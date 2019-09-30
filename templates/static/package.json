@@ -1,7 +1,7 @@
 {
-  "name": "hello_template",
+  "name": "albertasat",
   "version": "1.0.0",
-  "description": "A template for creating a full stack wep app with Flask, NPM, Webpack, and Reactjs",
+  "description": "AlbertaSat's wep app with Flask, NPM, Webpack, and Reactjs",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
