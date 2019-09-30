@@ -8,5 +8,6 @@ For more information, please visit our [wiki](https://github.com/UAlberta-CMPUT4
 
 
 ## To setup local enviornment:
-Install local enviornment: `./install.sh`    
-To run the local enviornment: `python3 run.py`
+1. Make sure you have python, npm, and pip installed on your machine
+2. Install local enviornment: `./install.sh`    
+3. To run the local enviornment: `python3 run.py`
