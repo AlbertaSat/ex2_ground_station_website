@@ -5,3 +5,8 @@
 In this repository we are attempting to make a smoother, more functional, and extendable ground station experience for the operators of the [Ex-Alta 2 satellite](https://albertasat.ca/ex-alta-2/).
 
 For more information, please visit our [wiki](https://github.com/UAlberta-CMPUT401/AlbertaSat/wiki).
+
+
+## To setup local enviornment:
+Install local enviornment: `./install.sh`    
+To run the local enviornment: `python3 run.py`
