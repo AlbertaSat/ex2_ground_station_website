@@ -1,5 +1,5 @@
-from templates import app
+from groundstation import create_app
 
 #Load this config object for development mode
-app.config.from_object('configurations.DevelopmentConfig')
+app = create_app()
 app.run()
