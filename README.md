@@ -16,3 +16,6 @@ For more information, please visit our [wiki](https://github.com/UAlberta-CMPUT4
 ## For db migrations:
 1. `python3 manage.py db migrate`
 2. `python3 manage.py db update`
+
+## For db creation:
+1. `python3 manage.py recreate_db`
