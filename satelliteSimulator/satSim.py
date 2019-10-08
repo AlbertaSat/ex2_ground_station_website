@@ -235,7 +235,12 @@ def run_interactively():
     print('--- ENTER DATA TO SEND, enter \'Q\' to quit ---')
 
     environment = Environment(10, 10, 0.05)
-    satellite_components = [SatelliteComponent('GPS', [('batteryVoltage', -0.01)], [])]
+
+    def effect_of_gps_on(old_value):
+        new_value = old_value - 0.01
+        return new_value
+
+    satellite_components = [SatelliteComponent('GPS', [('batteryVoltage', effect_of_gps_on)], [])]
     satellite = Satellite(satellite_components)
     simulator = Simulator(environment, satellite)
     del environment, satellite
@@ -253,7 +258,7 @@ def run_interactively():
 
 def main():
 
-    example_usage()
+    run_interactively()
 
 
 
