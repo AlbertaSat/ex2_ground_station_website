@@ -48,9 +48,9 @@ class SatelliteComponent:
 
 class Satellite:
 
-    sat_modes = ['DORMANT', 'ACTIVE', 'SLEEPING']
+    sat_modes =  ['Danger', 'Critical', 'Passive', 'Active Mission']
 
-    def __init__(self, components, satelliteMode=sat_modes[0], batteryVoltage=4,
+    def __init__(self, components, satelliteMode=sat_modes[2], batteryVoltage=4,
         currentIn=0.3, currentOut=0.3, noMCUResets=0,
         lastBeaconTime=None, currentTime=0, beaconInterval=20):
 
