@@ -10,7 +10,7 @@ class Environment:
         params:
             - connection_strength (int) : value between [1 (weak), 10 (strong)]
             - connection_stability (int) : value between [1 (weak), 10 (strong)]
-            - packet_drop_probability (float) : probability command won't reach satellite
+            - packet_drop_probability (float) : probability that the command won't reach the satellite
         """
         self.connection_strength = connection_strength
         self.connection_stability = connection_stability
@@ -69,7 +69,7 @@ class Satellite:
         # convert list of components to dict for easier searching
         self.components = {c.name:c for c in components}
 
-        # simulator attributes
+        # beacons will be 'broadcast' to this file every beacon interval
         self.BEACON_BROADCAST_FILE = 'beacons.txt'
         self.BEACON_INTERVAL = beaconInterval
 
@@ -258,7 +258,7 @@ def run_interactively():
 
 def main():
 
-    run_interactively()
+    minimal_example()
 
 
 

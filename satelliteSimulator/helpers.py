@@ -7,7 +7,10 @@ def calculate_semi_random_latency(connection_strength, connection_stability, min
         - connection_stability (int) : determins how much variance there is in samples
         - min_delay (float) : if you want a guarunteed minimum of delay, you should set this to a >= 0 value
     """
-    latency_mean = 9/connection_strength
+    # decrease for lower latency
+    numerator = 5
+
+    latency_mean = numerator/connection_strength
     deviation = (1/connection_stability)
     random_latency = max(min_delay, random.normalvariate(latency_mean, deviation))
     return random_latency
