@@ -11,13 +11,14 @@ cli = FlaskGroup(create_app=create_app)
 
 @cli.command('recreate_db')
 def recreate_db():
+	"""Recreate the database"""
 	db.drop_all()
 	db.create_all()
 	db.session.commit()
 
 @cli.command()
 def test():
-	"""Runs all tests in tests"""
+	"""Runs all tests in tests folder"""
 	tests = unittest.TestLoader().discover('groundstation/tests', pattern='test*.py')
 	result = unittest.TextTestRunner(verbosity=2).run(tests)
 	if result.wasSuccessful():
