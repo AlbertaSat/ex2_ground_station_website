@@ -25,3 +25,14 @@ class Housekeeping(db.Model):
 	currentOut = db.Column(db.Float)
 	noMCUResets = db.Column(db.Integer)
 	lastBeaconTime = db.Column(db.DateTime)
+
+	def toJson(self):
+		return {
+			'id': self.id,
+			'satelliteMode': self.satelliteMode,
+			'batteryVoltage': self.batteryVoltage,
+			'currentIn': self.currentIn,
+			'currentOut': self.currentOut,
+			'noMCUResets': self.noMCUResets,
+			'lastBeaconTime': self.lastBeaconTime
+		}
