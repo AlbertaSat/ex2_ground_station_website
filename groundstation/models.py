@@ -15,8 +15,8 @@ class User(db.Model):
 			'username': self.username
 		}
 
-class SatelliteModel(db.Model):
-	__tablename__ = 'satellite_model'
+class Housekeeping(db.Model):
+	__tablename__ = 'housekeeping'
 
 	id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 	satelliteMode = db.Column(db.String(32))
@@ -25,6 +25,3 @@ class SatelliteModel(db.Model):
 	currentOut = db.Column(db.Float)
 	noMCUResets = db.Column(db.Integer)
 	lastBeaconTime = db.Column(db.DateTime)
-
-
-
