@@ -6,9 +6,18 @@ In this repository we are attempting to make a smoother, more functional, and ex
 
 For more information, please visit our [wiki](https://github.com/UAlberta-CMPUT401/AlbertaSat/wiki).
 
+[![Build Status](https://travis-ci.org/UAlberta-CMPUT401/AlbertaSat.svg?branch=dev)](UAlberta-CMPUT401/AlbertaSat)
+
 
 ## To setup local enviornment:
 1. Make sure you have python, npm, and pip installed on your machine
 2. Install local enviornment: `./install.sh` 
 3. Set environment variables `source env.sh`    
 4. To run the local enviornment: `python3 run.py` or simply `flask run`
+
+## For db migrations:
+1. `python3 manage.py db migrate`
+2. `python3 manage.py db update`
+
+## For db creation:
+1. `python3 manage.py recreate_db`
