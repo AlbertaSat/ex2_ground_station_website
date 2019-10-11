@@ -12,7 +12,7 @@ class Command:
 
 	#Get the formatting for send function
 	def getCommand(self):
-		return [self.type, self.data]
+		return (self.type, self.data)
 
 	def getData(self):
 		return self.data
@@ -60,39 +60,39 @@ class PetTimers(Command):
 		self.name = name
 		self.data = timers
 
-class TurnOn(command):
+# class TurnOn(command):
 
-	self.type = 'TURN-ON'
+# 	self.type = 'TURN-ON'
 
-	def __init__(self, name, ID):
-		self.name = name
-		self.id = ID
-		self.data = [ID]
+# 	def __init__(self, name, ID):
+# 		self.name = name
+# 		self.id = ID
+# 		self.data = [ID]
 
-	def getID(self):
-		return self.id
+# 	def getID(self):
+# 		return self.id
 
-	def setID(self, ID):
-		self.id = ID
-		self.data = [self.id]
+# 	def setID(self, ID):
+# 		self.id = ID
+# 		self.data = [self.id]
 
 
 
-class TurnOff(Command):
+# class TurnOff(Command):
 
-	self.type = 'TURN-OFF'
+# 	self.type = 'TURN-OFF'
 
-	def __init__(self, name, ID):
-		self.name = name
-		self.id = ID
-		self.data = [ID]
+# 	def __init__(self, name, ID):
+# 		self.name = name
+# 		self.id = ID
+# 		self.data = [ID]
 
-	def getID(self):
-		return self.id
+# 	def getID(self):
+# 		return self.id
 
-	def setID(self, ID):
-		self.id = ID
-		self.data = [self.id]
+# 	def setID(self, ID):
+# 		self.id = ID
+# 		self.data = [self.id]
 
 #a proposition for an alternate to both turn on/off
 class TogglePart(Command):
@@ -113,10 +113,10 @@ class TogglePart(Command):
 
 
 	def turn-On(self):
-		return ['TURN-ON', self.data]
+		return ('TURN-ON', self.data)
 
 	def turn-off(self):
-		return ['TURN-OFF', self.data]
+		return ('TURN-OFF', self.data)
 
 class Magnetometer(Command):
 	self.type = "MAGNETOMETER"
