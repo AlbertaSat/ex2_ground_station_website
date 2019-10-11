@@ -1,9 +1,8 @@
 # from .satelliteSimulator import satSim 
-#from groundstation.gsAPI import ping
+#import gsAPI
+from groundstation.gsAPI import ping 
 #from satelliteSimulator.satSim import satSim
-import sys
 
-#sys.path.insert(1, 'satelliteSimulator')
 from groundstation.satelliteSimulator.satSim import Environment, Satellite, Simulator
 
 def setSimulator(conn_strength, conn_stability, packet_drop_prob):

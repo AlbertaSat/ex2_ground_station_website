@@ -1,4 +1,4 @@
-import helpers
+from groundstation.satelliteSimulator import helpers
 import random
 import json
 import time
