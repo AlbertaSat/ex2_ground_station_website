@@ -1,4 +1,4 @@
-import helpers
+from groundstation.satelliteSimulator import helpers
 import random
 import json
 import time
@@ -6,16 +6,18 @@ from ast import literal_eval as make_tuple
 
 class Environment:
 
-    def __init__(self, connection_strength, connection_stability, packet_drop_probability):
+    def __init__(self, connection_strength, connection_stability, packet_drop_probability, no_delay=False):
         """
         params:
             - connection_strength (int) : value between [1 (weak), 10 (strong)]
             - connection_stability (int) : value between [1 (weak), 10 (strong)]
             - packet_drop_probability (float) : probability that the command won't reach the satellite
+            - no_delay (bool) : if this is true, responses will be instant regardless of strength/stability
         """
         self.connection_strength = connection_strength
         self.connection_stability = connection_stability
         self.packet_drop_probability = packet_drop_probability
+        self.no_delay = no_delay
 
     def step(self):
         """Moves the environment one time step, change environment state in here
@@ -191,8 +193,9 @@ class Satellite:
             return 'NO-RESPONSE'
 
         response = self._execute_telecommand(telecommand_name, args)
-        response_latency = helpers.calculate_semi_random_latency(environment.connection_strength, environment.connection_stability)
-        time.sleep(response_latency)
+        if not environment.no_delay:
+            response_latency = helpers.calculate_semi_random_latency(environment.connection_strength, environment.connection_stability)
+            time.sleep(response_latency)
         # TODO: separate incoming dropped packets with outgoing dropped packets
         #       i.e.) packets sent to satellite might not even reach it (essentially what we have rn)
         #           * but there is also the case where sat recieves, telecommand, executes, but we dont get its response (we need to add this)
