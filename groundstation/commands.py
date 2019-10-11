@@ -1,6 +1,7 @@
 #Every command will extend this. It contains a basic initialization and functions 
 #to get and set names and data as well as return the command in a tuple of the 
 #form [command type, [relevant data]] 
+#At the moment, most of these are stubs as we don't know the actual formatting
 class Command:
 
 	self.data = []
@@ -71,9 +72,66 @@ class TurnOn(command):
 	def getID(self):
 		return self.id
 
-	def setID(self):
+	def setID(self, ID):
+		self.id = ID
+		self.data = [self.id]
+
+
+
+class TurnOff(Command):
+
+	self.type = 'TURN-OFF'
+
+	def __init__(self, name, ID):
+		self.name = name
+		self.id = ID
+		self.data = [ID]
+
+	def getID(self):
 		return self.id
 
+	def setID(self, ID):
+		self.id = ID
+		self.data = [self.id]
 
+#a proposition for an alternate to both turn on/off
+class TogglePart(Command):
+
+	self.type = 'TURN-OFF'
+
+		def __init__(self, name, ID):
+		self.name = name
+		self.id = ID
+		self.data = [ID]
+
+	def getID(self):
+		return self.id
+
+	def setID(self, ID):
+		self.id = ID
+		self.data = [self.id]
+
+
+	def turn-On(self):
+		return ['TURN-ON', self.data]
+
+	def turn-off(self):
+		return ['TURN-OFF', self.data]
+
+class Magnetometer(Command):
+	self.type = "MAGNETOMETER"
+
+	def __init__(self, name, time):
+		self.name = name
+		self.time = time
+		self.data = [self.time]
+
+class Imaging(Command):
+	self.type = "Imaging"
+
+	def __init__(self, name, time):
+		self.name = name
+		self.time = time
+		self.data = [self.time]
 
 
