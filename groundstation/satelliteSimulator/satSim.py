@@ -2,6 +2,7 @@ import helpers
 import random
 import json
 import time
+from ast import literal_eval as make_tuple
 
 class Environment:
 
@@ -53,6 +54,11 @@ class Satellite:
     def __init__(self, components, satelliteMode=sat_modes[2], batteryVoltage=4,
         currentIn=0.3, currentOut=0.3, noMCUResets=0,
         lastBeaconTime=None, currentTime=0, beaconInterval=20):
+        """
+        Attributes:
+            - flight_schedule (string) : a path to the flight schedule file.
+                * assumes each timestep in the fs is unique
+        """
 
         # model attributes
         self.satelliteMode = satelliteMode
@@ -64,13 +70,15 @@ class Satellite:
 
         self.currentTime = currentTime
         self.time_till_next_beacon = beaconInterval
-        # a dict, {component_name:component_object}
+        self.flight_schedule = None
 
         # convert list of components to dict for easier searching
         self.components = {c.name:c for c in components}
 
         # beacons will be 'broadcast' to this file every beacon interval
-        self.BEACON_BROADCAST_FILE = 'beacons.txt'
+        self.BEACON_BROADCAST_FILE = 'beacons.json'
+        with open(self.BEACON_BROADCAST_FILE, 'w') as fptr:
+            json.dump([], fptr)
         self.BEACON_INTERVAL = beaconInterval
 
 
@@ -81,6 +89,10 @@ class Satellite:
         self.time_till_next_beacon  -= 1
 
         self._apply_component_effects_on_satellite_state()
+        fs_command = self._get_fs_command_for_current_time()
+        if fs_command is not None:
+            response = self._execute_telecommand(fs_command[0], fs_command[1])
+            print('Executed FS command, resp = ', response)
 
         if self.time_till_next_beacon == 0:
             self._broadcast_beacon()
@@ -98,7 +110,6 @@ class Satellite:
 
 
     def _turn_on_component(self, component_name):
-
         # NOTE: Not sure if I should catch exceptions if component does not exist
         component = self.components[component_name]
         component.turn_on()
@@ -123,9 +134,46 @@ class Satellite:
 
     def _broadcast_beacon(self):
         self.lastBeaconTime = self.currentTime
-        with open(self.BEACON_BROADCAST_FILE, 'a+') as f_ptr:
-            hk_json = json.dumps(self._get_hk_as_dict(), indent=4)
-            f_ptr.write(hk_json)
+        with open(self.BEACON_BROADCAST_FILE, 'r') as fptr:
+            beacons_list = json.load(fptr)
+            beacons_list.append(self._get_hk_as_dict())
+
+        with open(self.BEACON_BROADCAST_FILE, 'w') as fptr:
+            json.dump(beacons_list, fptr, indent=4)
+
+
+    def _get_fs_command_for_current_time(self):
+        """
+        returns:
+            - command (tuple?)
+        """
+        if self.flight_schedule is not None:
+            with open(self.flight_schedule) as fptr:
+                for row in fptr:
+                    row = (row.strip()).split(',', 1)
+                    if int(row[0]) == self.currentTime:
+                        return make_tuple(row[1])
+
+
+    def _execute_telecommand(self, telecommand_name, args):
+        if telecommand_name == 'PING':
+            response = 'PING-RESPONSE'
+        elif telecommand_name == 'GET-HK':
+            response = json.dumps(self._get_hk_as_dict())
+        elif telecommand_name == 'TURN-ON':
+            self._turn_on_component(args[0])
+            response = '200 OK'
+        elif telecommand_name == 'TURN-OFF':
+            self._turn_off_component(args[0])
+            response = '200 OK'
+        elif telecommand_name == 'SET-FS':
+            # expecting string path to the flight schedule
+            self.flight_schedule = args[0]
+            response = '201 Created'
+        else:
+            response = 'UNRECOGNIZED-COMMAND'
+
+        return response
 
 
     def send(self, data, environment):
@@ -135,35 +183,21 @@ class Satellite:
         return:
             - depends, idk, probably always a string for now
         """
-        command_name, args = data
-        response = ''
+        telecommand_name, args = data
 
         # determine if we will drop the request (based on connection)
         if random.random() <= environment.packet_drop_probability:
             # drop packet
             return 'NO-RESPONSE'
 
-        if command_name == 'PING':
-            response = 'PING-RESPONSE'
-        elif command_name == 'GET-HK':
-            response = json.dumps(self._get_hk_as_dict())
-        elif command_name == 'TURN-ON':
-            # expecting one string in args, 'component_name' to turn on
-            self._turn_on_component(args[0])
-            response = '200 OK'
-        elif command_name == 'TURN-OFF':
-            # expecting one string in args, 'component_name' to turn off
-            self._turn_off_component(args[0])
-            response = '200 OK'
-        else:
-            response = 'UNRECOGNIZED-COMMAND'
-
+        response = self._execute_telecommand(telecommand_name, args)
         response_latency = helpers.calculate_semi_random_latency(environment.connection_strength, environment.connection_stability)
         time.sleep(response_latency)
         # TODO: separate incoming dropped packets with outgoing dropped packets
         #       i.e.) packets sent to satellite might not even reach it (essentially what we have rn)
         #           * but there is also the case where sat recieves, telecommand, executes, but we dont get its response (we need to add this)
         return response
+
 
 class Simulator:
 
@@ -198,8 +232,8 @@ def minimal_example():
 
 def example_usage():
 
-    environment = Environment(connection_strength=7, connection_stability=7,
-        packet_drop_probability=0.05)
+    environment = Environment(connection_strength=10, connection_stability=10,
+        packet_drop_probability=0.02)
 
     def effect_of_gps_on(old_value):
         new_value = old_value - 0.01
@@ -227,10 +261,30 @@ def example_usage():
     resp = simulator.send_to_sat(data)
     print(resp)
 
+    # doing this so I dont have to keep creating it for each example
+    return simulator
+
+
+def flight_schedule_example():
+
+    simulator = example_usage()
+
+    data = ('SET-FS', ['test_flight_schedule1.txt'])
+    resp = simulator.send_to_sat(data)
+    print(resp)
+
+    for i in range(50):
+        simulator.step()
+
+    data = ('GET-HK', [])
+    resp = simulator.send_to_sat(data)
+    print(resp)
+    assert not simulator.satellite.components['GPS'].is_on, 'GPS is still on!'
+
+
+
 
 def run_interactively():
-
-    from ast import literal_eval as make_tuple
 
     print('--- ENTER DATA TO SEND, enter \'Q\' to quit ---')
 
@@ -258,7 +312,7 @@ def run_interactively():
 
 def main():
 
-    minimal_example()
+    flight_schedule_example()
 
 
 
