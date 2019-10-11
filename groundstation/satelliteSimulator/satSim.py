@@ -76,7 +76,9 @@ class Satellite:
         self.components = {c.name:c for c in components}
 
         # beacons will be 'broadcast' to this file every beacon interval
-        self.BEACON_BROADCAST_FILE = 'beacons.txt'
+        self.BEACON_BROADCAST_FILE = 'beacons.json'
+        with open(self.BEACON_BROADCAST_FILE, 'w') as fptr:
+            json.dump([], fptr)
         self.BEACON_INTERVAL = beaconInterval
 
 
@@ -91,7 +93,6 @@ class Satellite:
         if fs_command is not None:
             response = self._execute_telecommand(fs_command[0], fs_command[1])
             print('Executed FS command, resp = ', response)
-
 
         if self.time_till_next_beacon == 0:
             self._broadcast_beacon()
@@ -133,9 +134,12 @@ class Satellite:
 
     def _broadcast_beacon(self):
         self.lastBeaconTime = self.currentTime
-        with open(self.BEACON_BROADCAST_FILE, 'a+') as f_ptr:
-            hk_json = json.dumps(self._get_hk_as_dict(), indent=4)
-            f_ptr.write(hk_json)
+        with open(self.BEACON_BROADCAST_FILE, 'r') as fptr:
+            beacons_list = json.load(fptr)
+            beacons_list.append(self._get_hk_as_dict())
+
+        with open(self.BEACON_BROADCAST_FILE, 'w') as fptr:
+            json.dump(beacons_list, fptr, indent=4)
 
 
     def _get_fs_command_for_current_time(self):
