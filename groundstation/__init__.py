@@ -19,8 +19,10 @@ def create_app(script_info=None):
 	migrate.init_app(app, db)
 
 	from groundstation.views import home_blueprint
+	from groundstation.api.housekeeping import housekeeping_blueprint
 	# register the blueprints
 	app.register_blueprint(home_blueprint)
+	app.register_blueprint(housekeeping_blueprint)
 
 	@app.shell_context_processor
 	def ctx():
