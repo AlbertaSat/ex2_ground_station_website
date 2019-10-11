@@ -34,5 +34,5 @@ class Housekeeping(db.Model):
 			'currentIn': self.currentIn,
 			'currentOut': self.currentOut,
 			'noMCUResets': self.noMCUResets,
-			'lastBeaconTime': self.lastBeaconTime
+			'lastBeaconTime': str(self.lastBeaconTime)
 		}

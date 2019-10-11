@@ -4,7 +4,7 @@ import unittest
 from flask.cli import FlaskGroup
 
 from groundstation import create_app, db
-from groundstation.models import User
+from groundstation.api.models import User
 
 app = create_app()
 cli = FlaskGroup(create_app=create_app)
