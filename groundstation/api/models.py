@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from groundstation import db
 
 class User(db.Model):
