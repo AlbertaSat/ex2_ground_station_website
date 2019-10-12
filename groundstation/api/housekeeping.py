@@ -2,6 +2,7 @@ from flask import request
 from flask import Blueprint
 from flask_restful import Resource, Api
 from datetime import datetime
+import json
 
 from groundstation.api.models import Housekeeping
 from groundstation import db
@@ -30,9 +31,14 @@ class HousekeepingLog(Resource):
             return response_object, 200
 
 class HousekeepingLogList(Resource):
-    def post(self):
+    def post(self, local_data=None):
         """Post a housekeeping log"""
-        post_data = request.get_json()
+        # this api call will have to treat incoming data different if it is called locally
+        if not local_data:
+            post_data = request.get_json()
+        else:
+            post_data = json.loads(local_data)
+
         # since json dates will be strings, convert them to a python datetime object
         post_data['lastBeaconTime'] = datetime.strptime(post_data['lastBeaconTime'], '%Y-%m-%d %H:%M:%S')
         housekeeping = Housekeeping(**post_data)

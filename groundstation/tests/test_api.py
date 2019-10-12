@@ -6,6 +6,7 @@ from groundstation.tests.base import BaseTestCase
 from groundstation import db
 from groundstation.api.models import Housekeeping
 from groundstation.tests.utils import fakeHousekeepingAsDict
+from groundstation.api.housekeeping import HousekeepingLogList
 
 class TestHousekeepingService(BaseTestCase):
     """Test the housekeeping/satellite model service"""
@@ -54,4 +55,19 @@ class TestHousekeepingService(BaseTestCase):
                 data['message']
             )
             self.assertIn('success', data['status'])
+
+    def test_post_housekeeping_locally(self):
+        """Since local data is wrapped differently than data over http, 
+        we must send and receive it differently (locally it is a tuple of dicts)"""
+        timestamp = str(datetime.fromtimestamp(1570749472))
+        housekeepingData = fakeHousekeepingAsDict(timestamp)
+        housekeepingLogList = HousekeepingLogList()
+        response = housekeepingLogList.post(local_data=json.dumps(housekeepingData))
+        self.assertEqual(response[1], 201)
+        self.assertEqual(
+            f'Housekeeping Log with timestamp {timestamp} was added!', 
+            response[0]['message']
+        )
+        self.assertIn('success', response[0]['status'])
+
 
