@@ -2,14 +2,12 @@
 # (or the simulator)
 
 
-# def setSimulator(conn_strength, conn_stability, packet_drop_prob):
-# 	environment = Environment(connection_strength=conn_strength, connection_stability=conn_stability,
-#         packet_drop_probability=packet_drop_prob)
-
-# 	satellite = Satellite(components=[])
-# 	return Simulator(environment, satellite)
-
-
 def send(socket, data):
-
+	""" Pipes the incoming data (probably a Command tuple) to the socket (probably the Simulator)
+		- socket (Simulator) : A Simulator instance
+		- data (Tuple) : The collection of data to send to the socket.
+	"""
+	# This is where you should send information, data, or commands to the satellite or server.
+	# (for now it's just the simulator)
+	# eg of the tuple: 	('PING', [])
 	return socket.send_to_sat(data)
