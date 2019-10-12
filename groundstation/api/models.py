@@ -15,8 +15,8 @@ class User(db.Model):
 			'username': self.username
 		}
 
-class SatelliteModel(db.Model):
-	__tablename__ = 'satellite_model'
+class Housekeeping(db.Model):
+	__tablename__ = 'housekeeping'
 
 	id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 	satelliteMode = db.Column(db.String(32))
@@ -26,5 +26,13 @@ class SatelliteModel(db.Model):
 	noMCUResets = db.Column(db.Integer)
 	lastBeaconTime = db.Column(db.DateTime)
 
-
-
+	def toJson(self):
+		return {
+			'id': self.id,
+			'satelliteMode': self.satelliteMode,
+			'batteryVoltage': self.batteryVoltage,
+			'currentIn': self.currentIn,
+			'currentOut': self.currentOut,
+			'noMCUResets': self.noMCUResets,
+			'lastBeaconTime': str(self.lastBeaconTime)
+		}

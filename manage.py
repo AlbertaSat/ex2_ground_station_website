@@ -1,10 +1,12 @@
 import sys
 import unittest
+from datetime import datetime
 
 from flask.cli import FlaskGroup
 
 from groundstation import create_app, db
-from groundstation.models import User
+from groundstation.api.models import User, Housekeeping
+from groundstation.tests.utils import fakeHousekeepingAsDict
 
 app = create_app()
 cli = FlaskGroup(create_app=create_app)
@@ -24,6 +26,16 @@ def test():
 	if result.wasSuccessful():
 		return 0
 	sys.exit(result)
+
+@cli.command('seed_db')
+def seed_db():
+	timestamp = datetime.fromtimestamp(1570749472)
+	housekeepingData = fakeHousekeepingAsDict(timestamp)
+
+	housekeeping = Housekeeping(**housekeepingData)
+	db.session.add(housekeeping)
+	db.session.commit()
+	
 
 if __name__ == '__main__':
 	cli()
