@@ -6,6 +6,10 @@ class TestGroundstation(BaseTestCase):
 	"""Test the testing"""
 	def testTesting(self):
 		self.assertEqual(200, 200)
+	
+	def test_interface(self):
+		# Don't know how to write this test TBH
+		pass
 
 
 
