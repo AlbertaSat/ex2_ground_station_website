@@ -4,6 +4,7 @@ home_blueprint = Blueprint('home',__name__)
 
 @home_blueprint.route('/')
 @home_blueprint.route('/home')
+@home_blueprint.route('/flightschedule')
 def index():
 	return render_template("index.html")
 
