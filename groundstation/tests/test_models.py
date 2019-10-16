@@ -2,7 +2,7 @@ import unittest
 from datetime import datetime
 
 from groundstation.tests.base import BaseTestCase
-from groundstation.api.models import Housekeeping
+from groundstation.backend_api.models import Housekeeping
 from groundstation import db
 from groundstation.tests.utils import fakeHousekeepingAsDict
 

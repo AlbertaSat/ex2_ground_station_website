@@ -17,3 +17,9 @@ def get_hk(socket):
 	""" Create a Get HK command and send it to the socket.
 	"""
 	return ""
+
+
+commandList {'ping': ping()}
+
+commandList['ping']
+
