@@ -4,9 +4,9 @@ import json
 from datetime import datetime
 from groundstation.tests.base import BaseTestCase
 from groundstation import db
-from groundstation.api.models import Housekeeping
+from groundstation.backend_api.models import Housekeeping
 from groundstation.tests.utils import fakeHousekeepingAsDict
-from groundstation.api.housekeeping import HousekeepingLogList
+from groundstation.backend_api.housekeeping import HousekeepingLogList
 
 class TestHousekeepingService(BaseTestCase):
     """Test the housekeeping/satellite model service"""
@@ -21,7 +21,7 @@ class TestHousekeepingService(BaseTestCase):
         db.session.commit()
 
         with self.client:
-            response = self.client.get(f'/housekeepinglog/{housekeeping.id}')
+            response = self.client.get(f'/api/housekeepinglog/{housekeeping.id}')
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertIn('Passive', data['data']['satelliteMode'])
@@ -33,7 +33,7 @@ class TestHousekeepingService(BaseTestCase):
 
     def test_get_housekeeping_incorrect_id(self):
         with self.client:
-            response = self.client.get('/housekeepinglog/123')
+            response = self.client.get('/api/housekeepinglog/123')
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 404)
             self.assertIn('Housekeeping Log does not exist', data['message'])
@@ -44,7 +44,7 @@ class TestHousekeepingService(BaseTestCase):
         housekeepingData = fakeHousekeepingAsDict(timestamp)
         with self.client:
             response = self.client.post(
-                '/housekeepinglog',
+                '/api/housekeepinglog',
                 data=json.dumps(housekeepingData),
                 content_type='application/json'
             )

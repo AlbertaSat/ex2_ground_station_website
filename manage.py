@@ -6,9 +6,9 @@ import json
 from flask.cli import FlaskGroup
 
 from groundstation import create_app, db
-from groundstation.api.models import User, Housekeeping
+from groundstation.backend_api.models import User, Housekeeping
 from groundstation.tests.utils import fakeHousekeepingAsDict
-from groundstation.api.housekeeping import HousekeepingLogList
+from groundstation.backend_api.housekeeping import HousekeepingLogList
 
 app = create_app()
 cli = FlaskGroup(create_app=create_app)

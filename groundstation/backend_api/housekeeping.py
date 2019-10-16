@@ -4,7 +4,7 @@ from flask_restful import Resource, Api
 from datetime import datetime
 import json
 
-from groundstation.api.models import Housekeeping
+from groundstation.backend_api.models import Housekeeping
 from groundstation import db
 
 housekeeping_blueprint = Blueprint('housekeeping', __name__)
@@ -52,6 +52,6 @@ class HousekeepingLogList(Resource):
 
         return response_object, 201
 
-api.add_resource(HousekeepingLog, '/housekeepinglog/<housekeeping_id>')
-api.add_resource(HousekeepingLogList, '/housekeepinglog')
+api.add_resource(HousekeepingLog, '/api/housekeepinglog/<housekeeping_id>')
+api.add_resource(HousekeepingLogList, '/api/housekeepinglog')
 
