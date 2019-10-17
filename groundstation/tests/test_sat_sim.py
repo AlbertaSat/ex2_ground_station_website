@@ -1,5 +1,6 @@
 import unittest
 from unittest import mock
+import json
 
 from groundstation.tests.base import BaseTestCase
 from groundstation.satelliteSimulator.satSim import Environment, Satellite, Simulator, SatelliteComponent
@@ -53,7 +54,6 @@ class TestSatelliteSimulator(BaseTestCase):
     @mock.patch('groundstation.satelliteSimulator.satSim.open')
     @mock.patch('groundstation.satelliteSimulator.satSim.time.sleep')
     def test_get_hk(self, mocked_time_sleep, mocked_open, _):
-        import json
 
         environment = Environment(connection_strength=10, connection_stability=10,
             packet_drop_probability=0)
@@ -71,7 +71,6 @@ class TestSatelliteSimulator(BaseTestCase):
     @mock.patch('groundstation.satelliteSimulator.satSim.open')
     @mock.patch('groundstation.satelliteSimulator.satSim.time.sleep')
     def test_component_effects_battery(self, mocked_time_sleep, mocked_open, _):
-        import json
         environment = Environment(connection_strength=10, connection_stability=10,
             packet_drop_probability=0)
 
