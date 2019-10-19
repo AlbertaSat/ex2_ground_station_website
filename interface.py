@@ -57,20 +57,20 @@ def main():
 
     if housekeeping['batteryVoltage'] < 15.3:
         print("Battery voltage critical. Shutting down all components.")
-        for component in satellite.components:
+        for component in satellite_components:
             simulator.send_to_sat(('TURN-OFF', component.name))
     elif housekeeping['batteryVoltage'] < 15.6:
         # Shutdown components based on some kind of priority system?
         print("Battery voltage low. Shutting down low priority components.")
-        simulator.send_to_sat(('TURN-OFF', satellite.components[0].name))
+        simulator.send_to_sat(('TURN-OFF', satellite_components[0].name))
 
     if housekeeping['currentIn'] >= 0.4:
         # Missing current channels functionality.
         # Tied to different components, so turn them off then on again?
         print("Over-current detected.")
-        simulator.send_to_sat(('TURN-OFF', satellite.components[0].name))
+        simulator.send_to_sat(('TURN-OFF', satellite_components[0].name))
         time.sleep(5)
-        simulator.send_to_sat(('TURN-ON', satellite.components[0].name))
+        simulator.send_to_sat(('TURN-ON', satellite_components[0].name))
 
     log = HousekeepingLogList()
     log.post(housekeeping)
