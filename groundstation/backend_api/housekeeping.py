@@ -6,11 +6,14 @@ import json
 
 from groundstation.backend_api.models import Housekeeping
 from groundstation import db
+from groundstation.backend_api.utils import create_context
 
 housekeeping_blueprint = Blueprint('housekeeping', __name__)
 api = Api(housekeeping_blueprint)
 
 class HousekeepingLog(Resource):
+
+    @create_context
     def get(self, housekeeping_id):
         """Get a single housekeeping log via its id"""
         response_object = {
@@ -31,6 +34,8 @@ class HousekeepingLog(Resource):
             return response_object, 200
 
 class HousekeepingLogList(Resource):
+
+    @create_context
     def post(self, local_data=None):
         """Post a housekeeping log"""
         # this api call will have to treat incoming data different if it is called locally

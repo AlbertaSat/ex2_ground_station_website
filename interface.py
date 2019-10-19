@@ -3,8 +3,12 @@
 # For now, the "satellite" is just the simulator.
 
 import time
+import json
+from datetime import datetime
 from groundstation.groundapi import ping
 from groundstation.satelliteSimulator.satSim import Environment, Satellite, SatelliteComponent, Simulator
+from groundstation.backend_api.housekeeping import HousekeepingLogList
+from groundstation.tests.utils import fakeHousekeepingAsDict
 
 
 def main():
