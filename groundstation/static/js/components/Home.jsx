@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 
 class Home extends Component {
   constructor() {
     super();
     this.state = {
+      empty: false,
       isLoaded: false,
       housekeeping: null
       // {
@@ -22,6 +24,9 @@ class Home extends Component {
   componentDidMount() {
     fetch('/api/housekeepinglog/1')
     .then(results => {
+      if (results.status == 401) { // if data is empty
+        this.setState({ empty: true })
+      }
       return results.json();
     }).then(data => {
       this.setState({ housekeeping: data.data, isLoaded: true })
@@ -30,12 +35,20 @@ class Home extends Component {
   }
 
   render() {
-    const { isLoaded, housekeeping } = this.state;
+    const { isLoaded, housekeeping, error } = this.state;
     return (
       <div>
         <h1>This is our GroundStation!</h1>
-        {isLoaded ? (
+        {error ? (
           <div>
+            <ErrorOutlineIcon /> There is currently no housekeeping data!
+          </div>
+        ) : (
+          <div></div>
+        )}
+        {isLoaded && !error ? (
+          <div>
+            
             <p>Id: {housekeeping.id}</p>
             <p>satelliteMode: {housekeeping.satelliteMode}</p>
             <p>batteryVoltage: {housekeeping.batteryVoltage}</p>
