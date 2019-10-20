@@ -78,7 +78,7 @@ class Satellite:
         self.components = {c.name:c for c in components}
 
         # beacons will be 'broadcast' to this file every beacon interval
-        self.BEACON_BROADCAST_FILE = 'beacons.json'
+        self.BEACON_BROADCAST_FILE = 'groundstation/satelliteSimulator/beacons.json'
         with open(self.BEACON_BROADCAST_FILE, 'w') as fptr:
             json.dump([], fptr)
         self.BEACON_INTERVAL = beaconInterval
@@ -277,7 +277,7 @@ def flight_schedule_example():
 
     simulator = example_usage()
 
-    data = ('SET-FS', ['test_flight_schedule1.txt'])
+    data = ('SET-FS', ['groundstation/satelliteSimulator/test_flight_schedule1.txt'])
     resp = simulator.send_to_sat(data)
     print(resp)
 
