@@ -55,7 +55,7 @@ class Satellite:
 
     def __init__(self, components, satelliteMode=sat_modes[2], batteryVoltage=4,
         currentIn=0.3, currentOut=0.3, noMCUResets=0,
-        lastBeaconTime=None, currentTime=0, beaconInterval=20):
+        lastBeaconTime=None, currentTime=helpers.get_unix_time(), beaconInterval=20):
         """
         Attributes:
             - flight_schedule (string) : a path to the flight schedule file.
@@ -218,6 +218,9 @@ class Simulator:
         self.environment.step()
         self.satellite.step()
 
+    def get_current_satellite_time(self):
+        return self.satellite.currentTime
+
 
 def minimal_example():
 
@@ -269,6 +272,8 @@ def example_usage():
 
 
 def flight_schedule_example():
+    # WARNING: This wont work now that time is referenced by current unix time
+    # just use it as visual reference
 
     simulator = example_usage()
 
@@ -315,7 +320,7 @@ def run_interactively():
 
 def main():
 
-    flight_schedule_example()
+    example_usage()
 
 
 
