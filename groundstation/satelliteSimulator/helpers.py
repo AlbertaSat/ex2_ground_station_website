@@ -1,4 +1,6 @@
 import random
+import time
+
 
 def calculate_semi_random_latency(connection_strength, connection_stability, min_delay=0):
     """returns a latency value depending on the conn. strength and conn. stability
@@ -14,3 +16,6 @@ def calculate_semi_random_latency(connection_strength, connection_stability, min
     deviation = (1/connection_stability)
     random_latency = max(min_delay, random.normalvariate(latency_mean, deviation))
     return random_latency
+
+def get_unix_time():
+    return int(time.time())

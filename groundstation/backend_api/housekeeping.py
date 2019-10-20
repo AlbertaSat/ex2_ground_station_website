@@ -39,13 +39,24 @@ class HousekeepingLogList(Resource):
     def post(self, local_data=None):
         """Post a housekeeping log"""
         # this api call will have to treat incoming data different if it is called locally
+        response_object = {
+            'status': 'fail',
+            'message': 'Invalid payload'
+        }
+
         if not local_data:
             post_data = request.get_json()
         else:
             post_data = json.loads(local_data)
 
-        # since json dates will be strings, convert them to a python datetime object
-        post_data['lastBeaconTime'] = datetime.strptime(post_data['lastBeaconTime'], '%Y-%m-%d %H:%M:%S')
+        # since incoming timestamp will be a string, convert it into a datetime object
+        # also handle all errors that could occur with the timestamp
+        # as a timestamp is necessary for all housekeeping logs
+        try:
+            post_data['lastBeaconTime'] = datetime.strptime(post_data['lastBeaconTime'], '%Y-%m-%d %H:%M:%S')
+        except (ValueError, TypeError, KeyError) as error:
+            return response_object, 400
+
         housekeeping = Housekeeping(**post_data)
         db.session.add(housekeeping)
         db.session.commit()
