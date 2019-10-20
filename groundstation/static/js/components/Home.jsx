@@ -5,7 +5,7 @@ class Home extends Component {
   constructor() {
     super();
     this.state = {
-      isLoading: false,
+      isLoaded: false,
       housekeeping: null
       // {
       //   id: null,
@@ -24,17 +24,17 @@ class Home extends Component {
     .then(results => {
       return results.json();
     }).then(data => {
-      this.setState({ housekeeping: data.data, isLoading: true })
+      this.setState({ housekeeping: data.data, isLoaded: true })
       console.log(this.state.housekeeping);
     })
   }
 
   render() {
-    const { isLoading, housekeeping } = this.state;
+    const { isLoaded, housekeeping } = this.state;
     return (
       <div>
         <h1>This is our GroundStation!</h1>
-        {isLoading ? (
+        {isLoaded ? (
           <div>
             <p>Id: {housekeeping.id}</p>
             <p>satelliteMode: {housekeeping.satelliteMode}</p>
