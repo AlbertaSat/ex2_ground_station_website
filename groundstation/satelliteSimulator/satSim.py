@@ -207,9 +207,12 @@ class Simulator:
     def __init__(self, environment, satellite):
         self.environment = environment
         self.satellite = satellite
+        self._log_file_path = 'groundstation/satelliteSimulator/log.txt'
 
     def send_to_sat(self, data):
+        self._add_to_log('groundstation', 'satellite', data)
         sat_resp = self.satellite.send(data, self.environment)
+        self._add_to_log('satellite', 'groundstation', sat_resp)
         return sat_resp
 
     def step(self):
@@ -220,6 +223,17 @@ class Simulator:
 
     def get_current_satellite_time(self):
         return self.satellite.currentTime
+
+    def _add_to_log(self, sender, recipient, message):
+
+        log_message = '---- LOG ENTRY ----\n'
+        log_message += f'sender: {sender}\n'
+        log_message += f'recipient: {recipient}\n'
+        log_message += f'message: {message}\n\n'
+
+        with open(self._log_file_path, 'a+') as fptr:
+            fptr.write(log_message + '\n')
+
 
 
 def minimal_example():
