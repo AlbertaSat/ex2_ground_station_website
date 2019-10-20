@@ -70,4 +70,38 @@ class TestHousekeepingService(BaseTestCase):
         )
         self.assertIn('success', response[0]['status'])
 
+    def test_post_housekeeping_with_no_timestamp(self):
+        """all housekeeping logs/beacons should have a timestamp with them
+            ensure that this timestamp exists 
+        """
+        housekeepingData = fakeHousekeepingAsDict(None)
+        del housekeepingData['lastBeaconTime']
+        with self.client:
+            response = self.client.post(
+                'api/housekeepinglog',
+                data=json.dumps(housekeepingData),
+                content_type='application/json'
+            )
+        data = json.loads(response.data.decode())
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('Invalid payload', data['message'])
+        self.assertIn('fail', data['status'])
+
+    def test_post_housekeeping_with_invalid_timestamp(self):
+        """Ensure that the timestamp is a valid datetime"""
+        housekeepingData = fakeHousekeepingAsDict('notadatetimeobject')
+        with self.client:
+            response = self.client.post(
+                'api/housekeepinglog',
+                data=json.dumps(housekeepingData),
+                content_type='application/json'
+            )
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 400)
+            self.assertIn('Invalid payload', data['message'])
+            self.assertIn('fail', data['status'])
+
+
+
+
 
