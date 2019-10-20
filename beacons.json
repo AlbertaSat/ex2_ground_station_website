@@ -1,1 +1,18 @@
-[]
+[
+    {
+        "satelliteMode": "Passive",
+        "batteryVoltage": 3.8000000000000043,
+        "currentIn": 0.3,
+        "currentOut": 0.3,
+        "noMCUResets": 0,
+        "lastBeaconTime": 1571531804
+    },
+    {
+        "satelliteMode": "Passive",
+        "batteryVoltage": 3.6000000000000085,
+        "currentIn": 0.3,
+        "currentOut": 0.3,
+        "noMCUResets": 0,
+        "lastBeaconTime": 1571531824
+    }
+]
