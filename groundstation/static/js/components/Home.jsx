@@ -3,52 +3,54 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 
 class Home extends Component {
+  loadingIndicator(isLoaded){
+
+  }
+
   constructor() {
     super();
     this.state = {
-      empty: false,
+      empty: true,
       isLoaded: false,
-      housekeeping: null
-      // {
-      //   id: null,
-      //   satelliteMode: null,
-      //   batteryVoltage: null,
-      //   currentIn: null,
-      //   currentOut: null,
-      //   lastBeaconTime: null,
-      //   noMCUResets: null
-      // }
+      housekeeping: {
+        id: null,
+        satelliteMode: null,
+        batteryVoltage: null,
+        currentIn: null,
+        currentOut: null,
+        lastBeaconTime: null,
+        noMCUResets: null
+      }
     };
   }
 
   componentDidMount() {
     fetch('/api/housekeepinglog/1')
     .then(results => {
-      if (results.status == 401) { // if data is empty
-        this.setState({ empty: true })
-      }
       return results.json();
     }).then(data => {
-      this.setState({ housekeeping: data.data, isLoaded: true })
-      console.log(this.state.housekeeping);
+      console.log('data: ', data);
+      if (data.status == 'success') {
+        this.setState({ housekeeping: data.data, isLoaded: true, empty: false })
+        console.log(this.state.housekeeping);
+      }
     })
   }
 
   render() {
-    const { isLoaded, housekeeping, error } = this.state;
+    const { isLoaded, housekeeping, empty } = this.state;
+    if (empty) {
+      return (
+        <div>
+        <ErrorOutlineIcon /> There is currently no housekeeping data!
+        </div>
+      )
+    }
     return (
       <div>
         <h1>This is our GroundStation!</h1>
-        {error ? (
+        {isLoaded ? (
           <div>
-            <ErrorOutlineIcon /> There is currently no housekeeping data!
-          </div>
-        ) : (
-          <div></div>
-        )}
-        {isLoaded && !error ? (
-          <div>
-            
             <p>Id: {housekeeping.id}</p>
             <p>satelliteMode: {housekeeping.satelliteMode}</p>
             <p>batteryVoltage: {housekeeping.batteryVoltage}</p>
