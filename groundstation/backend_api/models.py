@@ -45,7 +45,6 @@ class Commands(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     command_name = db.Column(db.String(64))
     num_arguments = db.Column(db.Integer)
-    flightschedule_comman_id = db.Column(db.Integer, db.ForeignKey('flightschedulecommands.id'))
 
     def to_json(self):
         return {
@@ -66,6 +65,6 @@ class FlightScheduleCommands(db.Model):
     __tablename__ = 'flightschedulecommands'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    command_id = db.relationship('Commands', uselist=False)
+    command_id = db.Column(db.Integer, db.ForeignKey('commands.id'), nullable=False)
     timestamp = db.Column(db.DateTime)
     flightschedule_id = db.Column(db.Integer, db.ForeignKey('flightschedules.id'), nullable=False)
