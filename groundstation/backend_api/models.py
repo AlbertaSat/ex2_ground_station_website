@@ -45,6 +45,8 @@ class Commands(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     command_name = db.Column(db.String(64))
     num_arguments = db.Column(db.Integer)
+    flightschedulecommands = db.relationship('FlightScheduleCommands', backref='flightschedulecommand', lazy=True)
+
 
     def to_json(self):
         return {
