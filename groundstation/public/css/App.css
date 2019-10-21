@@ -1,0 +1,24 @@
+.menu-links {
+    position: absolute;
+    right: 0;
+    margin-right: 5em !important;
+  }
+  
+.MuiAppBar-colorPrimary {
+  background-color: rgb(37, 37, 37) !important;
+  color: rgb(37, 37, 37)
+}
+.primary {
+  background-color: rgb(37, 37, 37) !important;
+  color: rgb(37, 37, 37)
+}
+.secondary {
+  color: rgb(243, 243, 243) !important
+}
+.indent {
+  color: rgb(255, 51, 102) !important
+}
+
+.link-items {
+  padding: 5px;
+}

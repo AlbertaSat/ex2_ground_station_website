@@ -1,0 +1,10 @@
+sudo: true
+
+language: python
+
+install: pip install -r requirements.txt
+
+before_script:
+  - source env.sh
+
+script: python3 manage.py test
