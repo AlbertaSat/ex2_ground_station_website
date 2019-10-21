@@ -63,6 +63,14 @@ class FlightSchedules(db.Model):
     upload_date = db.Column(db.DateTime)
     commands = db.relationship('FlightScheduleCommands', backref='flightschedule', lazy=True)
 
+    def to_json(self):
+        return {
+            'id': self.id,
+            'creation_date': str(self.creation_date),
+            'upload_date': str(self.upload_date),
+            'commands': [command.to_json() for command in self.commands]
+        }
+
 class FlightScheduleCommands(db.Model):
     __tablename__ = 'flightschedulecommands'
 
@@ -70,3 +78,11 @@ class FlightScheduleCommands(db.Model):
     command_id = db.Column(db.Integer, db.ForeignKey('commands.id'), nullable=False)
     timestamp = db.Column(db.DateTime)
     flightschedule_id = db.Column(db.Integer, db.ForeignKey('flightschedules.id'), nullable=False)
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'command': self.flightschedulecommand.to_json(),
+            'timestamp': str(self.timestamp)
+        }
+
