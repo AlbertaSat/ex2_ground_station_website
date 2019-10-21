@@ -1,0 +1,84 @@
+---- LOG ENTRY ----
+sender: groundstation
+recipient: satellite
+message: ('PING', [1, 1200, 10])
+
+
+---- LOG ENTRY ----
+sender: satellite
+recipient: groundstation
+message: PING-RESPONSE
+
+
+---- LOG ENTRY ----
+sender: groundstation
+recipient: satellite
+message: ('PING', [1, 1200, 10])
+
+
+---- LOG ENTRY ----
+sender: satellite
+recipient: groundstation
+message: PING-RESPONSE
+
+
+---- LOG ENTRY ----
+sender: groundstation
+recipient: satellite
+message: ('PING', [1, 1200, 10])
+
+
+---- LOG ENTRY ----
+sender: satellite
+recipient: groundstation
+message: PING-RESPONSE
+
+
+---- LOG ENTRY ----
+sender: groundstation
+recipient: satellite
+message: ('PING', [1, 1200, 10])
+
+
+---- LOG ENTRY ----
+sender: satellite
+recipient: groundstation
+message: PING-RESPONSE
+
+
+---- LOG ENTRY ----
+sender: groundstation
+recipient: satellite
+message: ('PING', [1, 1200, 10])
+
+
+---- LOG ENTRY ----
+sender: satellite
+recipient: groundstation
+message: PING-RESPONSE
+
+
+---- LOG ENTRY ----
+sender: groundstation
+recipient: satellite
+message: ('GET-HK', [])
+
+
+---- LOG ENTRY ----
+sender: satellite
+recipient: groundstation
+message: {"satelliteMode": "Passive", "batteryVoltage": 16, "currentIn": 0.3, "currentOut": 0.3, "noMCUResets": 0, "lastBeaconTime": 1571622480}
+
+
+---- LOG ENTRY ----
+sender: groundstation
+recipient: satellite
+message: ('TURN-ON', ['GPS'])
+
+
+---- LOG ENTRY ----
+sender: satellite
+recipient: groundstation
+message: 200 OK
+
+

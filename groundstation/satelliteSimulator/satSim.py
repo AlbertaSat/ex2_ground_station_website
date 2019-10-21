@@ -55,7 +55,7 @@ class Satellite:
 
     def __init__(self, components, satelliteMode=sat_modes[2], batteryVoltage=4,
         currentIn=0.3, currentOut=0.3, noMCUResets=0,
-        lastBeaconTime=None, currentTime=0, beaconInterval=20):
+        lastBeaconTime=None, currentTime=helpers.get_unix_time(), beaconInterval=20):
         """
         Attributes:
             - flight_schedule (string) : a path to the flight schedule file.
@@ -78,7 +78,7 @@ class Satellite:
         self.components = {c.name:c for c in components}
 
         # beacons will be 'broadcast' to this file every beacon interval
-        self.BEACON_BROADCAST_FILE = 'beacons.json'
+        self.BEACON_BROADCAST_FILE = 'groundstation/satelliteSimulator/beacons.json'
         with open(self.BEACON_BROADCAST_FILE, 'w') as fptr:
             json.dump([], fptr)
         self.BEACON_INTERVAL = beaconInterval
@@ -207,9 +207,12 @@ class Simulator:
     def __init__(self, environment, satellite):
         self.environment = environment
         self.satellite = satellite
+        self._log_file_path = 'groundstation/satelliteSimulator/log.txt'
 
     def send_to_sat(self, data):
+        self._add_to_log('groundstation', 'satellite', data)
         sat_resp = self.satellite.send(data, self.environment)
+        self._add_to_log('satellite', 'groundstation', sat_resp)
         return sat_resp
 
     def step(self):
@@ -217,6 +220,20 @@ class Simulator:
         """
         self.environment.step()
         self.satellite.step()
+
+    def get_current_satellite_time(self):
+        return self.satellite.currentTime
+
+    def _add_to_log(self, sender, recipient, message):
+
+        log_message = '---- LOG ENTRY ----\n'
+        log_message += f'sender: {sender}\n'
+        log_message += f'recipient: {recipient}\n'
+        log_message += f'message: {message}\n\n'
+
+        with open(self._log_file_path, 'a+') as fptr:
+            fptr.write(log_message + '\n')
+
 
 
 def minimal_example():
@@ -269,10 +286,12 @@ def example_usage():
 
 
 def flight_schedule_example():
+    # WARNING: This wont work now that time is referenced by current unix time
+    # just use it as visual reference
 
     simulator = example_usage()
 
-    data = ('SET-FS', ['test_flight_schedule1.txt'])
+    data = ('SET-FS', ['groundstation/satelliteSimulator/test_flight_schedule1.txt'])
     resp = simulator.send_to_sat(data)
     print(resp)
 
@@ -315,7 +334,7 @@ def run_interactively():
 
 def main():
 
-    flight_schedule_example()
+    example_usage()
 
 
 
