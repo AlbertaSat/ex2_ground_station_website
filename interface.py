@@ -21,7 +21,7 @@ def main():
         new_value = old_value - 0.01
         return new_value
     satellite_components = [SatelliteComponent('GPS', [('batteryVoltage', effect_of_gps_on)], []),]
-    satellite = Satellite(satellite_components, 'Passive', 16)
+    satellite = Satellite(satellite_components, 'Passive', 16, 0.3, 0.3, 0, int(time.time()))
     simulator = Simulator(environment, satellite)
     del environment, satellite
 
@@ -52,6 +52,7 @@ def main():
     # After which we run through the housekeeping and startup checks.
     rawHK = simulator.send_to_sat(('GET-HK', []))
     housekeeping = json.loads(rawHK)
+    housekeeping['lastBeaconTime'] = str(datetime.fromtimestamp(housekeeping['lastBeaconTime']))
 
     if housekeeping['satelliteMode'] == 'Danger' or housekeeping['satelliteMode'] == 'Critical':
         print("Satellite is experiencing an emergency!")
