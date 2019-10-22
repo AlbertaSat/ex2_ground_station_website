@@ -38,7 +38,7 @@ class TestCommandModel(BaseTestCase):
 
 	"""Test adding a command"""
 	def test_add_command(self):
-		command = add_command(db=db, command_name='ping', num_arguments=0)
+		command = add_command(command_name='ping', num_arguments=0)
 		self.assertTrue(command.id)
 		self.assertEqual(command.command_name, 'ping')
 		self.assertEqual(command.num_arguments, 0)
@@ -48,7 +48,7 @@ class TestFlightScheduleModel(BaseTestCase):
 	""""Test adding a flight schedule"""
 	def test_add_flight_schedule(self):
 		timestamp = datetime.fromtimestamp(1570749472)
-		flightschedule = add_flight_schedule(db=db, creation_date=timestamp, upload_date=timestamp)
+		flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp)
 		self.assertTrue(flightschedule.id)
 		self.assertEqual(timestamp, flightschedule.creation_date)
 		self.assertEqual(timestamp, flightschedule.upload_date)
@@ -58,10 +58,9 @@ class TestFlightScheduleCommandsModel(BaseTestCase):
 	"""Test adding a command to the flight schedule"""
 	def test_add_command_to_flight_schedule(self):
 		timestamp = datetime.fromtimestamp(1570749472)
-		command = add_command(db=db, command_name='ping', num_arguments=0)
-		flightschedule = add_flight_schedule(db=db, creation_date=timestamp, upload_date=timestamp)
+		command = add_command(command_name='ping', num_arguments=0)
+		flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp)
 		flightschedule_commands = add_command_to_flightschedule(
-                                    db=db,
 									timestamp=timestamp,
 									flightschedule_id=flightschedule.id,
 									command_id=command.id
@@ -70,16 +69,6 @@ class TestFlightScheduleCommandsModel(BaseTestCase):
 		self.assertEqual(flightschedule_commands.timestamp, timestamp)
 		self.assertEqual(flightschedule_commands.command_id, command.id)
 		self.assertEqual(flightschedule_commands.flightschedule_id, flightschedule.id)
-
-    # def test_foreign_key_on_commands(self):
-    #     timestamp = datetime.fromtimestamp(1570749472)
-	# 	flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp)
-    #     flightschedule_commands = add_command_to_flightschedule(
-    #                                 db=db,
-	# 								timestamp=timestamp,
-	# 								flightschedule_id=flightschedule.id,
-	# 								command_id=command.id
-	# 							)
 
 
 if __name__ == '__main__':
