@@ -4,7 +4,8 @@ from datetime import datetime
 from groundstation.tests.base import BaseTestCase
 from groundstation.backend_api.models import Housekeeping
 from groundstation import db
-from groundstation.tests.utils import fakeHousekeepingAsDict, add_command, add_flight_schedule, add_command_to_flightschedule
+from groundstation.tests.utils import fakeHousekeepingAsDict
+from groundstation.backend_api.utils import add_command, add_flight_schedule, add_command_to_flightschedule
 
 class TestHousekeepingModel(BaseTestCase):
 
@@ -68,7 +69,6 @@ class TestFlightScheduleCommandsModel(BaseTestCase):
 		self.assertEqual(flightschedule_commands.timestamp, timestamp)
 		self.assertEqual(flightschedule_commands.command_id, command.id)
 		self.assertEqual(flightschedule_commands.flightschedule_id, flightschedule.id)
-
 
 
 if __name__ == '__main__':
