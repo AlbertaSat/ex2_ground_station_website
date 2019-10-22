@@ -37,7 +37,7 @@ def seed_db():
     housekeeping = Housekeeping(**housekeepingData)
     db.session.add(housekeeping)
     db.session.commit()
-    
+
 
 if __name__ == '__main__':
     cli()

@@ -85,4 +85,3 @@ class FlightScheduleCommands(db.Model):
             'command': self.command.to_json(),
             'timestamp': str(self.timestamp)
         }
-
