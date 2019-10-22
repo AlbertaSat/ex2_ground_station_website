@@ -38,3 +38,51 @@ class Housekeeping(db.Model):
             'noMCUResets': self.noMCUResets,
             'lastBeaconTime': str(self.lastBeaconTime)
         }
+
+class Commands(db.Model):
+    __tablename__ = 'commands'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    command_name = db.Column(db.String(64))
+    num_arguments = db.Column(db.Integer)
+    flightschedulecommands = db.relationship('FlightScheduleCommands', backref='command', lazy=True)
+
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'command_name': self.command_name,
+            'num_arguments': self.num_arguments
+        }
+
+class FlightSchedules(db.Model):
+    __tablename__ = 'flightschedules'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    creation_date = db.Column(db.DateTime)
+    upload_date = db.Column(db.DateTime)
+    commands = db.relationship('FlightScheduleCommands', backref='flightschedule', lazy=True)
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'creation_date': str(self.creation_date),
+            'upload_date': str(self.upload_date),
+            'commands': [command.to_json() for command in self.commands]
+        }
+
+class FlightScheduleCommands(db.Model):
+    __tablename__ = 'flightschedulecommands'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    command_id = db.Column(db.Integer, db.ForeignKey('commands.id'), nullable=False)
+    timestamp = db.Column(db.DateTime)
+    flightschedule_id = db.Column(db.Integer, db.ForeignKey('flightschedules.id'), nullable=False)
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'command': self.command.to_json(),
+            'timestamp': str(self.timestamp)
+        }
+
