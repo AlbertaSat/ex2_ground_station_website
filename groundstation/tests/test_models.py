@@ -8,6 +8,7 @@ from groundstation.tests.utils import fakeHousekeepingAsDict, add_command, add_f
 
 class TestHousekeepingModel(BaseTestCase):
 
+	"""Test adding a housekeeping entry"""
 	def testAddHousekeepingEntry(self):
 		timestamp = datetime.fromtimestamp(1570749472)
 		housekeepingData = fakeHousekeepingAsDict(timestamp)
@@ -22,6 +23,7 @@ class TestHousekeepingModel(BaseTestCase):
 		self.assertEqual(housekeeping.noMCUResets, 14)
 		self.assertEqual(housekeeping.lastBeaconTime, timestamp)
 
+	"""Test converting a housekeeping entry into json"""
 	def testHousekeepingToJson(self):
 		timestamp = datetime.fromtimestamp(1570749472)
 		housekeepingData = fakeHousekeepingAsDict(timestamp)
@@ -31,12 +33,18 @@ class TestHousekeepingModel(BaseTestCase):
 		db.session.commit()
 		self.assertTrue(isinstance(housekeeping.toJson(), dict))
 
+class TestCommandModel(BaseTestCase):
+
+	"""Test adding a command"""
 	def test_add_command(self):
 		command = add_command(command_name='ping', num_arguments=0)
 		self.assertTrue(command.id)
 		self.assertEqual(command.command_name, 'ping')
 		self.assertEqual(command.num_arguments, 0)
 
+class TestFlightScheduleModel(BaseTestCase):
+
+	""""Test adding a flight schedule"""
 	def test_add_flight_schedule(self):
 		timestamp = datetime.fromtimestamp(1570749472)
 		flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp)
@@ -44,6 +52,9 @@ class TestHousekeepingModel(BaseTestCase):
 		self.assertEqual(timestamp, flightschedule.creation_date)
 		self.assertEqual(timestamp, flightschedule.upload_date)
 
+class TestFlightScheduleCommandsModel(BaseTestCase):
+
+	"""Test adding a command to the flight schedule"""
 	def test_add_command_to_flight_schedule(self):
 		timestamp = datetime.fromtimestamp(1570749472)
 		command = add_command(command_name='ping', num_arguments=0)
