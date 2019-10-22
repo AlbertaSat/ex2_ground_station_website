@@ -150,3 +150,6 @@ pip-selfcheck.json
 # End of https://www.gitignore.io/api/venv,react,flask
 
 *.db
+
+log.txt
+beacons.json
