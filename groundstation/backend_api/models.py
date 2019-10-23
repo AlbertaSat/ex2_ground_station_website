@@ -28,7 +28,7 @@ class Housekeeping(db.Model):
     noMCUResets = db.Column(db.Integer)
     lastBeaconTime = db.Column(db.DateTime, nullable=False)
 
-    def toJson(self):
+    def to_json(self):
         return {
             'id': self.id,
             'satelliteMode': self.satelliteMode,

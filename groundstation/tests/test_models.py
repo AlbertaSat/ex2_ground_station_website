@@ -32,7 +32,7 @@ class TestHousekeepingModel(BaseTestCase):
 		housekeeping = Housekeeping(**housekeepingData)
 		db.session.add(housekeeping)
 		db.session.commit()
-		self.assertTrue(isinstance(housekeeping.toJson(), dict))
+		self.assertTrue(isinstance(housekeeping.to_json(), dict))
 
 class TestCommandModel(BaseTestCase):
 
