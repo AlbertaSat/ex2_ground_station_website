@@ -28,7 +28,7 @@ class HousekeepingLog(Resource):
         else:
             response_object = {
                 'status': 'success',
-                'data' : housekeeping.toJson()
+                'data' : housekeeping.to_json()
             }
 
             return response_object, 200
@@ -67,6 +67,18 @@ class HousekeepingLogList(Resource):
         }
 
         return response_object, 201
+
+    @create_context
+    def get(self):
+        
+        response_object = {
+            'status': 'success',
+            'data': {
+                'logs': [log.to_json() for log in Housekeeping.query.order_by(Housekeeping.lastBeaconTime).all()]
+            }
+        }
+
+        return response_object, 200
 
 api.add_resource(HousekeepingLog, '/api/housekeepinglog/<housekeeping_id>')
 api.add_resource(HousekeepingLogList, '/api/housekeepinglog')
