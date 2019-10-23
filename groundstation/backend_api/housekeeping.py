@@ -70,7 +70,8 @@ class HousekeepingLogList(Resource):
 
     @create_context
     def get(self):
-
+        # for query string ?limit=n
+        # if no limit defined return all
         query_limit = request.args.get('limit')
 
         if query_limit:
