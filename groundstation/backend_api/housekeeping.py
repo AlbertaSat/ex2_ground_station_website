@@ -71,13 +71,9 @@ class HousekeepingLogList(Resource):
     @create_context
     def get(self):
         # for query string ?limit=n
-        # if no limit defined return all
+        # if no limit defined it is none
         query_limit = request.args.get('limit')
-
-        if query_limit:
-            logs = Housekeeping.query.order_by(Housekeeping.lastBeaconTime).limit(query_limit).all()
-        else:
-            logs = Housekeeping.query.order_by(Housekeeping.lastBeaconTime).all()
+        logs = Housekeeping.query.order_by(Housekeeping.lastBeaconTime).limit(query_limit).all()
 
         response_object = {
             'status': 'success',
