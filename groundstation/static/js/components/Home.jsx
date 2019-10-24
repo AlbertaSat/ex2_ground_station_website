@@ -81,11 +81,11 @@ class Home extends Component {
         }
       ]},
       {id: 3, creationDate: '2019-10-10 17:17:52', timeStamp: '2019-10-10 17:17:52', uploadDate: '2019-10-10 17:17:52',
-        commands: {
+        commands: [{
         commandId: 1,
         commandName: 'ping',
         timeStamp: '2019-10-10 17:17:52'
-        }
+        }]
       }];
     if (empty) {
       return (
@@ -171,28 +171,26 @@ class Home extends Component {
                     </Table>
                   </ExpansionPanelSummary>
                   <ExpansionPanelDetails>
-                  {/* {flightschedule.commands.map(commands => (
+                   {flightschedule.commands.map(commands => (
                     <Table aria-label="simple table">
                       <TableHead>
                         <TableRow>
                           <TableCell>ID</TableCell>
                           <TableCell align="right">Command Name</TableCell>
                           <TableCell align="right">Time Stamp</TableCell>
-                          <TableCell align="right">CurrentIn</TableCell>
-                          <TableCell align="right">CurrentOut</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
                         <TableRow>
-                          <TableCell component="th" scope="row">
-                            {commands.commandId}
+                          <TableCell component ="th" scope="row">
+                            {commands.id}
                           </TableCell>
                           <TableCell align="right">{commands.commandName}</TableCell>
                           <TableCell align="right">{commands.timeStamp}</TableCell>
                         </TableRow>
                       </TableBody>
                     </Table>
-                  ))} */}
+                  ))} 
                   </ExpansionPanelDetails>
                 </ExpansionPanel>
               ))}
