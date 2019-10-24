@@ -171,7 +171,6 @@ class Home extends Component {
                     </Table>
                   </ExpansionPanelSummary>
                   <ExpansionPanelDetails>
-                   {flightschedule.commands.map(commands => (
                     <Table aria-label="simple table">
                       <TableHead>
                         <TableRow>
@@ -180,17 +179,18 @@ class Home extends Component {
                           <TableCell align="right">Time Stamp</TableCell>
                         </TableRow>
                       </TableHead>
+                   {flightschedule.commands.map(commands => (
                       <TableBody>
                         <TableRow>
                           <TableCell component ="th" scope="row">
-                            {commands.id}
+                            {commands.commandId}
                           </TableCell>
                           <TableCell align="right">{commands.commandName}</TableCell>
                           <TableCell align="right">{commands.timeStamp}</TableCell>
                         </TableRow>
                       </TableBody>
-                    </Table>
-                  ))} 
+                    ))} 
+                   </Table>
                   </ExpansionPanelDetails>
                 </ExpansionPanel>
               ))}
