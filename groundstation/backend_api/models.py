@@ -50,7 +50,6 @@ class Commands(db.Model):
 
     def to_json(self):
         return {
-            'id': self.id,
             'command_name': self.command_name,
             'num_arguments': self.num_arguments
         }
@@ -65,7 +64,7 @@ class FlightSchedules(db.Model):
 
     def to_json(self):
         return {
-            'id': self.id,
+            'flightschedule_id': self.id,
             'creation_date': str(self.creation_date),
             'upload_date': str(self.upload_date),
             'commands': [command.to_json() for command in self.commands]
@@ -81,7 +80,7 @@ class FlightScheduleCommands(db.Model):
 
     def to_json(self):
         return {
-            'id': self.id,
-            'command': self.command.to_json(),
-            'timestamp': str(self.timestamp)
+            'flightschedule_command_id': self.id,
+            'timestamp': str(self.timestamp),
+            'command': self.command.to_json()
         }
