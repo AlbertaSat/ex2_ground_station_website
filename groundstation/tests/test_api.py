@@ -148,6 +148,28 @@ class TestHousekeepingService(BaseTestCase):
             self.assertEqual(data['data']['logs'][1]['id'], 2)
             self.assertIn('success', data['status'])
 
+    def test_get_all_housekeeping_limit_by(self):
+        timestamp = datetime.fromtimestamp(1570749472)
+        housekeepingData1 = fakeHousekeepingAsDict(timestamp)
+        housekeepingData2 = fakeHousekeepingAsDict(timestamp)
+
+        housekeeping1 = Housekeeping(**housekeepingData1)
+        db.session.add(housekeeping1)
+        db.session.commit()
+
+        housekeeping2 = Housekeeping(**housekeepingData2)
+        db.session.add(housekeeping2)
+        db.session.commit()
+
+        with self.client:
+            response = self.client.get('/api/housekeepinglog?limit=1')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(data['data']['logs']), 1)
+            self.assertIn('Passive', data['data']['logs'][0]['satelliteMode'])
+            self.assertIn('success', data['status'])
+
+
 
 
 
