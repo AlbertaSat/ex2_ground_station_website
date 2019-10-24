@@ -28,6 +28,16 @@ class Home extends Component {
         currentOut: null,
         lastBeaconTime: null,
         noMCUResets: null
+      },
+      flightschedule: {
+        id: null,
+        creationDate: null,
+        timeStamp: null,
+        uploadDate: null,
+        flightscheduleCommands: {
+          command_id: null,
+          timeStamp: null
+        }
       }
     };
   }
@@ -47,6 +57,36 @@ class Home extends Component {
 
   render() {
     const { isLoaded, housekeeping, empty } = this.state;
+    const flightschedule = [
+      {id: 1, creationDate: '2019-10-10 17:17:52', timeStamp: '2019-10-10 17:17:52', uploadDate: '2019-10-10 17:17:52',
+        commands: [{
+        commandId: 1,
+        commandName: 'ping',
+        timeStamp: '2019-10-10 17:17:52'
+        },
+        {commandId: 2,
+        commandName: 'ddos',
+        timeStamp: '2019-10-10 17:17:52'
+        }
+      ]},
+      {id: 2, creationDate: '2019-10-10 17:17:52', timeStamp: '2019-10-10 17:17:52', uploadDate: '2019-10-10 17:17:52',
+        commands: [{
+        commandId: 1,
+        commandName: 'destroy',
+        timeStamp: '2019-10-10 17:17:52'
+        },
+        {commandId: 2,
+          commandName: 'ping',
+          timeStamp: '2019-10-10 17:17:52'
+        }
+      ]},
+      {id: 3, creationDate: '2019-10-10 17:17:52', timeStamp: '2019-10-10 17:17:52', uploadDate: '2019-10-10 17:17:52',
+        commands: {
+        commandId: 1,
+        commandName: 'ping',
+        timeStamp: '2019-10-10 17:17:52'
+        }
+      }];
     if (empty) {
       return (
         <div>
@@ -54,6 +94,7 @@ class Home extends Component {
         </div>
       )
     }
+    console.log(flightschedule);
     return (
       <div>
         
@@ -76,10 +117,10 @@ class Home extends Component {
                       <TableHead>
                         <TableRow>
                           <TableCell>ID</TableCell>
-                          <TableCell align="right">SatelliteMode</TableCell>
-                          <TableCell align="right">BatteryVoltage</TableCell>
-                          <TableCell align="right">CurrentIn</TableCell>
-                          <TableCell align="right">CurrentOut</TableCell>
+                          <TableCell align="right">Satellite Mode</TableCell>
+                          <TableCell align="right">Battery Voltage</TableCell>
+                          <TableCell align="right">Current In</TableCell>
+                          <TableCell align="right">Current Out</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
@@ -103,27 +144,63 @@ class Home extends Component {
           <Grid item sm>
             <Paper className="grid-containers">
               <h4 className="container-text">Upcoming Flight Schedules</h4>
+              {flightschedule.map(flightschedule => (
+                <ExpansionPanel key={flightschedule.id}>
+                  <ExpansionPanelSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1a-content"
+                    id="panel1a-header"
+                  >
+                    <Table aria-label="simple table">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>ID</TableCell>
+                          <TableCell align="right">Creation Date</TableCell>
+                          <TableCell align="right">Upload Date</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        <TableRow>
+                          <TableCell component="th" scope="row">
+                            {flightschedule.id}
+                          </TableCell>
+                          <TableCell align="right">{flightschedule.creationDate}</TableCell>
+                          <TableCell align="right">{flightschedule.uploadDate}</TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </ExpansionPanelSummary>
+                  <ExpansionPanelDetails>
+                  {/* {flightschedule.commands.map(commands => (
+                    <Table aria-label="simple table">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>ID</TableCell>
+                          <TableCell align="right">Command Name</TableCell>
+                          <TableCell align="right">Time Stamp</TableCell>
+                          <TableCell align="right">CurrentIn</TableCell>
+                          <TableCell align="right">CurrentOut</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        <TableRow>
+                          <TableCell component="th" scope="row">
+                            {commands.commandId}
+                          </TableCell>
+                          <TableCell align="right">{commands.commandName}</TableCell>
+                          <TableCell align="right">{commands.timeStamp}</TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  ))} */}
+                  </ExpansionPanelDetails>
+                </ExpansionPanel>
+              ))}
             </Paper>
           </Grid>
         </Grid>
 
         </div>
-
-        // {isLoaded ? (
-        //   <div>
-        //     <p>Id: {housekeeping.id}</p>
-        //     <p>satelliteMode: {housekeeping.satelliteMode}</p>
-        //     <p>batteryVoltage: {housekeeping.batteryVoltage}</p>
-        //     <p>currentIn: {housekeeping.currentIn}</p>
-        //     <p>currentOut: {housekeeping.currentOut}</p>
-        //     <p>lastBeaconTime: {housekeeping.lastBeaconTime}</p>
-        //     <p>noMCUResets: {housekeeping.noMCUResets}</p>
-        //   </div>
-        // // If there is a delay in data, let's let the user know it's loading
-        // ) : (
-        //   <CircularProgress />
-        // )}
-      // </div>
     )
   }
 }
