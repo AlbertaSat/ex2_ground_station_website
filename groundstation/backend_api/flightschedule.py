@@ -3,12 +3,20 @@ from flask_restful import Resource, Api, reqparse, fields, marshal_with
 
 from groundstation import db
 from groundstation.backend_api.models import FlightSchedules
+
 from groundstation.backend_api.utils import create_context
 
 flightschedule_blueprint = Blueprint('flightschedule', __name__)
 api = Api(flightschedule_blueprint)
 
 class FlightScheduleList(Resource):
+
+    def __init__(self):
+        self.post_schema = {
+            'is_queued' : ...,
+            'commands' : aray
+        }
+        super(FlightScheduleList, self).__init__()
 
     def get(self):
         pass
