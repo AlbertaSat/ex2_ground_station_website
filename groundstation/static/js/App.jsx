@@ -13,16 +13,19 @@ function App() {
                     <AppBar position="static">
                         <Toolbar>
                             <Typography variant="h6">
-                            <a className="link-items indent" href="/">Ex-Alta 2</a>
+                            <a className="link-items indent" href="/">AlbertaSat</a>
                             </Typography>
                             <Typography className="menu-links">
                                 <a className="link-items secondary" href="/livecommands">Live Commands</a>
+                                <a className="link-items secondary" href="/#">Housekeeping</a>
                                 <a className="link-items secondary" href="/flightschedule">Flight Schedule</a>
                             </Typography>
                         </Toolbar>
                     </AppBar>
                 </div>
-                <Routes />
+                <div className="route-container">
+                    <Routes />
+                </div>
         	</div>
        );
     }

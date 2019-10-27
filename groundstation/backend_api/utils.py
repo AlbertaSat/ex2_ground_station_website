@@ -1,6 +1,6 @@
 from flask import has_app_context
 from groundstation import create_app
-from groundstation.backend_api.models import Commands, FlightSchedules, FlightScheduleCommands
+from groundstation.backend_api.models import Telecommands, FlightSchedules, FlightScheduleCommands
 from groundstation import db
 
 
@@ -19,10 +19,10 @@ def create_context(function):
              return function(*args, **kwargs)
 
     return decorate
+    
+def add_telecommand(command_name, num_arguments, is_dangerous):
+		command = Telecommands(command_name=command_name, num_arguments=num_arguments, is_dangerous=is_dangerous)
 
-
-def add_command(command_name, num_arguments, is_dangerous):
-		command = Commands(command_name=command_name, num_arguments=num_arguments, is_dangerous=is_dangerous)
 		db.session.add(command)
 		db.session.commit()
 		return command

@@ -101,6 +101,78 @@ class TestHousekeepingService(BaseTestCase):
             self.assertIn('Invalid payload', data['message'])
             self.assertIn('fail', data['status'])
 
+    def test_get_all_housekeeping(self):
+        """Get all housekeeping that is currently in the database"""
+        timestamp = datetime.fromtimestamp(1570749472)
+        housekeepingData1 = fakeHousekeepingAsDict(timestamp)
+        housekeepingData2 = fakeHousekeepingAsDict(timestamp)
+
+        housekeeping1 = Housekeeping(**housekeepingData1)
+        db.session.add(housekeeping1)
+        db.session.commit()
+
+        housekeeping2 = Housekeeping(**housekeepingData2)
+        db.session.add(housekeeping2)
+        db.session.commit()
+
+        with self.client:
+            response = self.client.get('/api/housekeepinglog')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(data['data']['logs']), 2)
+            self.assertIn('Passive', data['data']['logs'][0]['satelliteMode'])
+            self.assertIn('Passive', data['data']['logs'][1]['satelliteMode'])
+            self.assertIn('success', data['status'])
+
+    def test_get_all_housekeeping_order_by_date(self):
+        """Ensure that housekeeping is returned by date"""
+        timestamp1 = datetime.fromtimestamp(1570749472)
+        timestamp2 = datetime.fromtimestamp(1570749502)
+        housekeepingData1 = fakeHousekeepingAsDict(timestamp1)
+        housekeepingData2 = fakeHousekeepingAsDict(timestamp2)
+
+        housekeeping1 = Housekeeping(**housekeepingData1)
+        db.session.add(housekeeping1)
+        db.session.commit()
+
+        housekeeping2 = Housekeeping(**housekeepingData2)
+        db.session.add(housekeeping2)
+        db.session.commit()
+
+        with self.client:
+            response = self.client.get('/api/housekeepinglog')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(data['data']['logs']), 2)
+            self.assertEqual(data['data']['logs'][0]['id'], 1)
+            self.assertEqual(data['data']['logs'][1]['id'], 2)
+            self.assertIn('success', data['status'])
+
+    def test_get_all_housekeeping_limit_by(self):
+        timestamp = datetime.fromtimestamp(1570749472)
+        housekeepingData1 = fakeHousekeepingAsDict(timestamp)
+        housekeepingData2 = fakeHousekeepingAsDict(timestamp)
+
+        housekeeping1 = Housekeeping(**housekeepingData1)
+        db.session.add(housekeeping1)
+        db.session.commit()
+
+        housekeeping2 = Housekeeping(**housekeepingData2)
+        db.session.add(housekeeping2)
+        db.session.commit()
+
+        with self.client:
+            response = self.client.get('/api/housekeepinglog?limit=1')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(data['data']['logs']), 1)
+            self.assertIn('Passive', data['data']['logs'][0]['satelliteMode'])
+            self.assertIn('success', data['status'])
+
+
+
+
+
 
 
 

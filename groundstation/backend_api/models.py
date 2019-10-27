@@ -1,5 +1,4 @@
 from datetime import datetime
-
 from groundstation import db
 
 class User(db.Model):
@@ -28,7 +27,7 @@ class Housekeeping(db.Model):
     noMCUResets = db.Column(db.Integer)
     lastBeaconTime = db.Column(db.DateTime, nullable=False)
 
-    def toJson(self):
+    def to_json(self):
         return {
             'id': self.id,
             'satelliteMode': self.satelliteMode,
@@ -39,8 +38,8 @@ class Housekeeping(db.Model):
             'lastBeaconTime': str(self.lastBeaconTime)
         }
 
-class Commands(db.Model):
-    __tablename__ = 'commands'
+class Telecommands(db.Model):
+    __tablename__ = 'telecommands'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     command_name = db.Column(db.String(64))
@@ -51,7 +50,6 @@ class Commands(db.Model):
 
     def to_json(self):
         return {
-            'id': self.id,
             'command_name': self.command_name,
             'num_arguments': self.num_arguments,
             'is_dangerous': self.is_dangerous
@@ -61,15 +59,17 @@ class FlightSchedules(db.Model):
     __tablename__ = 'flightschedules'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    creation_date = db.Column(db.DateTime)
+    creation_date = db.Column(db.DateTime, default=datetime.utcnow)
     upload_date = db.Column(db.DateTime)
+    is_queued = db.Column(db.Boolean, default=False)
     commands = db.relationship('FlightScheduleCommands', backref='flightschedule', lazy=True)
 
     def to_json(self):
         return {
-            'id': self.id,
+            'flightschedule_id': self.id,
             'creation_date': str(self.creation_date),
             'upload_date': str(self.upload_date),
+            'is_queued':str(self.is_queued),
             'commands': [command.to_json() for command in self.commands]
         }
 
@@ -77,13 +77,13 @@ class FlightScheduleCommands(db.Model):
     __tablename__ = 'flightschedulecommands'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    command_id = db.Column(db.Integer, db.ForeignKey('commands.id'), nullable=False)
+    command_id = db.Column(db.Integer, db.ForeignKey('telecommands.id'), nullable=False)
     timestamp = db.Column(db.DateTime)
     flightschedule_id = db.Column(db.Integer, db.ForeignKey('flightschedules.id'), nullable=False)
 
     def to_json(self):
         return {
-            'id': self.id,
-            'command': self.command.to_json(),
-            'timestamp': str(self.timestamp)
+            'flightschedule_command_id': self.id,
+            'timestamp': str(self.timestamp),
+            'command': self.command.to_json()
         }

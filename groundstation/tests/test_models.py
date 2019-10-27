@@ -5,7 +5,7 @@ from groundstation.tests.base import BaseTestCase
 from groundstation.backend_api.models import Housekeeping
 from groundstation import db
 from groundstation.tests.utils import fakeHousekeepingAsDict
-from groundstation.backend_api.utils import add_command, add_flight_schedule, add_command_to_flightschedule
+from groundstation.backend_api.utils import add_telecommand, add_flight_schedule, add_command_to_flightschedule
 
 class TestHousekeepingModel(BaseTestCase):
 
@@ -32,13 +32,13 @@ class TestHousekeepingModel(BaseTestCase):
 		housekeeping = Housekeeping(**housekeepingData)
 		db.session.add(housekeeping)
 		db.session.commit()
-		self.assertTrue(isinstance(housekeeping.toJson(), dict))
+		self.assertTrue(isinstance(housekeeping.to_json(), dict))
 
 class TestCommandModel(BaseTestCase):
 
 	"""Test adding a command"""
 	def test_add_command(self):
-		command = add_command(command_name='ping', num_arguments=0)
+		command = add_telecommand(command_name='ping', num_arguments=0)
 		self.assertTrue(command.id)
 		self.assertEqual(command.command_name, 'ping')
 		self.assertEqual(command.num_arguments, 0)
@@ -58,7 +58,7 @@ class TestFlightScheduleCommandsModel(BaseTestCase):
 	"""Test adding a command to the flight schedule"""
 	def test_add_command_to_flight_schedule(self):
 		timestamp = datetime.fromtimestamp(1570749472)
-		command = add_command(command_name='ping', num_arguments=0)
+		command = add_telecommand(command_name='ping', num_arguments=0)
 		flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp)
 		flightschedule_commands = add_command_to_flightschedule(
 									timestamp=timestamp,
