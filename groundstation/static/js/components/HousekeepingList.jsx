@@ -42,7 +42,7 @@ const HousekeepingLogList = (props) => {
               		{props.housekeeping.map((housekeeping, idx) => (
                 		<ExpansionPanel key={housekeeping.name} defaultExpanded={(idx == 0) ? true : false}>
                   			<ExpansionPanelSummary
-                    			expandIcon={<ExpandMoreIcon />}
+                    			expandIcon={<ExpandMoreIcon style={{color: '#4bacb8'}} />}
                     			aria-controls="panel1a-content"
                     			id="panel1a-header"
                   			>

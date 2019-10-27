@@ -5,6 +5,7 @@ import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
+import Paper from '@material-ui/core/Paper';
 
 import HousekeepingList from './HousekeepingList';
 import FlightScheduleList from './FlightScheduleList'
@@ -12,7 +13,9 @@ import Countdown from './Countdown'
 
 const styles = {
   root: {
-    padding: '32px'
+    padding: '42px',
+    display: 'inline-flex',
+    alignItems: 'center'
   },
 };
 
@@ -99,8 +102,11 @@ class Home extends Component {
         <Grid container spacing={2} alignItems='flex-end'>
           <Grid item sm={8}>
             <div className={classes.root}>
-              <Typography variant="h4">
+              <Typography variant="h4" displayInline>
                 OVERVIEW
+              </Typography>
+              <Typography variant="h7" displayInline style={{marginLeft: '20px', borderBottom : '2px solid #4bacb8'}}>
+                Updates every 30 seconds
               </Typography>
             </div>
           </Grid>

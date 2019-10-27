@@ -16,12 +16,12 @@ const Countdown = (props) => {
 		  		  <Table aria-label="simple table">
 		  		  	<TableHead>
                       <TableRow>
-                      	<TableCell align="left" padding="none"><h5>Until Next Passover</h5></TableCell>
-                        <TableCell align="center" padding="none"><h5>12</h5></TableCell>
-                        <TableCell align="center" padding="none"><h5>:</h5></TableCell>
-                        <TableCell align="center" padding="none"><h5>12</h5></TableCell>
-                        <TableCell align="center" padding="none"><h5>:</h5></TableCell>
-                        <TableCell align="center" padding="none"><h5>12</h5></TableCell>
+                      	<TableCell align="left" padding="none" style={{ borderBottom: 'solid 1px #4bacb8'}}><h5>Until Next Passover</h5></TableCell>
+                        <TableCell align="center" padding="none" style={{ borderBottom: 'solid 1px #4bacb8'}}><h5>12</h5></TableCell>
+                        <TableCell align="center" padding="none" style={{ borderBottom: 'solid 1px #4bacb8'}}><h5>:</h5></TableCell>
+                        <TableCell align="center" padding="none" style={{ borderBottom: 'solid 1px #4bacb8'}}><h5>12</h5></TableCell>
+                        <TableCell align="center" padding="none" style={{ borderBottom: 'solid 1px #4bacb8'}}><h5>:</h5></TableCell>
+                        <TableCell align="center" padding="none" style={{ borderBottom: 'solid 1px #4bacb8'}}><h5>12</h5></TableCell>
                       </TableRow>
                     </TableHead>
 		  		  </Table>

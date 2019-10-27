@@ -19,7 +19,7 @@ const FlightScheduleList = (props) => {
           {props.flightschedule.map(flightschedule => (
              <ExpansionPanel key={flightschedule.id}>
                <ExpansionPanelSummary
-                 expandIcon={<ExpandMoreIcon />}
+                 expandIcon={<ExpandMoreIcon style={{ color: '#4bacb8'}}/>}
                  aria-controls="panel1a-content"
                  id="panel1a-header"
                >
@@ -46,9 +46,9 @@ const FlightScheduleList = (props) => {
                   <Table aria-label="simple table">
                     <TableHead>
                       <TableRow>
-                        <TableCell style={{backgroundColor: '#000', color: '#fff'}}>ID</TableCell>
-                        <TableCell align="right" style={{backgroundColor: '#000', color: '#fff'}}>Command Name</TableCell>
-                        <TableCell align="right" style={{backgroundColor: '#000', color: '#fff'}}>Time Stamp</TableCell>
+                        <TableCell style={{backgroundColor: '#212121', color: '#fff'}}>ID</TableCell>
+                        <TableCell align="right" style={{backgroundColor: '#212121', color: '#fff'}}>Command Name</TableCell>
+                        <TableCell align="right" style={{backgroundColor: '#212121', color: '#fff'}}>Time Stamp</TableCell>
                       </TableRow>
                     </TableHead>
                     {flightschedule.commands.map(commands => (
