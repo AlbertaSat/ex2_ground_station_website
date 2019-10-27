@@ -9,3 +9,10 @@ def fakeHousekeepingAsDict(timestamp):
 					}
 
 	return housekeepingData
+
+def fake_flight_schedule_as_dict(is_queued: bool, commands: list):
+    flightschedule = {
+        'is_queued':is_queued,
+        'commands':commands
+    }
+    return flightschedule
