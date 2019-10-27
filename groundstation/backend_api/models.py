@@ -38,8 +38,8 @@ class Housekeeping(db.Model):
             'lastBeaconTime': str(self.lastBeaconTime)
         }
 
-class Commands(db.Model):
-    __tablename__ = 'commands'
+class Telecommands(db.Model):
+    __tablename__ = 'telecommands'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     command_name = db.Column(db.String(64))
@@ -75,7 +75,7 @@ class FlightScheduleCommands(db.Model):
     __tablename__ = 'flightschedulecommands'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    command_id = db.Column(db.Integer, db.ForeignKey('commands.id'), nullable=False)
+    command_id = db.Column(db.Integer, db.ForeignKey('telecommands.id'), nullable=False)
     timestamp = db.Column(db.DateTime)
     flightschedule_id = db.Column(db.Integer, db.ForeignKey('flightschedules.id'), nullable=False)
 
