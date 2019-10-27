@@ -1,4 +1,4 @@
-from groundstation.backend_api.utils import add_command, create_context
+from groundstation.backend_api.utils import add_telecommand, create_context
 
 @create_context
 def populate_commands_table():
@@ -12,7 +12,7 @@ def populate_commands_table():
     }
 
     for name, (num_args, danger) in commands.items():
-        c = add_command(command_name=name, num_arguments=num_args, is_dangerous=danger)
+        c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=danger)
         print(f'{c.command_name} added successfully to db!')
 
 if __name__=='__main__':
