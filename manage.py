@@ -40,7 +40,7 @@ def seed_db():
     db.session.commit()
 
     command = add_command(command_name='ping', num_arguments=0)
-    flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp)
+    flightschedule = add_flight_schedule(creation_date=timestamp)
     flightschedule_commands = add_command_to_flightschedule(
                                 timestamp=timestamp,
                                 flightschedule_id=flightschedule.id,

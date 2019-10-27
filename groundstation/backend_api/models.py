@@ -1,5 +1,4 @@
 from datetime import datetime
-
 from groundstation import db
 
 class User(db.Model):
@@ -58,8 +57,9 @@ class FlightSchedules(db.Model):
     __tablename__ = 'flightschedules'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    creation_date = db.Column(db.DateTime)
+    creation_date = db.Column(db.DateTime, default=datetime.utcnow)
     upload_date = db.Column(db.DateTime)
+    is_queued = db.Column(db.Boolean, default=False)
     commands = db.relationship('FlightScheduleCommands', backref='flightschedule', lazy=True)
 
     def to_json(self):
@@ -67,6 +67,7 @@ class FlightSchedules(db.Model):
             'flightschedule_id': self.id,
             'creation_date': str(self.creation_date),
             'upload_date': str(self.upload_date),
+            'is_queued':str(self.is_queued),
             'commands': [command.to_json() for command in self.commands]
         }
 
