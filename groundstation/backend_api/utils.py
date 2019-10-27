@@ -21,8 +21,8 @@ def create_context(function):
     return decorate
 
 
-def add_command(command_name, num_arguments):
-		command = Commands(command_name=command_name, num_arguments=num_arguments)
+def add_command(command_name, num_arguments, is_dangerous):
+		command = Commands(command_name=command_name, num_arguments=num_arguments, is_dangerous=is_dangerous)
 		db.session.add(command)
 		db.session.commit()
 		return command
