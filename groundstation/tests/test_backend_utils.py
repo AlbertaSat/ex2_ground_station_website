@@ -1,16 +1,15 @@
-from populate_database import populate_commands_table
 from groundstation.tests.base import BaseTestCase
-from groundstation.backend_api.models import Commands
+from groundstation.backend_api.models import Telecommands
+from groundstation.backend_api.utils import add_telecommand
 from unittest import mock
 
 
 class TestUtils(BaseTestCase):
 
-    @mock.patch('populate_database.print')
-    def test_populate_commands(self, _):
+    def test_add_telecommand(self):
 
-        commands = Commands.query.all()
+        commands = Telecommands.query.all()
         self.assertEqual(len(commands), 0)
-        populate_commands_table()
-        commands = Commands.query.all()
+        add_telecommand('TEST_COMMAND', 2)
+        commands = Telecommands.query.all()
         self.assertTrue(len(commands) > 0)
