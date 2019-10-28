@@ -40,17 +40,28 @@ class Telecommand(Resource):
             #post_data['lastBeaconTime'] = datetime.strptime(post_data['lastBeaconTime'], '%Y-%m-%d %H:%M:%S')
             #I don't know the format or how to pull data from the JSON so will consult others and fill in this section
             #TODO: reformat or extract data from JSON
+
+            #JSON object expected
+            # dict {
+            # command_name : "NAME"
+            # num_args : int
+            # is_dangerous : bool
+            # }
+
+            #converting types and checking correct values
+            #post_data[''] =
         except (ValueError, TypeError, KeyError) as error:
             return response_object, 400
 
-        telecommand = Telecommands(**post_data)
+
+        telecommand = Telecommands(post_data["command_name"], post_data["num_args"], post_data["is_dangerous"])
         db.session.add(telecommand)
         db.session.commit()
 
         response_object = {
             'status': 'success',
-            #not sure on the formatting for this yet, need to consult others
-            'message': 'Command {command.name} was added!'
+
+            'message': 'Command {post_data["command_name"]} was added!'
         }
 
         return response_object, 201
