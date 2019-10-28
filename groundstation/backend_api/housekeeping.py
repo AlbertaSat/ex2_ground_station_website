@@ -53,7 +53,7 @@ class HousekeepingLogList(Resource):
         # also handle all errors that could occur with the timestamp
         # as a timestamp is necessary for all housekeeping logs
         try:
-            post_data['lastBeaconTime'] = datetime.strptime(post_data['lastBeaconTime'], '%Y-%m-%d %H:%M:%S')
+            post_data['last_Beacon_Time'] = datetime.strptime(post_data['last_Beacon_Time'], '%Y-%m-%d %H:%M:%S')
         except (ValueError, TypeError, KeyError) as error:
             return response_object, 400
 
@@ -63,7 +63,7 @@ class HousekeepingLogList(Resource):
 
         response_object = {
             'status': 'success',
-            'message': f'Housekeeping Log with timestamp {housekeeping.lastBeaconTime} was added!'
+            'message': f'Housekeeping Log with timestamp {housekeeping.last_Beacon_Time} was added!'
         }
 
         return response_object, 201
@@ -73,7 +73,7 @@ class HousekeepingLogList(Resource):
         # for query string ?limit=n
         # if no limit defined it is none
         query_limit = request.args.get('limit')
-        logs = Housekeeping.query.order_by(Housekeeping.lastBeaconTime).limit(query_limit).all()
+        logs = Housekeeping.query.order_by(Housekeeping.last_Beacon_Time).limit(query_limit).all()
 
         response_object = {
             'status': 'success',

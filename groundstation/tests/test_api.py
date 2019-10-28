@@ -75,7 +75,7 @@ class TestHousekeepingService(BaseTestCase):
             ensure that this timestamp exists 
         """
         housekeepingData = fakeHousekeepingAsDict(None)
-        del housekeepingData['lastBeaconTime']
+        del housekeepingData['last_Beacon_Time']
         with self.client:
             response = self.client.post(
                 'api/housekeepinglog',
