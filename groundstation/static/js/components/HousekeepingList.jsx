@@ -18,10 +18,20 @@ import { withStyles } from '@material-ui/core/styles';
 
 function modeIcon(status){
 	if(status == "Passive" || status == "Active Mission"){
-		return <CheckCircleIcon style={{ fill: '#155724' }}/>
+		return <CheckCircleIcon style={{ fill: '#479b4e' }}/>
 	}else{
 		return <WarningIcon style={{ fill: '#721c24' }}/>
 	}
+}
+
+function tableColor(status){
+  if(status == "Passive" || status == "Active Mission"){
+    return {borderLeft: 'solid 8px #479b4e'}
+  }else{
+    return {border: 'solid 8px #721c24'}
+  }
+  //#c48b16 Warning
+  //#f44336 Danger
 }
 
 const HousekeepingLogList = (props) => {
@@ -40,7 +50,11 @@ const HousekeepingLogList = (props) => {
               		<h5>Recent Housekeeping Data</h5>
               
               		{props.housekeeping.map((housekeeping, idx) => (
-                		<ExpansionPanel key={housekeeping.name} defaultExpanded={(idx == 0) ? true : false}>
+                		<ExpansionPanel 
+                      key={housekeeping.name}
+                      defaultExpanded={(idx == 0) ? true : false}
+                      style={tableColor(housekeeping.satelliteMode)}
+                    >
                   			<ExpansionPanelSummary
                     			expandIcon={<ExpandMoreIcon style={{color: '#4bacb8'}} />}
                     			aria-controls="panel1a-content"
@@ -52,11 +66,11 @@ const HousekeepingLogList = (props) => {
                     			<Table aria-label="simple table">
                       				<TableHead>
                         				<TableRow>
-                          					<TableCell style={{backgroundColor: '#000', color: '#fff'}}>ID</TableCell>
-                          					<TableCell align="right" style={{backgroundColor: '#000', color: '#fff'}}>Satellite Mode</TableCell>
-                          					<TableCell align="right" style={{backgroundColor: '#000', color: '#fff'}}>Battery Voltage</TableCell>
-                          					<TableCell align="right" style={{backgroundColor: '#000', color: '#fff'}}>Current In</TableCell>
-                          					<TableCell align="right" style={{backgroundColor: '#000', color: '#fff'}}>Current Out</TableCell>
+                          					<TableCell style={{backgroundColor: '#212529', color: '#fff'}}>ID</TableCell>
+                          					<TableCell align="right" style={{backgroundColor: '#212529', color: '#fff'}}>Satellite Mode</TableCell>
+                          					<TableCell align="right" style={{backgroundColor: '#212529', color: '#fff'}}>Battery Voltage</TableCell>
+                          					<TableCell align="right" style={{backgroundColor: '#212529', color: '#fff'}}>Current In</TableCell>
+                          					<TableCell align="right" style={{backgroundColor: '#212529', color: '#fff'}}>Current Out</TableCell>
                         				</TableRow>
                       				</TableHead>
                       				<TableBody>
