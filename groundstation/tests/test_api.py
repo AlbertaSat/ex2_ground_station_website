@@ -7,7 +7,7 @@ from groundstation import db
 from groundstation.backend_api.models import Housekeeping, Telecommands
 from groundstation.tests.utils import fakeHousekeepingAsDict
 from groundstation.backend_api.housekeeping import HousekeepingLogList
-from groundstation.backend_api.Telecommand import Telecommand_service
+from groundstation.backend_api.telecommand import Telecommand_service
 
 class TestHousekeepingService(BaseTestCase):
     """Test the housekeeping/satellite model service"""
@@ -178,16 +178,19 @@ class test_telecommand_service(BaseTestCase):
     def test_post_telecommand(self):
 
         command = {
-        command_name : "TEST_COMMAND"
-        num_args : 0
-        is_dangerous : False
+        'command_name' : "TEST_COMMAND",
+        'num_args' : 0,
+        'is_dangerous' : False
         }
 
         service = Telecommand_service()
 
         response = service.post(local_data=json.dumps(command))
         print(response)
-
+        # data = json.loads(response.data.decode())
+        self.assertEqual(response[1], 201)
+        self.assertIn('success', response[0]['status'])
+        self.assertIn(f'Command {command["command_name"]} was added!', response[0]['message'])
 
 
 

@@ -12,7 +12,7 @@ from flask_restful import Resource, Api
 from datetime import datetime
 import json
 
-from groundstation.backend_api.models import telecommand
+from groundstation.backend_api.models import Telecommands
 from groundstation import db
 from groundstation.backend_api.utils import create_context, add_telecommand
 
@@ -21,7 +21,7 @@ api = Api(telecommand_blueprint)
 
 class Telecommand_service(Resource):
 
-	@create_context
+    @create_context
     def post(self, local_data=None):
         
         """Post a telecommand"""
@@ -53,7 +53,7 @@ class Telecommand_service(Resource):
             return response_object, 400
 
 
-        telecommand = Telecommands(post_data["command_name"], post_data["num_args"], post_data["is_dangerous"])
+        telecommand = Telecommands(command_name=post_data["command_name"], num_arguments=post_data["num_args"], is_dangerous=post_data["is_dangerous"])
         db.session.add(telecommand)
         db.session.commit()
 
