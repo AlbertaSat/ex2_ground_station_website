@@ -14,7 +14,7 @@ class TestSatelliteSimulator(BaseTestCase):
         environment = Environment(connection_strength=10, connection_stability=10,
             packet_drop_probability=0)
 
-        satellite = Satellite([], beaconInterval=20)
+        satellite = Satellite([], beacon_Interval=20)
         simulator = Simulator(environment, satellite)
         del environment, satellite
 
@@ -39,7 +39,7 @@ class TestSatelliteSimulator(BaseTestCase):
             return new_value
 
         satellite_components = [
-            SatelliteComponent('GPS', [('batteryVoltage', effect_of_gps_on)], []),
+            SatelliteComponent('GPS', [('battery_Voltage', effect_of_gps_on)], []),
             ]
         satellite = Satellite(satellite_components)
         simulator = Simulator(environment, satellite)
@@ -79,13 +79,13 @@ class TestSatelliteSimulator(BaseTestCase):
             return new_value
 
         satellite_components = [
-            SatelliteComponent('GPS', [('batteryVoltage', effect_of_gps_on)], []),
+            SatelliteComponent('GPS', [('battery_Voltage', effect_of_gps_on)], []),
             ]
         satellite = Satellite(satellite_components)
         simulator = Simulator(environment, satellite)
         del environment, satellite
 
-        starting_voltage = simulator.satellite.batteryVoltage
+        starting_voltage = simulator.satellite.battery_Voltage
 
         data = ('TURN-ON', ['GPS'])
         simulator.send_to_sat(data)
@@ -95,7 +95,7 @@ class TestSatelliteSimulator(BaseTestCase):
         data = ('GET-HK', [])
         resp = simulator.send_to_sat(data)
         hk_dict = json.loads(resp)
-        self.assertTrue(hk_dict['batteryVoltage'] < starting_voltage)
+        self.assertTrue(hk_dict['battery_Voltage'] < starting_voltage)
 
     @mock.patch('groundstation.satellite_simulator.sat_sim.Satellite._broadcast_beacon')
     @mock.patch('groundstation.satellite_simulator.sat_sim.open')
