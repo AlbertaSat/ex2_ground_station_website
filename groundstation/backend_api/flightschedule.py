@@ -11,6 +11,23 @@ from groundstation.backend_api.validators import FlightScheduleValidator
 flightschedule_blueprint = Blueprint('flightschedule', __name__)
 api = Api(flightschedule_blueprint)
 
+class Flightschedule(Resource):
+
+    @create_context
+    def get(self, flightschedule_id):
+        flightschedule = FlightSchedules.query.filter_by(id=flightschedule_id).first()
+
+        if not flightschedule:
+            response_object = {'status': 'fail','message': 'Flightschedule does not exist'}
+            return response_object, 404
+        else:
+            response_object = {
+                'status': 'success',
+                'data': flightschedule.to_json()
+            }
+            return response_object, 200
+
+
 class FlightScheduleList(Resource):
 
     def __init__(self):
@@ -18,8 +35,28 @@ class FlightScheduleList(Resource):
         super(FlightScheduleList, self).__init__()
 
     @create_context
-    def get(self):
-        pass
+    def get(self, local_args=None):
+        """
+        local_args : dict
+        """
+
+        if not local_args:
+            # flask request
+            query_limit = request.args.get('limit')
+        else:
+            # local request
+            query_limit = local_args.get('limit')
+
+        # TODO: check that limit(None) doesnt kill it
+        flightschedules = FlightSchedules.query.order_by(FlightSchedules.creation_date).limit(query_limit).all()
+        response_object = {
+            'status':'success',
+            'data': {
+                'flightschedules':[fs.to_json() for fs in flightschedules]
+            }
+        }
+        return response_object, 200
+
 
     @create_context
     def post(self, local_data=None):
@@ -67,5 +104,5 @@ class FlightScheduleList(Resource):
 
         return response_object, 201
 
-
+api.add_resource(Flightschedule, '/api/flightschedules/<flightschedule_id>')
 api.add_resource(FlightScheduleList, '/api/flightschedules')

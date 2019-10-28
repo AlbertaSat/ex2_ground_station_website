@@ -173,7 +173,7 @@ class TestHousekeepingService(BaseTestCase):
 class TestFlightScheduleService(BaseTestCase):
 
     def test_post_with_no_commands(self):
-        flightschedule = fake_flight_schedule_as_dict(False, [])
+        flightschedule = fake_flight_schedule_as_dict()
         self.assertEqual(len(FlightSchedules.query.all()), 0)
 
         with self.client:
@@ -190,7 +190,7 @@ class TestFlightScheduleService(BaseTestCase):
         self.assertTrue(num_flightschedules > 0)
 
     def test_local_post_no_commands(self):
-        flightschedule = fake_flight_schedule_as_dict(False, [])
+        flightschedule = fake_flight_schedule_as_dict()
         self.assertEqual(len(FlightSchedules.query.all()), 0)
 
         post_data = json.dumps(flightschedule)
@@ -201,7 +201,7 @@ class TestFlightScheduleService(BaseTestCase):
         self.assertTrue(num_flightschedules > 0)
 
     def test_with_missing_commands(self):
-        flightschedule = fake_flight_schedule_as_dict(False, [])
+        flightschedule = fake_flight_schedule_as_dict()
         flightschedule.pop('commands')
 
         with self.client:
@@ -216,7 +216,7 @@ class TestFlightScheduleService(BaseTestCase):
             self.assertIn('commands', response_data['errors'].keys())
 
     def test_multiple_queued_posts(self):
-        flightschedule = fake_flight_schedule_as_dict(True, [])
+        flightschedule = fake_flight_schedule_as_dict(is_queued=True, commands=[])
 
         with self.client:
             post_data = json.dumps(flightschedule)
@@ -232,3 +232,51 @@ class TestFlightScheduleService(BaseTestCase):
             self.assertIn('A Queued flight schedule already exists!', response_data['message'])
 
     # TODO: Test with actuall command objects in the post data
+
+
+    def test_get_all_flightschedules(self):
+        for i in range(10):
+            flightschedule = FlightSchedules(**fake_flight_schedule_as_dict())
+            db.session.add(flightschedule)
+        db.session.commit()
+
+        with self.client:
+            response = self.client.get('/api/flightschedules')
+            response_data = json.loads(response.data.decode())
+            flightschedules = response_data['data']['flightschedules']
+            self.assertEqual(len(flightschedules), 10)
+
+    def test_get_all_flightschedules_limit_by(self):
+        for i in range(10):
+            flightschedule = FlightSchedules(**fake_flight_schedule_as_dict())
+            db.session.add(flightschedule)
+        db.session.commit()
+        with self.client:
+            response = self.client.get('/api/flightschedules?limit=3')
+            response_data = json.loads(response.data.decode())
+            flightschedules = response_data['data']['flightschedules']
+            self.assertEqual(len(flightschedules), 3)
+
+    def test_get_all_flightschedules_locally_limit_by(self):
+        for i in range(10):
+            flightschedule = FlightSchedules(**fake_flight_schedule_as_dict())
+            db.session.add(flightschedule)
+        db.session.commit()
+
+        response = FlightScheduleList().get(local_args={'limit':3})
+        self.assertEqual(response[1], 200)
+        self.assertEqual(len(response[0]['data']['flightschedules']), 3)
+
+    def test_get_flight_schedule_by_id(self):
+        flightschedule = FlightSchedules(**fake_flight_schedule_as_dict())
+        db.session.add(flightschedule)
+        db.session.commit()
+        id = flightschedule.id
+        with self.client:
+            response = self.client.get(f'/api/flightschedules/{id}')
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response_data['data']['flightschedule_id'], id)
+
+    # def test_get_flight_schedule_locally_by_id(self):
+    #     pass
