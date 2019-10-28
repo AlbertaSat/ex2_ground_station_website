@@ -38,10 +38,11 @@ class TestCommandModel(BaseTestCase):
 
 	"""Test adding a command"""
 	def test_add_command(self):
-		command = add_telecommand(command_name='ping', num_arguments=0)
+		command = add_telecommand(command_name='ping', num_arguments=0, is_dangerous=False)
 		self.assertTrue(command.id)
 		self.assertEqual(command.command_name, 'ping')
 		self.assertEqual(command.num_arguments, 0)
+		self.assertEqual(command.is_dangerous, False)
 
 class TestFlightScheduleModel(BaseTestCase):
 
@@ -58,7 +59,7 @@ class TestFlightScheduleCommandsModel(BaseTestCase):
 	"""Test adding a command to the flight schedule"""
 	def test_add_command_to_flight_schedule(self):
 		timestamp = datetime.fromtimestamp(1570749472)
-		command = add_telecommand(command_name='ping', num_arguments=0)
+		command = add_telecommand(command_name='ping', num_arguments=0, is_dangerous=False)
 		flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp)
 		flightschedule_commands = add_command_to_flightschedule(
 									timestamp=timestamp,

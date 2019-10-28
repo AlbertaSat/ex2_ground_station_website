@@ -10,6 +10,6 @@ class TestUtils(BaseTestCase):
 
         commands = Telecommands.query.all()
         self.assertEqual(len(commands), 0)
-        add_telecommand('TEST_COMMAND', 2)
+        add_telecommand('TEST_COMMAND', 2, False)
         commands = Telecommands.query.all()
         self.assertTrue(len(commands) > 0)

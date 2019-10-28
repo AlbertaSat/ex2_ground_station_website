@@ -19,7 +19,7 @@ from groundstation.backend_api.utils import create_context, add_telecommand
 telecommand_blueprint = Blueprint('telecommand', __name__)
 api = Api(telecommand_blueprint)
 
-class Telecommand(Resource):
+class Telecommand_service(Resource):
 
 	@create_context
     def post(self, local_data=None):
@@ -37,8 +37,6 @@ class Telecommand(Resource):
             post_data = json.loads(local_data)
 
         try:
-            #post_data['lastBeaconTime'] = datetime.strptime(post_data['lastBeaconTime'], '%Y-%m-%d %H:%M:%S')
-            #I don't know the format or how to pull data from the JSON so will consult others and fill in this section
             #TODO: reformat or extract data from JSON
 
             #JSON object expected
@@ -50,6 +48,7 @@ class Telecommand(Resource):
 
             #converting types and checking correct values
             #post_data[''] =
+            pass
         except (ValueError, TypeError, KeyError) as error:
             return response_object, 400
 
@@ -61,7 +60,7 @@ class Telecommand(Resource):
         response_object = {
             'status': 'success',
 
-            'message': 'Command {post_data["command_name"]} was added!'
+            'message': f'Command {post_data["command_name"]} was added!'
         }
 
         return response_object, 201

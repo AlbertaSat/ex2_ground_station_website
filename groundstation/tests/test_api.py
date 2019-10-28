@@ -4,9 +4,10 @@ import json
 from datetime import datetime
 from groundstation.tests.base import BaseTestCase
 from groundstation import db
-from groundstation.backend_api.models import Housekeeping
+from groundstation.backend_api.models import Housekeeping, Telecommands
 from groundstation.tests.utils import fakeHousekeepingAsDict
 from groundstation.backend_api.housekeeping import HousekeepingLogList
+from groundstation.backend_api.Telecommand import Telecommand_service
 
 class TestHousekeepingService(BaseTestCase):
     """Test the housekeeping/satellite model service"""
@@ -169,10 +170,23 @@ class TestHousekeepingService(BaseTestCase):
             self.assertIn('Passive', data['data']['logs'][0]['satelliteMode'])
             self.assertIn('success', data['status'])
 
+#########################################################################
+#Test telecommand model/get and post
 
+class test_telecommand_service(BaseTestCase):
 
+    def test_post_telecommand(self):
 
+        command = {
+        command_name : "TEST_COMMAND"
+        num_args : 0
+        is_dangerous : False
+        }
 
+        service = Telecommand_service()
+
+        response = service.post(local_data=json.dumps(command))
+        print(response)
 
 
 
