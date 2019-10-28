@@ -102,10 +102,10 @@ class Home extends Component {
         <Grid container spacing={2} alignItems='flex-end'>
           <Grid item sm={8}>
             <div className={classes.root}>
-              <Typography variant="h4" displayInline>
+              <Typography variant="h4" displayInline style={{color: '#28324C'}}>
                 OVERVIEW
               </Typography>
-              <Typography variant="h7" displayInline style={{marginLeft: '20px', borderBottom : '2px solid #4bacb8'}}>
+              <Typography variant="h7" displayInline style={{marginLeft: '20px', borderBottom : '2px solid #28324C', color: '28324C'}}>
                 Updates every 30 seconds
               </Typography>
             </div>

@@ -26,9 +26,9 @@ const FlightScheduleList = (props) => {
                   <Table aria-label="simple table">
                     <TableHead>
                       <TableRow>
-                        <TableCell style={{backgroundColor: '#000', color: '#fff'}}>ID</TableCell>
-                        <TableCell align="right" style={{backgroundColor: '#000', color: '#fff'}}>Creation Date</TableCell>
-                        <TableCell align="right" style={{backgroundColor: '#000', color: '#fff'}}>Upload Date</TableCell>
+                        <TableCell style={{backgroundColor: '#212529', color: '#fff'}}>ID</TableCell>
+                        <TableCell align="right" style={{backgroundColor: '#212529', color: '#fff'}}>Creation Date</TableCell>
+                        <TableCell align="right" style={{backgroundColor: '#212529', color: '#fff'}}>Upload Date</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
@@ -44,13 +44,6 @@ const FlightScheduleList = (props) => {
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                   <Table aria-label="simple table">
-                    <TableHead>
-                      <TableRow>
-                        <TableCell style={{backgroundColor: '#212121', color: '#fff'}}>ID</TableCell>
-                        <TableCell align="right" style={{backgroundColor: '#212121', color: '#fff'}}>Command Name</TableCell>
-                        <TableCell align="right" style={{backgroundColor: '#212121', color: '#fff'}}>Time Stamp</TableCell>
-                      </TableRow>
-                    </TableHead>
                     {flightschedule.commands.map(commands => (
                       <TableBody>
                         <TableRow>
