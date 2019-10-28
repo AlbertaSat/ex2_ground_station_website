@@ -24,10 +24,10 @@ class TestHousekeepingService(BaseTestCase):
             response = self.client.get(f'/api/housekeepinglog/{housekeeping.id}')
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
-            self.assertIn('Passive', data['data']['satelliteMode'])
-            self.assertEqual(1.7, data['data']['batteryVoltage'])
-            self.assertEqual(14, data['data']['noMCUResets'])
-            self.assertIn(str(timestamp), data['data']['lastBeaconTime'])
+            self.assertIn('Passive', data['data']['satellite_mode'])
+            self.assertEqual(1.7, data['data']['battery_voltage'])
+            self.assertEqual(14, data['data']['no_MCU_resets'])
+            self.assertIn(str(timestamp), data['data']['last_beacon_time'])
             self.assertIn('success', data['status'])
 
 
@@ -75,7 +75,7 @@ class TestHousekeepingService(BaseTestCase):
             ensure that this timestamp exists 
         """
         housekeepingData = fakeHousekeepingAsDict(None)
-        del housekeepingData['last_Beacon_Time']
+        del housekeepingData['last_beacon_time']
         with self.client:
             response = self.client.post(
                 'api/housekeepinglog',
@@ -120,8 +120,8 @@ class TestHousekeepingService(BaseTestCase):
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertEqual(len(data['data']['logs']), 2)
-            self.assertIn('Passive', data['data']['logs'][0]['satelliteMode'])
-            self.assertIn('Passive', data['data']['logs'][1]['satelliteMode'])
+            self.assertIn('Passive', data['data']['logs'][0]['satellite_mode'])
+            self.assertIn('Passive', data['data']['logs'][1]['satellite_mode'])
             self.assertIn('success', data['status'])
 
     def test_get_all_housekeeping_order_by_date(self):
@@ -166,7 +166,7 @@ class TestHousekeepingService(BaseTestCase):
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertEqual(len(data['data']['logs']), 1)
-            self.assertIn('Passive', data['data']['logs'][0]['satelliteMode'])
+            self.assertIn('Passive', data['data']['logs'][0]['satellite_mode'])
             self.assertIn('success', data['status'])
 
 

@@ -18,11 +18,11 @@ class TestHousekeepingModel(BaseTestCase):
 		db.session.add(housekeeping)
 		db.session.commit()
 		self.assertTrue(housekeeping.id)
-		self.assertEqual(housekeeping.satellite_Mode, 'Passive')
-		self.assertEqual(housekeeping.battery_Voltage, 1.7)
-		self.assertEqual(housekeeping.current_In, 1.2)
-		self.assertEqual(housekeeping.no_MCU_Resets, 14)
-		self.assertEqual(housekeeping.last_Beacon_Time, timestamp)
+		self.assertEqual(housekeeping.satellite_mode, 'Passive')
+		self.assertEqual(housekeeping.battery_voltage, 1.7)
+		self.assertEqual(housekeeping.current_in, 1.2)
+		self.assertEqual(housekeeping.no_MCU_resets, 14)
+		self.assertEqual(housekeeping.last_beacon_time, timestamp)
 
 	"""Test converting a housekeeping entry into json"""
 	def testHousekeepingToJson(self):

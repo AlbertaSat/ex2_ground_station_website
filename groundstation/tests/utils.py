@@ -1,11 +1,11 @@
 def fakeHousekeepingAsDict(timestamp):
 	housekeepingData = {
-						'satellite_Mode' : 'Passive',
-						'battery_Voltage': 1.7,
-						'current_In': 1.2,
-						'current_Out': 1.1,
-						'no_MCU_Resets': 14,
-						'last_Beacon_Time': timestamp
+						'satellite_mode' : 'Passive',
+						'battery_voltage': 1.7,
+						'current_in': 1.2,
+						'current_out': 1.1,
+						'no_MCU_resets': 14,
+						'last_beacon_time': timestamp
 					}
 
 	return housekeepingData

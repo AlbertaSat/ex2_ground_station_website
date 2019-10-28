@@ -20,22 +20,22 @@ class Housekeeping(db.Model):
     __tablename__ = 'housekeeping'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    satellite_Mode = db.Column(db.String(32))
-    battery_Voltage = db.Column(db.Float)
-    current_In = db.Column(db.Float)
-    current_Out = db.Column(db.Float)
-    no_MCU_Resets = db.Column(db.Integer)
-    last_Beacon_Time = db.Column(db.DateTime, nullable=False)
+    satellite_mode = db.Column(db.String(32))
+    battery_voltage = db.Column(db.Float)
+    current_in = db.Column(db.Float)
+    current_out = db.Column(db.Float)
+    no_MCU_resets = db.Column(db.Integer)
+    last_beacon_time = db.Column(db.DateTime, nullable=False)
 
     def to_json(self):
         return {
             'id': self.id,
-            'satelliteMode': self.satellite_Mode,
-            'batteryVoltage': self.battery_Voltage,
-            'currentIn': self.current_In,
-            'currentOut': self.current_Out,
-            'noMCUResets': self.no_MCU_Resets,
-            'lastBeaconTime': str(self.last_Beacon_Time)
+            'satellite_mode': self.satellite_mode,
+            'battery_voltage': self.battery_voltage,
+            'current_in': self.current_in,
+            'current_out': self.current_out,
+            'no_MCU_resets': self.no_MCU_resets,
+            'last_beacon_time': str(self.last_beacon_time)
         }
 
 class Telecommands(db.Model):
