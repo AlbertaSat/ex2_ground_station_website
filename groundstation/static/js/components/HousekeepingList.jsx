@@ -66,11 +66,30 @@ const HousekeepingLogList = (props) => {
                     			<Table aria-label="simple table">
                       				<TableHead>
                         				<TableRow>
-                          					<TableCell style={{backgroundColor: '#212529', color: '#fff'}}>ID</TableCell>
-                          					<TableCell align="right" style={{backgroundColor: '#212529', color: '#fff'}}>Satellite Mode</TableCell>
-                          					<TableCell align="right" style={{backgroundColor: '#212529', color: '#fff'}}>Battery Voltage</TableCell>
-                          					<TableCell align="right" style={{backgroundColor: '#212529', color: '#fff'}}>Current In</TableCell>
-                          					<TableCell align="right" style={{backgroundColor: '#212529', color: '#fff'}}>Current Out</TableCell>
+                          					<TableCell 
+                                       style={{backgroundColor: '#212529', color: '#fff', paddingTop: '8px', paddingBottom: '8px'}}>
+                                       ID
+                                    </TableCell>
+                          					<TableCell 
+                                       align="right" 
+                                       style={{backgroundColor: '#212529', color: '#fff', paddingTop: '8px', paddingBottom: '8px'}}>
+                                       Satellite Mode
+                                    </TableCell>
+                          					<TableCell 
+                                       align="right" 
+                                       style={{backgroundColor: '#212529', color: '#fff', paddingTop: '8px', paddingBottom: '8px'}}>
+                                       Battery Voltage
+                                    </TableCell>
+                          					<TableCell 
+                                       align="right" 
+                                       style={{backgroundColor: '#212529', color: '#fff', paddingTop: '8px', paddingBottom: '8px'}}>
+                                       Current In
+                                    </TableCell>
+                          					<TableCell 
+                                       align="right" 
+                                       style={{backgroundColor: '#212529', color: '#fff', paddingTop: '8px', paddingBottom: '8px'}}>
+                                       Current Out
+                                    </TableCell>
                         				</TableRow>
                       				</TableHead>
                       				<TableBody>
