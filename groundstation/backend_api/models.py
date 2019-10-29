@@ -85,3 +85,14 @@ class FlightScheduleCommands(db.Model):
             'timestamp': str(self.timestamp),
             'command': self.command.to_json()
         }
+
+class Passover(db.Model):
+    __tablename__ = 'passovers'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    timestamp = db.Column(db.DateTime)
+
+    def to_json(self):
+        return {
+            'timestamp': str(self.timestamp)
+        }
