@@ -53,14 +53,14 @@ const HousekeepingLogList = (props) => {
                 		<ExpansionPanel 
                       key={housekeeping.name}
                       defaultExpanded={(idx == 0) ? true : false}
-                      style={tableColor(housekeeping.satelliteMode)}
+                      style={tableColor(housekeeping.satellite_mode)}
                     >
                   			<ExpansionPanelSummary
                     			expandIcon={<ExpandMoreIcon style={{color: '#4bacb8'}} />}
                     			aria-controls="panel1a-content"
                     			id="panel1a-header"
                   			>
-                    			<Typography>{housekeeping.lastBeaconTime}</Typography>
+                    			<Typography>{housekeeping.last_beacon_time}</Typography>
                   			</ExpansionPanelSummary>
                   			<ExpansionPanelDetails>
                     			<Table aria-label="simple table">
@@ -98,12 +98,12 @@ const HousekeepingLogList = (props) => {
                             					{housekeeping.id}
                           					</TableCell>
                           					<TableCell align="right">
-                          						{modeIcon(housekeeping.satelliteMode)}
-                          						<span style={{ marginLeft: '5px' }}>{housekeeping.satelliteMode}</span>
+                          						{modeIcon(housekeeping.satellite_mode)}
+                          						<span style={{ marginLeft: '5px' }}>{housekeeping.satellite_mode}</span>
                           					</TableCell>
-                          					<TableCell align="right">{housekeeping.batteryVoltage}</TableCell>
-                          					<TableCell align="right">{housekeeping.currentIn}</TableCell>
-                          					<TableCell align="right">{housekeeping.currentOut}</TableCell>
+                          					<TableCell align="right">{housekeeping.battery_voltage}</TableCell>
+                          					<TableCell align="right">{housekeeping.current_in}</TableCell>
+                          					<TableCell align="right">{housekeeping.current_out}</TableCell>
                         				</TableRow>
                       				</TableBody>
                     			</Table>
