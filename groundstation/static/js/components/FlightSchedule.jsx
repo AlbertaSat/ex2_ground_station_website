@@ -15,6 +15,7 @@ class FlightSchedule extends Component{
 		}
 		this.handleAddFlightOpenClick = this.handleAddFlightOpenClick.bind(this);
 		this.handleDeleteFlightOpenClick = this.handleDeleteFlightOpenClick.bind(this);
+		this.handleAddEvent = this.handleAddEvent.bind(this);
 	};
 
 	handleAddFlightOpenClick(event){
@@ -27,6 +28,14 @@ class FlightSchedule extends Component{
 		event.preventDefault();
 		event.stopPropagation();
 		this.setState({deleteFlightOpen: !this.state.deleteFlightOpen});
+	}
+
+	handleAddEvent(event, type){
+		if(type=='date'){
+			console.log(event)
+		}else{
+			console.log(event.target.innerText);
+		}
 	}
 
 
@@ -55,6 +64,7 @@ class FlightSchedule extends Component{
     		  <AddFlightschedule 
     		    open={this.state.addFlightOpen}
     			handleAddFlightOpenClick={this.handleAddFlightOpenClick}
+    			handleAddEvent={this.handleAddEvent}
     		  />
     		  <DeleteFlightschedule
     		    open={this.state.deleteFlightOpen}
