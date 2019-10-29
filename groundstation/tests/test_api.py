@@ -4,9 +4,10 @@ import json
 from datetime import datetime
 from groundstation.tests.base import BaseTestCase
 from groundstation import db
-from groundstation.backend_api.models import Housekeeping
-from groundstation.tests.utils import fakeHousekeepingAsDict
+from groundstation.backend_api.models import Housekeeping, FlightSchedules
+from groundstation.tests.utils import fakeHousekeepingAsDict, fake_flight_schedule_as_dict
 from groundstation.backend_api.housekeeping import HousekeepingLogList
+from groundstation.backend_api.flightschedule import FlightScheduleList
 
 class TestHousekeepingService(BaseTestCase):
     """Test the housekeeping/satellite model service"""
@@ -51,13 +52,13 @@ class TestHousekeepingService(BaseTestCase):
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 201)
             self.assertEqual(
-                f'Housekeeping Log with timestamp {timestamp} was added!', 
+                f'Housekeeping Log with timestamp {timestamp} was added!',
                 data['message']
             )
             self.assertIn('success', data['status'])
 
     def test_post_housekeeping_locally(self):
-        """Since local data is wrapped differently than data over http, 
+        """Since local data is wrapped differently than data over http,
         we must send and receive it differently (locally it is a tuple of dicts)"""
         timestamp = str(datetime.fromtimestamp(1570749472))
         housekeepingData = fakeHousekeepingAsDict(timestamp)
@@ -65,14 +66,14 @@ class TestHousekeepingService(BaseTestCase):
         response = housekeepingLogList.post(local_data=json.dumps(housekeepingData))
         self.assertEqual(response[1], 201)
         self.assertEqual(
-            f'Housekeeping Log with timestamp {timestamp} was added!', 
+            f'Housekeeping Log with timestamp {timestamp} was added!',
             response[0]['message']
         )
         self.assertIn('success', response[0]['status'])
 
     def test_post_housekeeping_with_no_timestamp(self):
         """all housekeeping logs/beacons should have a timestamp with them
-            ensure that this timestamp exists 
+            ensure that this timestamp exists
         """
         housekeepingData = fakeHousekeepingAsDict(None)
         del housekeepingData['last_beacon_time']
@@ -169,11 +170,113 @@ class TestHousekeepingService(BaseTestCase):
             self.assertIn('Passive', data['data']['logs'][0]['satellite_mode'])
             self.assertIn('success', data['status'])
 
+class TestFlightScheduleService(BaseTestCase):
+
+    def test_post_with_no_commands(self):
+        flightschedule = fake_flight_schedule_as_dict()
+        self.assertEqual(len(FlightSchedules.query.all()), 0)
+
+        with self.client:
+            post_data = json.dumps(flightschedule)
+            response = self.client.post(
+                'api/flightschedules',
+                data=post_data,
+                content_type='application/json'
+            )
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 201)
+
+        num_flightschedules = len(FlightSchedules.query.all())
+        self.assertTrue(num_flightschedules > 0)
+
+    def test_local_post_no_commands(self):
+        flightschedule = fake_flight_schedule_as_dict()
+        self.assertEqual(len(FlightSchedules.query.all()), 0)
+
+        post_data = json.dumps(flightschedule)
+        response = FlightScheduleList().post(local_data=post_data)
+
+        self.assertEqual(response[1], 201)
+        num_flightschedules = len(FlightSchedules.query.all())
+        self.assertTrue(num_flightschedules > 0)
+
+    def test_with_missing_commands(self):
+        flightschedule = fake_flight_schedule_as_dict()
+        flightschedule.pop('commands')
+
+        with self.client:
+            post_data = json.dumps(flightschedule)
+            response = self.client.post(
+                'api/flightschedules',
+                data=post_data,
+                content_type='application/json'
+            )
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 400)
+            self.assertIn('commands', response_data['errors'].keys())
+
+    def test_multiple_queued_posts(self):
+        flightschedule = fake_flight_schedule_as_dict(is_queued=True, commands=[])
+
+        with self.client:
+            post_data = json.dumps(flightschedule)
+            kw_args = {'data':post_data, 'content_type':'application/json'}
+
+            response_1 = self.client.post('api/flightschedules', **kw_args)
+            response_data = json.loads(response_1.data.decode())
+            self.assertEqual(response_1.status_code, 201)
+
+            response_2 = self.client.post('api/flightschedules', **kw_args)
+            response_data = json.loads(response_2.data.decode())
+            self.assertEqual(response_2.status_code, 400)
+            self.assertIn('A Queued flight schedule already exists!', response_data['message'])
+
+    # TODO: Test with actuall command objects in the post data
 
 
+    def test_get_all_flightschedules(self):
+        for i in range(10):
+            flightschedule = FlightSchedules(**fake_flight_schedule_as_dict())
+            db.session.add(flightschedule)
+        db.session.commit()
 
+        with self.client:
+            response = self.client.get('/api/flightschedules')
+            response_data = json.loads(response.data.decode())
+            flightschedules = response_data['data']['flightschedules']
+            self.assertEqual(len(flightschedules), 10)
 
+    def test_get_all_flightschedules_limit_by(self):
+        for i in range(10):
+            flightschedule = FlightSchedules(**fake_flight_schedule_as_dict())
+            db.session.add(flightschedule)
+        db.session.commit()
+        with self.client:
+            response = self.client.get('/api/flightschedules?limit=3')
+            response_data = json.loads(response.data.decode())
+            flightschedules = response_data['data']['flightschedules']
+            self.assertEqual(len(flightschedules), 3)
 
+    def test_get_all_flightschedules_locally_limit_by(self):
+        for i in range(10):
+            flightschedule = FlightSchedules(**fake_flight_schedule_as_dict())
+            db.session.add(flightschedule)
+        db.session.commit()
 
+        response = FlightScheduleList().get(local_args={'limit':3})
+        self.assertEqual(response[1], 200)
+        self.assertEqual(len(response[0]['data']['flightschedules']), 3)
 
+    def test_get_flight_schedule_by_id(self):
+        flightschedule = FlightSchedules(**fake_flight_schedule_as_dict())
+        db.session.add(flightschedule)
+        db.session.commit()
+        id = flightschedule.id
+        with self.client:
+            response = self.client.get(f'/api/flightschedules/{id}')
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response_data['data']['flightschedule_id'], id)
 
+    # def test_get_flight_schedule_locally_by_id(self):
+    #     pass
