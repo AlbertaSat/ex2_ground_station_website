@@ -47,7 +47,6 @@ class FlightScheduleList(Resource):
             # local request
             query_limit = local_args.get('limit')
 
-        # TODO: check that limit(None) doesnt kill it
         flightschedules = FlightSchedules.query.order_by(FlightSchedules.creation_date).limit(query_limit).all()
         response_object = {
             'status':'success',
