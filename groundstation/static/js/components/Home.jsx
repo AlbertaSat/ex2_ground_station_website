@@ -119,7 +119,7 @@ class Home extends Component {
             <HousekeepingList housekeeping={this.state.housekeeping} empty={this.state.empty} />
           </Grid>
           <Grid item sm={4}>
-            <FlightScheduleList flightschedule={flightschedule}/>
+            <FlightScheduleList flightschedule={flightschedule} isMinified={true}/>
           </Grid>
         </Grid>
 
