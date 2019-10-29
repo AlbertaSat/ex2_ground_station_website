@@ -5,9 +5,10 @@ from datetime import datetime
 from groundstation.tests.base import BaseTestCase
 from groundstation import db
 from groundstation.backend_api.models import Housekeeping, FlightSchedules
-from groundstation.tests.utils import fakeHousekeepingAsDict, fake_flight_schedule_as_dict
+from groundstation.tests.utils import fakeHousekeepingAsDict, fake_flight_schedule_as_dict, fake_passover_as_dict
 from groundstation.backend_api.housekeeping import HousekeepingLogList
 from groundstation.backend_api.flightschedule import FlightScheduleList
+from groundstation.backend_api.passover import PassoverList
 
 class TestHousekeepingService(BaseTestCase):
     """Test the housekeeping/satellite model service"""
@@ -278,5 +279,32 @@ class TestFlightScheduleService(BaseTestCase):
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response_data['data']['flightschedule_id'], id)
 
-    # def test_get_flight_schedule_locally_by_id(self):
-    #     pass
+class TestPassoverService(BaseTestCase):
+
+    def test_get_all_passovers_with_empty_db(self):
+        datetimes = [datetime.datetime.utcnow() for i in range(5)]
+
+        with self.client:
+            post_data = json.dumps(fake_passover_as_dict(datetimes))
+            kw_args = {'data':post_data, 'content_type':'application/json'}
+
+            response = self.client.post('/api/passovers', **kw_args)
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(len(response_data['data']['passovers'], 5))
+            self.assertEqual(response.status_code, 201)
+
+    def test_get_all_passovers_with_empty_db(self):
+        with self.client:
+            response = self.client.get('/api/passovers')
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(response_data['data']['passovers']), 0)
+
+    def test_invalid_post_with_no_passover_objects(self):
+        with self.client:
+            post_data = json.dumps(fake_passover_as_dict([]))
+            kw_args = {'data':post_data, 'content_type':'application/json'}
+
+            response = self.client.post('/api/passovers', **kw_args)
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 400)

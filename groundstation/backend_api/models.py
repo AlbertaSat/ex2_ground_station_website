@@ -94,5 +94,6 @@ class Passover(db.Model):
 
     def to_json(self):
         return {
+            'passover_id': self.id,
             'timestamp': str(self.timestamp)
         }

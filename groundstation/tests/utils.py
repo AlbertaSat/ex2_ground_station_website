@@ -16,3 +16,12 @@ def fake_flight_schedule_as_dict(is_queued=False, commands=[]):
         'commands':commands
     }
     return flightschedule
+
+def fake_passover_as_dict(timestamps):
+    """
+    params:
+        @timestamps : [datetime.datetime.utcnow()] : (a list of datetime objects)
+    """
+    return {
+        'passovers':[{'timestamp':str(timestamp)} for timestamp in timestamps]
+    }
