@@ -92,17 +92,6 @@ class FlightScheduleList(Resource):
         #db.session.add(flightschedule)
 
         for command_data in flightschedule_commands:
-            #try:
-            #    command_data['timestamp'] = datetime.strptime(command_data['timestamp'][:-5], '%Y-%m-%dT%H:%M:%S')
-            #except (ValueError, TypeError, KeyError) as error:
-             #   print(error)
-              #  response_object = {
-              #      'status': 'fail',
-              #      'message': 'The posted data is not valid!',
-              #  }
-              #  return response_object, 400
-
-            print(command_data)
             command = FlightScheduleCommands(**command_data)
             flightschedule.commands.append(command)
             #db.session.add(command)

@@ -3,7 +3,7 @@ from marshmallow import Schema, fields, validate
 class FlightScheduleCommandValidator(Schema):
     command_id = fields.Integer(required=True)
     timestamp = fields.DateTime(format='iso', required=True)
-    flightschedule_id = fields.Integer(required=True)
+    #flightschedule_id = fields.Integer(required=True)
 
 class FlightScheduleValidator(Schema):
     is_queued = fields.Boolean(required=True)
