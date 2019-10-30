@@ -31,7 +31,7 @@ class Flightschedule(Resource):
 class FlightScheduleList(Resource):
 
     def __init__(self):
-        self.validate = FlightScheduleValidator()
+        self.validator = FlightScheduleValidator()
         super(FlightScheduleList, self).__init__()
 
     @create_context
@@ -66,7 +66,7 @@ class FlightScheduleList(Resource):
             post_data = json.loads(local_data)
 
         try:
-            validated_data = self.validate(post_data)
+            validated_data = self.validator.load(post_data)
         except ValidationError as err:
             response_object = {
                 'status': 'fail',

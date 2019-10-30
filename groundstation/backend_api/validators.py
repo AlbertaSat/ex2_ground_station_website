@@ -1,15 +1,13 @@
 from marshmallow import Schema, fields, validate
 
-class FlightScheduleValidator:
+class FlightScheduleCommandValidator(Schema):
+    command_id = fields.Integer(required=True)
+    timestamp = fields.DateTime(format='iso', required=True)
+    flightschedule_id = fields.Integer(required=True)
 
-    def __init__(self):
-        self.schema = Schema.from_dict({
-            'is_queued': fields.Boolean(required=True), 'commands': fields.List(fields.Dict(), required=True)
-        })
-
-    def __call__(self, dict_rep):
-        validated_data = self.schema().load(dict_rep)
-        return validated_data
+class FlightScheduleValidator(Schema):
+    is_queued = fields.Boolean(required=True)
+    commands = fields.Nested(FlightScheduleCommandValidator, many=True, required=True)
 
 class PassoverValidator(Schema):
     timestamp = fields.DateTime(format='iso', required=True)
