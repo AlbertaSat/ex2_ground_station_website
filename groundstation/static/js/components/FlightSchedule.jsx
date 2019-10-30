@@ -16,12 +16,12 @@ class FlightSchedule extends Component{
 			thisFlightscheduleId: null,
 			availCommands: [{ commandName: 'ping', id: 1 },
   							{ commandName: 'get_hk', id: 2 }],
-  			displayDate: null
 		}
 		this.handleAddFlightOpenClick = this.handleAddFlightOpenClick.bind(this);
 		this.handleDeleteFlightOpenClick = this.handleDeleteFlightOpenClick.bind(this);
 		this.handleAddEvent = this.handleAddEvent.bind(this);
 		this.addFlightschedule = this.addFlightschedule.bind(this);
+		this.handleAddCommandClick = this.handleAddCommandClick.bind(this);
 	}
 
 	componentDidMount(){
@@ -56,6 +56,7 @@ class FlightSchedule extends Component{
 	addFlightschedule(event){
 		event.preventDefault();
 		let data = {is_queued: false, commands: this.state.thisFlightscheduleCommands}
+		console.log('posted data', data);
 		fetch('/api/flightschedules', {
 			method: 'POST',
 			headers: {
@@ -94,6 +95,12 @@ class FlightSchedule extends Component{
 		console.log(this.state.thisFlightscheduleCommands);
 	}
 
+	handleAddCommandClick(event){
+		const obj = this.state.thisFlightscheduleCommands.slice();
+		obj.push({'command_id': '', 'timestamp': ''})
+		this.setState({thisFlightscheduleCommands: obj})
+	}
+
 
 
 	render(){
@@ -113,7 +120,7 @@ class FlightSchedule extends Component{
     			thisFlightschedule={this.state.thisFlightscheduleCommands}
     			availCommands={this.state.availCommands}
     			addFlightschedule={this.addFlightschedule}
-    			displayDate={this.state.displayDate}
+    			handleAddCommandClick={this.handleAddCommandClick}
     		  />
     		  <DeleteFlightschedule
     		    open={this.state.deleteFlightOpen}
