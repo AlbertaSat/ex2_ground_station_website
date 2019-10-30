@@ -1,14 +1,15 @@
 import unittest
 import json
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from groundstation.tests.base import BaseTestCase
 from groundstation import db
-from groundstation.backend_api.models import Housekeeping, FlightSchedules
+from groundstation.backend_api.models import Housekeeping, FlightSchedules, Passover
 from groundstation.tests.utils import fakeHousekeepingAsDict, fake_flight_schedule_as_dict, fake_passover_as_dict
 from groundstation.backend_api.housekeeping import HousekeepingLogList
 from groundstation.backend_api.flightschedule import FlightScheduleList
 from groundstation.backend_api.passover import PassoverList
+from unittest import mock
 
 class TestHousekeepingService(BaseTestCase):
     """Test the housekeeping/satellite model service"""
@@ -282,7 +283,7 @@ class TestFlightScheduleService(BaseTestCase):
 class TestPassoverService(BaseTestCase):
 
     def test_get_all_passovers_with_empty_db(self):
-        datetimes = [datetime.datetime.utcnow() for i in range(5)]
+        datetimes = [datetime.utcnow() for i in range(5)]
 
         with self.client:
             post_data = json.dumps(fake_passover_as_dict(datetimes))
@@ -308,3 +309,34 @@ class TestPassoverService(BaseTestCase):
             response = self.client.post('/api/passovers', **kw_args)
             response_data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 400)
+
+    # Ignore for now, testing this is annoying because it relies on dates and mocking dates is annoying
+    # this test doesnt work
+    # def test_get_next_passover_only_with_no_passovers_in_db(self):
+    #
+    #     passover_times = []
+    #     for i in range(5, 25):
+    #         passover_times.append(datetime(2019, 10, i, hour=4, minute=25, second=i))
+    #
+    #     pretend_current_time, correct_next_passover = passover_times[10], passover_times[11]
+    #     passover_times.pop(10)
+    #     for time in passover_times:
+    #         p = Passover(timestamp=time)
+    #         db.session.add(p)
+    #     db.session.commit()
+    #
+    #     with self.client:
+    #         response = self.client.get('/api/passovers?next-only=true')
+    #         response_data = json.loads(response.data.decode())
+    #         self.assertEqual(response.status_code, 200)
+    #         self.assertEqual(len(response_data['data']['passovers']), 1)
+    #         self.assertEqual(str(correct_next_passover), response_data['data']['passovers'][0]['timestamp'])
+
+
+
+
+
+
+    #
+    # def test_get_next_passover_only_with_valid_passovers_in_db(self):
+    #     pass
