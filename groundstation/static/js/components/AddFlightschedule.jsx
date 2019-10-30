@@ -6,8 +6,69 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableRow from '@material-ui/core/TableRow';
+import DateFnsUtils from '@date-io/date-fns';
+import {
+  DateTimePicker,
+  MuiPickersUtilsProvider
+} from "@material-ui/pickers";
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles({
+  popup: {
+  	zIndex: 1500,
+  },
+});
 
 const AddFlightschedule = (props) =>{
+  	const classes = useStyles();
+
+  	let length = props.thisFlightschedule.length;
+  	let commandTable = [];
+  	for(var i=0; i < length; i++){
+  	  commandTable.push(
+  		<TableBody>
+            <TableRow>
+              <TableCell>
+                 <Autocomplete
+		      		className={classes.root}
+      				options={props.availCommands}
+		      		getOptionLabel={option => option.commandName}
+		      		style={{ width: 300 }}
+		      		classes={{
+		            	popup: classes.popup,
+		          	}}
+		          	name="command"
+		          	onChange={(event) => props.handleAddEvent(event, 'command', i - 1)}
+		      		renderInput={params => (
+		        	<TextField {...params} 
+		        	 label="Command" 
+		        	 variant="outlined" 
+		        	 fullWidth 
+		        	 InputLabelProps={{
+						shrink: true,
+					 }}
+		        	/>
+		      	    )}
+		    	  />
+                </TableCell>
+                <TableCell>
+                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                    <DateTimePicker 
+                      name="date" 
+                      onChange={(event) => props.handleAddEvent(event, 'date', i - 1)}
+                    />
+                  </MuiPickersUtilsProvider>
+                </TableCell>
+              </TableRow>
+          </TableBody>
+        )
+  	}
+
 	return (
 		<div>
 		  <Dialog 
@@ -19,6 +80,9 @@ const AddFlightschedule = (props) =>{
 		      <DialogContentText>
 		        To add commands to this flight schedule, enter the command name followed by the timestamp.
 		      </DialogContentText>
+		      <Table aria-label="simple table">
+		        {commandTable}
+              </Table>
 		    </DialogContent>
 		    <DialogActions>
               <Button onClick={ (event) => props.handleAddFlightOpenClick(event) } color="primary">
