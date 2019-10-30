@@ -11,15 +11,30 @@ class FlightSchedule extends Component{
 			deleteFlightOpen: false,
 			allflightschedules: [],
 			queuedflightschedule: [],
-			thisFlightscheduleCommands: [{'command_id': '', 'time_stamp': ''}],
+			thisFlightscheduleCommands: [{'command_id': '', 'timestamp': ''}],
 			thisFlightscheduleId: null,
 			availCommands: [{ commandName: 'ping', id: 1 },
-  							{ commandName: 'get_hk', id: 2 }]
+  							{ commandName: 'get_hk', id: 2 }],
+  			displayDate: null
 		}
 		this.handleAddFlightOpenClick = this.handleAddFlightOpenClick.bind(this);
 		this.handleDeleteFlightOpenClick = this.handleDeleteFlightOpenClick.bind(this);
 		this.handleAddEvent = this.handleAddEvent.bind(this);
-	};
+		this.addFlightschedule = this.addFlightschedule.bind(this);
+	}
+
+	componentDidMount(){
+		fetch('/api/flightschedules?limit=5')
+		.then(results =>{
+			return results.json();
+		}).then(data =>{
+			console.log(data);
+			if(data.status=='success'){
+				console.log('success');
+				this.setState({'allflightschedules': data.data.flightschedules});
+			}
+		})
+	}
 
 	handleAddFlightOpenClick(event, idx){
 		event.preventDefault();
@@ -27,7 +42,7 @@ class FlightSchedule extends Component{
 
 		this.setState({
 						addFlightOpen: !this.state.addFlightOpen,
-						thisFlightscheduleCommands: [{'command_id': '', 'time_stamp': ''}],
+						thisFlightscheduleCommands: [{'command_id': '', 'timestamp': ''}],
 					});
 	};
 
@@ -37,41 +52,54 @@ class FlightSchedule extends Component{
 		this.setState({deleteFlightOpen: !this.state.deleteFlightOpen});
 	}
 
-	addFlightschedule(){
-		return;
+	addFlightschedule(event){
+		event.preventDefault();
+		let data = {is_queued: false, commands: this.state.thisFlightscheduleCommands}
+		fetch('/api/flightschedules', {
+			method: 'POST',
+			headers: {
+      		  'Content-Type': 'application/json'
+      		},
+      		body: JSON.stringify(data),	
+		}).then(results => {
+			return results.json();
+		}).then(data => {
+			console.log(data)
+
+			if(data.status == 'success'){
+				const obj = this.state.allflightschedules.slice();
+				obj.push(data.data);
+				this.setState({addFlightOpen: !this.state.addFlightOpen,
+				thisFlightscheduleCommands: 
+					[{'command_id': '', 'timestamp': ''}],
+				allflightschedules: obj,})
+			}
+		});
+
 	}
 
 	handleAddEvent(event, type, idx){
 		const obj = this.state.thisFlightscheduleCommands.slice();
+		let displayDate = this.state.displayDate;
 
 		if(type=='date'){
-			obj[idx].time_stamp = event.toString();
+			obj[idx].timestamp = event.toISOString();
+			displayDate = event;
 		}else{
 			obj[idx].command_id = this.state.availCommands[event.target.dataset.optionIndex].id;
 		}
-		this.setState({thisFlightscheduleCommands: obj})
+		this.setState({thisFlightscheduleCommands: obj,
+						displayDate: displayDate})
 		console.log(this.state.thisFlightscheduleCommands);
 	}
 
 
 
 	render(){
-		const flightschedule = [
-	      {id: 1, creationDate: '2019-10-10 17:17:52', timeStamp: '2019-10-10 17:17:52', uploadDate: '2019-10-10 17:17:52',
-	        commands: [{
-	        commandId: 1,
-	        commandName: 'ping',
-	        timeStamp: '2019-10-10 17:17:52'
-	        },
-	        {commandId: 2,
-	        commandName: 'ddos',
-	        timeStamp: '2019-10-10 17:17:52'
-	        }
-	      ]}];
 		return (
 		    <div>
     		  <FlightScheduleList 
-    		    flightschedule={flightschedule} 
+    		    flightschedule={this.state.allflightschedules} 
     		    isMinified={false}
     		    handleAddFlightOpenClick={this.handleAddFlightOpenClick}
     		    handleDeleteFlightOpenClick={this.handleDeleteFlightOpenClick}
@@ -82,6 +110,8 @@ class FlightSchedule extends Component{
     			handleAddEvent={this.handleAddEvent}
     			thisFlightschedule={this.state.thisFlightscheduleCommands}
     			availCommands={this.state.availCommands}
+    			addFlightschedule={this.addFlightschedule}
+    			displayDate={this.state.displayDate}
     		  />
     		  <DeleteFlightschedule
     		    open={this.state.deleteFlightOpen}

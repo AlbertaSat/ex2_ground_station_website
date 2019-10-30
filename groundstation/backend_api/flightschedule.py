@@ -4,9 +4,10 @@ from flask import Blueprint
 from flask_restful import Resource, Api
 from marshmallow import ValidationError
 from groundstation import db
-from groundstation.backend_api.models import FlightSchedules
+from groundstation.backend_api.models import FlightSchedules, FlightScheduleCommands
 from groundstation.backend_api.utils import create_context
 from groundstation.backend_api.validators import FlightScheduleValidator
+from datetime import datetime
 
 flightschedule_blueprint = Blueprint('flightschedule', __name__)
 api = Api(flightschedule_blueprint)
@@ -88,17 +89,30 @@ class FlightScheduleList(Resource):
         # TODO validate commands
         flightschedule_commands = validated_data.pop('commands')
         flightschedule = FlightSchedules(**validated_data)
-        db.session.add(flightschedule)
+        #db.session.add(flightschedule)
 
         for command_data in flightschedule_commands:
-            command = FlightScheduleCommands(**command_data)
-            db.session.add(command)
+            try:
+                command_data['timestamp'] = datetime.strptime(command_data['timestamp'][:-5], '%Y-%m-%dT%H:%M:%S')
+            except (ValueError, TypeError, KeyError) as error:
+                print(error)
+                response_object = {
+                    'status': 'fail',
+                    'message': 'The posted data is not valid!',
+                }
+                return response_object, 400
 
+            print(command_data)
+            command = FlightScheduleCommands(**command_data)
+            flightschedule.commands.append(command)
+            #db.session.add(command)
+
+        db.session.add(flightschedule)
         db.session.commit()
 
         response_object = {
             'status': 'success',
-            'message': f'Flight Schedule was successfully created!'
+            'data': flightschedule.to_json()
         }
 
         return response_object, 201

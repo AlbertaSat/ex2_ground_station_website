@@ -26,8 +26,9 @@ const FlightScheduleList = (props) => {
        <div>
 		<Paper className="grid-containers">
        	  <h5 className="container-text">Upcoming Flight Schedules</h5>
+          {console.log(props.flightschedule)}
           {props.flightschedule.map((flightschedule, idx) => (
-             <ExpansionPanel key={flightschedule.id}>
+             <ExpansionPanel key={flightschedule.flightschedule_id}>
                <ExpansionPanelSummary
                  expandIcon={<ExpandMoreIcon style={{ color: '#4bacb8'}}/>}
                  aria-controls="panel1a-content"
@@ -37,10 +38,10 @@ const FlightScheduleList = (props) => {
                     <TableBody>
                       <TableRow>
                         <TableCell component="th" scope="row">
-                          {"Flight Schedule #" + flightschedule.id}
+                          {"Flight Schedule #" + flightschedule.flightschedule_id}
                         </TableCell>
                         <TableCell align="right">
-                          {"Created at " + flightschedule.creationDate}
+                          {"Created at " + flightschedule.creation_date}
                         </TableCell>
                         {
                           !props.isMinified && 
@@ -83,10 +84,10 @@ const FlightScheduleList = (props) => {
                       <TableBody>
                         <TableRow>
                           <TableCell component ="th" scope="row">
-                            {commands.commandId}
+                            {commands.flightschedule_command_id}
                           </TableCell>
-                          <TableCell align="right">{commands.commandName}</TableCell>
-                          <TableCell align="right">{commands.timeStamp}</TableCell>
+                          <TableCell align="right">{commands.command.command_name}</TableCell>
+                          <TableCell align="right">{commands.timestamp}</TableCell>
                         </TableRow>
                       </TableBody>
                     ))} 
