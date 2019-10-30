@@ -7,6 +7,7 @@ class FlightSchedule extends Component{
 	constructor(){
 		super();
 		this.state = {
+			empty: true,
 			addFlightOpen: false,
 			deleteFlightOpen: false,
 			allflightschedules: [],
@@ -31,7 +32,7 @@ class FlightSchedule extends Component{
 			console.log(data);
 			if(data.status=='success'){
 				console.log('success');
-				this.setState({'allflightschedules': data.data.flightschedules});
+				this.setState({'allflightschedules': data.data.flightschedules, empty: false});
 			}
 		})
 	}
@@ -103,6 +104,7 @@ class FlightSchedule extends Component{
     		    isMinified={false}
     		    handleAddFlightOpenClick={this.handleAddFlightOpenClick}
     		    handleDeleteFlightOpenClick={this.handleDeleteFlightOpenClick}
+    		    empty={this.state.empty}
     		  />
     		  <AddFlightschedule 
     		    open={this.state.addFlightOpen}

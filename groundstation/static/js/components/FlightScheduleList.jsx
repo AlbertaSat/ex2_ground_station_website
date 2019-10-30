@@ -1,4 +1,5 @@
 import React from 'react'
+import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import Paper from '@material-ui/core/Paper';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
@@ -22,11 +23,19 @@ function isMinified(minify, elemt){
 }
 
 const FlightScheduleList = (props) => {
+  if (props.empty) {
+      return (
+        <div>
+          <ErrorOutlineIcon /> There are no flightschedules!
+        </div>
+      )
+  }
+
 	return (
        <div>
 		<Paper className="grid-containers">
        	  <h5 className="container-text">Upcoming Flight Schedules</h5>
-          {console.log(props.flightschedule)}
+          
           {props.flightschedule.map((flightschedule, idx) => (
              <ExpansionPanel key={flightschedule.flightschedule_id}>
                <ExpansionPanelSummary
