@@ -3,25 +3,32 @@ import FlightScheduleList from './FlightScheduleList';
 import AddFlightschedule from './AddFlightschedule';
 import DeleteFlightschedule from './DeleteFlightschedule';
 
-
 class FlightSchedule extends Component{
 	constructor(){
 		super();
 		this.state = {
 			addFlightOpen: false,
 			deleteFlightOpen: false,
-			allflightschedules: null,
-			queuedflightschedule: null,
+			allflightschedules: [],
+			queuedflightschedule: [],
+			thisFlightscheduleCommands: [{'command_id': '', 'time_stamp': ''}],
+			thisFlightscheduleId: null,
+			availCommands: [{ commandName: 'ping', id: 1 },
+  							{ commandName: 'get_hk', id: 2 }]
 		}
 		this.handleAddFlightOpenClick = this.handleAddFlightOpenClick.bind(this);
 		this.handleDeleteFlightOpenClick = this.handleDeleteFlightOpenClick.bind(this);
 		this.handleAddEvent = this.handleAddEvent.bind(this);
 	};
 
-	handleAddFlightOpenClick(event){
+	handleAddFlightOpenClick(event, idx){
 		event.preventDefault();
 		event.stopPropagation();
-		this.setState({addFlightOpen: !this.state.addFlightOpen});
+
+		this.setState({
+						addFlightOpen: !this.state.addFlightOpen,
+						thisFlightscheduleCommands: [{'command_id': '', 'time_stamp': ''}],
+					});
 	};
 
 	handleDeleteFlightOpenClick(event){
@@ -30,12 +37,20 @@ class FlightSchedule extends Component{
 		this.setState({deleteFlightOpen: !this.state.deleteFlightOpen});
 	}
 
-	handleAddEvent(event, type){
+	addFlightschedule(){
+		return;
+	}
+
+	handleAddEvent(event, type, idx){
+		const obj = this.state.thisFlightscheduleCommands.slice();
+
 		if(type=='date'){
-			console.log(event)
+			obj[idx].time_stamp = event.toString();
 		}else{
-			console.log(event.target.innerText);
+			obj[idx].command_id = this.state.availCommands[event.target.dataset.optionIndex].id;
 		}
+		this.setState({thisFlightscheduleCommands: obj})
+		console.log(this.state.thisFlightscheduleCommands);
 	}
 
 
@@ -65,6 +80,8 @@ class FlightSchedule extends Component{
     		    open={this.state.addFlightOpen}
     			handleAddFlightOpenClick={this.handleAddFlightOpenClick}
     			handleAddEvent={this.handleAddEvent}
+    			thisFlightschedule={this.state.thisFlightscheduleCommands}
+    			availCommands={this.state.availCommands}
     		  />
     		  <DeleteFlightschedule
     		    open={this.state.deleteFlightOpen}

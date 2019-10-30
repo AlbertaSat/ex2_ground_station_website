@@ -24,11 +24,50 @@ const useStyles = makeStyles({
   },
 });
 
-
 const AddFlightschedule = (props) =>{
-	const top100Films = [{ title: 'The Shawshank Redemption', year: 1994 },
-  		{ title: 'The Godfather', year: 1972 }];
   	const classes = useStyles();
+
+  	let length = props.thisFlightschedule.length;
+  	let commandTable = [];
+  	for(var i=0; i < length; i++){
+  	  commandTable.push(
+  		<TableBody>
+            <TableRow>
+              <TableCell>
+                 <Autocomplete
+		      		className={classes.root}
+      				options={props.availCommands}
+		      		getOptionLabel={option => option.commandName}
+		      		style={{ width: 300 }}
+		      		classes={{
+		            	popup: classes.popup,
+		          	}}
+		          	name="command"
+		          	onChange={(event) => props.handleAddEvent(event, 'command', i - 1)}
+		      		renderInput={params => (
+		        	<TextField {...params} 
+		        	 label="Command" 
+		        	 variant="outlined" 
+		        	 fullWidth 
+		        	 InputLabelProps={{
+						shrink: true,
+					 }}
+		        	/>
+		      	    )}
+		    	  />
+                </TableCell>
+                <TableCell>
+                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                    <DateTimePicker 
+                      name="date" 
+                      onChange={(event) => props.handleAddEvent(event, 'date', i - 1)}
+                    />
+                  </MuiPickersUtilsProvider>
+                </TableCell>
+              </TableRow>
+          </TableBody>
+        )
+  	}
 
 	return (
 		<div>
@@ -42,38 +81,7 @@ const AddFlightschedule = (props) =>{
 		        To add commands to this flight schedule, enter the command name followed by the timestamp.
 		      </DialogContentText>
 		      <Table aria-label="simple table">
-                <TableBody>
-                  <TableRow>
-                    <TableCell>
-                      <Autocomplete
-		      			className={classes.root}
-      					options={top100Films}
-		      			getOptionLabel={option => option.title}
-		      			style={{ width: 300 }}
-		      			classes={{
-		            		popup: classes.popup,
-		          		}}
-		          		name="command"
-		          		onChange={(event) => props.handleAddEvent(event, 'command')}
-		      			renderInput={params => (
-		        	 	<TextField {...params} 
-		        	 	  label="Command" 
-		        	 	  variant="outlined" 
-		        	 	  fullWidth 
-		        	 	  InputLabelProps={{
-							shrink: true,
-						  }}
-		        	 	  />
-		      			)}
-		    		  />
-                    </TableCell>
-                    <TableCell>
-                      <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                        <DateTimePicker name="date" onChange={(event) => props.handleAddEvent(event, 'date')}/>
-                      </MuiPickersUtilsProvider>
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
+		        {commandTable}
               </Table>
 		    </DialogContent>
 		    <DialogActions>

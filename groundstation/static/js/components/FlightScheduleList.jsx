@@ -26,7 +26,7 @@ const FlightScheduleList = (props) => {
        <div>
 		<Paper className="grid-containers">
        	  <h5 className="container-text">Upcoming Flight Schedules</h5>
-          {props.flightschedule.map(flightschedule => (
+          {props.flightschedule.map((flightschedule, idx) => (
              <ExpansionPanel key={flightschedule.id}>
                <ExpansionPanelSummary
                  expandIcon={<ExpandMoreIcon style={{ color: '#4bacb8'}}/>}
@@ -47,7 +47,7 @@ const FlightScheduleList = (props) => {
                              <TableCell align="right">
                                <AddIcon 
                                  style={{ color: '#4bacb8', marginRight: '20px'}}
-                                 onClick={ (event) => props.handleAddFlightOpenClick(event) }
+                                 onClick={ (event) => props.handleAddFlightOpenClick(event, idx) }
                                />
                                <DeleteIcon 
                                  style={{ color: '#4bacb8'}}
