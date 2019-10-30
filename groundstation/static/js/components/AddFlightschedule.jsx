@@ -25,6 +25,7 @@ const useStyles = makeStyles({
 });
 
 const AddFlightschedule = (props) =>{
+	console.log(props.displayDate);
   	const classes = useStyles();
 
   	let length = props.thisFlightschedule.length;
@@ -42,7 +43,6 @@ const AddFlightschedule = (props) =>{
 		      		classes={{
 		            	popup: classes.popup,
 		          	}}
-		          	name="command"
 		          	onChange={(event) => props.handleAddEvent(event, 'command', i - 1)}
 		      		renderInput={params => (
 		        	<TextField {...params} 
@@ -59,7 +59,9 @@ const AddFlightschedule = (props) =>{
                 <TableCell>
                   <MuiPickersUtilsProvider utils={DateFnsUtils}>
                     <DateTimePicker 
-                      name="date" 
+                      label="Timestamp"
+                      inputVariant="outlined"
+                      value={props.displayDate}
                       onChange={(event) => props.handleAddEvent(event, 'date', i - 1)}
                     />
                   </MuiPickersUtilsProvider>
@@ -88,7 +90,7 @@ const AddFlightschedule = (props) =>{
               <Button onClick={ (event) => props.handleAddFlightOpenClick(event) } color="primary">
                 Cancel
              </Button>
-             <Button onClick={ (event) => props.handleAddFlightOpenClick(event) } color="primary">
+             <Button onClick={ (event) => props.addFlightschedule(event) } color="primary">
                Submit
              </Button>
             </DialogActions>

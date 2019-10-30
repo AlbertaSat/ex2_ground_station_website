@@ -35,30 +35,33 @@ class Home extends Component {
         lastBeaconTime: null,
         noMCUResets: null
       },
-      flightschedule: {
-        id: null,
-        creationDate: null,
-        timeStamp: null,
-        uploadDate: null,
-        flightscheduleCommands: {
-          command_id: null,
-          timeStamp: null
-        }
-      }
+      flightschedule: []
     };
   }
 
   componentDidMount() {
-    fetch('/api/housekeepinglog')
-    .then(results => {
-      return results.json();
-    }).then(data => {
-      console.log('data: ', data);
-      if (data.status == 'success') {
-        this.setState({ housekeeping: data.data.logs, isLoaded: true, empty: false })
-        console.log(this.state.housekeeping);
+    Promise.all([
+      fetch('/api/housekeepinglog'), 
+      fetch('/api/flightschedules?limit=5')
+    ]).then(([res1, res2]) => {
+      return Promise.all([res1.json(), res2.json()])
+    }).then(([res1, res2]) => {
+      if(res1.status == 'success'){
+        this.setState({ housekeeping: res1.data.logs, isLoaded: true, empty: false});
+      }if(res2.status == 'success'){
+        this.setState({flightschedule: res2.data.flightschedules, empty: false})
       }
-    })
+    });
+    //fetch('/api/housekeepinglog')
+    //.then(results => {
+    //  return results.json();
+    //}).then(data => {
+     // console.log('data: ', data);
+     // if (data.status == 'success') {
+     //   this.setState({ housekeeping: data.data.logs, isLoaded: true, empty: false })
+     //   console.log(this.state.housekeeping);
+     // }
+    //})
   }
 
   render() {
@@ -119,7 +122,7 @@ class Home extends Component {
             <HousekeepingList housekeeping={this.state.housekeeping} empty={this.state.empty} />
           </Grid>
           <Grid item sm={4}>
-            <FlightScheduleList flightschedule={flightschedule} isMinified={true}/>
+            <FlightScheduleList flightschedule={this.state.flightschedule} isMinified={true} empty={this.state.empty}/>
           </Grid>
         </Grid>
 
