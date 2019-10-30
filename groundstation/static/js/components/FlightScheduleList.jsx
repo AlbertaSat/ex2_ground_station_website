@@ -13,6 +13,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import Grid from '@material-ui/core/Grid';
 
 function isMinified(minify, elemt){
   if(!minify){
@@ -34,8 +35,20 @@ const FlightScheduleList = (props) => {
 	return (
        <div>
 		<Paper className="grid-containers">
-       	  <h5 className="container-text">Upcoming Flight Schedules</h5>
-          
+          <Grid container>
+            <Grid item xs={(props.isMinified) ? 12 : 11} style={{textAlign: 'center'}}>
+              <Typography variant="h5" displayInline>Upcoming Flight Schedules</Typography>
+            </Grid>
+            {
+              !props.isMinified &&
+                <Grid item xs={1} style={{textAlign: 'right'}}>
+                  <AddIcon 
+                            style={{ color: '#4bacb8'}} 
+                            onClick={ (event) => props.handleAddFlightOpenClick(event, 0) }
+                  />
+                </Grid>
+            } 
+          </Grid>
           {props.flightschedule.map((flightschedule, idx) => (
              <ExpansionPanel key={flightschedule.flightschedule_id}>
                <ExpansionPanelSummary

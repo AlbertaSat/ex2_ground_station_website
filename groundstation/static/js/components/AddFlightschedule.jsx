@@ -17,6 +17,8 @@ import {
   MuiPickersUtilsProvider
 } from "@material-ui/pickers";
 import { makeStyles } from '@material-ui/core/styles';
+import AddIcon from '@material-ui/icons/Add';
+import Typography from '@material-ui/core/Typography';
 
 const useStyles = makeStyles({
   popup: {
@@ -27,49 +29,6 @@ const useStyles = makeStyles({
 const AddFlightschedule = (props) =>{
 	console.log(props.displayDate);
   	const classes = useStyles();
-
-  	let length = props.thisFlightschedule.length;
-  	let commandTable = [];
-  	for(var i=0; i < length; i++){
-  	  commandTable.push(
-  		<TableBody>
-            <TableRow>
-              <TableCell>
-                 <Autocomplete
-		      		className={classes.root}
-      				options={props.availCommands}
-		      		getOptionLabel={option => option.commandName}
-		      		style={{ width: 300 }}
-		      		classes={{
-		            	popup: classes.popup,
-		          	}}
-		          	onChange={(event) => props.handleAddEvent(event, 'command', i - 1)}
-		      		renderInput={params => (
-		        	<TextField {...params} 
-		        	 label="Command" 
-		        	 variant="outlined" 
-		        	 fullWidth 
-		        	 InputLabelProps={{
-						shrink: true,
-					 }}
-		        	/>
-		      	    )}
-		    	  />
-                </TableCell>
-                <TableCell>
-                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                    <DateTimePicker 
-                      label="Timestamp"
-                      inputVariant="outlined"
-                      value={props.displayDate}
-                      onChange={(event) => props.handleAddEvent(event, 'date', i - 1)}
-                    />
-                  </MuiPickersUtilsProvider>
-                </TableCell>
-              </TableRow>
-          </TableBody>
-        )
-  	}
 
 	return (
 		<div>
@@ -83,8 +42,53 @@ const AddFlightschedule = (props) =>{
 		        To add commands to this flight schedule, enter the command name followed by the timestamp.
 		      </DialogContentText>
 		      <Table aria-label="simple table">
-		        {commandTable}
+		        {
+		          props.thisFlightschedule.map((flighschedule, idx) => (
+  					  <TableBody>
+            			<TableRow>
+              				<TableCell>
+                 				<Autocomplete
+		      						className={classes.root}
+      								options={props.availCommands}
+		      						getOptionLabel={option => option.commandName}
+		      						style={{ width: 300 }}
+		      						classes={{
+		            				popup: classes.popup,
+		          				}}
+		          				onChange={(event) => props.handleAddEvent(event, 'command', idx)}
+		      					renderInput={params => (
+		        				<TextField {...params} 
+		        	 				label="Command" 
+		        	 				variant="outlined" 
+		        	 				fullWidth 
+		        	 				InputLabelProps={{
+									shrink: true,
+								 }}
+					        	/>
+					      	    )}
+					    	  />
+			                </TableCell>
+			                <TableCell>
+			                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
+			                    <DateTimePicker 
+			                      label="Timestamp"
+			                      inputVariant="outlined"
+			                      value={props.thisFlightschedule[idx].timestamp}
+			                      onChange={(event) => props.handleAddEvent(event, 'date', idx)}
+			                    />
+			                  </MuiPickersUtilsProvider>
+			                </TableCell>
+			              </TableRow>
+			          </TableBody>
+			          )	
+  					)}
               </Table>
+                <DialogContentText>
+		          <AddIcon 
+                    style={{ color: '#4bacb8'}} 
+                    onClick={(event) => props.handleAddCommandClick(event)}
+                  />
+		      </DialogContentText>
 		    </DialogContent>
 		    <DialogActions>
               <Button onClick={ (event) => props.handleAddFlightOpenClick(event) } color="primary">
