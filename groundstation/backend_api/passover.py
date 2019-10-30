@@ -2,7 +2,7 @@ from flask import request
 from flask import Blueprint
 from flask_restful import Resource, Api
 from marshmallow import ValidationError
-from datetime import datetime
+import datetime
 import json
 
 from groundstation import db
@@ -23,10 +23,18 @@ class PassoverList(Resource):
     def get(self, local_args=None):
         if not local_args:
             query_limit = request.args.get('limit')
+            next_only = request.args.get('next-only')
         else:
             query_limit = local_args.get('limit')
+            next_only = local_args.get('next-only')
 
-        passovers = Passover.query.order_by(Passover.timestamp).limit(query_limit).all()
+        if next_only == 'true':
+            current_time = datetime.datetime.now(datetime.timezone.utc)
+            passovers = [Passover.query.filter(Passover.timestamp > current_time).order_by(Passover.timestamp).limit(query_limit).first()]
+            passovers = [] if passovers[0] is None else passovers
+        else:
+            passovers = Passover.query.order_by(Passover.timestamp).limit(query_limit).all()
+
         response_object = {
             'status':'success',
             'data': {
