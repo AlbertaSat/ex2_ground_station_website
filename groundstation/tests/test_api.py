@@ -1,7 +1,7 @@
 import unittest
 import json
 
-from datetime import datetime, timedelta
+import datetime
 from groundstation.tests.base import BaseTestCase
 from groundstation import db
 from groundstation.backend_api.models import Housekeeping, FlightSchedules, Passover
@@ -16,7 +16,7 @@ class TestHousekeepingService(BaseTestCase):
 
     def test_get_housekeeping(self):
         """Test getting a housekeeping log"""
-        timestamp = datetime.fromtimestamp(1570749472)
+        timestamp = datetime.datetime.fromtimestamp(1570749472)
         housekeepingData = fakeHousekeepingAsDict(timestamp)
 
         housekeeping = Housekeeping(**housekeepingData)
@@ -43,7 +43,7 @@ class TestHousekeepingService(BaseTestCase):
             self.assertIn('fail', data['status'])
 
     def test_post_housekeeping(self):
-        timestamp = str(datetime.fromtimestamp(1570749472))
+        timestamp = str(datetime.datetime.fromtimestamp(1570749472))
         housekeepingData = fakeHousekeepingAsDict(timestamp)
         with self.client:
             response = self.client.post(
@@ -62,7 +62,7 @@ class TestHousekeepingService(BaseTestCase):
     def test_post_housekeeping_locally(self):
         """Since local data is wrapped differently than data over http,
         we must send and receive it differently (locally it is a tuple of dicts)"""
-        timestamp = str(datetime.fromtimestamp(1570749472))
+        timestamp = str(datetime.datetime.fromtimestamp(1570749472))
         housekeepingData = fakeHousekeepingAsDict(timestamp)
         housekeepingLogList = HousekeepingLogList()
         response = housekeepingLogList.post(local_data=json.dumps(housekeepingData))
@@ -106,7 +106,7 @@ class TestHousekeepingService(BaseTestCase):
 
     def test_get_all_housekeeping(self):
         """Get all housekeeping that is currently in the database"""
-        timestamp = datetime.fromtimestamp(1570749472)
+        timestamp = datetime.datetime.fromtimestamp(1570749472)
         housekeepingData1 = fakeHousekeepingAsDict(timestamp)
         housekeepingData2 = fakeHousekeepingAsDict(timestamp)
 
@@ -129,8 +129,8 @@ class TestHousekeepingService(BaseTestCase):
 
     def test_get_all_housekeeping_order_by_date(self):
         """Ensure that housekeeping is returned by date"""
-        timestamp1 = datetime.fromtimestamp(1570749472)
-        timestamp2 = datetime.fromtimestamp(1570749502)
+        timestamp1 = datetime.datetime.fromtimestamp(1570749472)
+        timestamp2 = datetime.datetime.fromtimestamp(1570749502)
         housekeepingData1 = fakeHousekeepingAsDict(timestamp1)
         housekeepingData2 = fakeHousekeepingAsDict(timestamp2)
 
@@ -152,7 +152,7 @@ class TestHousekeepingService(BaseTestCase):
             self.assertIn('success', data['status'])
 
     def test_get_all_housekeeping_limit_by(self):
-        timestamp = datetime.fromtimestamp(1570749472)
+        timestamp = datetime.datetime.fromtimestamp(1570749472)
         housekeepingData1 = fakeHousekeepingAsDict(timestamp)
         housekeepingData2 = fakeHousekeepingAsDict(timestamp)
 
@@ -283,7 +283,7 @@ class TestFlightScheduleService(BaseTestCase):
 class TestPassoverService(BaseTestCase):
 
     def test_get_all_passovers_with_empty_db(self):
-        datetimes = [datetime.utcnow() for i in range(5)]
+        datetimes = [datetime.datetime.utcnow() for i in range(5)]
 
         with self.client:
             post_data = json.dumps(fake_passover_as_dict(datetimes))
@@ -310,33 +310,29 @@ class TestPassoverService(BaseTestCase):
             response_data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 400)
 
-    # Ignore for now, testing this is annoying because it relies on dates and mocking dates is annoying
-    # this test doesnt work
-    # def test_get_next_passover_only_with_no_passovers_in_db(self):
-    #
-    #     passover_times = []
-    #     for i in range(5, 25):
-    #         passover_times.append(datetime(2019, 10, i, hour=4, minute=25, second=i))
-    #
-    #     pretend_current_time, correct_next_passover = passover_times[10], passover_times[11]
-    #     passover_times.pop(10)
-    #     for time in passover_times:
-    #         p = Passover(timestamp=time)
-    #         db.session.add(p)
-    #     db.session.commit()
-    #
-    #     with self.client:
-    #         response = self.client.get('/api/passovers?next-only=true')
-    #         response_data = json.loads(response.data.decode())
-    #         self.assertEqual(response.status_code, 200)
-    #         self.assertEqual(len(response_data['data']['passovers']), 1)
-    #         self.assertEqual(str(correct_next_passover), response_data['data']['passovers'][0]['timestamp'])
+    # this test has some solid jank but testing date time is super annoying so its fine for now
+    def test_get_next_passover(self):
 
+        current_time = datetime.datetime.now(datetime.timezone.utc)
+        print('current_time', str(current_time))
+        offset = datetime.timedelta(minutes=90)
+        correct_next_passover = None
+        for i in range(-10, 10, 1):
+            d = current_time + i * offset
+            if i == 0:
+                continue
+            if i == 1:
+                correct_next_passover = d
+                print('correct_next_passover', correct_next_passover)
 
+            p = Passover(timestamp=d)
+            db.session.add(p)
 
+        db.session.commit()
 
-
-
-    #
-    # def test_get_next_passover_only_with_valid_passovers_in_db(self):
-    #     pass
+        with self.client:
+            response = self.client.get('/api/passovers?next-only=true')
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(response_data['data']['passovers']), 1)
+            self.assertEqual(str(correct_next_passover).split('+')[0], response_data['data']['passovers'][0]['timestamp'])
