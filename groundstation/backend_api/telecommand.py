@@ -19,7 +19,7 @@ from groundstation.backend_api.utils import create_context, add_telecommand
 telecommand_blueprint = Blueprint('telecommand', __name__)
 api = Api(telecommand_blueprint)
 
-class Telecommand_service(Resource):
+class TelecommandService(Resource):
 
     @create_context
     def post(self, local_data=None):
