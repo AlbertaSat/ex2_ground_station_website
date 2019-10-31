@@ -20,22 +20,22 @@ class Housekeeping(db.Model):
     __tablename__ = 'housekeeping'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    satelliteMode = db.Column(db.String(32))
-    batteryVoltage = db.Column(db.Float)
-    currentIn = db.Column(db.Float)
-    currentOut = db.Column(db.Float)
-    noMCUResets = db.Column(db.Integer)
-    lastBeaconTime = db.Column(db.DateTime, nullable=False)
+    satellite_mode = db.Column(db.String(32))
+    battery_voltage = db.Column(db.Float)
+    current_in = db.Column(db.Float)
+    current_out = db.Column(db.Float)
+    no_MCU_resets = db.Column(db.Integer)
+    last_beacon_time = db.Column(db.DateTime, nullable=False)
 
     def to_json(self):
         return {
             'id': self.id,
-            'satelliteMode': self.satelliteMode,
-            'batteryVoltage': self.batteryVoltage,
-            'currentIn': self.currentIn,
-            'currentOut': self.currentOut,
-            'noMCUResets': self.noMCUResets,
-            'lastBeaconTime': str(self.lastBeaconTime)
+            'satellite_mode': self.satellite_mode,
+            'battery_voltage': self.battery_voltage,
+            'current_in': self.current_in,
+            'current_out': self.current_out,
+            'no_MCU_resets': self.no_MCU_resets,
+            'last_beacon_time': str(self.last_beacon_time)
         }
 
 class Telecommands(db.Model):
@@ -50,6 +50,7 @@ class Telecommands(db.Model):
 
     def to_json(self):
         return {
+            'command_id': self.id,
             'command_name': self.command_name,
             'num_arguments': self.num_arguments,
             'is_dangerous': self.is_dangerous
@@ -86,4 +87,16 @@ class FlightScheduleCommands(db.Model):
             'flightschedule_command_id': self.id,
             'timestamp': str(self.timestamp),
             'command': self.command.to_json()
+        }
+
+class Passover(db.Model):
+    __tablename__ = 'passovers'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    timestamp = db.Column(db.DateTime)
+
+    def to_json(self):
+        return {
+            'passover_id': self.id,
+            'timestamp': str(self.timestamp)
         }
