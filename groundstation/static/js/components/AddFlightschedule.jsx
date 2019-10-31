@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -19,16 +19,12 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
 import Typography from '@material-ui/core/Typography';
-
-const useStyles = makeStyles({
-  popup: {
-  	zIndex: 1500,
-  },
-});
-
+import Select, { components } from 'react-select';
+	
 const AddFlightschedule = (props) =>{
-	console.log(props.displayDate);
-  	const classes = useStyles();
+  	const selects = props.availCommands.map((command) => (
+		{label: command.commandName, value: command.id}
+	))
 
 	return (
 		<div>
@@ -47,36 +43,37 @@ const AddFlightschedule = (props) =>{
   					  <TableBody>
             			<TableRow>
               				<TableCell>
-                 				<Autocomplete
-		      						className={classes.root}
-      								options={props.availCommands}
-		      						getOptionLabel={option => option.commandName}
-		      						style={{ width: 300 }}
-		      						classes={{
-		            				popup: classes.popup,
-		          				}}
-		          				onChange={(event) => props.handleAddEvent(event, 'command', idx)}
-		      					renderInput={params => (
-		        				<TextField {...params} 
-		        	 				label="Command" 
-		        	 				variant="outlined" 
-		        	 				fullWidth 
-		        	 				InputLabelProps={{
-									shrink: true,
-								 }}
-					        	/>
-					      	    )}
-					    	  />
+              				  <form>
+              					<Select 
+              						className="basic-single"
+        							classNamePrefix="select"
+        							name="color"
+        							options={selects} 
+              						isClearable
+        							placeholder="Command"
+							        styles={{
+							          control: (provided, state) => ({
+							          	...provided,
+							          	padding: '10px 10px',
+							          }),
+							        }}
+              						onChange={(event) => props.handleAddEvent(event, 'command', idx)}
+              						defaultValue={{'label': flighschedule.command.command_name, 
+              										'value': flighschedule.command.command_id}}
+              					/>
+              				  </form>
 			                </TableCell>
 			                <TableCell>
-			                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
-			                    <DateTimePicker 
-			                      label="Timestamp"
-			                      inputVariant="outlined"
-			                      value={props.thisFlightschedule[idx].timestamp}
-			                      onChange={(event) => props.handleAddEvent(event, 'date', idx)}
-			                    />
-			                  </MuiPickersUtilsProvider>
+			                  <form>
+				                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
+				                    <DateTimePicker 
+				                      label="Timestamp"
+				                      inputVariant="outlined"
+				                      value={props.thisFlightschedule[idx].timestamp}
+				                      onChange={(event) => props.handleAddEvent(event, 'date', idx)}
+				                    />
+				                  </MuiPickersUtilsProvider>
+			                  </form>
 			                </TableCell>
 			              </TableRow>
 			          </TableBody>

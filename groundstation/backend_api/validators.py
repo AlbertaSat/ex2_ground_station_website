@@ -1,8 +1,11 @@
 from marshmallow import Schema, fields, validate
 
+class CommandValidator(Schema):
+	command_id = fields.Integer(required=True)
+
 class FlightScheduleCommandValidator(Schema):
-    command_id = fields.Integer(required=True)
     timestamp = fields.DateTime(format='iso', required=True)
+    command = fields.Nested(CommandValidator, required=True)
     #flightschedule_id = fields.Integer(required=True)
 
 class FlightScheduleValidator(Schema):

@@ -92,7 +92,9 @@ class FlightScheduleList(Resource):
         #db.session.add(flightschedule)
 
         for command_data in flightschedule_commands:
-            command = FlightScheduleCommands(**command_data)
+            command_id = command_data['command']['command_id']
+            timestamp = command_data['timestamp']
+            command = FlightScheduleCommands(command_id=command_id, timestamp=timestamp)
             flightschedule.commands.append(command)
             #db.session.add(command)
 

@@ -44,7 +44,7 @@ const FlightScheduleList = (props) => {
                 <Grid item xs={1} style={{textAlign: 'right'}}>
                   <AddIcon 
                             style={{ color: '#4bacb8'}} 
-                            onClick={ (event) => props.handleAddFlightOpenClick(event, 0) }
+                            onClick={ (event) => props.handleAddFlightOpenClick(event) }
                   />
                 </Grid>
             } 
@@ -70,7 +70,7 @@ const FlightScheduleList = (props) => {
                              <TableCell align="right">
                                <AddIcon 
                                  style={{ color: '#4bacb8', marginRight: '20px'}}
-                                 onClick={ (event) => props.handleAddFlightOpenClick(event, idx) }
+                                 onClick={ (event) => props.handleEditCommandClick(event, idx) }
                                />
                                <DeleteIcon 
                                  style={{ color: '#4bacb8'}}
