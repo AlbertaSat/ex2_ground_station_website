@@ -10,7 +10,7 @@ from groundstation.tests.utils import fakeHousekeepingAsDict, fake_flight_schedu
 from groundstation.backend_api.housekeeping import HousekeepingLogList
 from groundstation.backend_api.flightschedule import FlightScheduleList
 from groundstation.backend_api.passover import PassoverList
-from groundstation.backend_api.telecommand import Telecommand_service
+from groundstation.backend_api.telecommand import TelecommandService
 from unittest import mock
 
 class TestHousekeepingService(BaseTestCase):
@@ -178,7 +178,7 @@ class TestHousekeepingService(BaseTestCase):
 #########################################################################
 #Test telecommand model/get and post
 
-class test_telecommand_service(BaseTestCase):
+class TestTelecommandService(BaseTestCase):
 
     def test_post_telecommand(self):
 
@@ -188,7 +188,7 @@ class test_telecommand_service(BaseTestCase):
         'is_dangerous' : False
         }
 
-        service = Telecommand_service()
+        service = TelecommandService()
 
         response = service.post(local_data=json.dumps(command))
         print(response)
