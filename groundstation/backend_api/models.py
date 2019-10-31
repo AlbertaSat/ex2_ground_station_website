@@ -49,6 +49,7 @@ class Telecommands(db.Model):
 
     def to_json(self):
         return {
+            'command_id': self.id,
             'command_name': self.command_name,
             'num_arguments': self.num_arguments
         }
