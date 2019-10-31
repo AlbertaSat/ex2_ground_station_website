@@ -20,41 +20,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
 import Typography from '@material-ui/core/Typography';
 import Select, { components } from 'react-select';
-
-const useStyles = makeStyles({
-  root: {
-  	font: 'inherit',
-  	color: 'currentColor',
-  	padding: '18.5px 14px',
-  },
-});
-
-const customStyles = {
-	control: () => ({
-    // none of react-select's styles are passed to <Control />
-    	alignItems: 'center',
-    	borderColor: 'rgb(204, 204, 204)',
-    	borderRadius: '4px',
-    	borderStyle: 'solid',
-    	borderWidth: '1px',
-    	cursor: 'default',
-    	display: 'flex',
-    	flexWrap: 'wrap',
-    	justifyContent: 'space-between',
-    	position: 'relative',
-    	boxSizing: 'border-box',
-    	padding: '10px 13px',
-
-  })};
-
-
 	
 const AddFlightschedule = (props) =>{
   	const selects = props.availCommands.map((command) => (
 		{label: command.commandName, value: command.id}
 	))
-
-	const classes = useStyles()
 
 	return (
 		<div>
