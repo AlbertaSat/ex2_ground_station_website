@@ -39,7 +39,7 @@ function App(props) {
                                   </a>
                                 <a 
                                   className={`link-items ${classes.navbarLinks}`} 
-                                  href="/#">
+                                  href="/housekeeping">
                                   Housekeeping
                                 </a>
                                 <a 
