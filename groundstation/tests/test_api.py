@@ -4,11 +4,13 @@ import json
 import datetime
 from groundstation.tests.base import BaseTestCase
 from groundstation import db
-from groundstation.backend_api.models import Housekeeping, FlightSchedules, Passover
+
+from groundstation.backend_api.models import Housekeeping, FlightSchedules, Passover, Telecommands
 from groundstation.tests.utils import fakeHousekeepingAsDict, fake_flight_schedule_as_dict, fake_passover_as_dict
 from groundstation.backend_api.housekeeping import HousekeepingLogList
 from groundstation.backend_api.flightschedule import FlightScheduleList
 from groundstation.backend_api.passover import PassoverList
+from groundstation.backend_api.telecommand import TelecommandService
 from unittest import mock
 
 class TestHousekeepingService(BaseTestCase):
@@ -172,6 +174,31 @@ class TestHousekeepingService(BaseTestCase):
             self.assertIn('Passive', data['data']['logs'][0]['satellite_mode'])
             self.assertIn('success', data['status'])
 
+
+#########################################################################
+#Test telecommand model/get and post
+
+class TestTelecommandService(BaseTestCase):
+
+    def test_post_telecommand(self):
+
+        command = {
+        'command_name' : "TEST_COMMAND",
+        'num_args' : 0,
+        'is_dangerous' : False
+        }
+
+        service = TelecommandService()
+
+        response = service.post(local_data=json.dumps(command))
+        print(response)
+        # data = json.loads(response.data.decode())
+        self.assertEqual(response[1], 201)
+        self.assertIn('success', response[0]['status'])
+        self.assertIn(f'Command {command["command_name"]} was added!', response[0]['message'])
+
+#########################################################################
+#Test flight schedule functions
 class TestFlightScheduleService(BaseTestCase):
 
     def test_post_with_no_commands(self):
@@ -234,6 +261,7 @@ class TestFlightScheduleService(BaseTestCase):
             self.assertIn('A Queued flight schedule already exists!', response_data['message'])
 
     # TODO: Test with actuall command objects in the post data
+
 
 
     def test_get_all_flightschedules(self):

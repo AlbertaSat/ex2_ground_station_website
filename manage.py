@@ -40,15 +40,15 @@ def seed_db():
     db.session.commit()
 
     commands = {
-        'ping':0,
-        'get-hk':0,
-        'turn-on':1,
-        'turn-off':1,
-        'set-fs':1
+        'ping': (0,False),
+        'get-hk':(0,False),
+        'turn-on':(1,True),
+        'turn-off':(1,True),
+        'set-fs':(1,True),
     }
 
-    for name, num_args in commands.items():
-        c = add_telecommand(command_name=name, num_arguments=num_args)
+    for name, (num_args, is_danger) in commands.items():
+        c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
 
     command = Telecommands.query.filter_by(command_name='ping').first()
     flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp)

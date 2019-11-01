@@ -19,9 +19,10 @@ def create_context(function):
              return function(*args, **kwargs)
 
     return decorate
+    
+def add_telecommand(command_name, num_arguments, is_dangerous):
+		command = Telecommands(command_name=command_name, num_arguments=num_arguments, is_dangerous=is_dangerous)
 
-def add_telecommand(command_name, num_arguments):
-		command = Telecommands(command_name=command_name, num_arguments=num_arguments)
 		db.session.add(command)
 		db.session.commit()
 		return command

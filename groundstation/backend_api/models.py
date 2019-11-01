@@ -45,13 +45,15 @@ class Telecommands(db.Model):
     command_name = db.Column(db.String(64))
     num_arguments = db.Column(db.Integer)
     flightschedulecommands = db.relationship('FlightScheduleCommands', backref='command', lazy=True)
+    is_dangerous = db.Column(db.Boolean)
 
 
     def to_json(self):
         return {
             'command_id': self.id,
             'command_name': self.command_name,
-            'num_arguments': self.num_arguments
+            'num_arguments': self.num_arguments,
+            'is_dangerous': self.is_dangerous
         }
 
 class FlightSchedules(db.Model):
