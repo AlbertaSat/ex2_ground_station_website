@@ -10,12 +10,14 @@ class FlightSchedule extends Component{
 			empty: true,
 			addFlightOpen: false,
 			deleteFlightOpen: false,
+			editFlight: false,
 			allflightschedules: [],
 			queuedflightschedule: [],
 			thisFlightscheduleCommands: [{'command': {'command_id': ''}, 'timestamp': null}],
 			thisFlightscheduleId: null,
 			availCommands: [{ commandName: 'ping', id: 1 },
   							{ commandName: 'get_hk', id: 2 }],
+  			patchCommands: []
 		}
 		this.handleAddFlightOpenClick = this.handleAddFlightOpenClick.bind(this);
 		this.handleDeleteFlightOpenClick = this.handleDeleteFlightOpenClick.bind(this);
@@ -44,6 +46,7 @@ class FlightSchedule extends Component{
 
 		this.setState({
 						addFlightOpen: !this.state.addFlightOpen,
+						editFlight: false,
 						thisFlightscheduleCommands: [{'command': {'command_id': ''}, 'timestamp': null}],
 					});
 	};
@@ -82,28 +85,44 @@ class FlightSchedule extends Component{
 	}
 
 	handleAddEvent(event, type, idx){
-		console.log(event)
+		console.log('event', event)
 		const obj = this.state.thisFlightscheduleCommands.slice();
 		if(type=='date'){
 			obj[idx].timestamp = event.toISOString();
 		}else{
 			obj[idx].command.command_id = event.value;
+			obj[idx].command.command_name = event.label;
 		}
+
+		if(this.state.editFlight){
+			obj[idx].op = 'replace'
+		}
+		// we have to handle the case where an object is being edited,
+		// however it is newly created, so deleting it shouldnt be
+		// patched to the database
 		this.setState({thisFlightscheduleCommands: obj})
 		console.log(this.state.thisFlightscheduleCommands);
 	}
 
 	handleAddCommandClick(event){
 		const obj = this.state.thisFlightscheduleCommands.slice();
-		obj.push({'command' : {'command_id': ''}, 'timestamp': null})
+		let comm = {'command' : {'command_id': ''}, 'timestamp': null}
+		// if we are editing add a condition for adding
+		if(this.state.editFlight){
+			comm.opt = 'add'
+		}
+		obj.push(comm)
 		this.setState({thisFlightscheduleCommands: obj})
 	}
 
 	handleEditCommandClick(event, idx){
-		const obj = this.state.allflightschedules[idx].commands.slice()
-		console.log(obj);
+		event.preventDefault();
+		const obj = this.state.allflightschedules[idx].commands.map((command) => (
+			{...command, op: 'none'}
+		))
 		this.setState({addFlightOpen: !this.state.addFlightOpen,
-						thisFlightscheduleCommands: obj})
+						thisFlightscheduleCommands: obj,
+						'editFlight': true})
 	}
 
 
