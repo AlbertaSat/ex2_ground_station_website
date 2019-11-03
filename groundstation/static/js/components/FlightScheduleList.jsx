@@ -8,6 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -43,7 +44,7 @@ const FlightScheduleList = (props) => {
               !props.isMinified &&
                 <Grid item xs={1} style={{textAlign: 'right'}}>
                   <AddIcon 
-                            style={{ color: '#4bacb8'}} 
+                            style={{ color: '#4bacb8', fontSize: '2rem'}} 
                             onClick={ (event) => props.handleAddFlightOpenClick(event) }
                   />
                 </Grid>
@@ -68,7 +69,7 @@ const FlightScheduleList = (props) => {
                         {
                           !props.isMinified && 
                              <TableCell align="right">
-                               <AddIcon 
+                               <EditIcon
                                  style={{ color: '#4bacb8', marginRight: '20px'}}
                                  onClick={ (event) => props.handleEditCommandClick(event, idx) }
                                />

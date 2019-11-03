@@ -100,6 +100,7 @@ class FlightSchedule extends Component{
 	}
 
 	handleEditCommandClick(event, idx){
+		event.preventDefault();
 		const obj = this.state.allflightschedules[idx].commands.slice()
 		console.log(obj);
 		this.setState({addFlightOpen: !this.state.addFlightOpen,
