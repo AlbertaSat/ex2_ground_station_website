@@ -41,3 +41,7 @@
 .number{
   font-size: 2.4em;
 }
+
+.MuiList-padding {
+  padding-top: 80px !important;
+}
