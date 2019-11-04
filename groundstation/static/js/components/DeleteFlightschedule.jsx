@@ -21,10 +21,10 @@ const DeleteFlightschedule = (props) =>{
 		      </DialogContentText>
 		    </DialogContent>
 		    <DialogActions>
-              <Button onClick={ (event) => props.handleDeleteFlightOpenClick(event) } color="primary">
+              <Button onClick={ (event) => props.deleteFlightschedule(event) } color="primary">
                 Yes
              </Button>
-             <Button onClick={ (event) => props.handleDeleteFlightOpenClick(event) } color="primary">
+             <Button onClick={ (event) => props.handleDeleteFlightClose(event) } color="primary">
                No
              </Button>
             </DialogActions>

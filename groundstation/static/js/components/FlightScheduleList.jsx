@@ -76,7 +76,8 @@ const FlightScheduleList = (props) => {
                                />
                                <DeleteIcon 
                                  style={{ color: '#4bacb8'}}
-                                 onClick={ (event) => props.handleDeleteFlightOpenClick(event) }
+                                 onClick={ (event) => props.handleDeleteFlightOpenClick(event, idx,
+                                                    flightschedule.flightschedule_id)}
                                />
                              </TableCell>
                         }

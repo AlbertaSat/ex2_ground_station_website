@@ -63,7 +63,7 @@ class FlightSchedules(db.Model):
     creation_date = db.Column(db.DateTime, default=datetime.utcnow)
     upload_date = db.Column(db.DateTime)
     is_queued = db.Column(db.Boolean, default=False)
-    commands = db.relationship('FlightScheduleCommands', backref='flightschedule', lazy=True)
+    commands = db.relationship('FlightScheduleCommands', backref='flightschedule', lazy=True, cascade='all')
 
     def to_json(self):
         return {
