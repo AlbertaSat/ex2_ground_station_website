@@ -5,7 +5,7 @@ import datetime
 from groundstation.tests.base import BaseTestCase
 from groundstation import db
 
-from groundstation.backend_api.models import Housekeeping, FlightSchedules, Passover, Telecommands
+from groundstation.backend_api.models import Housekeeping, FlightSchedules, Passover, Telecommands, FlightScheduleCommands
 from groundstation.tests.utils import fakeHousekeepingAsDict, fake_flight_schedule_as_dict, fake_passover_as_dict, fake_patch_update_as_dict
 from groundstation.backend_api.housekeeping import HousekeepingLogList
 from groundstation.backend_api.flightschedule import FlightScheduleList
@@ -345,6 +345,33 @@ class TestFlightScheduleService(BaseTestCase):
             self.assertEqual(len(response_data['data']['commands']), 3)
             self.assertEqual(response_data['data']['commands'][0]['command']['command_id'], 2)
             self.assertEqual(response_data['data']['commands'][2]['command']['command_id'], 1)
+
+    def test_delete_flightschedule(self):
+        timestamp = datetime.datetime.fromtimestamp(1570749472)
+        commands = {
+            'ping': (0,False),
+            'get-hk':(0,False),
+        }
+        for name, (num_args, is_danger) in commands.items():
+            c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
+
+        command1 = Telecommands.query.filter_by(command_name='ping').first()
+        flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp)
+        flightschedule_commands = add_command_to_flightschedule(
+                                timestamp=timestamp,
+                                flightschedule_id=flightschedule.id,
+                                command_id=command1.id
+                            )
+        with self.client:
+            response = self.client.delete(f'api/flightschedules/{flightschedule.id}')
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(FlightSchedules.query.filter_by(id=flightschedule.id).first(), None)
+            self.assertEqual(
+                FlightScheduleCommands.query.filter_by(id=flightschedule_commands.id).first(), 
+                None
+            )
+
+
 
 
 

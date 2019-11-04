@@ -83,6 +83,25 @@ class Flightschedule(Resource):
 
         return response_object, 200
 
+    @create_context
+    def delete(self, flightschedule_id):
+        flightschedule = FlightSchedules.query.filter_by(id=flightschedule_id).first()
+
+        if not flightschedule:
+            response_object = {'status': 'fail', 'message': 'Flightschedule does not exist'}
+            return response_object, 404
+
+        db.session.delete(flightschedule)
+        db.session.commit()
+
+        response_object = {
+            'status': 'success',
+            'message': 'flightschedule succesfully deleted'
+        }
+
+        return response_object, 200
+
+
 
 class FlightScheduleList(Resource):
 

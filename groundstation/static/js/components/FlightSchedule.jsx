@@ -26,6 +26,8 @@ class FlightSchedule extends Component{
 		this.addFlightschedule = this.addFlightschedule.bind(this);
 		this.handleAddCommandClick = this.handleAddCommandClick.bind(this);
 		this.handleEditCommandClick = this.handleEditCommandClick.bind(this);
+		this.deleteFlightschedule = this.deleteFlightschedule.bind(this);
+		this.handleDeleteFlightClose = this.handleDeleteFlightClose.bind(this);
 	}
 
 	componentDidMount(){
@@ -54,12 +56,47 @@ class FlightSchedule extends Component{
 					});
 	};
 
-	handleDeleteFlightOpenClick(event){
+	// handle opening of delete flight schedule dialog
+	handleDeleteFlightOpenClick(event, idx, id){
 		event.preventDefault();
 		event.stopPropagation();
-		this.setState({deleteFlightOpen: !this.state.deleteFlightOpen});
+		this.setState({deleteFlightOpen: !this.state.deleteFlightOpen,
+						thisFlightscheduleId: id,
+						thisIndex: idx});
 	}
 
+	//handle closing of delete flight schedule dialog
+	handleDeleteFlightClose(event){
+		event.preventDefault();
+		this.setState({deleteFlightOpen: false,
+						thisFlightscheduleId: null,
+						thisIndex: null});
+	}
+
+	// handle deletion of flight schedule
+	deleteFlightschedule(event){
+		event.preventDefault();
+		fetch('/api/flightschedules/' + this.state.thisFlightscheduleId, {
+			method: 'DELETE',
+		}).then(results => {
+			return results.json();
+		}).then(data => {
+			console.log(data);
+			if(data.status == 'success'){
+				console.log(this.state.thisIndex);
+				const obj = this.state.allflightschedules.slice();
+				obj.splice(this.state.thisIndex, 1)
+				console.log(obj)
+				this.setState({deleteFlightOpen: false,
+								thisIndex: null,
+								thisFlightscheduleId: null,
+								allflightschedules: obj})
+
+			}
+		})
+	}
+
+	// add or patch a flightschedule
 	addFlightschedule(event){
 		event.preventDefault();
 		// dependent on what state we are in, the url or method changes
@@ -89,12 +126,12 @@ class FlightSchedule extends Component{
 					obj.push(data.data);
 				}
 				this.setState({addFlightOpen: !this.state.addFlightOpen,
-				thisFlightscheduleCommands: 
-					[{'command': {'command_id': ''}, 'timestamp': ''}],
-				allflightschedules: obj,
-				editFlight: false,
-				thisIndex: null,
-				thisFlightscheduleId: null,
+					thisFlightscheduleCommands: 
+						[{'command': {'command_id': ''}, 'timestamp': ''}],
+					allflightschedules: obj,
+					editFlight: false,
+					thisIndex: null,
+					thisFlightscheduleId: null,
 				})
 			}
 		});
@@ -171,6 +208,8 @@ class FlightSchedule extends Component{
     		  <DeleteFlightschedule
     		    open={this.state.deleteFlightOpen}
     		    handleDeleteFlightOpenClick={this.handleDeleteFlightOpenClick}
+    		    deleteFlightschedule={this.deleteFlightschedule}
+    		    handleDeleteFlightClose={this.handleDeleteFlightClose}
     		  />
   			</div>
 		)
