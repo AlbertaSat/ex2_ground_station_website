@@ -34,7 +34,7 @@ function tableColor(status){
   //#f44336 Danger
 }
 
-const HousekeepingLogList = (props) => {
+const HousekeepingLogListCompact = (props) => {
 	if (props.empty) {
       return (
         <div>
@@ -116,4 +116,4 @@ const HousekeepingLogList = (props) => {
 	)
 };
 
-export default HousekeepingLogList;
+export default HousekeepingLogListCompact;
