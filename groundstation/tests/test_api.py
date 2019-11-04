@@ -6,11 +6,13 @@ from groundstation.tests.base import BaseTestCase
 from groundstation import db
 
 from groundstation.backend_api.models import Housekeeping, FlightSchedules, Passover, Telecommands
-from groundstation.tests.utils import fakeHousekeepingAsDict, fake_flight_schedule_as_dict, fake_passover_as_dict
+from groundstation.tests.utils import fakeHousekeepingAsDict, fake_flight_schedule_as_dict, fake_passover_as_dict, fake_patch_update_as_dict
 from groundstation.backend_api.housekeeping import HousekeepingLogList
 from groundstation.backend_api.flightschedule import FlightScheduleList
 from groundstation.backend_api.passover import PassoverList
 from groundstation.backend_api.telecommand import TelecommandService
+from groundstation.backend_api.utils import add_telecommand, add_flight_schedule, add_command_to_flightschedule
+
 from unittest import mock
 
 class TestHousekeepingService(BaseTestCase):
@@ -307,6 +309,45 @@ class TestFlightScheduleService(BaseTestCase):
             response_data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response_data['data']['flightschedule_id'], id)
+
+    def test_patch_flight_schedule(self):
+        timestamp = datetime.datetime.fromtimestamp(1570749472)
+        commands = {
+            'ping': (0,False),
+            'get-hk':(0,False),
+        }
+
+        for name, (num_args, is_danger) in commands.items():
+            c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
+
+        command1 = Telecommands.query.filter_by(command_name='ping').first()
+        command2 = Telecommands.query.filter_by(command_name='get-hk').first()
+        flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp)
+        flightschedule_commands1 = add_command_to_flightschedule(
+                                timestamp=timestamp,
+                                flightschedule_id=flightschedule.id,
+                                command_id=command1.id
+                            )
+        flightschedule_commands2 = add_command_to_flightschedule(
+                                timestamp=timestamp,
+                                flightschedule_id=flightschedule.id,
+                                command_id=command2.id
+                            )
+        post_data = json.dumps(fake_patch_update_as_dict(timestamp))
+        with self.client:
+            response = self.client.patch(
+                f'api/flightschedules/{flightschedule.id}',
+                data=post_data,
+                content_type='application/json'
+            )
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(response_data['data']['commands']), 3)
+            self.assertEqual(response_data['data']['commands'][0]['command']['command_id'], 2)
+            self.assertEqual(response_data['data']['commands'][2]['command']['command_id'], 1)
+
+
+
 
 class TestPassoverService(BaseTestCase):
 

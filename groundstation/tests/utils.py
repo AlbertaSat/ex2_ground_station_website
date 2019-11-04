@@ -25,3 +25,11 @@ def fake_passover_as_dict(timestamps):
     return {
         'passovers':[{'timestamp':str(timestamp)} for timestamp in timestamps]
     }
+
+def fake_patch_update_as_dict(timestamp):
+    return {'is_queued': False, 
+            'commands': [
+                {'op': 'replace', 'flightschedule_command_id': 1, 'timestamp': str(timestamp), 'command': {'command_id': 2}},
+                {'op': 'add', 'timestamp': str(timestamp), 'command': {'command_id': 1}}
+            ]
+        }
