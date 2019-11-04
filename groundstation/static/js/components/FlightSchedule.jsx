@@ -28,6 +28,7 @@ class FlightSchedule extends Component{
 		this.handleEditCommandClick = this.handleEditCommandClick.bind(this);
 		this.deleteFlightschedule = this.deleteFlightschedule.bind(this);
 		this.handleDeleteFlightClose = this.handleDeleteFlightClose.bind(this);
+		this.handleDeleteCommandClick = this.handleDeleteCommandClick.bind(this);
 	}
 
 	componentDidMount(){
@@ -171,6 +172,20 @@ class FlightSchedule extends Component{
 		this.setState({thisFlightscheduleCommands: obj})
 	}
 
+	// handle deleting a command
+	handleDeleteCommandClick(event, idx){
+		const obj = this.state.thisFlightscheduleCommands.slice();
+		// if a flight schedule is newly created we just want to remove it
+		if(obj[idx].op == 'none' || obj[idx].op == 'replace'){
+			obj[idx].op = 'remove'
+		}else{
+			obj.splice(idx, 1)
+		}
+		this.setState({thisFlightscheduleCommands: obj})
+		console.log(this.state.thisFlightscheduleCommands);
+	}
+
+	// handle opening the editing dialog
 	handleEditCommandClick(event, idx, id){
 		event.preventDefault();
 		event.stopPropagation();
@@ -204,6 +219,7 @@ class FlightSchedule extends Component{
     			availCommands={this.state.availCommands}
     			addFlightschedule={this.addFlightschedule}
     			handleAddCommandClick={this.handleAddCommandClick}
+    			handleDeleteCommandClick={this.handleDeleteCommandClick}
     		  />
     		  <DeleteFlightschedule
     		    open={this.state.deleteFlightOpen}

@@ -71,6 +71,9 @@ class Flightschedule(Resource):
                 this_command = FlightScheduleCommands.query.filter_by(id=command['flightschedule_command_id']).first()
                 this_command.timestamp = command['timestamp']
                 this_command.command_id = command['command']['command_id']
+            elif command['op'] == 'remove':
+                this_command = FlightScheduleCommands.query.filter_by(id=command['flightschedule_command_id']).first()
+                db.session.delete(this_command)
             else:
                 pass
 
