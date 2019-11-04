@@ -58,8 +58,6 @@ def seed_db():
                                 command_id=command.id
                             )
 
-    print(flightschedule.to_json())
-
 
 if __name__ == '__main__':
     cli()

@@ -71,7 +71,8 @@ const FlightScheduleList = (props) => {
                              <TableCell align="right">
                                <EditIcon
                                  style={{ color: '#4bacb8', marginRight: '20px'}}
-                                 onClick={ (event) => props.handleEditCommandClick(event, idx) }
+                                 onClick={ (event) => props.handleEditCommandClick(event, idx, 
+                                                      flightschedule.flightschedule_id) }
                                />
                                <DeleteIcon 
                                  style={{ color: '#4bacb8'}}

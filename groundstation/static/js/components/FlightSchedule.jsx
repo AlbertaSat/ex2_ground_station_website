@@ -15,6 +15,7 @@ class FlightSchedule extends Component{
 			queuedflightschedule: [],
 			thisFlightscheduleCommands: [{'command': {'command_id': ''}, 'timestamp': null}],
 			thisFlightscheduleId: null,
+			thisIndex: null,
 			availCommands: [{ commandName: 'ping', id: 1 },
   							{ commandName: 'get_hk', id: 2 }],
   			patchCommands: []
@@ -47,6 +48,8 @@ class FlightSchedule extends Component{
 		this.setState({
 						addFlightOpen: !this.state.addFlightOpen,
 						editFlight: false,
+						thisFlightscheduleId: null,
+						thisIndex: null,
 						thisFlightscheduleCommands: [{'command': {'command_id': ''}, 'timestamp': null}],
 					});
 	};
@@ -59,10 +62,15 @@ class FlightSchedule extends Component{
 
 	addFlightschedule(event){
 		event.preventDefault();
+		// dependent on what state we are in, the url or method changes
 		let data = {is_queued: false, commands: this.state.thisFlightscheduleCommands}
+		let url = (this.state.editFlight)? 
+			'/api/flightschedules/' +  this.state.thisFlightscheduleId : 
+			'/api/flightschedules'
+		let method = (this.state.editFlight)? 'PATCH' : 'POST'
 		console.log('posted data', data);
-		fetch('/api/flightschedules', {
-			method: 'POST',
+		fetch(url, {
+			method: method,
 			headers: {
       		  'Content-Type': 'application/json'
       		},
@@ -74,11 +82,20 @@ class FlightSchedule extends Component{
 
 			if(data.status == 'success'){
 				const obj = this.state.allflightschedules.slice();
-				obj.push(data.data);
+				// depending on what we are doing, we handle the resulting data differently
+				if(this.state.editFlight){
+					obj[this.state.thisIndex] = data.data;
+				}else{
+					obj.push(data.data);
+				}
 				this.setState({addFlightOpen: !this.state.addFlightOpen,
 				thisFlightscheduleCommands: 
 					[{'command': {'command_id': ''}, 'timestamp': ''}],
-				allflightschedules: obj,})
+				allflightschedules: obj,
+				editFlight: false,
+				thisIndex: null,
+				thisFlightscheduleId: null,
+				})
 			}
 		});
 
@@ -94,7 +111,9 @@ class FlightSchedule extends Component{
 			obj[idx].command.command_name = event.label;
 		}
 
-		if(this.state.editFlight){
+		// if a command was created and then edited, we consider it added
+		// and not replaced, only existing commands can be replaced
+		if(this.state.editFlight && obj[idx].op != 'add'){
 			obj[idx].op = 'replace'
 		}
 		// we have to handle the case where an object is being edited,
@@ -109,20 +128,23 @@ class FlightSchedule extends Component{
 		let comm = {'command' : {'command_id': ''}, 'timestamp': null}
 		// if we are editing add a condition for adding
 		if(this.state.editFlight){
-			comm.opt = 'add'
+			comm.op = 'add'
 		}
 		obj.push(comm)
 		this.setState({thisFlightscheduleCommands: obj})
 	}
 
-	handleEditCommandClick(event, idx){
+	handleEditCommandClick(event, idx, id){
 		event.preventDefault();
+		event.stopPropagation();
 		const obj = this.state.allflightschedules[idx].commands.map((command) => (
 			{...command, op: 'none'}
 		))
 		this.setState({addFlightOpen: !this.state.addFlightOpen,
 						thisFlightscheduleCommands: obj,
-						'editFlight': true})
+						editFlight: true,
+						thisFlightscheduleId: id,
+						thisIndex: idx})
 	}
 
 
