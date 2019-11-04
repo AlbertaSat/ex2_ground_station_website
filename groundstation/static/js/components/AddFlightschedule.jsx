@@ -5,6 +5,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import DeleteIcon from '@material-ui/icons/Delete';
 import DialogActions from '@material-ui/core/DialogActions';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import Table from '@material-ui/core/Table';
@@ -40,6 +41,8 @@ const AddFlightschedule = (props) =>{
 		      <Table aria-label="simple table">
 		        {
 		          props.thisFlightschedule.map((flighschedule, idx) => (
+		          	// if flight schedule command is to be removed, dont display it anymore
+		            flighschedule.op != 'remove' &&
   					  <TableBody>
             			<TableRow>
               				<TableCell>
@@ -74,6 +77,12 @@ const AddFlightschedule = (props) =>{
 				                    />
 				                  </MuiPickersUtilsProvider>
 			                  </form>
+			                </TableCell>
+			                <TableCell>
+			                	<DeleteIcon 
+                                 style={{ color: '#4bacb8'}}
+                                 onClick={(event) => props.handleDeleteCommandClick(event, idx)}
+                               />
 			                </TableCell>
 			              </TableRow>
 			          </TableBody>
