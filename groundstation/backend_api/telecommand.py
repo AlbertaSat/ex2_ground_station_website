@@ -66,6 +66,3 @@ class TelecommandService(Resource):
         return response_object, 201
 
 
-
-        return response_object, 200
-
