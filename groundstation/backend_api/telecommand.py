@@ -24,7 +24,7 @@ class TelecommandService(Resource):
     @create_context
     def post(self, local_data=None):
         
-        """Post a telecommand"""
+        #"""Post a telecommand"""
         # this api call will have to treat incoming data different if it is called locally
         response_object = {
             'status': 'fail',
@@ -64,5 +64,46 @@ class TelecommandService(Resource):
         }
 
         return response_object, 201
+
+    def get(self, local_data=None):
+        #get all telecommands
+        #add an optional field to fetch a specific command?
+
+        response_object = {
+            'status': 'fail',
+            'message': 'no commands'
+        }
+
+        if not local_data:
+            try:
+                post_data = request.get_json()
+        else:
+            try:
+                post_data = json.loads(local_data)
+
+        #add option of searching individual command
+        if not local_data:
+            commList = Telecommands.query.all()
+
+            response_object = {
+                'status': 'success',
+                'message': 'returned all commands'
+                'data': {
+                    'commands': {command.to_json() for command in commList}
+                }
+
+            }
+            
+            return response_object, 200
+
+        else:
+            command = Telecommands.filter_by(id=post_data['id'])
+
+            response_object = {
+                'status': 'success',
+                'data': command.to_json()
+            }
+
+            return response_object, 200
 
 
