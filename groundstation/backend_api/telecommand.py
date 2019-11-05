@@ -74,36 +74,40 @@ class TelecommandService(Resource):
             'message': 'no commands'
         }
 
+        post_data = None
+
         if not local_data:
-            try:
-                post_data = request.get_json()
+            post_data = request.get_json()
         else:
-            try:
-                post_data = json.loads(local_data)
+            post_data = json.loads(local_data)
 
-        #add option of searching individual command
-        if not local_data:
-            commList = Telecommands.query.all()
+        command = Telecommands.filter_by(id=post_data['id']).first()
 
-            response_object = {
-                'status': 'success',
-                'message': 'returned all commands'
-                'data': {
-                    'commands': {command.to_json() for command in commList}
-                }
+        response_object = {
+            'status': 'success',
+            'data': command.to_json()
+        }
 
+        return response_object, 200
+
+
+class TelecommandList(Resource):
+
+    @create_context
+    def get(self):
+
+        commList = Telecommands.query.all()
+
+        response_object = {
+            'status': 'success',
+            'message': 'returned all commands'
+            'data': {
+                'commands': {command.to_json() for command in commList}
             }
-            
-            return response_object, 200
 
-        else:
-            command = Telecommands.filter_by(id=post_data['id'])
+        }
 
-            response_object = {
-                'status': 'success',
-                'data': command.to_json()
-            }
+        return response_object, 200
 
-            return response_object, 200
-
-
+api.add_resource(TelecommandService, 'api.telecommandservie/<telecommand_id>')
+api.add_resource(TelecommandList,'api/telecommandlist')
