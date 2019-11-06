@@ -33,3 +33,9 @@ def fake_patch_update_as_dict(timestamp):
                 {'op': 'add', 'timestamp': str(timestamp), 'command': {'command_id': 1}}
             ]
         }
+
+def fake_telecommand_as_dict():
+    return {'command_name': 'TEST_COMMAND',
+            'num_arguments': 0,
+            'is_dangerous': False
+    }

@@ -6,11 +6,11 @@ from groundstation.tests.base import BaseTestCase
 from groundstation import db
 
 from groundstation.backend_api.models import Housekeeping, FlightSchedules, Passover, Telecommands, FlightScheduleCommands
-from groundstation.tests.utils import fakeHousekeepingAsDict, fake_flight_schedule_as_dict, fake_passover_as_dict, fake_patch_update_as_dict
+from groundstation.tests.utils import fakeHousekeepingAsDict, fake_flight_schedule_as_dict, fake_passover_as_dict, fake_patch_update_as_dict, fake_telecommand_as_dict
 from groundstation.backend_api.housekeeping import HousekeepingLogList
 from groundstation.backend_api.flightschedule import FlightScheduleList
 from groundstation.backend_api.passover import PassoverList
-from groundstation.backend_api.telecommand import TelecommandService
+from groundstation.backend_api.telecommand import TelecommandService, TelecommandList
 from groundstation.backend_api.utils import add_telecommand, add_flight_schedule, add_command_to_flightschedule
 
 from unittest import mock
@@ -193,11 +193,40 @@ class TestTelecommandService(BaseTestCase):
         service = TelecommandService()
 
         response = service.post(local_data=json.dumps(command))
-        print(response)
+        # print(response)
         # data = json.loads(response.data.decode())
         self.assertEqual(response[1], 201)
-        self.assertIn('success', response[0]['status'])
-        self.assertIn(f'Command {command["command_name"]} was added!', response[0]['message'])
+        self.assertEqual('success', response[0]['status'])
+        self.assertEqual(f'Command {command["command_name"]} was added!', response[0]['message'])
+
+    def test_get_telecommand(self):
+        """Test getting a telecommand by name"""
+
+        test_command = fake_telecommand_as_dict()
+
+        telecommand = Telecommands(**test_command)
+        db.session.add(telecommand)
+        db.session.commit()
+
+        with self.client:
+            response = self.client.get(f'/api/telecommands/{telecommand.command_name}')
+            # print(response)
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual('TEST_COMMAND', data['data']['command_name'])
+            self.assertEqual(0, data['data']['num_arguments'])
+            # print(data['data'])
+            self.assertEqual(False, data['data']['is_dangerous'])
+
+def test_get_telecommand_with_invalid_command_name(self):
+        """Test getting invalid command name"""
+
+        with self.client:
+            response = self.client.get('/api/telecommands/INVALID_TEST_NAME')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 404)
+            self.assertEqual(response[0].message, 'telecommand does not exist')
+
 
 #########################################################################
 #Test flight schedule functions

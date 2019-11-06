@@ -49,7 +49,7 @@ class TelecommandService(Resource):
             #converting types and checking correct values
             #post_data[''] =
             pass
-        except (ValueError, TypeError, KeyError) as error:
+        except (ValueError, TypeError, KeyError):
             return response_object, 400
 
 
@@ -65,30 +65,27 @@ class TelecommandService(Resource):
 
         return response_object, 201
 
-    def get(self, local_data=None):
+    def get(self, telecommand_id):
         #get all telecommands
         #add an optional field to fetch a specific command?
 
         response_object = {
             'status': 'fail',
-            'message': 'no commands'
+            'message': 'telecommand does not exist'
         }
 
-        post_data = None
 
-        if not local_data:
-            post_data = request.get_json()
+        command = Telecommands.query.filter_by(command_name=telecommand_id).first()
+
+        if not command:
+            return response_object, 404
         else:
-            post_data = json.loads(local_data)
+            response_object = {
+                'status': 'success',
+                'data': command.to_json()
+            }
 
-        command = Telecommands.filter_by(id=post_data['id']).first()
-
-        response_object = {
-            'status': 'success',
-            'data': command.to_json()
-        }
-
-        return response_object, 200
+            return response_object, 200
 
 
 class TelecommandList(Resource):
@@ -100,14 +97,14 @@ class TelecommandList(Resource):
 
         response_object = {
             'status': 'success',
-            'message': 'returned all commands'
+            'message': 'returned all commands',
             'data': {
-                'commands': {command.to_json() for command in commList}
+                'commands': [command.to_json() for command in commList]
             }
 
         }
 
         return response_object, 200
 
-api.add_resource(TelecommandService, 'api.telecommandservie/<telecommand_id>')
-api.add_resource(TelecommandList,'api/telecommandlist')
+api.add_resource(TelecommandService, '/api/telecommands/<telecommand_id>')
+api.add_resource(TelecommandList,'/api/telecommandlist')
