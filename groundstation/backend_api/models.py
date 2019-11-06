@@ -81,13 +81,30 @@ class FlightScheduleCommands(db.Model):
     command_id = db.Column(db.Integer, db.ForeignKey('telecommands.id'), nullable=False)
     timestamp = db.Column(db.DateTime)
     flightschedule_id = db.Column(db.Integer, db.ForeignKey('flightschedules.id'), nullable=False)
+    arguments = db.relationship('FlightScheduleCommandsArgs', backref='flightschedulecommand', lazy=True, cascade='all')
 
     def to_json(self):
         return {
             'flightschedule_command_id': self.id,
             'timestamp': str(self.timestamp),
-            'command': self.command.to_json()
+            'command': self.command.to_json(),
+            'args': [arg.to_json() for arg in self.arguments]
         }
+
+class FlightScheduleCommandsArgs(db.Model):
+    __tablename__ = 'flightschedulecommandsargs'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    index = db.Column(db.Integer)
+    argument = db.Column(db.String(8))
+    flightschedulecommand_id = db.Column(db.Integer, db.ForeignKey('flightschedulecommands.id'), nullable=False)
+
+    def to_json(self):
+        return {
+            'index': self.index,
+            'argument': self.argument
+        }
+
 
 class Passover(db.Model):
     __tablename__ = 'passovers'

@@ -9,7 +9,8 @@ from groundstation import create_app, db
 from groundstation.backend_api.models import User, Housekeeping, Telecommands
 from groundstation.tests.utils import fakeHousekeepingAsDict
 from groundstation.backend_api.housekeeping import HousekeepingLogList
-from groundstation.backend_api.utils import add_telecommand, add_flight_schedule, add_command_to_flightschedule
+from groundstation.backend_api.utils import add_telecommand, add_flight_schedule, add_command_to_flightschedule, \
+add_arg_to_flightschedulecommand
 
 app = create_app()
 cli = FlaskGroup(create_app=create_app)
@@ -57,6 +58,21 @@ def seed_db():
                                 flightschedule_id=flightschedule.id,
                                 command_id=command.id
                             )
+
+    command = Telecommands.query.filter_by(command_name='turn-on').first()
+    flightschedule_commands = add_command_to_flightschedule(
+                                timestamp=timestamp,
+                                flightschedule_id=flightschedule.id,
+                                command_id=command.id
+                            )
+    
+    flightschedulecommand_arg = add_arg_to_flightschedulecommand(
+                                index=0, 
+                                argument='5', 
+                                flightschedule_command_id=flightschedule_commands.id
+                            )
+
+    print(flightschedule.to_json())
 
 
 if __name__ == '__main__':

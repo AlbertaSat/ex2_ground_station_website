@@ -1,6 +1,6 @@
 from flask import has_app_context
 from groundstation import create_app
-from groundstation.backend_api.models import Telecommands, FlightSchedules, FlightScheduleCommands
+from groundstation.backend_api.models import Telecommands, FlightSchedules, FlightScheduleCommands, FlightScheduleCommandsArgs
 from groundstation import db
 
 
@@ -42,3 +42,14 @@ def add_command_to_flightschedule(timestamp, flightschedule_id, command_id):
 	db.session.add(flightschedule_commands)
 	db.session.commit()
 	return flightschedule_commands
+
+def add_arg_to_flightschedulecommand(index, argument, flightschedule_command_id):
+	flightschedule_command_arg = FlightScheduleCommandsArgs(
+									index=index, 
+									argument=argument, 
+									flightschedulecommand_id=flightschedule_command_id
+								)
+
+	db.session.add(flightschedule_command_arg)
+	db.session.commit()
+	return flightschedule_command_arg
