@@ -27,6 +27,19 @@ const AddFlightschedule = (props) =>{
 		{label: command.commandName, value: command.id, args: command.no_args}
 	))
 
+const useStyles = makeStyles({
+  cell: {
+  	borderBottom: '1px solid rgba(224, 224, 224, 1)',
+  	paddingTop: '0px',
+  },
+  argBottom: {
+  	borderBottom: '0px',
+  	paddingBottom: '0px',
+  },
+});
+
+const classes = useStyles();
+
 	return (
 		<div>
 		  <Dialog 
@@ -46,7 +59,7 @@ const AddFlightschedule = (props) =>{
 		            flighschedule.op != 'remove' &&
   					  <TableBody>
             			<TableRow>
-              				<TableCell>
+              				<TableCell className={(flighschedule.args.length > 0)? classes.argBottom : null }>
               				  <form>
               					<Select 
               						className="basic-single"
@@ -67,7 +80,7 @@ const AddFlightschedule = (props) =>{
               					/>
               				  </form>
 			                </TableCell>
-			                <TableCell>
+			                <TableCell className={(flighschedule.args.length > 0)? classes.argBottom : null}>
 			                  <form>
 				                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
 				                    <DateTimePicker 
@@ -79,20 +92,20 @@ const AddFlightschedule = (props) =>{
 				                  </MuiPickersUtilsProvider>
 			                  </form>
 			                </TableCell>
-			                <TableCell>
+			                <TableCell className={(flighschedule.args.length > 0)? classes.argBottom : null }>
 			                	<DeleteIcon 
                                  style={{ color: '#4bacb8'}}
                                  onClick={(event) => props.handleDeleteCommandClick(event, idx)}
                                />
 			                </TableCell>
 			              </TableRow>
-			              <TableRow>
+			              <TableRow className={classes.cell}>
 			              	{
 			              	  flighschedule.args.map((arg, index) => (
 			              	  	<TableCell>
 			              	  	  <form>
 			              	  		<TextField
-          								label="Argument"
+          								label={"Argument #" + (index + 1)}
           								margin="normal"
           								variant="outlined"
           								defaultValue={arg.argument}
