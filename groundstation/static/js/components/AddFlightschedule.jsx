@@ -102,7 +102,7 @@ const classes = useStyles();
 			              <TableRow className={classes.cell}>
 			              	{
 			              	  flighschedule.args.map((arg, index) => (
-			              	  	<TableCell>
+			              	  	<TableCell className={classes.cell}>
 			              	  	  <form>
 			              	  		<TextField
           								label={"Argument #" + (index + 1)}
