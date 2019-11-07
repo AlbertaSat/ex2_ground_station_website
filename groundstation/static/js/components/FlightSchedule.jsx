@@ -188,6 +188,8 @@ class FlightSchedule extends Component{
 	}
 
 	// handle deleting a command
+	// there is a bug where if you delete a command with a command after it
+	// the command you deleted becomes the command after it
 	handleDeleteCommandClick(event, idx){
 		const obj = this.state.thisFlightscheduleCommands.slice();
 		// if a flight schedule is newly created we just want to remove it
@@ -195,6 +197,7 @@ class FlightSchedule extends Component{
 			obj[idx].op = 'remove'
 		}else{
 			obj.splice(idx, 1)
+			console.log('obj', obj)
 		}
 		this.setState({thisFlightscheduleCommands: obj})
 		console.log(this.state.thisFlightscheduleCommands);

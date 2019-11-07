@@ -62,7 +62,7 @@ const AddFlightschedule = (props) =>{
 							          }),
 							        }}
               						onChange={(event) => props.handleAddEvent(event, 'command', idx)}
-              						defaultValue={{'label': flighschedule.command.command_name, 
+              						value={{'label': flighschedule.command.command_name, 
               										'value': flighschedule.command.command_id}}
               					/>
               				  </form>
