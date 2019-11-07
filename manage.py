@@ -2,6 +2,7 @@ import sys
 import unittest
 from datetime import datetime
 import json
+import click
 
 from flask.cli import FlaskGroup
 
@@ -22,9 +23,13 @@ def recreate_db():
     db.session.commit()
 
 @cli.command()
-def test():
+@click.argument('path', required=False)
+def test(path=None):
     """Runs all tests in tests folder"""
-    tests = unittest.TestLoader().discover('groundstation/tests', pattern='test*.py')
+    if path is None:
+        tests = unittest.TestLoader().discover('groundstation/tests', pattern='test*.py')
+    else:
+        tests = unittest.TestLoader().loadTestsFromName(f'groundstation.tests.{path}')
     result = unittest.TextTestRunner(verbosity=2).run(tests)
     if result.wasSuccessful():
         return 0
