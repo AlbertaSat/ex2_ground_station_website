@@ -81,7 +81,7 @@ class FlightScheduleCommands(db.Model):
     command_id = db.Column(db.Integer, db.ForeignKey('telecommands.id'), nullable=False)
     timestamp = db.Column(db.DateTime)
     flightschedule_id = db.Column(db.Integer, db.ForeignKey('flightschedules.id'), nullable=False)
-    arguments = db.relationship('FlightScheduleCommandsArgs', backref='flightschedulecommand', lazy=True, cascade='all')
+    arguments = db.relationship('FlightScheduleCommandsArgs', backref='flightschedulecommand', lazy=True, cascade='all, delete-orphan')
 
     def to_json(self):
         return {

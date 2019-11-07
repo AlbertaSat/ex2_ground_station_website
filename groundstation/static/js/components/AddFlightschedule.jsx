@@ -24,7 +24,7 @@ import Select, { components } from 'react-select';
 	
 const AddFlightschedule = (props) =>{
   	const selects = props.availCommands.map((command) => (
-		{label: command.commandName, value: command.id}
+		{label: command.commandName, value: command.id, args: command.no_args}
 	))
 
 	return (
@@ -41,6 +41,7 @@ const AddFlightschedule = (props) =>{
 		      <Table aria-label="simple table">
 		        {
 		          props.thisFlightschedule.map((flighschedule, idx) => (
+
 		          	// if flight schedule command is to be removed, dont display it anymore
 		            flighschedule.op != 'remove' &&
   					  <TableBody>
@@ -84,6 +85,23 @@ const AddFlightschedule = (props) =>{
                                  onClick={(event) => props.handleDeleteCommandClick(event, idx)}
                                />
 			                </TableCell>
+			              </TableRow>
+			              <TableRow>
+			              	{
+			              	  flighschedule.args.map((arg, index) => (
+			              	  	<TableCell>
+			              	  	  <form>
+			              	  		<TextField
+          								label="Argument"
+          								margin="normal"
+          								variant="outlined"
+          								defaultValue={arg.argument}
+          								onChange={(event) => props.handleChangeArgument(event, idx, index)}
+        							/>
+        						   </form>
+			              	  	</TableCell>
+			              	  ))
+			              	}
 			              </TableRow>
 			          </TableBody>
 			          )	

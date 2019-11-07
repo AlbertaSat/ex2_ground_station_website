@@ -4,7 +4,7 @@ from flask import Blueprint
 from flask_restful import Resource, Api
 from marshmallow import ValidationError
 from groundstation import db
-from groundstation.backend_api.models import FlightSchedules, FlightScheduleCommands
+from groundstation.backend_api.models import FlightSchedules, FlightScheduleCommands, FlightScheduleCommandsArgs
 from groundstation.backend_api.utils import create_context
 from groundstation.backend_api.validators import FlightScheduleValidator, FlightSchedulePatchValidator
 from datetime import datetime
@@ -66,11 +66,26 @@ class Flightschedule(Resource):
                         command_id=command['command']['command_id'], 
                         timestamp=command['timestamp']
                     )
+                arguments = command.pop('args')
+                for arg_data in arguments:
+                    arg = FlightScheduleCommandsArgs(
+                            index=arg_data['index'],
+                            argument=arg_data['argument']
+                        )
+                    new_command.arguments.append(arg)
                 flightschedule.commands.append(new_command)
             elif command['op'] == 'replace':
                 this_command = FlightScheduleCommands.query.filter_by(id=command['flightschedule_command_id']).first()
                 this_command.timestamp = command['timestamp']
                 this_command.command_id = command['command']['command_id']
+                this_command.arguments.clear()
+                arguments = command.pop('args')
+                for arg_data in arguments:
+                    arg = FlightScheduleCommandsArgs(
+                            index=arg_data['index'],
+                            argument=arg_data['argument']
+                        )
+                    this_command.arguments.append(arg)
             elif command['op'] == 'remove':
                 this_command = FlightScheduleCommands.query.filter_by(id=command['flightschedule_command_id']).first()
                 db.session.delete(this_command)
@@ -173,7 +188,14 @@ class FlightScheduleList(Resource):
             timestamp = command_data['timestamp']
             command = FlightScheduleCommands(command_id=command_id, timestamp=timestamp)
             flightschedule.commands.append(command)
-            #db.session.add(command)
+
+            arguments = command_data.pop('args')
+            for arg_data in arguments:
+                index = arg_data['index']
+                arg = arg_data['argument']
+                argument = FlightScheduleCommandsArgs(index=index, argument=arg)
+                command.arguments.append(argument)
+                
 
         db.session.add(flightschedule)
         db.session.commit()
