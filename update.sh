@@ -6,3 +6,4 @@ python3 manage.py seed_db
 cd groundstation/static
 npm install
 npm run build
+cd ../..
