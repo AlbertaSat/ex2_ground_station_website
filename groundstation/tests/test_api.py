@@ -218,7 +218,7 @@ class TestTelecommandService(BaseTestCase):
             # print(data['data'])
             self.assertEqual(False, data['data']['is_dangerous'])
 
-def test_get_telecommand_with_invalid_command_name(self):
+    def test_get_telecommand_with_invalid_command_name(self):
         """Test getting invalid command name"""
 
         with self.client:
@@ -226,6 +226,15 @@ def test_get_telecommand_with_invalid_command_name(self):
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 404)
             self.assertEqual(response[0].message, 'telecommand does not exist')
+
+class TestTelecommandList(BaseTestCase):
+    # Currently in progress
+    # def test_get_telecommand_list(self):
+
+    #     with self.client:
+    #         response = self.client.get('/api/telecommandlist')
+    #         data = json.loads(response.data.decode())
+    #         self.assertEqual(response.status_code,200)
 
 
 #########################################################################
