@@ -58,7 +58,6 @@ class Flightschedule(Resource):
 
         # go through the operations for this patch, inspired by the parse JSON syntax
         # we have replace, add, or remove as valid operations on the flight schedule
-        # TODO implement deleting
         flightschedule_commands = validated_data.pop('commands')
         for command in flightschedule_commands:
             if command['op'] == 'add':
@@ -66,6 +65,8 @@ class Flightschedule(Resource):
                         command_id=command['command']['command_id'], 
                         timestamp=command['timestamp']
                     )
+
+                # iterate through args and add them to our flightschedule in the db
                 arguments = command.pop('args')
                 for arg_data in arguments:
                     arg = FlightScheduleCommandsArgs(
@@ -78,14 +79,18 @@ class Flightschedule(Resource):
                 this_command = FlightScheduleCommands.query.filter_by(id=command['flightschedule_command_id']).first()
                 this_command.timestamp = command['timestamp']
                 this_command.command_id = command['command']['command_id']
+                
                 this_command.arguments.clear()
                 arguments = command.pop('args')
+
+                # iterate through args and add them to the db
                 for arg_data in arguments:
                     arg = FlightScheduleCommandsArgs(
                             index=arg_data['index'],
                             argument=arg_data['argument']
                         )
                     this_command.arguments.append(arg)
+            # delete the flight schedule command
             elif command['op'] == 'remove':
                 this_command = FlightScheduleCommands.query.filter_by(id=command['flightschedule_command_id']).first()
                 db.session.delete(this_command)

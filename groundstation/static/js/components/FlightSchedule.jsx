@@ -46,6 +46,7 @@ class FlightSchedule extends Component{
 		})
 	}
 
+	// handle add flight screen open
 	handleAddFlightOpenClick(event){
 		event.preventDefault();
 		event.stopPropagation();
@@ -141,6 +142,7 @@ class FlightSchedule extends Component{
 
 	}
 
+	// handle any changes in our form fields
 	handleAddEvent(event, type, idx){
 		console.log('event', event)
 		const obj = this.state.thisFlightscheduleCommands.slice();
@@ -166,6 +168,7 @@ class FlightSchedule extends Component{
 		console.log(this.state.thisFlightscheduleCommands);
 	}
 
+	// handle changing/adding arguments
 	handleChangeArgument(event, fs_idx, arg_idx){
 		const obj = this.state.thisFlightscheduleCommands.slice();
 		obj[fs_idx].args[arg_idx].argument = event.target.value;
@@ -176,6 +179,7 @@ class FlightSchedule extends Component{
 		this.setState({thisFlightscheduleCommands: obj})
 	}
 
+	// handle when the add command button is clicked
 	handleAddCommandClick(event){
 		const obj = this.state.thisFlightscheduleCommands.slice();
 		let comm = {'command' : {'command_id': ''}, 'timestamp': null, 'args': []}
