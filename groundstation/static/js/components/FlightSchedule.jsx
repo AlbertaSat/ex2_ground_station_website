@@ -13,11 +13,12 @@ class FlightSchedule extends Component{
 			editFlight: false,
 			allflightschedules: [],
 			queuedflightschedule: [],
-			thisFlightscheduleCommands: [{'command': {'command_id': ''}, 'timestamp': null}],
+			thisFlightscheduleCommands: [{'command': {'command_id': ''}, 'timestamp': null, 'args' : []}],
 			thisFlightscheduleId: null,
 			thisIndex: null,
-			availCommands: [{ commandName: 'ping', id: 1 },
-  							{ commandName: 'get_hk', id: 2 }],
+			availCommands: [{ commandName: 'ping', id: 1, no_args: 0},
+  							{ commandName: 'get_hk', id: 2, no_args: 0 },
+  							{ commandName: 'turn_on', id: 3, no_args: 1}],
   			patchCommands: []
 		}
 		this.handleAddFlightOpenClick = this.handleAddFlightOpenClick.bind(this);
@@ -29,6 +30,7 @@ class FlightSchedule extends Component{
 		this.deleteFlightschedule = this.deleteFlightschedule.bind(this);
 		this.handleDeleteFlightClose = this.handleDeleteFlightClose.bind(this);
 		this.handleDeleteCommandClick = this.handleDeleteCommandClick.bind(this);
+		this.handleChangeArgument = this.handleChangeArgument.bind(this);
 	}
 
 	componentDidMount(){
@@ -44,6 +46,7 @@ class FlightSchedule extends Component{
 		})
 	}
 
+	// handle add flight screen open
 	handleAddFlightOpenClick(event){
 		event.preventDefault();
 		event.stopPropagation();
@@ -53,7 +56,7 @@ class FlightSchedule extends Component{
 						editFlight: false,
 						thisFlightscheduleId: null,
 						thisIndex: null,
-						thisFlightscheduleCommands: [{'command': {'command_id': ''}, 'timestamp': null}],
+						thisFlightscheduleCommands: [{'command': {'command_id': ''}, 'timestamp': null, 'args': []}],
 					});
 	};
 
@@ -128,7 +131,7 @@ class FlightSchedule extends Component{
 				}
 				this.setState({addFlightOpen: !this.state.addFlightOpen,
 					thisFlightscheduleCommands: 
-						[{'command': {'command_id': ''}, 'timestamp': ''}],
+						[{'command': {'command_id': ''}, 'timestamp': '', 'args': []}],
 					allflightschedules: obj,
 					editFlight: false,
 					thisIndex: null,
@@ -139,6 +142,7 @@ class FlightSchedule extends Component{
 
 	}
 
+	// handle any changes in our form fields
 	handleAddEvent(event, type, idx){
 		console.log('event', event)
 		const obj = this.state.thisFlightscheduleCommands.slice();
@@ -147,8 +151,11 @@ class FlightSchedule extends Component{
 		}else{
 			obj[idx].command.command_id = event.value;
 			obj[idx].command.command_name = event.label;
+			obj[idx].args = []
+			for(let i = 0; i < event.args; i++){
+				obj[idx].args.push({index: i, argument: ''})
+			}
 		}
-
 		// if a command was created and then edited, we consider it added
 		// and not replaced, only existing commands can be replaced
 		if(this.state.editFlight && obj[idx].op != 'add'){
@@ -161,9 +168,21 @@ class FlightSchedule extends Component{
 		console.log(this.state.thisFlightscheduleCommands);
 	}
 
+	// handle changing/adding arguments
+	handleChangeArgument(event, fs_idx, arg_idx){
+		const obj = this.state.thisFlightscheduleCommands.slice();
+		obj[fs_idx].args[arg_idx].argument = event.target.value;
+		if(this.state.editFlight && obj[fs_idx].op != 'add'){
+			obj[fs_idx].op = 'replace'
+		}
+
+		this.setState({thisFlightscheduleCommands: obj})
+	}
+
+	// handle when the add command button is clicked
 	handleAddCommandClick(event){
 		const obj = this.state.thisFlightscheduleCommands.slice();
-		let comm = {'command' : {'command_id': ''}, 'timestamp': null}
+		let comm = {'command' : {'command_id': ''}, 'timestamp': null, 'args': []}
 		// if we are editing add a condition for adding
 		if(this.state.editFlight){
 			comm.op = 'add'
@@ -180,6 +199,7 @@ class FlightSchedule extends Component{
 			obj[idx].op = 'remove'
 		}else{
 			obj.splice(idx, 1)
+			console.log('obj', obj)
 		}
 		this.setState({thisFlightscheduleCommands: obj})
 		console.log(this.state.thisFlightscheduleCommands);
@@ -220,6 +240,7 @@ class FlightSchedule extends Component{
     			addFlightschedule={this.addFlightschedule}
     			handleAddCommandClick={this.handleAddCommandClick}
     			handleDeleteCommandClick={this.handleDeleteCommandClick}
+    			handleChangeArgument={this.handleChangeArgument}
     		  />
     		  <DeleteFlightschedule
     		    open={this.state.deleteFlightOpen}
