@@ -215,6 +215,27 @@ class TestTelecommandList(BaseTestCase):
         self.assertEqual(response[1], 201)
         self.assertEqual('success', response[0]['status'])
 
+    def test_post_telecommand_happy_path(self):
+        command = fake_telecommand_as_dict('ping', 0)
+        with self.client:
+            post_data = json.dumps(command)
+            kw_args = {'data':post_data, 'content_type':'application/json'}
+
+            response = self.client.post('/api/telecommands', **kw_args)
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 201)
+
+    def test_post_telecommand_invalid_json(self):
+        command = fake_telecommand_as_dict('ping', 0)
+        command.pop('command_name')
+        with self.client:
+            post_data = json.dumps(command)
+            kw_args = {'data':post_data, 'content_type':'application/json'}
+
+            response = self.client.post('/api/telecommands', **kw_args)
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 400)
+
 #########################################################################
 #Test flight schedule functions
 class TestFlightScheduleService(BaseTestCase):
