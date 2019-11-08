@@ -24,8 +24,21 @@ import Select, { components } from 'react-select';
 	
 const AddFlightschedule = (props) =>{
   	const selects = props.availCommands.map((command) => (
-		{label: command.commandName, value: command.id}
+		{label: command.commandName, value: command.id, args: command.no_args}
 	))
+
+const useStyles = makeStyles({
+  cell: {
+  	borderBottom: '1px solid rgba(224, 224, 224, 1)',
+  	paddingTop: '0px',
+  },
+  argBottom: {
+  	borderBottom: '0px',
+  	paddingBottom: '0px',
+  },
+});
+
+const classes = useStyles();
 
 	return (
 		<div>
@@ -41,11 +54,12 @@ const AddFlightschedule = (props) =>{
 		      <Table aria-label="simple table">
 		        {
 		          props.thisFlightschedule.map((flighschedule, idx) => (
+
 		          	// if flight schedule command is to be removed, dont display it anymore
 		            flighschedule.op != 'remove' &&
   					  <TableBody>
             			<TableRow>
-              				<TableCell>
+              				<TableCell className={(flighschedule.args.length > 0)? classes.argBottom : null }>
               				  <form>
               					<Select 
               						className="basic-single"
@@ -61,12 +75,12 @@ const AddFlightschedule = (props) =>{
 							          }),
 							        }}
               						onChange={(event) => props.handleAddEvent(event, 'command', idx)}
-              						defaultValue={{'label': flighschedule.command.command_name, 
+              						value={{'label': flighschedule.command.command_name, 
               										'value': flighschedule.command.command_id}}
               					/>
               				  </form>
 			                </TableCell>
-			                <TableCell>
+			                <TableCell className={(flighschedule.args.length > 0)? classes.argBottom : null}>
 			                  <form>
 				                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
 				                    <DateTimePicker 
@@ -78,12 +92,29 @@ const AddFlightschedule = (props) =>{
 				                  </MuiPickersUtilsProvider>
 			                  </form>
 			                </TableCell>
-			                <TableCell>
+			                <TableCell className={(flighschedule.args.length > 0)? classes.argBottom : null }>
 			                	<DeleteIcon 
                                  style={{ color: '#4bacb8'}}
                                  onClick={(event) => props.handleDeleteCommandClick(event, idx)}
                                />
 			                </TableCell>
+			              </TableRow>
+			              <TableRow className={classes.cell}>
+			              	{
+			              	  flighschedule.args.map((arg, index) => (
+			              	  	<TableCell className={classes.cell}>
+			              	  	  <form>
+			              	  		<TextField
+          								label={"Argument #" + (index + 1)}
+          								margin="normal"
+          								variant="outlined"
+          								defaultValue={arg.argument}
+          								onChange={(event) => props.handleChangeArgument(event, idx, index)}
+        							/>
+        						   </form>
+			              	  	</TableCell>
+			              	  ))
+			              	}
 			              </TableRow>
 			          </TableBody>
 			          )	
