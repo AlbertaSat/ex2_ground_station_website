@@ -1,5 +1,4 @@
 from datetime import datetime
-
 from groundstation import db
 
 class User(db.Model):
@@ -21,20 +20,104 @@ class Housekeeping(db.Model):
     __tablename__ = 'housekeeping'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    satelliteMode = db.Column(db.String(32))
-    batteryVoltage = db.Column(db.Float)
-    currentIn = db.Column(db.Float)
-    currentOut = db.Column(db.Float)
-    noMCUResets = db.Column(db.Integer)
-    lastBeaconTime = db.Column(db.DateTime, nullable=False)
+    satellite_mode = db.Column(db.String(32))
+    battery_voltage = db.Column(db.Float)
+    current_in = db.Column(db.Float)
+    current_out = db.Column(db.Float)
+    no_MCU_resets = db.Column(db.Integer)
+    last_beacon_time = db.Column(db.DateTime, nullable=False)
 
-    def toJson(self):
+    def to_json(self):
         return {
             'id': self.id,
-            'satelliteMode': self.satelliteMode,
-            'batteryVoltage': self.batteryVoltage,
-            'currentIn': self.currentIn,
-            'currentOut': self.currentOut,
-            'noMCUResets': self.noMCUResets,
-            'lastBeaconTime': str(self.lastBeaconTime)
+            'satellite_mode': self.satellite_mode,
+            'battery_voltage': self.battery_voltage,
+            'current_in': self.current_in,
+            'current_out': self.current_out,
+            'no_MCU_resets': self.no_MCU_resets,
+            'last_beacon_time': str(self.last_beacon_time)
+        }
+
+class Telecommands(db.Model):
+    __tablename__ = 'telecommands'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    command_name = db.Column(db.String(64))
+    num_arguments = db.Column(db.Integer)
+    flightschedulecommands = db.relationship('FlightScheduleCommands', backref='command', lazy=True)
+    is_dangerous = db.Column(db.Boolean)
+
+
+    def to_json(self):
+        return {
+            'command_id': self.id,
+            'command_name': self.command_name,
+            'num_arguments': self.num_arguments,
+            'is_dangerous': self.is_dangerous
+        }
+
+class FlightSchedules(db.Model):
+    __tablename__ = 'flightschedules'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    creation_date = db.Column(db.DateTime, default=datetime.utcnow)
+    upload_date = db.Column(db.DateTime)
+    is_queued = db.Column(db.Boolean, default=False)
+    commands = db.relationship('FlightScheduleCommands', backref='flightschedule', lazy=True, cascade='all')
+
+    def to_json(self):
+        return {
+            'flightschedule_id': self.id,
+            'creation_date': str(self.creation_date),
+            'upload_date': str(self.upload_date),
+            'is_queued':str(self.is_queued),
+            'commands': [command.to_json() for command in self.commands]
+        }
+
+class FlightScheduleCommands(db.Model):
+    __tablename__ = 'flightschedulecommands'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    command_id = db.Column(db.Integer, db.ForeignKey('telecommands.id'), nullable=False)
+    timestamp = db.Column(db.DateTime)
+    flightschedule_id = db.Column(db.Integer, db.ForeignKey('flightschedules.id'), nullable=False)
+    arguments = db.relationship('FlightScheduleCommandsArgs', 
+                                backref='flightschedulecommand', 
+                                lazy=True, 
+                                cascade='all, delete-orphan'
+                                )
+
+    def to_json(self):
+        return {
+            'flightschedule_command_id': self.id,
+            'timestamp': str(self.timestamp),
+            'command': self.command.to_json(),
+            'args': [arg.to_json() for arg in self.arguments]
+        }
+
+class FlightScheduleCommandsArgs(db.Model):
+    __tablename__ = 'flightschedulecommandsargs'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    index = db.Column(db.Integer)
+    argument = db.Column(db.String(8))
+    flightschedulecommand_id = db.Column(db.Integer, db.ForeignKey('flightschedulecommands.id'), nullable=False)
+
+    def to_json(self):
+        return {
+            'index': self.index,
+            'argument': self.argument
+        }
+
+
+class Passover(db.Model):
+    __tablename__ = 'passovers'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    timestamp = db.Column(db.DateTime)
+
+    def to_json(self):
+        return {
+            'passover_id': self.id,
+            'timestamp': str(self.timestamp)
         }

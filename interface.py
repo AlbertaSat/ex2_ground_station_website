@@ -20,7 +20,7 @@ def main():
     def effect_of_gps_on(old_value):
         new_value = old_value - 0.01
         return new_value
-    satellite_components = [SatelliteComponent('GPS', [('batteryVoltage', effect_of_gps_on)], []),]
+    satellite_components = [SatelliteComponent('GPS', [('battery_voltage', effect_of_gps_on)], []),]
     satellite = Satellite(satellite_components, 'Passive', 16, 0.3, 0.3, 0, int(time.time()))
     simulator = Simulator(environment, satellite)
     del environment, satellite

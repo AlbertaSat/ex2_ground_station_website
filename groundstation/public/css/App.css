@@ -20,5 +20,28 @@
 }
 
 .link-items {
-  padding: 5px;
+  padding: 10px;
+}
+
+.grid-containers {
+  padding: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.route-container {
+  padding: 20px;
+}
+
+.container-text {
+  padding: 10px;
+  text-align: center;
+}
+
+.number{
+  font-size: 2.4em;
+}
+
+.MuiList-padding {
+  padding-top: 80px !important;
 }

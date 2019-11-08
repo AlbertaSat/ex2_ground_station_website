@@ -53,9 +53,9 @@ class Satellite:
 
     sat_modes =  ['Danger', 'Critical', 'Passive', 'Active Mission']
 
-    def __init__(self, components, satelliteMode=sat_modes[2], batteryVoltage=4,
-        currentIn=0.3, currentOut=0.3, noMCUResets=0,
-        lastBeaconTime=None, currentTime=helpers.get_unix_time(), beaconInterval=20):
+    def __init__(self, components, satellite_mode=sat_modes[2], battery_voltage=4,
+        current_in=0.3, current_out=0.3, no_MCU_resets=0,
+        last_beacon_time=None, current_time=helpers.get_unix_time(), beacon_interval=20):
         """
         Attributes:
             - flight_schedule (string) : a path to the flight schedule file.
@@ -63,15 +63,15 @@ class Satellite:
         """
 
         # model attributes
-        self.satelliteMode = satelliteMode
-        self.batteryVoltage = batteryVoltage
-        self.currentIn = currentIn
-        self.currentOut = currentOut
-        self.noMCUResets = noMCUResets
-        self.lastBeaconTime = lastBeaconTime
+        self.satellite_mode = satellite_mode
+        self.battery_voltage = battery_voltage
+        self.current_in = current_in
+        self.current_out = current_out
+        self.no_MCU_resets = no_MCU_resets
+        self.last_beacon_time = last_beacon_time
 
-        self.currentTime = currentTime
-        self.time_till_next_beacon = beaconInterval
+        self.current_time = current_time
+        self.time_till_next_beacon = beacon_interval
         self.flight_schedule = None
 
         # convert list of components to dict for easier searching
@@ -81,13 +81,13 @@ class Satellite:
         self.BEACON_BROADCAST_FILE = 'groundstation/satellite_simulator/beacons.json'
         with open(self.BEACON_BROADCAST_FILE, 'w') as fptr:
             json.dump([], fptr)
-        self.BEACON_INTERVAL = beaconInterval
+        self.BEACON_INTERVAL = beacon_interval
 
 
     def step(self):
         """Moves the satellite one time step, change satellite state here
         """
-        self.currentTime += 1
+        self.current_time += 1
         self.time_till_next_beacon  -= 1
 
         self._apply_component_effects_on_satellite_state()
@@ -123,19 +123,19 @@ class Satellite:
 
 
     def _get_hk_as_dict(self):
-        lb = self.lastBeaconTime if self.lastBeaconTime is not None else ''
+        lb = self.last_beacon_time if self.last_beacon_time is not None else ''
         return {
-            'satelliteMode':self.satelliteMode,
-            'batteryVoltage':self.batteryVoltage,
-            'currentIn':self.currentIn,
-            'currentOut':self.currentOut,
-            'noMCUResets':self.noMCUResets,
-            'lastBeaconTime':lb
+            'satellite_mode':self.satellite_mode,
+            'battery_voltage':self.battery_voltage,
+            'current_in':self.current_in,
+            'current_out':self.current_out,
+            'no_MCU_resets':self.no_MCU_resets,
+            'last_beacon_time':lb
         }
 
 
     def _broadcast_beacon(self):
-        self.lastBeaconTime = self.currentTime
+        self.last_beacon_time = self.current_time
         with open(self.BEACON_BROADCAST_FILE, 'r') as fptr:
             beacons_list = json.load(fptr)
             beacons_list.append(self._get_hk_as_dict())
@@ -153,7 +153,7 @@ class Satellite:
             with open(self.flight_schedule) as fptr:
                 for row in fptr:
                     row = (row.strip()).split(',', 1)
-                    if int(row[0]) == self.currentTime:
+                    if int(row[0]) == self.current_time:
                         return make_tuple(row[1])
 
 
@@ -222,7 +222,7 @@ class Simulator:
         self.satellite.step()
 
     def get_current_satellite_time(self):
-        return self.satellite.currentTime
+        return self.satellite.current_time
 
     def _add_to_log(self, sender, recipient, message):
 
