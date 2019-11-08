@@ -10,7 +10,7 @@ from groundstation.tests.utils import fakeHousekeepingAsDict, fake_flight_schedu
 from groundstation.backend_api.housekeeping import HousekeepingLogList
 from groundstation.backend_api.flightschedule import FlightScheduleList
 from groundstation.backend_api.passover import PassoverList
-from groundstation.backend_api.telecommand import TelecommandService, TelecommandList
+from groundstation.backend_api.telecommand import Telecommand, TelecommandList
 from groundstation.backend_api.utils import add_telecommand, add_flight_schedule, add_command_to_flightschedule
 
 from unittest import mock
@@ -179,63 +179,41 @@ class TestHousekeepingService(BaseTestCase):
 
 #########################################################################
 #Test telecommand model/get and post
-
 class TestTelecommandService(BaseTestCase):
 
-    def test_post_telecommand(self):
-
-        command = {
-        'command_name' : "TEST_COMMAND",
-        'num_args' : 0,
-        'is_dangerous' : False
-        }
-
-        service = TelecommandService()
-
-        response = service.post(local_data=json.dumps(command))
-        # print(response)
-        # data = json.loads(response.data.decode())
-        self.assertEqual(response[1], 201)
-        self.assertEqual('success', response[0]['status'])
-        self.assertEqual(f'Command {command["command_name"]} was added!', response[0]['message'])
-
-    def test_get_telecommand(self):
-        """Test getting a telecommand by name"""
-
-        test_command = fake_telecommand_as_dict()
-
-        telecommand = Telecommands(**test_command)
-        db.session.add(telecommand)
-        db.session.commit()
-
+    def test_get_telecommand_by_name(self):
+        telecommand = add_telecommand('ping', 0, False)
         with self.client:
-            response = self.client.get(f'/api/telecommands/{telecommand.command_name}')
-            # print(response)
+            response = self.client.get(f'/api/telecommands/{telecommand.id}')
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
-            self.assertEqual('TEST_COMMAND', data['data']['command_name'])
             self.assertEqual(0, data['data']['num_arguments'])
-            # print(data['data'])
             self.assertEqual(False, data['data']['is_dangerous'])
 
     def test_get_telecommand_with_invalid_command_name(self):
-        """Test getting invalid command name"""
-
         with self.client:
-            response = self.client.get('/api/telecommands/INVALID_TEST_NAME')
+            response = self.client.get('/api/telecommands/30')
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 404)
-            self.assertEqual(response[0].message, 'telecommand does not exist')
+            self.assertEqual(data['message'], 'telecommand does not exist')
 
 class TestTelecommandList(BaseTestCase):
-    # Currently in progress
-    # def test_get_telecommand_list(self):
 
-    #     with self.client:
-    #         response = self.client.get('/api/telecommandlist')
-    #         data = json.loads(response.data.decode())
-    #         self.assertEqual(response.status_code,200)
+    def test_get_all_telecommands(self):
+        t1 = add_telecommand('ping', 0, False)
+        t2 = add_telecommand('self-destruct', 10, is_dangerous=True)
+        with self.client:
+            response = self.client.get('/api/telecommands')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(data['data']['telecommands']), 2)
 
+    def test_local_post_telecommand(self):
+        command = fake_telecommand_as_dict('ping', 0)
+        service = TelecommandList()
+        response = service.post(local_data=json.dumps(command))
+        self.assertEqual(response[1], 201)
+        self.assertEqual('success', response[0]['status'])
 
 #########################################################################
 #Test flight schedule functions
@@ -405,7 +383,7 @@ class TestFlightScheduleService(BaseTestCase):
             self.assertEqual(response.status_code, 200)
             self.assertEqual(FlightSchedules.query.filter_by(id=flightschedule.id).first(), None)
             self.assertEqual(
-                FlightScheduleCommands.query.filter_by(id=flightschedule_commands.id).first(), 
+                FlightScheduleCommands.query.filter_by(id=flightschedule_commands.id).first(),
                 None
             )
 

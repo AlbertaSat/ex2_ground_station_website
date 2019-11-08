@@ -36,3 +36,8 @@ class PassoverValidator(Schema):
 
 class PassoverListValidator(Schema):
     passovers = fields.Nested(PassoverValidator, many=True, required=True, validate=validate.Length(min=1))
+
+class TelecommandListValidator(Schema):
+    command_name = fields.String(required=True)
+    num_arguments = fields.Integer(required=True)
+    is_dangerous = fields.Boolean(required=True)

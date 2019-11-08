@@ -27,19 +27,19 @@ def fake_passover_as_dict(timestamps):
     }
 
 def fake_patch_update_as_dict(timestamp):
-    return {'is_queued': False, 
+    return {'is_queued': False,
             'commands': [
-                {'op': 'replace', 
-                'flightschedule_command_id': 1, 
-                'timestamp': str(timestamp), 
-                'args' : [], 
+                {'op': 'replace',
+                'flightschedule_command_id': 1,
+                'timestamp': str(timestamp),
+                'args' : [],
                 'command': {'command_id': 2}},
                 {'op': 'add', 'timestamp': str(timestamp), 'args' : [], 'command': {'command_id': 1}}
             ]
         }
 
-def fake_telecommand_as_dict():
-    return {'command_name': 'TEST_COMMAND',
-            'num_arguments': 0,
-            'is_dangerous': False
+def fake_telecommand_as_dict(command_name='test', num_arguments='0', is_dangerous=False):
+    return {'command_name':command_name,
+            'num_arguments':num_arguments,
+            'is_dangerous':is_dangerous
     }
