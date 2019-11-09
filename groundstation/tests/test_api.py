@@ -6,11 +6,11 @@ from groundstation.tests.base import BaseTestCase
 from groundstation import db
 
 from groundstation.backend_api.models import Housekeeping, FlightSchedules, Passover, Telecommands, FlightScheduleCommands
-from groundstation.tests.utils import fakeHousekeepingAsDict, fake_flight_schedule_as_dict, fake_passover_as_dict, fake_patch_update_as_dict
+from groundstation.tests.utils import fakeHousekeepingAsDict, fake_flight_schedule_as_dict, fake_passover_as_dict, fake_patch_update_as_dict, fake_telecommand_as_dict
 from groundstation.backend_api.housekeeping import HousekeepingLogList
 from groundstation.backend_api.flightschedule import FlightScheduleList
 from groundstation.backend_api.passover import PassoverList
-from groundstation.backend_api.telecommand import TelecommandService
+from groundstation.backend_api.telecommand import Telecommand, TelecommandList
 from groundstation.backend_api.utils import add_telecommand, add_flight_schedule, add_command_to_flightschedule
 
 from unittest import mock
@@ -179,25 +179,62 @@ class TestHousekeepingService(BaseTestCase):
 
 #########################################################################
 #Test telecommand model/get and post
-
 class TestTelecommandService(BaseTestCase):
 
-    def test_post_telecommand(self):
+    def test_get_telecommand_by_name(self):
+        telecommand = add_telecommand('ping', 0, False)
+        with self.client:
+            response = self.client.get(f'/api/telecommands/{telecommand.id}')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(0, data['data']['num_arguments'])
+            self.assertEqual(False, data['data']['is_dangerous'])
 
-        command = {
-        'command_name' : "TEST_COMMAND",
-        'num_args' : 0,
-        'is_dangerous' : False
-        }
+    def test_get_telecommand_with_invalid_command_name(self):
+        with self.client:
+            response = self.client.get('/api/telecommands/30')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 404)
+            self.assertEqual(data['message'], 'telecommand does not exist')
 
-        service = TelecommandService()
+class TestTelecommandList(BaseTestCase):
 
+    def test_get_all_telecommands(self):
+        t1 = add_telecommand('ping', 0, False)
+        t2 = add_telecommand('self-destruct', 10, is_dangerous=True)
+        with self.client:
+            response = self.client.get('/api/telecommands')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(data['data']['telecommands']), 2)
+
+    def test_local_post_telecommand(self):
+        command = fake_telecommand_as_dict('ping', 0)
+        service = TelecommandList()
         response = service.post(local_data=json.dumps(command))
-        print(response)
-        # data = json.loads(response.data.decode())
         self.assertEqual(response[1], 201)
-        self.assertIn('success', response[0]['status'])
-        self.assertIn(f'Command {command["command_name"]} was added!', response[0]['message'])
+        self.assertEqual('success', response[0]['status'])
+
+    def test_post_telecommand_happy_path(self):
+        command = fake_telecommand_as_dict('ping', 0)
+        with self.client:
+            post_data = json.dumps(command)
+            kw_args = {'data':post_data, 'content_type':'application/json'}
+
+            response = self.client.post('/api/telecommands', **kw_args)
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 201)
+
+    def test_post_telecommand_invalid_json(self):
+        command = fake_telecommand_as_dict('ping', 0)
+        command.pop('command_name')
+        with self.client:
+            post_data = json.dumps(command)
+            kw_args = {'data':post_data, 'content_type':'application/json'}
+
+            response = self.client.post('/api/telecommands', **kw_args)
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 400)
 
 #########################################################################
 #Test flight schedule functions
@@ -367,7 +404,7 @@ class TestFlightScheduleService(BaseTestCase):
             self.assertEqual(response.status_code, 200)
             self.assertEqual(FlightSchedules.query.filter_by(id=flightschedule.id).first(), None)
             self.assertEqual(
-                FlightScheduleCommands.query.filter_by(id=flightschedule_commands.id).first(), 
+                FlightScheduleCommands.query.filter_by(id=flightschedule_commands.id).first(),
                 None
             )
 
