@@ -131,24 +131,184 @@ const HousekeepingLogListFull = (props) => {
                         </Toolbar>
                         </AppBar>
                         <List>
-                        <ListItem button>
+                        <ListItem >
                             <ListItemText primary="ID" secondary={housekeeping.id} />
                         </ListItem>
                         <Divider />
-                        <ListItem button>
+                        <ListItem >
                             <ListItemText primary="Satellite Mode" secondary={housekeeping.satellite_mode} />
                         </ListItem>
-                        <ListItem button>
+                        <ListItem >
                             <ListItemText primary="Battery Voltage" secondary={housekeeping.battery_voltage} />
                         </ListItem>
                         <Divider />
-                        <ListItem button>
+                        <ListItem >
                             <ListItemText primary="Current In" secondary={housekeeping.current_in} />
                         </ListItem>
                         <Divider />
-                        <ListItem button>
+                        <ListItem >
                             <ListItemText primary="Current Out" secondary={housekeeping.current_out} />
                         </ListItem>
+                        {/*}
+                        <ListItem >
+                            <ListItemText primary="Watchdog 1" secondary={6600} />
+                        </ListItem>*/}
+
+                        <ListItem>
+                          <Table aria-label="simple table">
+                            <TableHead>
+                              <TableRow>
+                                <TableCell 
+                                    style={{backgroundColor: '#fff', color: '#000', paddingTop: '8px', paddingBottom: '8px'}}>
+                                    Power Channel
+                                </TableCell>
+                                <TableCell 
+                                  align="left"
+                                  style={{backgroundColor: '#fff', color: '#000', paddingTop: '8px', paddingBottom: '8px'}}>
+                                    Enabled
+                                </TableCell>
+                                <TableCell 
+                                  align="left"
+                                  style={{backgroundColor: '#fff', color: '#000', paddingTop: '8px', paddingBottom: '8px'}}>
+                                    Current
+                                </TableCell>
+                              </TableRow>
+                            </TableHead>
+                            {/*
+                            {flightschedule.commands.map(commands => (
+                              <TableBody>
+                                  <TableRow>
+                                    <TableCell component ="th" scope="row">
+                                      {commands.flightschedule_command_id}
+                                    </TableCell>
+                                    <TableCell align="right">{commands.command.command_name}</TableCell>
+                                    <TableCell align="right">{commands.timestamp}</TableCell>
+                                  </TableRow>
+                              </TableBody>
+                            ))}
+                            */}
+                          </Table>
+                        </ListItem>
+
+                        <ListItem>
+                          <Table aria-label="simple table">
+                            <TableHead>
+                              <TableRow>
+                                <TableCell 
+                                    style={{backgroundColor: '#fff', color: '#000', paddingTop: '8px', paddingBottom: '8px'}}>
+                                    Watchdog 1
+                                </TableCell>
+                                <TableCell 
+                                  align="left"
+                                  style={{backgroundColor: '#fff', color: '#000', paddingTop: '8px', paddingBottom: '8px'}}>
+                                    Watchdog 2
+                                </TableCell>
+                                <TableCell 
+                                  align="left"
+                                  style={{backgroundColor: '#fff', color: '#000', paddingTop: '8px', paddingBottom: '8px'}}>
+                                    Watchdog 3
+                                </TableCell>
+                              </TableRow>
+                            </TableHead>
+                            {/*
+                            {flightschedule.commands.map(commands => (
+                              <TableBody>
+                                  <TableRow>
+                                    <TableCell component ="th" scope="row">
+                                      {commands.flightschedule_command_id}
+                                    </TableCell>
+                                    <TableCell align="right">{commands.command.command_name}</TableCell>
+                                    <TableCell align="right">{commands.timestamp}</TableCell>
+                                  </TableRow>
+                              </TableBody>
+                            ))}
+                            */}
+                          </Table>
+                        </ListItem>
+
+                        <ListItem>
+                          <Table aria-label="simple table">
+                            <TableHead>
+                              <TableRow>
+                                <TableCell 
+                                    style={{backgroundColor: '#fff', color: '#000', paddingTop: '8px', paddingBottom: '8px'}}>
+                                    Solar Panel
+                                </TableCell>
+                                <TableCell 
+                                  align="left"
+                                  style={{backgroundColor: '#fff', color: '#000', paddingTop: '8px', paddingBottom: '8px'}}>
+                                    Current
+                                </TableCell>
+                              </TableRow>
+                            </TableHead>
+                            {/*
+                            {flightschedule.commands.map(commands => (
+                              <TableBody>
+                                  <TableRow>
+                                    <TableCell component ="th" scope="row">
+                                      {commands.flightschedule_command_id}
+                                    </TableCell>
+                                    <TableCell align="right">{commands.command.command_name}</TableCell>
+                                    <TableCell align="right">{commands.timestamp}</TableCell>
+                                  </TableRow>
+                              </TableBody>
+                            ))}
+                            */}
+                          </Table>
+                        </ListItem>
+
+                        <ListItem>
+                          <Table aria-label="simple table">
+                            <TableHead>
+                              <TableRow>
+                                <TableCell 
+                                    style={{backgroundColor: '#fff', color: '#000', paddingTop: '8px', paddingBottom: '8px'}}>
+                                    Temp 1
+                                </TableCell>
+                                <TableCell 
+                                  align="left"
+                                  style={{backgroundColor: '#fff', color: '#000', paddingTop: '8px', paddingBottom: '8px'}}>
+                                    Temp 2
+                                </TableCell>
+                                <TableCell 
+                                  align="left"
+                                  style={{backgroundColor: '#fff', color: '#000', paddingTop: '8px', paddingBottom: '8px'}}>
+                                    Temp 3
+                                </TableCell>
+                                <TableCell 
+                                  align="left"
+                                  style={{backgroundColor: '#fff', color: '#000', paddingTop: '8px', paddingBottom: '8px'}}>
+                                    Temp 4
+                                </TableCell>
+                                <TableCell 
+                                  align="left"
+                                  style={{backgroundColor: '#fff', color: '#000', paddingTop: '8px', paddingBottom: '8px'}}>
+                                    Temp 5
+                                </TableCell>
+                                <TableCell 
+                                  align="left"
+                                  style={{backgroundColor: '#fff', color: '#000', paddingTop: '8px', paddingBottom: '8px'}}>
+                                    Temp 6
+                                </TableCell>
+                              </TableRow>
+                            </TableHead>
+                            {/*
+                            {flightschedule.commands.map(commands => (
+                              <TableBody>
+                                  <TableRow>
+                                    <TableCell component ="th" scope="row">
+                                      {commands.flightschedule_command_id}
+                                    </TableCell>
+                                    <TableCell align="right">{commands.command.command_name}</TableCell>
+                                    <TableCell align="right">{commands.timestamp}</TableCell>
+                                  </TableRow>
+                              </TableBody>
+                            ))}
+                            */}
+                          </Table>
+                        </ListItem>
+                        
+
                         </List>
                     </Dialog>
                 </Table>
