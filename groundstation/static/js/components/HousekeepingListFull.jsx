@@ -149,10 +149,20 @@ const HousekeepingLogListFull = (props) => {
                         <ListItem >
                             <ListItemText primary="Current Out" secondary={housekeeping.current_out} />
                         </ListItem>
-                        {/*}
+
+                        <ListItem >
+                            <ListItemText primary="MCU Resets" secondary={housekeeping.no_MCU_resets} />
+                        </ListItem>
+                        
                         <ListItem >
                             <ListItemText primary="Watchdog 1" secondary={6600} />
-                        </ListItem>*/}
+                        </ListItem>
+                        <ListItem >
+                            <ListItemText primary="Watchdog 2" secondary={5} />
+                        </ListItem>
+                        <ListItem >
+                            <ListItemText primary="Watchdog 3" secondary={0} />
+                        </ListItem>
 
                         <ListItem>
                           <Table aria-label="simple table">
@@ -171,42 +181,6 @@ const HousekeepingLogListFull = (props) => {
                                   align="left"
                                   style={{backgroundColor: '#fff', color: '#000', paddingTop: '8px', paddingBottom: '8px'}}>
                                     Current
-                                </TableCell>
-                              </TableRow>
-                            </TableHead>
-                            {/*
-                            {flightschedule.commands.map(commands => (
-                              <TableBody>
-                                  <TableRow>
-                                    <TableCell component ="th" scope="row">
-                                      {commands.flightschedule_command_id}
-                                    </TableCell>
-                                    <TableCell align="right">{commands.command.command_name}</TableCell>
-                                    <TableCell align="right">{commands.timestamp}</TableCell>
-                                  </TableRow>
-                              </TableBody>
-                            ))}
-                            */}
-                          </Table>
-                        </ListItem>
-
-                        <ListItem>
-                          <Table aria-label="simple table">
-                            <TableHead>
-                              <TableRow>
-                                <TableCell 
-                                    style={{backgroundColor: '#fff', color: '#000', paddingTop: '8px', paddingBottom: '8px'}}>
-                                    Watchdog 1
-                                </TableCell>
-                                <TableCell 
-                                  align="left"
-                                  style={{backgroundColor: '#fff', color: '#000', paddingTop: '8px', paddingBottom: '8px'}}>
-                                    Watchdog 2
-                                </TableCell>
-                                <TableCell 
-                                  align="left"
-                                  style={{backgroundColor: '#fff', color: '#000', paddingTop: '8px', paddingBottom: '8px'}}>
-                                    Watchdog 3
                                 </TableCell>
                               </TableRow>
                             </TableHead>

@@ -24,6 +24,7 @@ class TestHousekeepingModel(BaseTestCase):
         self.assertEqual(housekeeping.current_in, 1.2)
         self.assertEqual(housekeeping.no_MCU_resets, 14)
         self.assertEqual(housekeeping.last_beacon_time, timestamp)
+        # TODO: Test for new housekeeping columns
 
     """Test converting a housekeeping entry into json"""
     def testHousekeepingToJson(self):
