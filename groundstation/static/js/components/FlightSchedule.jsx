@@ -211,6 +211,8 @@ class FlightSchedule extends Component{
 	handleEditCommandClick(event, idx, id){
 		event.preventDefault();
 		event.stopPropagation();
+		// if the flightschedule is queued, we set the state
+		// so the button can show the correct value
 		let isQueued = (this.state.allflightschedules[idx].is_queued === 'True');
 		const obj = this.state.allflightschedules[idx].commands.map((command) => (
 			{...command, op: 'none'}
