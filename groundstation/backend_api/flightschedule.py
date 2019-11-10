@@ -48,13 +48,26 @@ class Flightschedule(Resource):
         try:
             validated_data = self.validator.load(post_data)
         except ValidationError as err:
-            print(err.messages)
             response_object = {
                 'status': 'fail',
                 'message': 'The posted data is not valid!',
                 'errors': err.messages
             }
             return response_object, 400
+        # change our flightschedule is queued
+
+        # if we are queuing this flightschedule, handle the normal checks
+        # if it is valid, queue it
+        if validated_data['is_queued']:
+            num_queued = FlightSchedules.query.filter_by(is_queued=True).count()
+            if num_queued > 0:
+                response_object = {
+                    'status': 'fail',
+                    'message': 'A Queued flight schedule already exists!'
+                }
+                return response_object, 400
+
+        flightschedule.is_queued = validated_data['is_queued']
 
         # go through the operations for this patch, inspired by the parse JSON syntax
         # we have replace, add, or remove as valid operations on the flight schedule
