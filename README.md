@@ -9,7 +9,7 @@ For more information, please visit our [wiki](https://github.com/UAlberta-CMPUT4
 [![Build Status](https://travis-ci.com/UAlberta-CMPUT401/AlbertaSat.svg?token=TRHuLXSMdv9x8426GEpU&branch=dev)](https://travis-ci.com/UAlberta-CMPUT401/AlbertaSat)
 
 
-## To setup local enviornment:
+## To setup local environment:
 1. Make sure you have python, npm, and pip installed on your machine
 2. Install local enviornment: `./update.sh` 
 3. Set environment variables `source env.sh`    
