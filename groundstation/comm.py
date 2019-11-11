@@ -1,13 +1,20 @@
 # The Communications Module. Responsible for sending and retrieving data with the satellite.
 # (or the simulator)
-
+import groundstation.satellite_simulator.antenna as antenna
 
 def send(socket, data):
 	""" Pipes the incoming data (probably a Command tuple) to the socket (probably the Simulator)
-		- socket (Simulator) : A Simulator instance
-		- data (Tuple) : The collection of data to send to the socket.
+		- socket (something that implements .send(data) interface):
+		- data (str) : Message string
 	"""
-	# This is where you should send information, data, or commands to the satellite or server.
-	# (for now it's just the simulator)
-	# eg of the tuple: 	('PING', [])
-	return socket.send_to_sat(data)
+	return socket.send(data)
+
+def example():
+    telecommands = ['ping', 'get-hk', 'turn-on gps', 'ping', 'get-hk']
+    for telecommand in telecommands:
+        resp = send(antenna, telecommand)
+        print(resp)
+
+
+if __name__=='__main__':
+    example()
