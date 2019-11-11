@@ -26,6 +26,15 @@ def fake_passover_as_dict(timestamps):
         'passovers':[{'timestamp':str(timestamp)} for timestamp in timestamps]
     }
 
+def fake_message_as_dict(message='test', sender='tester', receiver='tester2'):
+    fake_message = {
+        'message': message,
+        'sender': sender,
+        'receiver': receiver
+    }
+
+    return fake_message
+
 def fake_patch_update_as_dict(timestamp):
     return {'is_queued': False,
             'commands': [
