@@ -47,6 +47,11 @@ function App(props) {
                                   href="/flightschedule">
                                   Flight Schedule
                                 </a>
+                                <a
+                                  className={`link-items ${classes.navbarLinks}`}
+                                  href="/login">
+                                  Login
+                                </a>
                             </Typography>
                         </Toolbar>
                     </AppBar>
