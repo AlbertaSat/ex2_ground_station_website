@@ -92,17 +92,22 @@ const FlightScheduleList = (props) => {
                         </TableCell>
                         {
                           !props.isMinified && 
-                             <TableCell align="right">
-                               <EditIcon
-                                 style={{ color: '#4bacb8', marginRight: '20px'}}
-                                 onClick={ (event) => props.handleEditCommandClick(event, idx, 
-                                                      flightschedule.flightschedule_id) }
-                               />
-                               <DeleteIcon 
-                                 style={{ color: '#4bacb8'}}
-                                 onClick={ (event) => props.handleDeleteFlightOpenClick(event, idx,
-                                                    flightschedule.flightschedule_id)}
-                               />
+                             <TableCell align="right" style={{minWidth: '80px'}}>
+                              {flightschedule.status != 3 &&
+                               <div>
+                                 <EditIcon
+                                   display='none'
+                                   style={{ color: '#4bacb8', marginRight: '20px' }}
+                                   onClick={ (event) => props.handleEditCommandClick(event, idx, 
+                                                        flightschedule.flightschedule_id) }
+                                 />
+                                 <DeleteIcon 
+                                   style={{ color: '#4bacb8'}}
+                                   onClick={ (event) => props.handleDeleteFlightOpenClick(event, idx,
+                                                      flightschedule.flightschedule_id)}
+                                 />
+                               </div>
+                             }
                              </TableCell>
                         }
                       </TableRow>
