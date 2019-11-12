@@ -58,8 +58,9 @@ class Flightschedule(Resource):
 
         # if we are queuing this flightschedule, handle the normal checks
         # if it is valid, queue it
-        if validated_data['is_queued']:
-            num_queued = FlightSchedules.query.filter_by(is_queued=True).count()
+        # status 1=queued, 2=draft, 3=uploaded
+        if validated_data['status'] == 1:
+            num_queued = FlightSchedules.query.filter_by(status=1).count()
             if num_queued > 0:
                 response_object = {
                     'status': 'fail',
@@ -67,7 +68,7 @@ class Flightschedule(Resource):
                 }
                 return response_object, 400
 
-        flightschedule.is_queued = validated_data['is_queued']
+        flightschedule.status = validated_data['status']
 
         # go through the operations for this patch, inspired by the parse JSON syntax
         # we have replace, add, or remove as valid operations on the flight schedule
@@ -158,7 +159,10 @@ class FlightScheduleList(Resource):
             # local request
             query_limit = local_args.get('limit')
 
-        flightschedules = FlightSchedules.query.order_by(FlightSchedules.creation_date).limit(query_limit).all()
+        flightschedules = FlightSchedules.query.order_by(
+                            FlightSchedules.status, 
+                            FlightSchedules.creation_date
+                        ).limit(query_limit).all()
         response_object = {
             'status':'success',
             'data': {
@@ -187,8 +191,8 @@ class FlightScheduleList(Resource):
             return response_object, 400
 
         # check that we are not queueing multiple flight schedules
-        if validated_data['is_queued']:
-            num_queued = FlightSchedules.query.filter_by(is_queued=True).count()
+        if validated_data['status'] == 1:
+            num_queued = FlightSchedules.query.filter_by(status=1).count()
             if num_queued > 0:
                 response_object = {
                     'status': 'fail',

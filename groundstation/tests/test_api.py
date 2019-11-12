@@ -284,7 +284,7 @@ class TestFlightScheduleService(BaseTestCase):
             self.assertIn('commands', response_data['errors'].keys())
 
     def test_multiple_queued_posts(self):
-        flightschedule = fake_flight_schedule_as_dict(is_queued=True, commands=[])
+        flightschedule = fake_flight_schedule_as_dict(status=1, commands=[])
 
         with self.client:
             post_data = json.dumps(flightschedule)
@@ -359,7 +359,7 @@ class TestFlightScheduleService(BaseTestCase):
 
         command1 = Telecommands.query.filter_by(command_name='ping').first()
         command2 = Telecommands.query.filter_by(command_name='get-hk').first()
-        flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp)
+        flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp, status=2)
         flightschedule_commands1 = add_command_to_flightschedule(
                                 timestamp=timestamp,
                                 flightschedule_id=flightschedule.id,
@@ -393,7 +393,7 @@ class TestFlightScheduleService(BaseTestCase):
             c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
 
         command1 = Telecommands.query.filter_by(command_name='ping').first()
-        flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp)
+        flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp, status=2)
         flightschedule_commands = add_command_to_flightschedule(
                                 timestamp=timestamp,
                                 flightschedule_id=flightschedule.id,

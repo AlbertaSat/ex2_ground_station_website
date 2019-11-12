@@ -10,9 +10,9 @@ def fakeHousekeepingAsDict(timestamp):
 
 	return housekeepingData
 
-def fake_flight_schedule_as_dict(is_queued=False, commands=[]):
+def fake_flight_schedule_as_dict(status=2, commands=[]):
     flightschedule = {
-        'is_queued':is_queued,
+        'status':status,
         'commands':commands
     }
     return flightschedule
@@ -36,7 +36,7 @@ def fake_message_as_dict(message='test', sender='tester', receiver='tester2'):
     return fake_message
 
 def fake_patch_update_as_dict(timestamp):
-    return {'is_queued': False,
+    return {'status': 2,
             'commands': [
                 {'op': 'replace',
                 'flightschedule_command_id': 1,

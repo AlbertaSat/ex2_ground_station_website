@@ -57,7 +57,7 @@ def seed_db():
         c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
 
     command = Telecommands.query.filter_by(command_name='ping').first()
-    flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp)
+    flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp, status=2)
     flightschedule_commands = add_command_to_flightschedule(
                                 timestamp=timestamp,
                                 flightschedule_id=flightschedule.id,

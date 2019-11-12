@@ -27,8 +27,8 @@ def add_telecommand(command_name, num_arguments, is_dangerous):
 		db.session.commit()
 		return command
 
-def add_flight_schedule(creation_date, upload_date):
-	flightschedule = FlightSchedules(creation_date=creation_date, upload_date=upload_date)
+def add_flight_schedule(creation_date, upload_date, status):
+	flightschedule = FlightSchedules(creation_date=creation_date, upload_date=upload_date, status=status)
 	db.session.add(flightschedule)
 	db.session.commit()
 	return flightschedule

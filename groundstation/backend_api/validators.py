@@ -17,7 +17,7 @@ class FlightScheduleCommandValidator(Schema):
     #flightschedule_id = fields.Integer(required=True)
 
 class FlightScheduleValidator(Schema):
-    is_queued = fields.Boolean(required=True)
+    status = fields.Integer(required=True, validate=validate.Range(min=1, max=3))
     commands = fields.Nested(FlightScheduleCommandValidator, many=True, required=True)
 
 class FlightSchedulePatchCommandValidator(Schema):
@@ -28,7 +28,7 @@ class FlightSchedulePatchCommandValidator(Schema):
     args = fields.Nested(ArgumentValidator, required=True, many=True)
 
 class FlightSchedulePatchValidator(Schema):
-	is_queued = fields.Boolean(required=True)
+	status = fields.Integer(required=True, validate=validate.Range(min=1, max=3))
 	commands = fields.Nested(FlightSchedulePatchCommandValidator, many=True, required=True)
 
 class PassoverValidator(Schema):
