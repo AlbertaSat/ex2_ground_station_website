@@ -1,7 +1,8 @@
 from groundstation.backend_api.communications import CommunicationList
+import json
 
 def main():
-    sender = CommunicationList
+    sender = CommunicationList()
     fail = True
     while fail:
         fail = False
@@ -26,6 +27,8 @@ def main():
         }
 
         print(line, message)
+
+        message = json.dumps(message)
 
         sender.post(local_data=message)
 
