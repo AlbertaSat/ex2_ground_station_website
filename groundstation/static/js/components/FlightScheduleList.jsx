@@ -57,7 +57,7 @@ const FlightScheduleList = (props) => {
 	return (
        <div>
 		<Paper className="grid-containers">
-          <Grid container>
+          <Grid container style={{paddingBottom: '12px'}}>
             <Grid item xs={(props.isMinified) ? 12 : 11} style={{textAlign: 'center'}}>
               <Typography variant="h5" displayInline>Flight Schedules</Typography>
             </Grid>
