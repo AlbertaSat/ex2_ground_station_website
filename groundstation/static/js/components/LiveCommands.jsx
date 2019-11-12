@@ -16,6 +16,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+// TODO: figue out how to scroll paper automatically as responses are added dynamically
 
 class LiveCommands extends Component {
     constructor(props) {
@@ -23,6 +24,7 @@ class LiveCommands extends Component {
         this.state = {
             isLoaded:false,
             isEmpty:false,
+            validTelecommands:[],
             errorMessage:'',
             textBoxValue:'',
             // TODO replace this with an on-mount fetch to communications
@@ -70,38 +72,65 @@ class LiveCommands extends Component {
             ]
         }
 
-        this.handleOnChange = this.handleOnChange.bind(this);
+        this.handleChange = this.handleChange.bind(this);
 		this.handleKeyPress = this.handleKeyPress.bind(this);
+        this.telecommandIsValid = this.telecommandIsValid.bind(this);
     }
 
-    handleOnChange(event) {
+    componentDidMount() {
+        fetch('/api/telecommands')
+        .then(results => {
+            return results.json();
+        }).then(data => {
+        console.log('data: ', data);
+        if (data.status == 'success') {
+            this.setState({ validTelecommands: data.data.telecommands, isLoaded: true, isEmpty: false });
+        } else {
+            // TODO: What should we do here
+            console.log("Error loading telecommands!");
+        }
+     });
+    }
+
+    telecommandIsValid(telecommand_string) {
+        const split_string = telecommand_string.trim().split(' ');
+        const matching_command = this.state.validTelecommands.find((element) => {
+            if (element.command_name === split_string[0]) {
+                return element
+            }
+        });
+        if (matching_command === undefined) {
+            return false;
+        }
+        if (!(matching_command.num_arguments === split_string.slice(1).length)) {
+            return false;
+        }
+        return true;
+    }
+
+    handleChange(event) {
         this.setState({textBoxValue:event.target.value});
     }
 
-    telecommandIsValid(telecommand) {
-        const telecommands = ['ping', 'get-hk', 'turn-on'];
-        // TODO: dont use hardcoded list, we should fetch valid telecommands on mount
-        if (telecommands.indexOf(telecommand) >= 0) {
-            return true;
-        }
-        return false;
-    }
-
     handleKeyPress(event) {
-        // NOTE: we dont prevent default here, TODO understand better
-        // event.preventDefault();
         if (event.key === 'Enter') {
-            const text = event.target.value
+            const text = event.target.value;
             if (this.telecommandIsValid(text)) {
                 console.log(text);
-                const logEntry = {type:'user-input', data:{message:text}}
+                const logEntry = {type:'user-input', data:{message:text}};
                 this.setState(prevState => ({
-                  displayLog: [...prevState.displayLog, logEntry], errorMessage:''
+                  displayLog: [...prevState.displayLog, logEntry],
+                  errorMessage:'',
+                  textBoxValue:''
                 }))
-                event.target.value = ''
             } else{
-                this.setState({errorMessage:'Invalid Telecommand'})
+                this.setState({errorMessage:'Invalid Telecommand'});
             }
+        } else if (event.key === 'ArrowUp'){
+            // TODO: Next level: store input history for easy re-send
+            console.log(event.key);
+        } else if (event.key === 'ArrowDown') {
+            console.log(event.key);
         }
     }
 
@@ -120,7 +149,9 @@ class LiveCommands extends Component {
                       margin="normal"
                       variant="outlined"
                       style={{width:"30%","background-color":"white"}}
-                      onKeyDown={ (event) => this.handleKeyPress(event) }
+                      value={this.state.textBoxValue}
+                      onChange={(event) => this.handleChange(event)}
+                      onKeyDown={(event) => this.handleKeyPress(event) }
                       error={!(this.state.errorMessage === '')}
                     />
                 </div>

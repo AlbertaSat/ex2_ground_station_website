@@ -1,8 +1,6 @@
 import React from 'react'
-// import Paper from '@material-ui/core/Paper';
 
 const CommunicationEntry = (props) => {
-    // const output = JSON.stringify(props.entry, null, 4);
     const divStyle = {color:'green'};
     if (props.entry.type === 'user-input') {
         divStyle.color = 'red';
@@ -23,7 +21,6 @@ const CommunicationsList = (props) => {
         </div>
       )
     }
-
 	return (
         <div>
             {props.displayLog.map(logEntry => (
