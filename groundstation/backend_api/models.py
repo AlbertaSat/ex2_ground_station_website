@@ -1,16 +1,58 @@
-from datetime import datetime
-from groundstation import db
+from flask import current_app
+import datetime
+import jwt
+from groundstation import db, bcrypt
 
 class User(db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.String(128))
+    username = db.Column(db.String(128), unique=True)
+    password_hash = db.Column(db.String(128))
+    is_admin = db.Column(db.Boolean, default=False, nullable=False)
 
-    def __init__(self, username):
+    def __init__(self, username, password, is_admin=False):
         self.username = username
+        num_rounds = current_app.config.get('BCRYPT_LOG_ROUNDS')
+        self.password_hash = bcrypt.generate_password_hash(password, num_rounds).decode()
+        self.is_admin = is_admin
 
-    def toJson(self):
+    def verify_password(self, password):
+        """ returns True if passes password is valid, else False """
+        return bcrypt.check_password_hash(self.password_hash, password)
+
+    def encode_auth_token_by_id(self):
+        """Generates the auth token"""
+        try:
+            payload = {
+                'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(
+                    days=current_app.config.get('TOKEN_EXPIRATION_DAYS'),
+                    seconds=current_app.config.get('TOKEN_EXPIRATION_SECONDS')),
+                'iat': datetime.datetime.now(datetime.timezone.utc),
+                'sub': self.id
+            }
+            return jwt.encode(
+                payload,
+                current_app.config.get('SECRET_KEY'),
+                algorithm='HS256'
+            )
+        except Exception as e:
+            return e
+
+    @staticmethod
+    def decode_auth_token(auth_token):
+        """
+        Decodes the auth token
+        params:
+            @auth_token
+        returns:
+            user_id (int)
+        """
+        payload = jwt.decode(auth_token, current_app.config.get('SECRET_KEY'))
+        user_id = payload['sub']
+        return user_id
+
+    def to_json(self):
         return {
             'id' : self.id,
             'username': self.username
@@ -60,7 +102,7 @@ class FlightSchedules(db.Model):
     __tablename__ = 'flightschedules'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    creation_date = db.Column(db.DateTime, default=datetime.utcnow)
+    creation_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     upload_date = db.Column(db.DateTime)
     # status is an integer, where 1=queued, 2=draft, 3=uploaded
     status = db.Column(db.Integer)

@@ -47,6 +47,11 @@ def fake_patch_update_as_dict(timestamp):
             ]
         }
 
+def fake_user_as_dict(username, password):
+    return {
+        'username':username,
+        'password':password
+    }
 def fake_telecommand_as_dict(command_name='test', num_arguments='0', is_dangerous=False):
     return {'command_name':command_name,
             'num_arguments':num_arguments,

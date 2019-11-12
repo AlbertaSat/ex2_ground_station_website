@@ -6,7 +6,7 @@ import json
 from marshmallow import ValidationError
 from groundstation import db
 from groundstation.backend_api.models import Telecommands
-from groundstation.backend_api.utils import create_context
+from groundstation.backend_api.utils import create_context, add_telecommand, login_required
 from groundstation.backend_api.validators import TelecommandListValidator
 
 telecommand_blueprint = Blueprint('telecommand', __name__)
@@ -50,6 +50,7 @@ class TelecommandList(Resource):
         return response_object, 200
 
     @create_context
+    @login_required
     def post(self, local_data=None):
         if not local_data:
             post_data = request.get_json()
