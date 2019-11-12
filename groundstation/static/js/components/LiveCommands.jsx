@@ -34,7 +34,7 @@ class LiveCommands extends Component {
                     data:{message:'ping'}
                 },
                 {
-                    type:'server-response',
+                    type:'server-message',
                     data:{id:1, message:'Ping response', timestamp:'2019-11-12 01:24:49.005184', sender:'Comm Module', receiver:'Alice'}
                 },
                 {
@@ -42,7 +42,7 @@ class LiveCommands extends Component {
                     data:{message:'ping'}
                 },
                 {
-                    type:'server-response',
+                    type:'server-message',
                     data:{id:1, message:'Ping response', timestamp:'2019-11-12 01:24:49.005184', sender:'Comm Module', receiver:'Alice'}
                 },
                 {
@@ -50,25 +50,9 @@ class LiveCommands extends Component {
                     data:{message:'ping'}
                 },
                 {
-                    type:'server-response',
+                    type:'server-message',
                     data:{id:1, message:'Ping response', timestamp:'2019-11-12 01:24:49.005184', sender:'Comm Module', receiver:'Alice'}
-                },
-                {
-                    type:'user-input',
-                    data:{message:'ping'}
-                },
-                {
-                    type:'server-response',
-                    data:{id:1, message:'Ping response', timestamp:'2019-11-12 01:24:49.005184', sender:'Comm Module', receiver:'Alice'}
-                },
-                {
-                    type:'user-input',
-                    data:{message:'ping'}
-                },
-                {
-                    type:'server-response',
-                    data:{id:1, message:'Ping response', timestamp:'2019-11-12 01:24:49.005184', sender:'Comm Module', receiver:'Alice'}
-                },
+                }
             ]
         }
 
@@ -117,6 +101,7 @@ class LiveCommands extends Component {
             const text = event.target.value;
             if (this.telecommandIsValid(text)) {
                 console.log(text);
+                // TODO: maybe add timestamp for when user enterred command
                 const logEntry = {type:'user-input', data:{message:text}};
                 this.setState(prevState => ({
                   displayLog: [...prevState.displayLog, logEntry],
