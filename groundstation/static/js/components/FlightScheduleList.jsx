@@ -33,12 +33,33 @@ const FlightScheduleList = (props) => {
       )
   }
 
+  function tableColour(status){
+    if(status == 3){
+      return {borderLeft: 'solid 8px #479b4e'}
+    }else if(status == 1){
+      return {borderLeft: 'solid 8px #4bacb8'}
+    }else if(status == 2){
+      return {borderLeft: 'solid 8px #A9A9A9'}
+    }
+  }
+
+  // format what our status div will look like
+  function statusDiv(status){
+    if(status == 3){
+      return <div style={{fontSize: '14px', color: '#479b4e'}}>Uploaded</div>
+    }else if(status == 1){
+      return <div style={{fontSize: '14px', color: '#4bacb8'}}>Queued</div>
+    }else if(status == 2){
+      return <div style={{fontSize: '14px', color: '#A9A9A9'}}>Draft</div>
+    }
+  }
+
 	return (
        <div>
 		<Paper className="grid-containers">
           <Grid container>
             <Grid item xs={(props.isMinified) ? 12 : 11} style={{textAlign: 'center'}}>
-              <Typography variant="h5" displayInline>Upcoming Flight Schedules</Typography>
+              <Typography variant="h5" displayInline>Flight Schedules</Typography>
             </Grid>
             {
               !props.isMinified &&
@@ -51,7 +72,7 @@ const FlightScheduleList = (props) => {
             } 
           </Grid>
           {props.flightschedule.map((flightschedule, idx) => (
-             <ExpansionPanel key={flightschedule.flightschedule_id}>
+             <ExpansionPanel key={flightschedule.flightschedule_id} style={tableColour(flightschedule.status)}>
                <ExpansionPanelSummary
                  expandIcon={<ExpandMoreIcon style={{ color: '#4bacb8'}}/>}
                  aria-controls="panel1a-content"
@@ -61,7 +82,10 @@ const FlightScheduleList = (props) => {
                     <TableBody>
                       <TableRow>
                         <TableCell component="th" scope="row">
-                          {"Flight Schedule #" + flightschedule.flightschedule_id}
+                          <div style={{fontWeight: 'bold'}}>
+                            {"Flight Schedule #" + flightschedule.flightschedule_id}
+                          </div>
+                          { statusDiv(flightschedule.status) }
                         </TableCell>
                         <TableCell align="right">
                           {"Created at " + flightschedule.creation_date}

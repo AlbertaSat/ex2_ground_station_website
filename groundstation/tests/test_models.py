@@ -50,7 +50,7 @@ class TestFlightScheduleModel(BaseTestCase):
     """"Test adding a flight schedule"""
     def test_add_flight_schedule(self):
         timestamp = datetime.fromtimestamp(1570749472)
-        flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp)
+        flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp, status=2)
         self.assertTrue(flightschedule.id)
         self.assertEqual(timestamp, flightschedule.creation_date)
         self.assertEqual(timestamp, flightschedule.upload_date)
@@ -61,7 +61,7 @@ class TestFlightScheduleCommandsModel(BaseTestCase):
     def test_add_command_to_flight_schedule(self):
         timestamp = datetime.fromtimestamp(1570749472)
         command = add_telecommand(command_name='ping', num_arguments=0, is_dangerous=False)
-        flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp)
+        flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp, status=2)
         flightschedule_commands = add_command_to_flightschedule(
                                     timestamp=timestamp,
                                     flightschedule_id=flightschedule.id,
@@ -78,7 +78,7 @@ class TestFlightScheduleCommandsArgsModel(BaseTestCase):
     def test_add_arg_to_flightschedule_command(self):
         timestamp = datetime.fromtimestamp(1570749472)
         command = add_telecommand(command_name='turn-on', num_arguments=1, is_dangerous=False)
-        flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp)
+        flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp, status=2)
         flightschedule_commands = add_command_to_flightschedule(
                                     timestamp=timestamp,
                                     flightschedule_id=flightschedule.id,
