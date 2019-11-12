@@ -5,14 +5,14 @@ import datetime
 from groundstation.tests.base import BaseTestCase
 from groundstation import db
 
-from groundstation.backend_api.models import Housekeeping, FlightSchedules, Passover, Telecommands, FlightScheduleCommands
-from groundstation.tests.utils import fakeHousekeepingAsDict, fake_flight_schedule_as_dict, fake_passover_as_dict, fake_patch_update_as_dict, fake_telecommand_as_dict
+from groundstation.backend_api.models import Housekeeping, FlightSchedules, Passover, Telecommands, FlightScheduleCommands, Communications
+from groundstation.tests.utils import fakeHousekeepingAsDict, fake_flight_schedule_as_dict, fake_passover_as_dict, fake_patch_update_as_dict, fake_telecommand_as_dict, fake_message_as_dict
 from groundstation.backend_api.housekeeping import HousekeepingLogList
 from groundstation.backend_api.flightschedule import FlightScheduleList
 from groundstation.backend_api.passover import PassoverList
 from groundstation.backend_api.telecommand import Telecommand, TelecommandList
 from groundstation.backend_api.utils import add_telecommand, add_flight_schedule, add_command_to_flightschedule
-
+from groundstation.backend_api.communications import Communication, CommunicationList
 from unittest import mock
 
 class TestHousekeepingService(BaseTestCase):
@@ -409,10 +409,6 @@ class TestFlightScheduleService(BaseTestCase):
             )
 
 
-
-
-
-
 class TestPassoverService(BaseTestCase):
 
     def test_get_all_passovers_with_empty_db(self):
@@ -469,3 +465,66 @@ class TestPassoverService(BaseTestCase):
             self.assertEqual(response.status_code, 200)
             self.assertEqual(len(response_data['data']['passovers']), 1)
             self.assertEqual(str(correct_next_passover).split('+')[0], response_data['data']['passovers'][0]['timestamp'])
+
+####################################################################
+#Test Communications functions
+class TestCommunicationsService(BaseTestCase):
+
+    def test_post_valid_communication(self):
+        # service = CommunicationsList()
+        test_message = fake_message_as_dict()
+        # response = service.post()
+
+        with self.client:
+            response = self.client.post(
+                '/api/communications',
+                data=json.dumps(test_message),
+                content_type='application/json'
+            )
+            data=json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 201)
+            # print(test_message)
+            msg = test_message['message']
+            self.assertEqual(
+                f'message {msg} was sent!',
+                data['message']
+            )
+            self.assertEqual('success', data['status'])
+
+    def test_get_all_communications(self):
+        test_message_1 = fake_message_as_dict()
+        test_message_2 = fake_message_as_dict(message='test 2')
+
+        test_message_1 = Communications(**test_message_1)
+        test_message_2 = Communications(**test_message_2)
+
+        db.session.add(test_message_1)
+        db.session.add(test_message_2)
+        db.session.commit()
+
+        with self.client:
+            response=self.client.get('/api/communications')
+            data=json.loads(response.data.decode())
+            # print(data)
+
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(data['status'], 'success')
+            self.assertEqual(len(data['data']['messages']), 2)
+            self.assertIn('test', data['data']['messages'][0]['message'])
+            self.assertIn('test 2', data['data']['messages'][1]['message'])
+
+
+
+#         with self.client:
+#             response = self.client.post(
+#                 '/api/housekeepinglog',
+#                 data=json.dumps(housekeepingData),
+#                 content_type='application/json'
+#             )
+#             data = json.loads(response.data.decode())
+#             self.assertEqual(response.status_code, 201)
+#             self.assertEqual(
+#                 f'Housekeeping Log with timestamp {timestamp} was added!',
+#                 data['message']
+#             )
+#             self.assertIn('success', data['status'])

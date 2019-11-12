@@ -122,3 +122,28 @@ class Passover(db.Model):
             'passover_id': self.id,
             'timestamp': str(self.timestamp)
         }
+
+#This will be the table of telecommands being sent to the satellite as well as the responses
+#the table will allow us to send and receive all commands transactionally allowing us to log
+#them as well as their responses
+#TODO: discuss with team the design/structure for the communications table
+class Communications(db.Model):
+    __tablename__ = 'communications'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    message = db.Column(db.String)          # Every command is going to be formatted as a string for simplicity
+    timestamp = db.Column(db.DateTime)      # Time at which the command was appended to the table
+    sender = db.Column(db.String)           # who sent the command (comm/react/command) as a note, the comm can send commands as responses from the satellite
+    receiver = db.Column(db.String)         # who the intended recipient of the command is (comm/react web page/command line)
+    #response = db.Column(db.Integer, db.ForeignKey('communications.id')) # one possible value for connecting satellite responses to sent telecommands
+
+    def to_json(self):
+        return {
+            'message_id': self.id,
+            'message': self.message,
+            'timestamp': str(self.timestamp),
+            'sender': self.sender,
+            'receiver': self.receiver
+        }
+        
+
