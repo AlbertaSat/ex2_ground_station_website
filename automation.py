@@ -21,12 +21,12 @@ def main():
         line = line.strip("\n")
         pieces = line.split(",")
         message = {
-            'command': pieces[0],
+            'message': pieces[0],
             'sender': pieces[1],
             'receiver': pieces[2]
         }
 
-        print(line, message)
+        #print(line, message)
 
         message = json.dumps(message)
 
