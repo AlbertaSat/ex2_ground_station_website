@@ -44,7 +44,16 @@ class UserValidator(Schema):
 class AuthLoginValidator(Schema):
     username = fields.String(required=True)
     password = fields.String(required=True)
+
 class TelecommandListValidator(Schema):
     command_name = fields.String(required=True)
     num_arguments = fields.Integer(required=True)
     is_dangerous = fields.Boolean(required=True)
+
+class HousekeepingValidator(Schema):
+    satellite_mode = fields.String(required=False)
+    battery_voltage = fields.Float(required=False)
+    current_in = fields.Float(required=False)
+    current_out = fields.Float(required=False)
+    no_MCU_resets = fields.Integer(required=False)
+    last_beacon_time = fields.DateTime(format='iso', required=True)

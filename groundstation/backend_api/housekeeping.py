@@ -1,12 +1,14 @@
 from flask import request
 from flask import Blueprint
 from flask_restful import Resource, Api
+from marshmallow import ValidationError
 from datetime import datetime
 import json
 
 from groundstation.backend_api.models import Housekeeping
 from groundstation import db
 from groundstation.backend_api.utils import create_context, login_required
+from groundstation.backend_api.validators import HousekeepingValidator
 
 housekeeping_blueprint = Blueprint('housekeeping', __name__)
 api = Api(housekeeping_blueprint)
@@ -35,30 +37,29 @@ class HousekeepingLog(Resource):
 
 class HousekeepingLogList(Resource):
 
+    def __init__(self):
+        self.validator = HousekeepingValidator()
+        super(HousekeepingLogList, self).__init__()
+
     @create_context
     @login_required
     def post(self, local_data=None):
-        """Post a housekeeping log"""
-        # this api call will have to treat incoming data different if it is called locally
-        response_object = {
-            'status': 'fail',
-            'message': 'Invalid payload'
-        }
-
         if not local_data:
             post_data = request.get_json()
         else:
             post_data = json.loads(local_data)
 
-        # since incoming timestamp will be a string, convert it into a datetime object
-        # also handle all errors that could occur with the timestamp
-        # as a timestamp is necessary for all housekeeping logs
         try:
-            post_data['last_beacon_time'] = datetime.strptime(post_data['last_beacon_time'], '%Y-%m-%d %H:%M:%S')
-        except (ValueError, TypeError, KeyError) as error:
+            validated_data = self.validator.load(post_data)
+        except ValidationError as err:
+            response_object = {
+                'status': 'fail',
+                'message': 'Invalid payload',
+                'errors': err.messages
+            }
             return response_object, 400
 
-        housekeeping = Housekeeping(**post_data)
+        housekeeping = Housekeeping(**validated_data)
         db.session.add(housekeeping)
         db.session.commit()
 
