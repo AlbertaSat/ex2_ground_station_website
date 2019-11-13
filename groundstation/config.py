@@ -12,7 +12,7 @@ class BaseConfig(object):
     SECRET_KEY = os.getenv('SECRET_KEY')
     TOKEN_EXPIRATION_DAYS = 1
     TOKEN_EXPIRATION_SECONDS = 0
-    BYPASS_AUTH = False
+    BYPASS_AUTH = True
 
 class ProductionConfig(BaseConfig):
     """
