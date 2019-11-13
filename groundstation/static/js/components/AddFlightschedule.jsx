@@ -56,7 +56,7 @@ const classes = useStyles();
 		      <Button style={{color: '#3f51b5', paddingLeft: '16px', paddingRight: '16px'}}
 		      		onClick={ (event) => props.handleQueueClick(event) }
 		      	>
-                	{(props.isQueued)? 'Dequeue' : 'Queue' }
+                	{(props.status == 1)? 'Dequeue' : 'Queue' }
               </Button>
 		      <Table aria-label="simple table">
 		        {

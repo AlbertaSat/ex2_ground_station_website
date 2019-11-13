@@ -2,16 +2,22 @@ import unittest
 import json
 
 import datetime
+from flask import current_app
 from groundstation.tests.base import BaseTestCase
 from groundstation import db
 
-from groundstation.backend_api.models import Housekeeping, FlightSchedules, Passover, Telecommands, FlightScheduleCommands, Communications
-from groundstation.tests.utils import fakeHousekeepingAsDict, fake_flight_schedule_as_dict, fake_passover_as_dict, fake_patch_update_as_dict, fake_telecommand_as_dict, fake_message_as_dict
+from groundstation.backend_api.models import Housekeeping, FlightSchedules, \
+    Passover, Telecommands, FlightScheduleCommands, Communications
+from groundstation.tests.utils import fakeHousekeepingAsDict, \
+    fake_flight_schedule_as_dict, fake_passover_as_dict, \
+    fake_patch_update_as_dict, fake_telecommand_as_dict, \
+    fake_message_as_dict, fake_user_as_dict
 from groundstation.backend_api.housekeeping import HousekeepingLogList
 from groundstation.backend_api.flightschedule import FlightScheduleList
 from groundstation.backend_api.passover import PassoverList
 from groundstation.backend_api.telecommand import Telecommand, TelecommandList
-from groundstation.backend_api.utils import add_telecommand, add_flight_schedule, add_command_to_flightschedule
+from groundstation.backend_api.utils import add_telecommand, \
+    add_flight_schedule, add_command_to_flightschedule, add_user
 from groundstation.backend_api.communications import Communication, CommunicationList
 from unittest import mock
 
@@ -284,7 +290,7 @@ class TestFlightScheduleService(BaseTestCase):
             self.assertIn('commands', response_data['errors'].keys())
 
     def test_multiple_queued_posts(self):
-        flightschedule = fake_flight_schedule_as_dict(is_queued=True, commands=[])
+        flightschedule = fake_flight_schedule_as_dict(status=1, commands=[])
 
         with self.client:
             post_data = json.dumps(flightschedule)
@@ -298,10 +304,6 @@ class TestFlightScheduleService(BaseTestCase):
             response_data = json.loads(response_2.data.decode())
             self.assertEqual(response_2.status_code, 400)
             self.assertIn('A Queued flight schedule already exists!', response_data['message'])
-
-    # TODO: Test with actuall command objects in the post data
-
-
 
     def test_get_all_flightschedules(self):
         for i in range(10):
@@ -359,7 +361,7 @@ class TestFlightScheduleService(BaseTestCase):
 
         command1 = Telecommands.query.filter_by(command_name='ping').first()
         command2 = Telecommands.query.filter_by(command_name='get-hk').first()
-        flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp)
+        flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp, status=2)
         flightschedule_commands1 = add_command_to_flightschedule(
                                 timestamp=timestamp,
                                 flightschedule_id=flightschedule.id,
@@ -393,7 +395,7 @@ class TestFlightScheduleService(BaseTestCase):
             c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
 
         command1 = Telecommands.query.filter_by(command_name='ping').first()
-        flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp)
+        flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp, status=2)
         flightschedule_commands = add_command_to_flightschedule(
                                 timestamp=timestamp,
                                 flightschedule_id=flightschedule.id,
@@ -407,6 +409,25 @@ class TestFlightScheduleService(BaseTestCase):
                 FlightScheduleCommands.query.filter_by(id=flightschedule_commands.id).first(),
                 None
             )
+
+    def test_get_without_auth_token(self):
+        current_app.config.update(BYPASS_AUTH=False)
+        admin = add_user('Alice', 'password', is_admin=True)
+        with self.client:
+            response = self.client.get('/api/flightschedules', headers={})
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 401)
+
+    def test_get_with_auth_token(self):
+        current_app.config.update(BYPASS_AUTH=False)
+
+        user = add_user('Alice', 'password', is_admin=False)
+        auth_token = user.encode_auth_token_by_id().decode()
+        with self.client:
+            response = self.client.get('/api/flightschedules', headers={'Authorization': f'Bearer {auth_token}'})
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+
 
 
 class TestPassoverService(BaseTestCase):
@@ -443,7 +464,7 @@ class TestPassoverService(BaseTestCase):
     def test_get_next_passover(self):
 
         current_time = datetime.datetime.now(datetime.timezone.utc)
-        print('current_time', str(current_time))
+        # print('current_time', str(current_time))
         offset = datetime.timedelta(minutes=90)
         correct_next_passover = None
         for i in range(-10, 10, 1):
@@ -452,7 +473,7 @@ class TestPassoverService(BaseTestCase):
                 continue
             if i == 1:
                 correct_next_passover = d
-                print('correct_next_passover', correct_next_passover)
+                # print('correct_next_passover', correct_next_passover)
 
             p = Passover(timestamp=d)
             db.session.add(p)
@@ -466,6 +487,68 @@ class TestPassoverService(BaseTestCase):
             self.assertEqual(len(response_data['data']['passovers']), 1)
             self.assertEqual(str(correct_next_passover).split('+')[0], response_data['data']['passovers'][0]['timestamp'])
 
+class TestUserService(BaseTestCase):
+
+    def test_post_new_user_without_admin_priviliges(self):
+        current_app.config.update(BYPASS_AUTH=False)
+
+        admin = add_user('admin', 'admin', is_admin=True)
+        user = add_user('user', 'user', is_admin=False)
+        auth_token = user.encode_auth_token_by_id().decode()
+        with self.client:
+            user_dict = fake_user_as_dict('new_user', 'new_user')
+            post_data = json.dumps(user_dict)
+            kw_args = {'data':post_data, 'content_type':'application/json'}
+            response = self.client.post('/api/users', headers={'Authorization': f'Bearer {auth_token}'}, **kw_args)
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 403)
+            self.assertIn('fail', response_data['status'])
+            self.assertIn('You do not have permission to create users.', response_data['message'])
+
+    def test_post_new_user_with_admin_priviliges(self):
+        current_app.config.update(BYPASS_AUTH=False)
+
+        admin = add_user('admin', 'admin', is_admin=True)
+        user = add_user('user', 'user', is_admin=False)
+        auth_token = admin.encode_auth_token_by_id().decode()
+        with self.client:
+            user_dict = fake_user_as_dict('new_user', 'new_user')
+            post_data = json.dumps(user_dict)
+            kw_args = {'data':post_data, 'content_type':'application/json'}
+            response = self.client.post('/api/users', headers={'Authorization': f'Bearer {auth_token}'}, **kw_args)
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 201)
+            self.assertIn('success', response_data['status'])
+
+    def test_post_duplicate_username(self):
+        current_app.config.update(BYPASS_AUTH=False)
+
+        admin = add_user('Alice', 'password', is_admin=True)
+        user1 = add_user('Bob', 'password', is_admin=False)
+        auth_token = admin.encode_auth_token_by_id().decode()
+        with self.client:
+            user_dict = fake_user_as_dict('Bob', 'secret-password')
+            post_data = json.dumps(user_dict)
+            kw_args = {'data':post_data, 'content_type':'application/json'}
+            response = self.client.post('/api/users', headers={'Authorization': f'Bearer {auth_token}'}, **kw_args)
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 400)
+            self.assertIn('dev_message', response_data.keys())
+
+    def test_missing_password_data(self):
+        current_app.config.update(BYPASS_AUTH=False)
+
+        admin = add_user('Alice', 'password', is_admin=True)
+        auth_token = admin.encode_auth_token_by_id().decode()
+        with self.client:
+            user_dict = fake_user_as_dict('Bob', 'secret-password')
+            user_dict.pop('password')
+            post_data = json.dumps(user_dict)
+            kw_args = {'data':post_data, 'content_type':'application/json'}
+            response = self.client.post('/api/users', headers={'Authorization': f'Bearer {auth_token}'}, **kw_args)
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 400)
+            self.assertIn('The posted data is not valid!', response_data['message'])
 ####################################################################
 #Test Communications functions
 class TestCommunicationsService(BaseTestCase):
