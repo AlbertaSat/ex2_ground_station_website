@@ -12,7 +12,7 @@ from groundstation.tests.utils import fakeHousekeepingAsDict
 from groundstation.backend_api.housekeeping import HousekeepingLogList
 from groundstation.backend_api.utils import add_telecommand, \
 add_flight_schedule, add_command_to_flightschedule, add_user, \
-add_arg_to_flightschedulecommand, add_message_to_communications
+add_arg_to_flightschedulecommand
 
 app = create_app()
 cli = FlaskGroup(create_app=create_app)
@@ -81,14 +81,7 @@ def seed_db():
                                 flightschedule_command_id=flightschedule_commands.id
                             )
 
-    message = add_message_to_communications(
-                    timestamp=timestamp, 
-                    message='ping', 
-                    sender='user',
-                    receiver='comm'
-                )
-
-
+    print(flightschedule.to_json())
 
 
 if __name__ == '__main__':
