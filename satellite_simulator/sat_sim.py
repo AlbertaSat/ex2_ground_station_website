@@ -1,4 +1,5 @@
-import helpers
+import sys
+from . import helpers
 import random
 import json
 import time

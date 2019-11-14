@@ -26,27 +26,27 @@ def create_context(function):
     return decorate
 
 def add_telecommand(command_name, num_arguments, is_dangerous):
-		command = Telecommands(command_name=command_name, num_arguments=num_arguments, is_dangerous=is_dangerous)
+        command = Telecommands(command_name=command_name, num_arguments=num_arguments, is_dangerous=is_dangerous)
 
-		db.session.add(command)
-		db.session.commit()
-		return command
+        db.session.add(command)
+        db.session.commit()
+        return command
 
 def add_flight_schedule(creation_date, upload_date, status):
-	flightschedule = FlightSchedules(creation_date=creation_date, upload_date=upload_date, status=status)
-	db.session.add(flightschedule)
-	db.session.commit()
-	return flightschedule
+    flightschedule = FlightSchedules(creation_date=creation_date, upload_date=upload_date, status=status)
+    db.session.add(flightschedule)
+    db.session.commit()
+    return flightschedule
 
 def add_command_to_flightschedule(timestamp, flightschedule_id, command_id):
-	flightschedule_commands = FlightScheduleCommands(
-								timestamp=timestamp,
-								flightschedule_id=flightschedule_id,
-								command_id=command_id
-							)
-	db.session.add(flightschedule_commands)
-	db.session.commit()
-	return flightschedule_commands
+    flightschedule_commands = FlightScheduleCommands(
+                                timestamp=timestamp,
+                                flightschedule_id=flightschedule_id,
+                                command_id=command_id
+                            )
+    db.session.add(flightschedule_commands)
+    db.session.commit()
+    return flightschedule_commands
 
 def add_user(username, password, is_admin=False):
     user = User(username=username, password=password, is_admin=is_admin)
@@ -111,16 +111,29 @@ def login_required(f):
         return f(*args, **kwargs)
 
     return decorated_function
-def add_arg_to_flightschedulecommand(index, argument, flightschedule_command_id):
-	flightschedule_command_arg = FlightScheduleCommandsArgs(
-									index=index,
-									argument=argument,
-									flightschedulecommand_id=flightschedule_command_id
-								)
 
-	db.session.add(flightschedule_command_arg)
-	db.session.commit()
-	return flightschedule_command_arg
+def add_arg_to_flightschedulecommand(index, argument, flightschedule_command_id):
+    flightschedule_command_arg = FlightScheduleCommandsArgs(
+                                    index=index,
+                                    argument=argument,
+                                    flightschedulecommand_id=flightschedule_command_id
+                                )
+
+    db.session.add(flightschedule_command_arg)
+    db.session.commit()
+    return flightschedule_command_arg
+
+def add_message_to_communications(timestamp, message, receiver, sender):
+        message = Communications(
+                            timestamp=timestamp, 
+                            message=message, 
+                            receiver=receiver, 
+                            sender=sender)
+
+        db.session.add(message)
+        db.session.commit()
+        return message
+
 
 # build a filter from query paramaters
 def dynamic_filters_communications(filters):

@@ -33,6 +33,9 @@ def communication_loop():
     # loop to continuously check communication table
     # if we have messages address to comm greater than the last id
     # send them to the satellite
+    # possibly change polling to select on a named pipe, probably the easiest 
+    # for the server to notify the comm module on new data
+    # or polling might be just fine
     while True:
         messages = communication_list.get(local_data=request_data)[0]
 
