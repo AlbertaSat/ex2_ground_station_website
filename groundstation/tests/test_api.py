@@ -596,26 +596,6 @@ class TestCommunicationsService(BaseTestCase):
             self.assertIn('test', data['data']['messages'][0]['message'])
             self.assertIn('test 2', data['data']['messages'][1]['message'])
 
-    def test_get_communications_with_query_params(self):
-        test_message_1 = fake_message_as_dict()
-        test_message_2 = fake_message_as_dict(message='test 2')
-
-        test_message_1 = Communications(**test_message_1)
-        test_message_2 = Communications(**test_message_2)
-
-        db.session.add(test_message_1)
-        db.session.add(test_message_2)
-        db.session.commit()
-
-        with self.client:
-            response = self.client.get('/api/communications?last_id=1&receiver=tester2')
-            data = json.loads(response.data.decode())
-
-            self.assertEqual(response.status_code, 200)
-            self.assertEqual(data['status'], 'success')
-            self.assertEqual(len(data['data']['messages']), 1)
-            self.assertIn('test 2', data['data']['messages'][0]['message'])
-
 
 
 #         with self.client:

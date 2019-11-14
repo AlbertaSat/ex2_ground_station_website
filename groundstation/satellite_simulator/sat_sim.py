@@ -1,5 +1,4 @@
-import sys
-from . import helpers
+from groundstation.satellite_simulator import helpers
 import random
 import json
 import time
