@@ -17,11 +17,11 @@ const CommunicationEntry = (props) => {
     let timestampString;
     if (type === 'user-input') {
         divStyle.backgroundColor = '#f2f2f2';
-        messageStyle.color = 'red';
+        messageStyle.color = '#56b2bc';
         timestampString = type + ' at ' + data.timestamp;
     } else {
         divStyle.backgroundColor = '#e3e3e3';
-        messageStyle.color = 'green';
+        messageStyle.color = '#007b40';
         timestampString = type + ' from ' + data.timestamp;
     }
     console.log(timestampString)
