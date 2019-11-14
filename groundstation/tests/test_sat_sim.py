@@ -3,13 +3,15 @@ from unittest import mock
 import json
 
 from groundstation.tests.base import BaseTestCase
-from groundstation.satellite_simulator.sat_sim import Environment, Satellite, Simulator, SatelliteComponent
+import sys
+sys.path.append(".")
+from satellite_simulator.sat_sim import Environment, Satellite, Simulator, SatelliteComponent
 
 class TestSatelliteSimulator(BaseTestCase):
 
-    @mock.patch('groundstation.satellite_simulator.sat_sim.Satellite._broadcast_beacon')
-    @mock.patch('groundstation.satellite_simulator.sat_sim.open')
-    @mock.patch('groundstation.satellite_simulator.sat_sim.time.sleep')
+    @mock.patch('satellite_simulator.sat_sim.Satellite._broadcast_beacon')
+    @mock.patch('satellite_simulator.sat_sim.open')
+    @mock.patch('satellite_simulator.sat_sim.time.sleep')
     def test_ping(self, mocked_time_sleep, _, mocked_broadcast):
         environment = Environment(connection_strength=10, connection_stability=10,
             packet_drop_probability=0)
@@ -27,9 +29,9 @@ class TestSatelliteSimulator(BaseTestCase):
         mocked_time_sleep.assert_called()
         mocked_broadcast.assert_called_once()
 
-    @mock.patch('groundstation.satellite_simulator.sat_sim.Satellite._broadcast_beacon')
-    @mock.patch('groundstation.satellite_simulator.sat_sim.open')
-    @mock.patch('groundstation.satellite_simulator.sat_sim.time.sleep')
+    @mock.patch('satellite_simulator.sat_sim.Satellite._broadcast_beacon')
+    @mock.patch('satellite_simulator.sat_sim.open')
+    @mock.patch('satellite_simulator.sat_sim.time.sleep')
     def turn_on_gps(self, mocked_time_sleep, mocked_open, _):
         environment = Environment(connection_strength=10, connection_stability=10,
             packet_drop_probability=0)
@@ -50,9 +52,9 @@ class TestSatelliteSimulator(BaseTestCase):
         self.assertEqual(resp, '200 OK')
         self.assertTrue(simulator.satellite.components['GPS'].is_on)
 
-    @mock.patch('groundstation.satellite_simulator.sat_sim.Satellite._broadcast_beacon')
-    @mock.patch('groundstation.satellite_simulator.sat_sim.open')
-    @mock.patch('groundstation.satellite_simulator.sat_sim.time.sleep')
+    @mock.patch('satellite_simulator.sat_sim.Satellite._broadcast_beacon')
+    @mock.patch('satellite_simulator.sat_sim.open')
+    @mock.patch('satellite_simulator.sat_sim.time.sleep')
     def test_get_hk(self, mocked_time_sleep, mocked_open, _):
 
         environment = Environment(connection_strength=10, connection_stability=10,
@@ -67,9 +69,9 @@ class TestSatelliteSimulator(BaseTestCase):
         hk_dict = json.loads(resp)
         self.assertTrue(len(hk_dict) > 0)
 
-    @mock.patch('groundstation.satellite_simulator.sat_sim.Satellite._broadcast_beacon')
-    @mock.patch('groundstation.satellite_simulator.sat_sim.open')
-    @mock.patch('groundstation.satellite_simulator.sat_sim.time.sleep')
+    @mock.patch('satellite_simulator.sat_sim.Satellite._broadcast_beacon')
+    @mock.patch('satellite_simulator.sat_sim.open')
+    @mock.patch('satellite_simulator.sat_sim.time.sleep')
     def test_component_effects_battery(self, mocked_time_sleep, mocked_open, _):
         environment = Environment(connection_strength=10, connection_stability=10,
             packet_drop_probability=0)
@@ -97,9 +99,9 @@ class TestSatelliteSimulator(BaseTestCase):
         hk_dict = json.loads(resp)
         self.assertTrue(hk_dict['battery_voltage'] < starting_voltage)
 
-    @mock.patch('groundstation.satellite_simulator.sat_sim.Satellite._broadcast_beacon')
-    @mock.patch('groundstation.satellite_simulator.sat_sim.open')
-    @mock.patch('groundstation.satellite_simulator.sat_sim.time.sleep')
+    @mock.patch('satellite_simulator.sat_sim.Satellite._broadcast_beacon')
+    @mock.patch('satellite_simulator.sat_sim.open')
+    @mock.patch('satellite_simulator.sat_sim.time.sleep')
     def test_full_packet_loss(self, mocked_time_sleep, mocked_open, _):
         environment = Environment(connection_strength=10, connection_stability=10,
             packet_drop_probability=1)
@@ -114,9 +116,9 @@ class TestSatelliteSimulator(BaseTestCase):
             self.assertEqual(resp, 'NO-RESPONSE')
             simulator.step()
 
-    @mock.patch('groundstation.satellite_simulator.sat_sim.Satellite._broadcast_beacon')
-    @mock.patch('groundstation.satellite_simulator.sat_sim.open')
-    @mock.patch('groundstation.satellite_simulator.sat_sim.time.sleep')
+    @mock.patch('satellite_simulator.sat_sim.Satellite._broadcast_beacon')
+    @mock.patch('satellite_simulator.sat_sim.open')
+    @mock.patch('satellite_simulator.sat_sim.time.sleep')
     def test_some_packet_loss(self, mocked_time_sleep, mocked_open, _):
         environment = Environment(connection_strength=10, connection_stability=10,
             packet_drop_probability=0.5)
