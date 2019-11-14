@@ -5,6 +5,8 @@ from groundstation import create_app
 from groundstation.backend_api.models import Telecommands, FlightSchedules, \
     FlightScheduleCommands, FlightScheduleCommandsArgs, User
 from groundstation import db
+import operator
+from groundstation.backend_api.models import Communications
 
 
 # a decorator to handle cases where backend api calls have no app context
@@ -119,3 +121,23 @@ def add_arg_to_flightschedulecommand(index, argument, flightschedule_command_id)
 	db.session.add(flightschedule_command_arg)
 	db.session.commit()
 	return flightschedule_command_arg
+
+# build a filter from query paramaters
+def dynamic_filters_communications(filters):
+    filter_ops = []
+
+    for arg, value in filters.items():
+        if arg == 'last_id':
+            filter_ops.append(operator.gt(Communications.id, value))
+        elif arg == 'receiver':
+            filter_ops.append(operator.eq(Communications.receiver, value))
+        elif arg == 'max':
+            max_comm = Communications.query.order_by(Communications.id.desc()).limit(1).first()
+            filter_ops.append(operator.ge(Communications.id, max_comm.id))
+        else:
+            pass
+            
+
+    return filter_ops
+
+        

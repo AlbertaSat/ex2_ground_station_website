@@ -3,9 +3,7 @@ import socket
 import time
 import json
 from datetime import datetime
-from groundstation.satellite_simulator.sat_sim import Environment, Satellite, SatelliteComponent, Simulator
-from groundstation.backend_api.housekeeping import HousekeepingLogList
-from groundstation.tests.utils import fakeHousekeepingAsDict
+from sat_sim import Environment, Satellite, SatelliteComponent, Simulator
 
 environment = Environment(connection_strength=7, connection_stability=7, packet_drop_probability=0.05)
 def effect_of_gps_on(old_value):
