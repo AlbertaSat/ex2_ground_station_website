@@ -3,6 +3,7 @@
 import satellite_simulator.antenna as antenna
 from groundstation.backend_api.communications import CommunicationList
 import time
+import json
 
 def send(socket, data):
     """ Pipes the incoming data (probably a Command tuple) to the socket (probably the Simulator)
@@ -11,8 +12,10 @@ def send(socket, data):
     """
     return socket.send(data)
 
-def handle_response(data):
-    print(data)
+# probably handle errors in the post, if not 200 OK
+def handle_response(data, communication_list):
+    logged_data = {'message': data, 'receiver': 'all', 'sender': 'comm'}
+    resp = communication_list.post(json.dumps(logged_data))
 
 def example():
     telecommands = ['ping', 'get-hk', 'turn-on gps', 'ping', 'get-hk']
@@ -42,7 +45,7 @@ def communication_loop():
         if len(messages['data']['messages']) > 0:
             for message in messages['data']['messages']:
                 resp = send(antenna, message['message'])
-                handle_response(resp)
+                handle_response(resp, communication_list)
 
             request_data['last_id'] = messages['data']['messages'][-1]['message_id']
 
