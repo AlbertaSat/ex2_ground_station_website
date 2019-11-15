@@ -50,6 +50,11 @@ class TelecommandListValidator(Schema):
     num_arguments = fields.Integer(required=True)
     is_dangerous = fields.Boolean(required=True)
 
+class PowerChannelValidator(Schema):
+    channel_no = fields.Integer(required=False) # Range of 1-24
+    enabled = fields.Boolean(required=False)
+    current = fields.Float(required=False)
+
 class HousekeepingValidator(Schema):
     satellite_mode = fields.String(required=False)
     battery_voltage = fields.Float(required=False)
@@ -57,3 +62,19 @@ class HousekeepingValidator(Schema):
     current_out = fields.Float(required=False)
     no_MCU_resets = fields.Integer(required=False)
     last_beacon_time = fields.DateTime(format='iso', required=True)
+    watchdog_1 = fields.Integer(required=False) # 3 watchdogs
+    watchdog_2 = fields.Integer(required=False)
+    watchdog_3 = fields.Integer(required=False)
+    panel_1_current = fields.Float(required=False) # 6 solar panel currents
+    panel_2_current = fields.Float(required=False)
+    panel_3_current = fields.Float(required=False)
+    panel_4_current = fields.Float(required=False)
+    panel_5_current = fields.Float(required=False)
+    panel_6_current = fields.Float(required=False)
+    temp_1 = fields.Float(required=False) # 6 temperatures at diff locations
+    temp_2 = fields.Float(required=False)
+    temp_3 = fields.Float(required=False)
+    temp_4 = fields.Float(required=False)
+    temp_5 = fields.Float(required=False)
+    temp_6 = fields.Float(required=False)
+    channels = fields.Nested(PowerChannelValidator, many=True, required=True)

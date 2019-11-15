@@ -25,18 +25,21 @@ def fakeHousekeepingAsDict(timestamp):
         'temp_4': 12.0,
         'temp_5': 11.0,
         'temp_6': 10.0,
-        'channels': []          # 24 power channels
+
+        'channels': [],
     }
-    # Create channels. Operator can't create HK, so it's just hardcoded
-    for i in range(1, 25):
-        p = PowerChannels()
-        p.hk_id = 1
-        p.channel_no = i
-        p.enabled = True
-        p.current = 0.0
-        housekeepingData['channels'].append(p)
 
     return housekeepingData
+
+def fake_power_channel_as_dict(channel_no):
+    power_channel = {
+        'channel_no': channel_no,
+        'enabled': True,
+        'current': 0.0
+    }
+
+    return power_channel
+
 
 def fake_flight_schedule_as_dict(status=2, commands=[]):
     flightschedule = {

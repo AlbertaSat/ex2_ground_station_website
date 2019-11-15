@@ -7,11 +7,11 @@ from groundstation.tests.base import BaseTestCase
 from groundstation import db
 
 from groundstation.backend_api.models import Housekeeping, FlightSchedules, \
-    Passover, Telecommands, FlightScheduleCommands, Communications
+    Passover, Telecommands, FlightScheduleCommands, Communications, PowerChannels
 from groundstation.tests.utils import fakeHousekeepingAsDict, \
     fake_flight_schedule_as_dict, fake_passover_as_dict, \
     fake_patch_update_as_dict, fake_telecommand_as_dict, \
-    fake_message_as_dict, fake_user_as_dict
+    fake_message_as_dict, fake_user_as_dict, fake_power_channel_as_dict
 from groundstation.backend_api.housekeeping import HousekeepingLogList
 from groundstation.backend_api.flightschedule import FlightScheduleList
 from groundstation.backend_api.passover import PassoverList
@@ -30,6 +30,12 @@ class TestHousekeepingService(BaseTestCase):
         housekeepingData = fakeHousekeepingAsDict(timestamp)
 
         housekeeping = Housekeeping(**housekeepingData)
+
+        for i in range(1, 25):
+            channel = fake_power_channel_as_dict(i)
+            p = PowerChannels(**channel)
+            housekeeping.channels.append(p)
+
         db.session.add(housekeeping)
         db.session.commit()
 
@@ -201,6 +207,27 @@ class TestHousekeepingService(BaseTestCase):
             self.assertEqual(response.status_code, 200)
             self.assertEqual(len(data['data']['logs']), 1)
             self.assertIn('Passive', data['data']['logs'][0]['satellite_mode'])
+            self.assertIn('success', data['status'])
+
+    def test_post_housekeeping_with_channels(self):
+        timestamp = str(datetime.datetime.fromtimestamp(1570749472))
+        housekeepingData = fakeHousekeepingAsDict(timestamp)
+        for i in range(1, 25):
+            channel = fake_power_channel_as_dict(i)
+            housekeepingData['channels'].append(channel)
+
+        with self.client:
+            response = self.client.post(
+                '/api/housekeepinglog',
+                data=json.dumps(housekeepingData),
+                content_type='application/json'
+            )
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 201)
+            self.assertEqual(
+                f'Housekeeping Log with timestamp {timestamp} was added!',
+                data['message']
+            )
             self.assertIn('success', data['status'])
 
 
