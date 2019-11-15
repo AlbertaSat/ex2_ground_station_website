@@ -86,9 +86,11 @@ class PowerChannels(db.Model):
 
     def to_json(self):
         return {
+            'id': self.id,
+            'hk_id': self.hk_id,
             'channel_no': self.channel_no,
             'enabled': self.enabled,
-
+            'current': self.current
         }
 
 class Telecommands(db.Model):

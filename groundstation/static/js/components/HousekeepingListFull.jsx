@@ -139,6 +139,19 @@ const HousekeepingLogListFull = (props) => {
                             <ListItemText primary="Satellite Mode" secondary={housekeeping.satellite_mode} />
                         </ListItem>
                         <ListItem >
+                            <ListItemText primary="Watchdog 1" secondary={housekeeping.watchdog_1} />
+                        </ListItem>
+                        <ListItem >
+                            <ListItemText primary="Watchdog 2" secondary={housekeeping.watchdog_2} />
+                        </ListItem>
+                        <ListItem >
+                            <ListItemText primary="Watchdog 3" secondary={housekeeping.watchdog_3} />
+                        </ListItem>
+                        <ListItem >
+                            <ListItemText primary="MCU Resets" secondary={housekeeping.no_MCU_resets} />
+                        </ListItem>
+
+                        <ListItem >
                             <ListItemText primary="Battery Voltage" secondary={housekeeping.battery_voltage} />
                         </ListItem>
                         <Divider />
@@ -148,20 +161,6 @@ const HousekeepingLogListFull = (props) => {
                         <Divider />
                         <ListItem >
                             <ListItemText primary="Current Out" secondary={housekeeping.current_out} />
-                        </ListItem>
-
-                        <ListItem >
-                            <ListItemText primary="MCU Resets" secondary={housekeeping.no_MCU_resets} />
-                        </ListItem>
-                        
-                        <ListItem >
-                            <ListItemText primary="Watchdog 1" secondary={6600} />
-                        </ListItem>
-                        <ListItem >
-                            <ListItemText primary="Watchdog 2" secondary={5} />
-                        </ListItem>
-                        <ListItem >
-                            <ListItemText primary="Watchdog 3" secondary={0} />
                         </ListItem>
 
                         <ListItem>
@@ -184,19 +183,15 @@ const HousekeepingLogListFull = (props) => {
                                 </TableCell>
                               </TableRow>
                             </TableHead>
-                            {/*
-                            {flightschedule.commands.map(commands => (
+                            {housekeeping.channels.map(channels => (
                               <TableBody>
                                   <TableRow>
-                                    <TableCell component ="th" scope="row">
-                                      {commands.flightschedule_command_id}
-                                    </TableCell>
-                                    <TableCell align="right">{commands.command.command_name}</TableCell>
-                                    <TableCell align="right">{commands.timestamp}</TableCell>
+                                    <TableCell>{channels.channel_no}</TableCell>
+                                    <TableCell align="left">{channels.enabled}</TableCell>
+                                    <TableCell align="left">{channels.current}</TableCell>
                                   </TableRow>
                               </TableBody>
                             ))}
-                            */}
                           </Table>
                         </ListItem>
 
@@ -214,20 +209,31 @@ const HousekeepingLogListFull = (props) => {
                                     Current
                                 </TableCell>
                               </TableRow>
+                              <TableRow>
+                                <TableCell >1</TableCell>
+                                <TableCell align="left">{housekeeping.panel_1_current}</TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell >2</TableCell>
+                                <TableCell align="left">{housekeeping.panel_2_current}</TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell >3</TableCell>
+                                <TableCell align="left">{housekeeping.panel_3_current}</TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell >4</TableCell>
+                                <TableCell align="left">{housekeeping.panel_4_current}</TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell >5</TableCell>
+                                <TableCell align="left">{housekeeping.panel_5_current}</TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell >6</TableCell>
+                                <TableCell align="left">{housekeeping.panel_6_current}</TableCell>
+                              </TableRow>
                             </TableHead>
-                            {/*
-                            {flightschedule.commands.map(commands => (
-                              <TableBody>
-                                  <TableRow>
-                                    <TableCell component ="th" scope="row">
-                                      {commands.flightschedule_command_id}
-                                    </TableCell>
-                                    <TableCell align="right">{commands.command.command_name}</TableCell>
-                                    <TableCell align="right">{commands.timestamp}</TableCell>
-                                  </TableRow>
-                              </TableBody>
-                            ))}
-                            */}
                           </Table>
                         </ListItem>
 
@@ -237,52 +243,42 @@ const HousekeepingLogListFull = (props) => {
                               <TableRow>
                                 <TableCell 
                                     style={{backgroundColor: '#fff', color: '#000', paddingTop: '8px', paddingBottom: '8px'}}>
-                                    Temp 1
+                                    Temperature Location
                                 </TableCell>
                                 <TableCell 
                                   align="left"
                                   style={{backgroundColor: '#fff', color: '#000', paddingTop: '8px', paddingBottom: '8px'}}>
-                                    Temp 2
-                                </TableCell>
-                                <TableCell 
-                                  align="left"
-                                  style={{backgroundColor: '#fff', color: '#000', paddingTop: '8px', paddingBottom: '8px'}}>
-                                    Temp 3
-                                </TableCell>
-                                <TableCell 
-                                  align="left"
-                                  style={{backgroundColor: '#fff', color: '#000', paddingTop: '8px', paddingBottom: '8px'}}>
-                                    Temp 4
-                                </TableCell>
-                                <TableCell 
-                                  align="left"
-                                  style={{backgroundColor: '#fff', color: '#000', paddingTop: '8px', paddingBottom: '8px'}}>
-                                    Temp 5
-                                </TableCell>
-                                <TableCell 
-                                  align="left"
-                                  style={{backgroundColor: '#fff', color: '#000', paddingTop: '8px', paddingBottom: '8px'}}>
-                                    Temp 6
+                                    Temperature
                                 </TableCell>
                               </TableRow>
+                              <TableRow>
+                                <TableCell >1</TableCell>
+                                <TableCell align="left">{housekeeping.temp_1}</TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell >2</TableCell>
+                                <TableCell align="left">{housekeeping.temp_2}</TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell >3</TableCell>
+                                <TableCell align="left">{housekeeping.temp_3}</TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell >4</TableCell>
+                                <TableCell align="left">{housekeeping.temp_4}</TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell >5</TableCell>
+                                <TableCell align="left">{housekeeping.temp_5}</TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell >6</TableCell>
+                                <TableCell align="left">{housekeeping.temp_6}</TableCell>
+                              </TableRow>
                             </TableHead>
-                            {/*
-                            {flightschedule.commands.map(commands => (
-                              <TableBody>
-                                  <TableRow>
-                                    <TableCell component ="th" scope="row">
-                                      {commands.flightschedule_command_id}
-                                    </TableCell>
-                                    <TableCell align="right">{commands.command.command_name}</TableCell>
-                                    <TableCell align="right">{commands.timestamp}</TableCell>
-                                  </TableRow>
-                              </TableBody>
-                            ))}
-                            */}
                           </Table>
                         </ListItem>
                         
-
                         </List>
                     </Dialog>
                 </Table>
