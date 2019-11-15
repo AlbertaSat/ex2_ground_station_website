@@ -17,7 +17,7 @@ class FlightScheduleCommandValidator(Schema):
     #flightschedule_id = fields.Integer(required=True)
 
 class FlightScheduleValidator(Schema):
-    is_queued = fields.Boolean(required=True)
+    status = fields.Integer(required=True, validate=validate.Range(min=1, max=3))
     commands = fields.Nested(FlightScheduleCommandValidator, many=True, required=True)
 
 class FlightSchedulePatchCommandValidator(Schema):
@@ -28,7 +28,7 @@ class FlightSchedulePatchCommandValidator(Schema):
     args = fields.Nested(ArgumentValidator, required=True, many=True)
 
 class FlightSchedulePatchValidator(Schema):
-	is_queued = fields.Boolean(required=True)
+	status = fields.Integer(required=True, validate=validate.Range(min=1, max=3))
 	commands = fields.Nested(FlightSchedulePatchCommandValidator, many=True, required=True)
 
 class PassoverValidator(Schema):
@@ -36,3 +36,24 @@ class PassoverValidator(Schema):
 
 class PassoverListValidator(Schema):
     passovers = fields.Nested(PassoverValidator, many=True, required=True, validate=validate.Length(min=1))
+
+class UserValidator(Schema):
+    username = fields.String(required=True)
+    password = fields.String(required=True)
+
+class AuthLoginValidator(Schema):
+    username = fields.String(required=True)
+    password = fields.String(required=True)
+
+class TelecommandListValidator(Schema):
+    command_name = fields.String(required=True)
+    num_arguments = fields.Integer(required=True)
+    is_dangerous = fields.Boolean(required=True)
+
+class HousekeepingValidator(Schema):
+    satellite_mode = fields.String(required=False)
+    battery_voltage = fields.Float(required=False)
+    current_in = fields.Float(required=False)
+    current_out = fields.Float(required=False)
+    no_MCU_resets = fields.Integer(required=False)
+    last_beacon_time = fields.DateTime(format='iso', required=True)

@@ -24,7 +24,7 @@ import Select, { components } from 'react-select';
 	
 const AddFlightschedule = (props) =>{
   	const selects = props.availCommands.map((command) => (
-		{label: command.commandName, value: command.id, args: command.no_args}
+		{label: command.command_name, value: command.command_id, args: command.num_arguments}
 	))
 
 const useStyles = makeStyles({
@@ -46,11 +46,18 @@ const classes = useStyles();
 		    open={props.open} 
 		    onclose={ (event) => props.handleAddFlightOpenClick(event) } 
 		    aria-labelledby='add-a-flight-schedule'>
-		    <DialogTitle id="form-add-a-flightschedule-title">Add Flightschedule</DialogTitle>
+		    <DialogTitle id="form-add-a-flightschedule-title">
+		    	Add/Edit Flightschedule
+		    </DialogTitle>
 		    <DialogContent>
 		      <DialogContentText>
 		        To add commands to this flight schedule, enter the command name followed by the timestamp.
 		      </DialogContentText>
+		      <Button style={{color: '#3f51b5', paddingLeft: '16px', paddingRight: '16px'}}
+		      		onClick={ (event) => props.handleQueueClick(event) }
+		      	>
+                	{(props.status == 1)? 'Dequeue' : 'Queue' }
+              </Button>
 		      <Table aria-label="simple table">
 		        {
 		          props.thisFlightschedule.map((flighschedule, idx) => (

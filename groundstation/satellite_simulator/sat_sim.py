@@ -3,6 +3,7 @@ import random
 import json
 import time
 from ast import literal_eval as make_tuple
+import os
 
 class Environment:
 
@@ -78,7 +79,7 @@ class Satellite:
         self.components = {c.name:c for c in components}
 
         # beacons will be 'broadcast' to this file every beacon interval
-        self.BEACON_BROADCAST_FILE = 'groundstation/satellite_simulator/beacons.json'
+        self.BEACON_BROADCAST_FILE = os.path.join(os.path.dirname(__file__), 'beacons.json')
         with open(self.BEACON_BROADCAST_FILE, 'w') as fptr:
             json.dump([], fptr)
         self.BEACON_INTERVAL = beacon_interval
@@ -158,6 +159,7 @@ class Satellite:
 
 
     def _execute_telecommand(self, telecommand_name, args):
+        telecommand_name = telecommand_name.upper()
         if telecommand_name == 'PING':
             response = 'PING-RESPONSE'
         elif telecommand_name == 'GET-HK':
@@ -207,7 +209,7 @@ class Simulator:
     def __init__(self, environment, satellite):
         self.environment = environment
         self.satellite = satellite
-        self._log_file_path = 'groundstation/satellite_simulator/log.txt'
+        self._log_file_path = os.path.join(os.path.dirname(__file__), 'log.txt')
 
     def send_to_sat(self, data):
         self._add_to_log('groundstation', 'satellite', data)

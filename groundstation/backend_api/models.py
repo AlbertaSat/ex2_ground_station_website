@@ -1,16 +1,58 @@
-from datetime import datetime
-from groundstation import db
+from flask import current_app
+import datetime
+import jwt
+from groundstation import db, bcrypt
 
 class User(db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.String(128))
+    username = db.Column(db.String(128), unique=True)
+    password_hash = db.Column(db.String(128))
+    is_admin = db.Column(db.Boolean, default=False, nullable=False)
 
-    def __init__(self, username):
+    def __init__(self, username, password, is_admin=False):
         self.username = username
+        num_rounds = current_app.config.get('BCRYPT_LOG_ROUNDS')
+        self.password_hash = bcrypt.generate_password_hash(password, num_rounds).decode()
+        self.is_admin = is_admin
 
-    def toJson(self):
+    def verify_password(self, password):
+        """ returns True if passes password is valid, else False """
+        return bcrypt.check_password_hash(self.password_hash, password)
+
+    def encode_auth_token_by_id(self):
+        """Generates the auth token"""
+        try:
+            payload = {
+                'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(
+                    days=current_app.config.get('TOKEN_EXPIRATION_DAYS'),
+                    seconds=current_app.config.get('TOKEN_EXPIRATION_SECONDS')),
+                'iat': datetime.datetime.now(datetime.timezone.utc),
+                'sub': self.id
+            }
+            return jwt.encode(
+                payload,
+                current_app.config.get('SECRET_KEY'),
+                algorithm='HS256'
+            )
+        except Exception as e:
+            return e
+
+    @staticmethod
+    def decode_auth_token(auth_token):
+        """
+        Decodes the auth token
+        params:
+            @auth_token
+        returns:
+            user_id (int)
+        """
+        payload = jwt.decode(auth_token, current_app.config.get('SECRET_KEY'))
+        user_id = payload['sub']
+        return user_id
+
+    def to_json(self):
         return {
             'id' : self.id,
             'username': self.username
@@ -86,9 +128,11 @@ class PowerChannels(db.Model):
 
     def to_json(self):
         return {
+            'id': self.id,
+            'hk_id': self.hk_id,
             'channel_no': self.channel_no,
             'enabled': self.enabled,
-
+            'current': self.current
         }
 
 class Telecommands(db.Model):
@@ -113,9 +157,10 @@ class FlightSchedules(db.Model):
     __tablename__ = 'flightschedules'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    creation_date = db.Column(db.DateTime, default=datetime.utcnow)
+    creation_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     upload_date = db.Column(db.DateTime)
-    is_queued = db.Column(db.Boolean, default=False)
+    # status is an integer, where 1=queued, 2=draft, 3=uploaded
+    status = db.Column(db.Integer)
     commands = db.relationship('FlightScheduleCommands', backref='flightschedule', lazy=True, cascade='all')
 
     def to_json(self):
@@ -123,7 +168,7 @@ class FlightSchedules(db.Model):
             'flightschedule_id': self.id,
             'creation_date': str(self.creation_date),
             'upload_date': str(self.upload_date),
-            'is_queued':str(self.is_queued),
+            'status': self.status,
             'commands': [command.to_json() for command in self.commands]
         }
 
@@ -174,3 +219,28 @@ class Passover(db.Model):
             'passover_id': self.id,
             'timestamp': str(self.timestamp)
         }
+
+#This will be the table of telecommands being sent to the satellite as well as the responses
+#the table will allow us to send and receive all commands transactionally allowing us to log
+#them as well as their responses
+#TODO: discuss with team the design/structure for the communications table
+class Communications(db.Model):
+    __tablename__ = 'communications'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    message = db.Column(db.String)          # Every command is going to be formatted as a string for simplicity
+    timestamp = db.Column(db.DateTime)      # Time at which the command was appended to the table
+    sender = db.Column(db.String)           # who sent the command (comm/react/command) as a note, the comm can send commands as responses from the satellite
+    receiver = db.Column(db.String)         # who the intended recipient of the command is (comm/react web page/command line)
+    #response = db.Column(db.Integer, db.ForeignKey('communications.id')) # one possible value for connecting satellite responses to sent telecommands
+
+    def to_json(self):
+        return {
+            'message_id': self.id,
+            'message': self.message,
+            'timestamp': str(self.timestamp),
+            'sender': self.sender,
+            'receiver': self.receiver
+        }
+        
+
