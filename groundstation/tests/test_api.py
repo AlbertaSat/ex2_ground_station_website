@@ -35,8 +35,29 @@ class TestHousekeepingService(BaseTestCase):
             self.assertEqual(1.7, data['data']['battery_voltage'])
             self.assertEqual(14, data['data']['no_MCU_resets'])
             self.assertIn(str(timestamp), data['data']['last_beacon_time'])
+            self.assertEqual(6000, data['data']['watchdog_1'])
+            self.assertEqual(11, data['data']['watchdog_2'])
+            self.assertEqual(0, data['data']['watchdog_3'])
+            self.assertEqual(1.1, data['data']['panel_1_current'])
+            self.assertEqual(1.0, data['data']['panel_2_current'])
+            self.assertEqual(1.2, data['data']['panel_3_current'])
+            self.assertEqual(1.0, data['data']['panel_4_current'])
+            self.assertEqual(1.0, data['data']['panel_5_current'])
+            self.assertEqual(1.0, data['data']['panel_6_current'])
+            self.assertEqual(11.0, data['data']['temp_1'])
+            self.assertEqual(11.0, data['data']['temp_2'])
+            self.assertEqual(14.0, data['data']['temp_3'])
+            self.assertEqual(12.0, data['data']['temp_4'])
+            self.assertEqual(11.0, data['data']['temp_5'])
+            self.assertEqual(10.0, data['data']['temp_6'])
+            for i in range(1, 25):
+                self.assertEqual(data['data']['channels'][i-1]['id'], i)
+                # \/ Should probably be housekeeping.id or smth instead of just 1
+                self.assertEqual(data['data']['channels'][i-1]['hk_id'], 1)
+                self.assertEqual(data['data']['channels'][i-1]['channel_no'], i)
+                self.assertEqual(data['data']['channels'][i-1]['enabled'], True)
+                self.assertEqual(data['data']['channels'][i-1]['current'], 0.0)
             self.assertIn('success', data['status'])
-
 
     def test_get_housekeeping_incorrect_id(self):
         with self.client:

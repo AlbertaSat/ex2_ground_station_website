@@ -24,7 +24,27 @@ class TestHousekeepingModel(BaseTestCase):
         self.assertEqual(housekeeping.current_in, 1.2)
         self.assertEqual(housekeeping.no_MCU_resets, 14)
         self.assertEqual(housekeeping.last_beacon_time, timestamp)
-        # TODO: Test for new housekeeping columns
+        self.assertEqual(housekeeping.watchdog_1, 6000)
+        self.assertEqual(housekeeping.watchdog_2, 11)
+        self.assertEqual(housekeeping.watchdog_3, 0)
+        self.assertEqual(housekeeping.panel_1_current, 1.1)
+        self.assertEqual(housekeeping.panel_2_current, 1.0)
+        self.assertEqual(housekeeping.panel_3_current, 1.2)
+        self.assertEqual(housekeeping.panel_4_current, 1.0)
+        self.assertEqual(housekeeping.panel_5_current, 1.0)
+        self.assertEqual(housekeeping.panel_6_current, 1.0)
+        self.assertEqual(housekeeping.temp_1, 11.0)
+        self.assertEqual(housekeeping.temp_2, 11.0)
+        self.assertEqual(housekeeping.temp_3, 14.0)
+        self.assertEqual(housekeeping.temp_4, 12.0)
+        self.assertEqual(housekeeping.temp_5, 11.0)
+        self.assertEqual(housekeeping.temp_6, 10.0)
+        for i in range(1, 25):
+            self.assertEqual(housekeeping.channels[i-1].id, i)
+            self.assertEqual(housekeeping.channels[i-1].hk_id, 1)
+            self.assertEqual(housekeeping.channels[i-1].channel_no, i)
+            self.assertEqual(housekeeping.channels[i-1].enabled, True)
+            self.assertEqual(housekeeping.channels[i-1].current, 0.0)
 
     """Test converting a housekeeping entry into json"""
     def testHousekeepingToJson(self):

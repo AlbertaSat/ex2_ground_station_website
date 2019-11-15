@@ -18,40 +18,15 @@ def fakeHousekeepingAsDict(timestamp):
         'panel_4_current': 1.0,
         'panel_5_current': 1.0,
         'panel_6_current': 1.0,
-        'temp_1': 11,           # Temperatures
-        'temp_2': 11,
-        'temp_3': 14,
-        'temp_4': 12,
-        'temp_5': 11,
-        'temp_6': 10,
-        'channels': [           # 24 power channels
-            # {'id':1, 'hk_id':1, 'channel_no':1, 'enabled': True, 'current': 3.0},
-            # {'id':2, 'hk_id':1, 'channel_no':2, 'enabled': True, 'current': 0.0},
-            # {'id':3, 'hk_id':1, 'channel_no':3, 'enabled': True, 'current': 0.0},
-            # {'id':4, 'hk_id':1, 'channel_no':4, 'enabled': True, 'current': 0.0},
-            # {'id':5, 'hk_id':1, 'channel_no':5, 'enabled': True, 'current': 1.0},
-            # {'id':6, 'hk_id':1, 'channel_no':6, 'enabled': True, 'current': 0.0},
-            # {'id':7, 'hk_id':1, 'channel_no':7, 'enabled': True, 'current': 0.0},
-            # {'id':8, 'hk_id':1, 'channel_no':8, 'enabled': True, 'current': 0.0},
-            # {'id':9, 'hk_id':1, 'channel_no':9, 'enabled': True, 'current': 60.0},
-            # {'id':10, 'hk_id':1, 'channel_no':10, 'enabled': True, 'current': 0.0},
-            # {'id':11, 'hk_id':1, 'channel_no':11, 'enabled': True, 'current': 0.0},
-            # {'id':12, 'hk_id':1, 'channel_no':12, 'enabled': True, 'current': 0.0},
-            # {'id':13, 'hk_id':1, 'channel_no':13, 'enabled': True, 'current': 6.0},
-            # {'id':14, 'hk_id':1, 'channel_no':14, 'enabled': True, 'current': 0.0},
-            # {'id':15, 'hk_id':1, 'channel_no':15, 'enabled': True, 'current': 0.0},
-            # {'id':16, 'hk_id':1, 'channel_no':16, 'enabled': True, 'current': 0.0},
-            # {'id':17, 'hk_id':1, 'channel_no':17, 'enabled': True, 'current': 0.0},
-            # {'id':18, 'hk_id':1, 'channel_no':18, 'enabled': True, 'current': 0.0},
-            # {'id':19, 'hk_id':1, 'channel_no':19, 'enabled': True, 'current': 0.0},
-            # {'id':20, 'hk_id':1, 'channel_no':20, 'enabled': True, 'current': 0.0},
-            # {'id':21, 'hk_id':1, 'channel_no':21, 'enabled': True, 'current': 127.0},
-            # {'id':22, 'hk_id':1, 'channel_no':22, 'enabled': True, 'current': 0.0},
-            # {'id':23, 'hk_id':1, 'channel_no':23, 'enabled': True, 'current': 0.0},
-            # {'id':24, 'hk_id':1, 'channel_no':24, 'enabled': True, 'current': 0.0}
-        ]
+        'temp_1': 11.0,           # Temperatures
+        'temp_2': 11.0,
+        'temp_3': 14.0,
+        'temp_4': 12.0,
+        'temp_5': 11.0,
+        'temp_6': 10.0,
+        'channels': []          # 24 power channels
     }
-    # Append 24 power channels
+    # Create channels. Operator can't create HK, so it's just hardcoded
     for i in range(1, 25):
         p = PowerChannels()
         p.hk_id = 1
