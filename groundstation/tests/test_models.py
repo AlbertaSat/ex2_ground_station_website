@@ -1,12 +1,39 @@
 import unittest
 from datetime import datetime
+from sqlalchemy import exc
 
 from groundstation.tests.base import BaseTestCase
-from groundstation.backend_api.models import Housekeeping
+from groundstation.backend_api.models import Housekeeping, User
 from groundstation import db
 from groundstation.tests.utils import fakeHousekeepingAsDict
-from groundstation.backend_api.utils import add_telecommand, add_flight_schedule, add_command_to_flightschedule, \
-add_arg_to_flightschedulecommand
+from groundstation.backend_api.utils import add_telecommand, \
+    add_flight_schedule, add_command_to_flightschedule, \
+    add_arg_to_flightschedulecommand, add_user
+
+class TestUserModel(BaseTestCase):
+
+    def test_unique_username_constraint(self):
+        user1 = add_user('Alice', 'null')
+        self.assertRaises(exc.IntegrityError, add_user, 'Alice', 'null')
+
+    def test_password_hashes_are_random(self):
+        user1 = add_user('Alice', 'password1')
+        user2 = add_user('Bob', 'password2')
+        self.assertNotEqual(user1.password_hash, user2.password_hash)
+
+    def test_encode_auth_token(self):
+        user = add_user('Alice', 'secret-password')
+        auth_token = user.encode_auth_token_by_id()
+        self.assertTrue(isinstance(auth_token, bytes))
+
+    def test_decode_auth_token(self):
+        user = add_user('Alice', 'secret-password')
+        auth_token = user.encode_auth_token_by_id()
+        user_id = User.decode_auth_token(auth_token)
+        token_user = User.query.filter_by(id=user_id).first()
+        self.assertEqual(user.id, token_user.id)
+        self.assertEqual(user.username, token_user.username)
+
 
 class TestHousekeepingModel(BaseTestCase):
 
@@ -71,7 +98,7 @@ class TestFlightScheduleModel(BaseTestCase):
     """"Test adding a flight schedule"""
     def test_add_flight_schedule(self):
         timestamp = datetime.fromtimestamp(1570749472)
-        flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp)
+        flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp, status=2)
         self.assertTrue(flightschedule.id)
         self.assertEqual(timestamp, flightschedule.creation_date)
         self.assertEqual(timestamp, flightschedule.upload_date)
@@ -82,7 +109,7 @@ class TestFlightScheduleCommandsModel(BaseTestCase):
     def test_add_command_to_flight_schedule(self):
         timestamp = datetime.fromtimestamp(1570749472)
         command = add_telecommand(command_name='ping', num_arguments=0, is_dangerous=False)
-        flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp)
+        flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp, status=2)
         flightschedule_commands = add_command_to_flightschedule(
                                     timestamp=timestamp,
                                     flightschedule_id=flightschedule.id,
@@ -94,20 +121,20 @@ class TestFlightScheduleCommandsModel(BaseTestCase):
         self.assertEqual(flightschedule_commands.flightschedule_id, flightschedule.id)
 
 class TestFlightScheduleCommandsArgsModel(BaseTestCase):
-    
+
     """Test adding an argument to a command"""
     def test_add_arg_to_flightschedule_command(self):
         timestamp = datetime.fromtimestamp(1570749472)
         command = add_telecommand(command_name='turn-on', num_arguments=1, is_dangerous=False)
-        flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp)
+        flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp, status=2)
         flightschedule_commands = add_command_to_flightschedule(
                                     timestamp=timestamp,
                                     flightschedule_id=flightschedule.id,
                                     command_id=command.id
                                 )
         command_arg = add_arg_to_flightschedulecommand(
-                        index=0, 
-                        argument='5', 
+                        index=0,
+                        argument='5',
                         flightschedule_command_id=flightschedule_commands.id
                     )
         self.assertTrue(command_arg.id)
