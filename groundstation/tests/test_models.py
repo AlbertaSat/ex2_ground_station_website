@@ -3,9 +3,9 @@ from datetime import datetime
 from sqlalchemy import exc
 
 from groundstation.tests.base import BaseTestCase
-from groundstation.backend_api.models import Housekeeping, User
+from groundstation.backend_api.models import Housekeeping, User, PowerChannels
 from groundstation import db
-from groundstation.tests.utils import fakeHousekeepingAsDict
+from groundstation.tests.utils import fakeHousekeepingAsDict, fake_power_channel_as_dict
 from groundstation.backend_api.utils import add_telecommand, \
     add_flight_schedule, add_command_to_flightschedule, \
     add_arg_to_flightschedulecommand, add_user
@@ -43,6 +43,13 @@ class TestHousekeepingModel(BaseTestCase):
         housekeepingData = fakeHousekeepingAsDict(timestamp)
 
         housekeeping = Housekeeping(**housekeepingData)
+
+        for i in range(1, 25):
+            channel = fake_power_channel_as_dict(i)
+            p = PowerChannels(**channel)
+            housekeeping.channels.append(p)
+
+
         db.session.add(housekeeping)
         db.session.commit()
         self.assertTrue(housekeeping.id)

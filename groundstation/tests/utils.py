@@ -1,5 +1,3 @@
-from groundstation.backend_api.models import PowerChannels
-
 def fakeHousekeepingAsDict(timestamp):
     housekeepingData = {
         'satellite_mode' : 'Passive',
