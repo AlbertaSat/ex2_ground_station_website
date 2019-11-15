@@ -18,7 +18,7 @@ def handle_response(data, communication_list):
     resp = communication_list.post(json.dumps(logged_data))
 
 def example():
-    telecommands = ['ping', 'get-hk', 'turn-on gps', 'ping', 'get-hk']
+    telecommands = ['ping', 'get-hk', 'turn-on 0', 'ping', 'get-hk']
     for telecommand in telecommands:
         resp = send(antenna, telecommand)
         print(resp)
@@ -36,7 +36,7 @@ def communication_loop():
     # loop to continuously check communication table
     # if we have messages address to comm greater than the last id
     # send them to the satellite
-    # possibly change polling to select on a named pipe, probably the easiest 
+    # possibly change polling to select on a named pipe, probably the easiest
     # for the server to notify the comm module on new data
     # or polling might be just fine
     while True:

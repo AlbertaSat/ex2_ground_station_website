@@ -14,5 +14,5 @@ def send(data):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((HOST, PORT))
         s.send(data)
-        resp = s.recv(1024).decode('utf-8')
+        resp = s.recv(2048).decode('utf-8')
         return resp
