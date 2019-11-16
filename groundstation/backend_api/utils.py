@@ -145,7 +145,6 @@ def dynamic_filters_communications(filters):
         elif arg == 'receiver':
             filter_ops.append(operator.eq(Communications.receiver, value))
         elif arg =='sender':
-            # TODO: make sure this is fine/test
             filter_ops.append(operator.eq(Communications.sender, value))
         elif arg =='ignore_sender':
             filter_ops.append(operator.ne(Communications.sender, value))
