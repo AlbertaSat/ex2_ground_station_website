@@ -17,7 +17,7 @@ const CommunicationEntry = (props) => {
     if (sender === 'comm') {
         divStyle.backgroundColor = '#e3e3e3';
         messageStyle.color = '#007b40';
-        infoStringPrefix = 'message from';
+        infoStringPrefix = 'Message from';
     } else {
         divStyle.backgroundColor = '#f2f2f2';
         messageStyle.color = '#56b2bc';
