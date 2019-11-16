@@ -1,18 +1,47 @@
 def fakeHousekeepingAsDict(timestamp):
-	housekeepingData = {
-						'satellite_mode' : 'Passive',
-						'battery_voltage': 1.7,
-						'current_in': 1.2,
-						'current_out': 1.1,
-						'no_MCU_resets': 14,
-						'last_beacon_time': timestamp
-					}
+    housekeepingData = {
+        'satellite_mode' : 'Passive',
+        'battery_voltage': 1.7,
+        'current_in': 1.2,
+        'current_out': 1.1,
+        'no_MCU_resets': 14,
+        'last_beacon_time': timestamp,
 
-	return housekeepingData
+        'watchdog_1': 6000,     # Watchdog counts
+        'watchdog_2': 11,
+        'watchdog_3': 0,
+        'panel_1_current': 1.1, # Solar panel currents
+        'panel_2_current': 1.0,
+        'panel_3_current': 1.2,
+        'panel_4_current': 1.0,
+        'panel_5_current': 1.0,
+        'panel_6_current': 1.0,
 
-def fake_flight_schedule_as_dict(is_queued=False, commands=[]):
+        'temp_1': 11.0,           # Temperatures
+        'temp_2': 11.0,
+        'temp_3': 14.0,
+        'temp_4': 12.0,
+        'temp_5': 11.0,
+        'temp_6': 10.0,
+
+        'channels': [],
+    }
+
+    return housekeepingData
+
+def fake_power_channel_as_dict(channel_no):
+    power_channel = {
+        'channel_no': channel_no,
+        'enabled': True,
+        'current': 0.0
+    }
+
+    return power_channel
+
+
+def fake_flight_schedule_as_dict(status=2, commands=[]):
     flightschedule = {
-        'is_queued':is_queued,
+        'status':status,
         'commands':commands
     }
     return flightschedule
@@ -36,7 +65,7 @@ def fake_message_as_dict(message='test', sender='tester', receiver='tester2'):
     return fake_message
 
 def fake_patch_update_as_dict(timestamp):
-    return {'is_queued': False,
+    return {'status': 2,
             'commands': [
                 {'op': 'replace',
                 'flightschedule_command_id': 1,
@@ -47,6 +76,11 @@ def fake_patch_update_as_dict(timestamp):
             ]
         }
 
+def fake_user_as_dict(username, password):
+    return {
+        'username':username,
+        'password':password
+    }
 def fake_telecommand_as_dict(command_name='test', num_arguments='0', is_dangerous=False):
     return {'command_name':command_name,
             'num_arguments':num_arguments,

@@ -6,7 +6,7 @@ import json
 
 from groundstation.backend_api.models import Communications
 from groundstation import db
-from groundstation.backend_api.utils import create_context
+from groundstation.backend_api.utils import create_context, dynamic_filters_communications
 
 communications_blueprint = Blueprint('communications', __name__)
 api = Api(communications_blueprint)
@@ -80,16 +80,21 @@ class CommunicationList(Resource):
         return response_object, 201
 
     @create_context
-    def get(self):
-        
-        #TODO Don't worry about query parameters
+    def get(self, local_data=None):
+
+        # handle if this get is a local call or not
+        # local_data will be a dictionary
+        if not local_data:
+            args = dynamic_filters_communications(request.args) 
+        else:
+            args = dynamic_filters_communications(local_data)
  
         response_object = {
             'status': 'fail',
             'message': 'no available messages'
         }
 
-        message_list = Communications.query.all()
+        message_list = Communications.query.filter(*args)
 
         if not message_list: # no messages for receiver
             response_object.update({'data':[]})
