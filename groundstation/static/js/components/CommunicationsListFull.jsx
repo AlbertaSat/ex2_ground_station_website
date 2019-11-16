@@ -18,16 +18,23 @@ const CommunicationEntry = (props) => {
         divStyle.backgroundColor = '#e3e3e3';
         messageStyle.color = '#007b40';
         infoStringPrefix = 'message from';
-        infoStringTimestamp = props.entry.timestamp;
     } else {
         divStyle.backgroundColor = '#f2f2f2';
         messageStyle.color = '#56b2bc';
-        infoStringPrefix = 'input from';
-        infoStringTimestamp = props.entry.timestamp;
+        infoStringPrefix = 'Input from';
     }
+
+    // this is pre janky but its the way it is
+    infoStringTimestamp = props.entry.timestamp;
+    if (infoStringTimestamp[infoStringTimestamp.length - 1] !== 'Z') {
+        infoStringTimestamp = infoStringTimestamp + 'Z';
+    }
+    infoStringTimestamp = new Date(infoStringTimestamp).toString();
     return (
         <div style={divStyle}>
-            <p style={infoStringStyle}>{infoStringPrefix} <strong>{sender}</strong> at {infoStringTimestamp}</p>
+            <div>
+                <p style={infoStringStyle}>{infoStringPrefix} <strong>{sender}</strong> on: </p><p>{infoStringTimestamp}</p>
+            </div>
             <p style={messageStyle}>Message: {props.entry.message}</p>
         </div>
     );

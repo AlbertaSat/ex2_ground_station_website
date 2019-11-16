@@ -1,7 +1,7 @@
 from flask import request
 from flask import Blueprint
 from flask_restful import Resource, Api
-from datetime import datetime
+import datetime
 import json
 
 from groundstation.backend_api.models import Communications
@@ -55,7 +55,7 @@ class CommunicationList(Resource):
             post_data = request.get_json()
         else:
             post_data = json.loads(local_data)
-        post_data.update({'timestamp': datetime.utcnow()})
+        post_data.update({'timestamp': datetime.datetime.now(datetime.timezone.utc)})
 
 
         #TODO: assertion checks for proper data types
@@ -94,7 +94,8 @@ class CommunicationList(Resource):
             'message': 'no available messages'
         }
 
-        message_list = Communications.query.filter(*args)
+        # order by ascending [min_id, min_id + 1, ..., max_id]
+        message_list = Communications.query.filter(*args).order_by(Communications.id)
 
         if not message_list: # no messages for receiver
             response_object.update({'data':[]})
@@ -106,7 +107,6 @@ class CommunicationList(Resource):
                     'messages': [message.to_json() for message in message_list]
                 }
             }
-
             return response_object, 200
 
 api.add_resource(CommunicationList, '/api/communications')

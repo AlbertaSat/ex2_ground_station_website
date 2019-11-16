@@ -5,6 +5,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
+// TODO posting messages should refer to current logged in user
+// TODO: figue out how to scroll paper automatically as responses are added dynamically
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -18,9 +20,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function getNewMessages(last_id, sender) {
+function getNewMessages(last_id, ignore) {
     var new_messages = new Promise((resolve, reject) => {
-        fetch('/api/communications?last_id=' + last_id + '&sender=comm')
+        fetch('/api/communications?last_id=' + last_id + '&ignore_sender=' + ignore)
         .then(results => {
             return results.json();
         }).then(data => {
@@ -34,7 +36,6 @@ function getNewMessages(last_id, sender) {
     return new_messages;
 }
 
-// TODO: figue out how to scroll paper automatically as responses are added dynamically
 class LiveCommands extends Component {
     constructor(props) {
         super(props);
@@ -66,7 +67,7 @@ class LiveCommands extends Component {
                 splashJobsLeft: prevState.splashJobsLeft - 1
             }));
         } else {
-            // TODO: What should we do here
+            // NOTE: should do something here maybe
             console.log("Error loading telecommands!");
         }
      });
@@ -87,7 +88,7 @@ class LiveCommands extends Component {
                     splashJobsLeft: prevState.splashJobsLeft - 1
                 }));
             } else {
-                // TODO: error
+                // NOTE: should do something here maybe
                 console.log('error')
             }
         });
@@ -102,13 +103,11 @@ class LiveCommands extends Component {
     }
 
     updateMessages() {
-        // TODO: make sure last message is the message with largest id, otherwise we need to implement this
-        // or maybe server just has like "largest_id" in the response so we dont have to do anything
         if (this.state.splashJobsLeft > 0) {
             console.log('splash jobs left!')
             return
         }
-        getNewMessages(this.state.last_id, 'comm')
+        getNewMessages(this.state.last_id, 'nick')
         .then(new_messages => {
             let last_message = new_messages[new_messages.length - 1];
             if (last_message !== undefined) {
@@ -147,8 +146,7 @@ class LiveCommands extends Component {
             const text = event.target.value;
             if (this.telecommandIsValid(text)) {
                 console.log(text);
-                // TODO: maybe add timestamp for when user enterred command
-                const post_data = {message:text, sender:'nick', receiver:'comm'};
+                const post_data = {timestamp:new Date(Date.now()).toISOString(), message:text, sender:'nick', receiver:'comm'};
 
                 fetch('/api/communications', {
                     method: 'POST',
@@ -166,7 +164,7 @@ class LiveCommands extends Component {
                           textBoxValue:''
                       }));
                     } else {
-                        // TODO: handle bad post
+                        // NOTE: should do something here maybe
                         console.log('error')
                     }
                 });
@@ -174,7 +172,7 @@ class LiveCommands extends Component {
                 this.setState({errorMessage:'Invalid Telecommand'});
             }
         } else if (event.key === 'ArrowUp'){
-            // TODO: Next level: store input history for easy re-send
+            // TODO (nice to have): Next level: store input history for easy re-send
             console.log(event.key);
         } else if (event.key === 'ArrowDown') {
             console.log(event.key);
@@ -182,9 +180,10 @@ class LiveCommands extends Component {
     }
 
     render() {
+        console.log('rendering')
         if (this.state.splashJobsLeft > 0) {
             return (
-                // TODO: This looks kinda bad since page loades instantly (local host) but might look alright in deployment
+                // NOTE: This looks kinda bad since page loades instantly (local host) but might look alright in deployment
                 <div>
                     <LinearProgress />
                 </div>

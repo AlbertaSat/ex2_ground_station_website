@@ -86,7 +86,7 @@ class Housekeeping(db.Model):
     temp_6 = db.Column(db.Float)
     # Power channels (probably 24 exactly in a HK log)
     channels = db.relationship('PowerChannels', backref='housekeeping', lazy=True, cascade='all')
-    
+
     def to_json(self):
         return {
             'id': self.id,
@@ -179,9 +179,9 @@ class FlightScheduleCommands(db.Model):
     command_id = db.Column(db.Integer, db.ForeignKey('telecommands.id'), nullable=False)
     timestamp = db.Column(db.DateTime)
     flightschedule_id = db.Column(db.Integer, db.ForeignKey('flightschedules.id'), nullable=False)
-    arguments = db.relationship('FlightScheduleCommandsArgs', 
-                                backref='flightschedulecommand', 
-                                lazy=True, 
+    arguments = db.relationship('FlightScheduleCommandsArgs',
+                                backref='flightschedulecommand',
+                                lazy=True,
                                 cascade='all, delete-orphan'
                                 )
 
@@ -228,19 +228,17 @@ class Communications(db.Model):
     __tablename__ = 'communications'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    message = db.Column(db.String)          # Every command is going to be formatted as a string for simplicity
-    timestamp = db.Column(db.DateTime)      # Time at which the command was appended to the table
-    sender = db.Column(db.String)           # who sent the command (comm/react/command) as a note, the comm can send commands as responses from the satellite
-    receiver = db.Column(db.String)         # who the intended recipient of the command is (comm/react web page/command line)
+    message = db.Column(db.String, nullable=False)          # Every command is going to be formatted as a string for simplicity
+    timestamp = db.Column(db.DateTime, nullable=False)      # Time at which the command was appended to the table
+    sender = db.Column(db.String, nullable=False)           # who sent the command (comm/react/command) as a note, the comm can send commands as responses from the satellite
+    receiver = db.Column(db.String, nullable=False)         # who the intended recipient of the command is (comm/react web page/command line)
     #response = db.Column(db.Integer, db.ForeignKey('communications.id')) # one possible value for connecting satellite responses to sent telecommands
 
     def to_json(self):
         return {
             'message_id': self.id,
             'message': self.message,
-            'timestamp': str(self.timestamp),
+            'timestamp': self.timestamp.isoformat(),
             'sender': self.sender,
             'receiver': self.receiver
         }
-        
-

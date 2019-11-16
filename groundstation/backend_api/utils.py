@@ -147,6 +147,8 @@ def dynamic_filters_communications(filters):
         elif arg =='sender':
             # TODO: make sure this is fine/test
             filter_ops.append(operator.eq(Communications.sender, value))
+        elif arg =='ignore_sender':
+            filter_ops.append(operator.ne(Communications.sender, value))
         elif arg == 'max':
             max_comm = Communications.query.order_by(Communications.id.desc()).limit(1).first()
             filter_ops.append(operator.ge(Communications.id, max_comm.id))
