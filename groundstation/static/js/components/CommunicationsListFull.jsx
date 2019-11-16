@@ -16,6 +16,7 @@ const CommunicationEntry = (props) => {
     const data = props.entry.data;
     let timestampString;
     if (type === 'user-input') {
+        // TODO: make color dependent on sender and recipient just
         divStyle.backgroundColor = '#f2f2f2';
         messageStyle.color = '#56b2bc';
         timestampString = type + ' at ' + data.timestamp;

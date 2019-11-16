@@ -125,9 +125,9 @@ def add_arg_to_flightschedulecommand(index, argument, flightschedule_command_id)
 
 def add_message_to_communications(timestamp, message, receiver, sender):
         message = Communications(
-                            timestamp=timestamp, 
-                            message=message, 
-                            receiver=receiver, 
+                            timestamp=timestamp,
+                            message=message,
+                            receiver=receiver,
                             sender=sender)
 
         db.session.add(message)
@@ -144,13 +144,14 @@ def dynamic_filters_communications(filters):
             filter_ops.append(operator.gt(Communications.id, value))
         elif arg == 'receiver':
             filter_ops.append(operator.eq(Communications.receiver, value))
+        elif arg =='sender':
+            # TODO: make sure this is fine/test
+            filter_ops.append(operator.eq(Communications.sender, value))
         elif arg == 'max':
             max_comm = Communications.query.order_by(Communications.id.desc()).limit(1).first()
             filter_ops.append(operator.ge(Communications.id, max_comm.id))
         else:
             pass
-            
+
 
     return filter_ops
-
-        
