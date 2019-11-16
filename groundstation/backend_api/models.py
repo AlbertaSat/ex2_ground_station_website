@@ -69,6 +69,24 @@ class Housekeeping(db.Model):
     no_MCU_resets = db.Column(db.Integer)
     last_beacon_time = db.Column(db.DateTime, nullable=False)
 
+    watchdog_1 = db.Column(db.Integer) # 3 watchdogs
+    watchdog_2 = db.Column(db.Integer)
+    watchdog_3 = db.Column(db.Integer)
+    panel_1_current = db.Column(db.Float) # 6 solar panel currents
+    panel_2_current = db.Column(db.Float)
+    panel_3_current = db.Column(db.Float)
+    panel_4_current = db.Column(db.Float)
+    panel_5_current = db.Column(db.Float)
+    panel_6_current = db.Column(db.Float)
+    temp_1 = db.Column(db.Float) # 6 temperatures at diff locations
+    temp_2 = db.Column(db.Float)
+    temp_3 = db.Column(db.Float)
+    temp_4 = db.Column(db.Float)
+    temp_5 = db.Column(db.Float)
+    temp_6 = db.Column(db.Float)
+    # Power channels (probably 24 exactly in a HK log)
+    channels = db.relationship('PowerChannels', backref='housekeeping', lazy=True, cascade='all')
+    
     def to_json(self):
         return {
             'id': self.id,
@@ -77,7 +95,44 @@ class Housekeeping(db.Model):
             'current_in': self.current_in,
             'current_out': self.current_out,
             'no_MCU_resets': self.no_MCU_resets,
-            'last_beacon_time': str(self.last_beacon_time)
+            'last_beacon_time': str(self.last_beacon_time),
+
+            'watchdog_1': self.watchdog_1,
+            'watchdog_2': self.watchdog_2,
+            'watchdog_3': self.watchdog_3,
+            'panel_1_current': self.panel_1_current,
+            'panel_2_current': self.panel_2_current,
+            'panel_3_current': self.panel_3_current,
+            'panel_4_current': self.panel_4_current,
+            'panel_5_current': self.panel_5_current,
+            'panel_6_current': self.panel_6_current,
+            'temp_1': self.temp_1,
+            'temp_2': self.temp_2,
+            'temp_3': self.temp_3,
+            'temp_4': self.temp_4,
+            'temp_5': self.temp_5,
+            'temp_6': self.temp_6,
+
+            'channels': [channel.to_json() for channel in self.channels]
+        }
+
+class PowerChannels(db.Model):
+    __tablename__ = 'powerchannels'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    hk_id = db.Column(db.Integer, db.ForeignKey('housekeeping.id'), nullable=False)
+    channel_no = db.Column(db.Integer) # Range of 1-24
+    enabled = db.Column(db.Boolean)
+    current = db.Column(db.Float)
+    # Might also need a 'Nominal' column? According to ASAT Common Commands doc.
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'hk_id': self.hk_id,
+            'channel_no': self.channel_no,
+            'enabled': self.enabled,
+            'current': self.current
         }
 
 class Telecommands(db.Model):

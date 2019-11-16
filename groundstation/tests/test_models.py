@@ -3,9 +3,9 @@ from datetime import datetime
 from sqlalchemy import exc
 
 from groundstation.tests.base import BaseTestCase
-from groundstation.backend_api.models import Housekeeping, User
+from groundstation.backend_api.models import Housekeeping, User, PowerChannels
 from groundstation import db
-from groundstation.tests.utils import fakeHousekeepingAsDict
+from groundstation.tests.utils import fakeHousekeepingAsDict, fake_power_channel_as_dict
 from groundstation.backend_api.utils import add_telecommand, \
     add_flight_schedule, add_command_to_flightschedule, \
     add_arg_to_flightschedulecommand, add_user
@@ -43,6 +43,13 @@ class TestHousekeepingModel(BaseTestCase):
         housekeepingData = fakeHousekeepingAsDict(timestamp)
 
         housekeeping = Housekeeping(**housekeepingData)
+
+        for i in range(1, 25):
+            channel = fake_power_channel_as_dict(i)
+            p = PowerChannels(**channel)
+            housekeeping.channels.append(p)
+
+
         db.session.add(housekeeping)
         db.session.commit()
         self.assertTrue(housekeeping.id)
@@ -51,6 +58,27 @@ class TestHousekeepingModel(BaseTestCase):
         self.assertEqual(housekeeping.current_in, 1.2)
         self.assertEqual(housekeeping.no_MCU_resets, 14)
         self.assertEqual(housekeeping.last_beacon_time, timestamp)
+        self.assertEqual(housekeeping.watchdog_1, 6000)
+        self.assertEqual(housekeeping.watchdog_2, 11)
+        self.assertEqual(housekeeping.watchdog_3, 0)
+        self.assertEqual(housekeeping.panel_1_current, 1.1)
+        self.assertEqual(housekeeping.panel_2_current, 1.0)
+        self.assertEqual(housekeeping.panel_3_current, 1.2)
+        self.assertEqual(housekeeping.panel_4_current, 1.0)
+        self.assertEqual(housekeeping.panel_5_current, 1.0)
+        self.assertEqual(housekeeping.panel_6_current, 1.0)
+        self.assertEqual(housekeeping.temp_1, 11.0)
+        self.assertEqual(housekeeping.temp_2, 11.0)
+        self.assertEqual(housekeeping.temp_3, 14.0)
+        self.assertEqual(housekeeping.temp_4, 12.0)
+        self.assertEqual(housekeeping.temp_5, 11.0)
+        self.assertEqual(housekeeping.temp_6, 10.0)
+        for i in range(1, 25):
+            self.assertEqual(housekeeping.channels[i-1].id, i)
+            self.assertEqual(housekeeping.channels[i-1].hk_id, 1)
+            self.assertEqual(housekeeping.channels[i-1].channel_no, i)
+            self.assertEqual(housekeeping.channels[i-1].enabled, True)
+            self.assertEqual(housekeeping.channels[i-1].current, 0.0)
 
     """Test converting a housekeeping entry into json"""
     def testHousekeepingToJson(self):

@@ -5,7 +5,7 @@ from marshmallow import ValidationError
 from datetime import datetime
 import json
 
-from groundstation.backend_api.models import Housekeeping
+from groundstation.backend_api.models import Housekeeping, PowerChannels
 from groundstation import db
 from groundstation.backend_api.utils import create_context, login_required
 from groundstation.backend_api.validators import HousekeepingValidator
@@ -59,7 +59,13 @@ class HousekeepingLogList(Resource):
             }
             return response_object, 400
 
+        channels = validated_data.pop('channels')
         housekeeping = Housekeeping(**validated_data)
+
+        for channel in channels:
+            p = PowerChannels(**channel)
+            housekeeping.channels.append(p)
+
         db.session.add(housekeeping)
         db.session.commit()
 
