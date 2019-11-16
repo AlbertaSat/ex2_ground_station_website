@@ -3,6 +3,8 @@ import CommunicationsList from './CommunicationsListFull'
 import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
+import LinearProgress from '@material-ui/core/LinearProgress';
+
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -22,65 +24,33 @@ function getNewMessages(last_id, sender) {
         .then(results => {
             return results.json();
         }).then(data => {
-        console.log('data: ', data);
-        if (data.status == 'success') {
-            resolve(data.data.messages);
-        } else {
-            resolve([]);
-        }
+            if (data.status == 'success') {
+                resolve(data.data.messages);
+            } else {
+                resolve([]);
+            }
+        });
     });
- });
- return new_messages;
+    return new_messages;
 }
 
 // TODO: figue out how to scroll paper automatically as responses are added dynamically
-
 class LiveCommands extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            // isLoaded:false,
             splashJobsLeft:2,
             isEmpty:false,
             validTelecommands:[],
             last_id:undefined,
             errorMessage:'',
             textBoxValue:'',
-            // TODO replace this with an on-mount fetch to communications
-            // displayLog:[
-            //     {
-            //         type:'user-input',
-            //         data:{message:'ping'}
-            //     },
-            //     {
-            //         type:'server-message',
-            //         data:{id:1, message:'Ping response', timestamp:'2019-11-12 01:24:49.005184', sender:'Comm Module', receiver:'Alice'}
-            //     },
-            //     {
-            //         type:'user-input',
-            //         data:{message:'ping'}
-            //     },
-            //     {
-            //         type:'server-message',
-            //         data:{id:1, message:'Ping response', timestamp:'2019-11-12 01:24:49.005184', sender:'Comm Module', receiver:'Alice'}
-            //     },
-            //     {
-            //         type:'user-input',
-            //         data:{message:'ping'}
-            //     },
-            //     {
-            //         type:'server-message',
-            //         data:{id:1, message:'Ping response', timestamp:'2019-11-12 01:24:49.005184', sender:'Comm Module', receiver:'Alice'}
-            //     }
-            // ]
             displayLog:[]
         }
-
         this.handleChange = this.handleChange.bind(this);
 		this.handleKeyPress = this.handleKeyPress.bind(this);
         this.telecommandIsValid = this.telecommandIsValid.bind(this);
         this.updateMessages = this.updateMessages.bind(this);
-        // this.getNewMessages = this.getNewMessages.bind(this);
     }
 
     componentDidMount() {
@@ -118,7 +88,7 @@ class LiveCommands extends Component {
                 }));
             } else {
                 // TODO: error
-
+                console.log('error')
             }
         });
         this.poll_timer = setInterval(
@@ -142,14 +112,13 @@ class LiveCommands extends Component {
         .then(new_messages => {
             let last_message = new_messages[new_messages.length - 1];
             if (last_message !== undefined) {
-                let displayable_messages = new_messages.map(message => ({type:'server-message', data:message}))
+                // let displayable_messages = new_messages.map(message => ({type:'server-message', data:message}))
                 this.setState(prevState => ({
-                  displayLog: [...prevState.displayLog, ...displayable_messages],
+                  displayLog: [...prevState.displayLog, ...new_messages],
                   last_id: last_message.message_id
               }));
             }
         });
-
     }
 
 
@@ -180,7 +149,6 @@ class LiveCommands extends Component {
                 console.log(text);
                 // TODO: maybe add timestamp for when user enterred command
                 const post_data = {message:text, sender:'nick', receiver:'comm'};
-                const logEntry = {type:'user-input', data:post_data};
 
                 fetch('/api/communications', {
                     method: 'POST',
@@ -193,7 +161,7 @@ class LiveCommands extends Component {
                 }).then(data => {
                     if (data.status === 'success') {
                         this.setState(prevState => ({
-                          displayLog: [...prevState.displayLog, logEntry],
+                          displayLog: [...prevState.displayLog, post_data],
                           errorMessage:'',
                           textBoxValue:''
                       }));
@@ -214,6 +182,14 @@ class LiveCommands extends Component {
     }
 
     render() {
+        if (this.state.splashJobsLeft > 0) {
+            return (
+                // TODO: This looks kinda bad since page loades instantly (local host) but might look alright in deployment
+                <div>
+                    <LinearProgress />
+                </div>
+            );
+        }
         return (
             <div>
                 <div>

@@ -8,28 +8,27 @@ const CommunicationEntry = (props) => {
     };
     const idStyle = {};
     const messageStyle = {};
-    const timestampStyle = {};
-    const senderStyle = {};
-    const receiverStyle = {};
+    const infoStringStyle = {};
 
-    const type = props.entry.type;
-    const data = props.entry.data;
-    let timestampString;
-    if (type === 'user-input') {
-        // TODO: make color dependent on sender and recipient just
-        divStyle.backgroundColor = '#f2f2f2';
-        messageStyle.color = '#56b2bc';
-        timestampString = type + ' at ' + data.timestamp;
-    } else {
+    const sender = props.entry.sender;
+
+    let infoStringPrefix;
+    let infoStringTimestamp;
+    if (sender === 'comm') {
         divStyle.backgroundColor = '#e3e3e3';
         messageStyle.color = '#007b40';
-        timestampString = type + ' from ' + data.timestamp;
+        infoStringPrefix = 'message from';
+        infoStringTimestamp = props.entry.timestamp;
+    } else {
+        divStyle.backgroundColor = '#f2f2f2';
+        messageStyle.color = '#56b2bc';
+        infoStringPrefix = 'input from';
+        infoStringTimestamp = props.entry.timestamp;
     }
-    console.log(timestampString)
     return (
         <div style={divStyle}>
-            <p style={timestampStyle}>{timestampString}</p>
-            <p style={messageStyle}>Message: {data.message}</p>
+            <p style={infoStringStyle}>{infoStringPrefix} <strong>{sender}</strong> at {infoStringTimestamp}</p>
+            <p style={messageStyle}>Message: {props.entry.message}</p>
         </div>
     );
 }
