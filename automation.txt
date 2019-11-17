@@ -1,0 +1,5 @@
+ping
+ping
+ping
+get-hk
+turn-on 1
