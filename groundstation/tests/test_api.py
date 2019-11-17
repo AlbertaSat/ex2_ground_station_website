@@ -71,6 +71,134 @@ class TestHousekeepingService(BaseTestCase):
                 self.assertEqual(data['data']['channels'][i-1]['current'], 0.0)
             self.assertIn('success', data['status'])
 
+    def test_get_housekeeping_with_dynamic_filters_1(self):
+        timestamp = datetime.datetime.fromtimestamp(1570749472)
+        housekeepingData = fakeHousekeepingAsDict(timestamp)
+        housekeepingData['temp_1'] = 11
+        housekeeping = Housekeeping(**housekeepingData)
+
+        for i in range(1, 25):
+            channel = fake_power_channel_as_dict(i)
+            p = PowerChannels(**channel)
+            housekeeping.channels.append(p)
+
+        db.session.add(housekeeping)
+        db.session.commit()
+
+        with self.client:
+            response = self.client.get('/api/housekeepinglog?att1_temp_1=gt-12')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(data['data']['logs']), 0)
+            response = self.client.get('/api/housekeepinglog?att1_temp_1=gt-10')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(data['data']['logs']), 1)
+
+    def test_get_housekeeping_with_dynamic_filters_2(self):
+        timestamp = datetime.datetime.fromtimestamp(1570749472)
+        housekeepingData = fakeHousekeepingAsDict(timestamp)
+        housekeepingData['temp_1'] = 11
+        housekeepingData['temp_2'] = 12
+        housekeepingData['temp_3'] = 13
+        housekeeping = Housekeeping(**housekeepingData)
+
+        for i in range(1, 25):
+            channel = fake_power_channel_as_dict(i)
+            p = PowerChannels(**channel)
+            housekeeping.channels.append(p)
+
+        db.session.add(housekeeping)
+        db.session.commit()
+
+        with self.client:
+            response = self.client.get('/api/housekeepinglog?att1_temp_1=gt-10&att2_temp_2=gt-11&att3_temp_3=gt-12')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(data['data']['logs']), 1)
+            response = self.client.get('/api/housekeepinglog?att1_temp_1=gt-10&att2_temp_2=gt-11&att3_temp_3=gt-14')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(data['data']['logs']), 0)
+
+    def test_get_housekeeping_with_dynamic_filters_3(self):
+        timestamp = datetime.datetime.fromtimestamp(1570749472)
+        housekeepingData = fakeHousekeepingAsDict(timestamp)
+        housekeepingData['battery_voltage'] = 16
+        housekeepingData['watchdog_1'] = 140
+        housekeepingData['panel_5_current'] = 0.5
+        housekeeping = Housekeeping(**housekeepingData)
+
+        for i in range(1, 25):
+            channel = fake_power_channel_as_dict(i)
+            p = PowerChannels(**channel)
+            housekeeping.channels.append(p)
+
+        db.session.add(housekeeping)
+        db.session.commit()
+
+        with self.client:
+            response = self.client.get('/api/housekeepinglog?att1_battery_voltage=eq-16&att2_watchdog_1=lt-150&att3_panel_5_current=gt-0.2')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(data['data']['logs']), 1)
+            response = self.client.get('/api/housekeepinglog?att1_battery_voltage=eq-15&att2_watchdog_1=lt-150&att3_panel_5_current=gt-0.2')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(data['data']['logs']), 0)
+
+    def test_get_housekeeping_with_dynamic_filters_4(self):
+
+        for i in range(15):
+            timestamp = datetime.datetime.fromtimestamp(1570749472 + i)
+            housekeepingData = fakeHousekeepingAsDict(timestamp)
+            housekeepingData['battery_voltage'] = 16 + i
+            housekeeping = Housekeeping(**housekeepingData)
+
+            for i in range(1, 25):
+                channel = fake_power_channel_as_dict(i)
+                p = PowerChannels(**channel)
+                housekeeping.channels.append(p)
+
+            db.session.add(housekeeping)
+
+        db.session.commit()
+
+        with self.client:
+            response = self.client.get('/api/housekeepinglog?att1_battery_voltage=gt-20&att2_battery_voltage=lt-24')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(data['data']['logs']), 3)
+
+            response = self.client.get('/api/housekeepinglog?att1_battery_voltage=gt-20&att2_battery_voltage=lt-24&att3_battery_voltage=eq-17')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(data['data']['logs']), 0)
+
+            response = self.client.get('/api/housekeepinglog?att1_battery_voltage=gt-20&limit=1&att2_battery_voltage=lt-24')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(data['data']['logs']), 1)
+
+    def test_get_housekeeping_with_dynamic_filters_5_invalid_attribute(self):
+        timestamp = datetime.datetime.fromtimestamp(1570749472)
+        housekeepingData = fakeHousekeepingAsDict(timestamp)
+        housekeepingData['temp_1'] = 11
+        housekeeping = Housekeeping(**housekeepingData)
+
+        for i in range(1, 25):
+            channel = fake_power_channel_as_dict(i)
+            p = PowerChannels(**channel)
+            housekeeping.channels.append(p)
+
+        db.session.add(housekeeping)
+        db.session.commit()
+
+        with self.client:
+            response = self.client.get('/api/housekeepinglog?att1_tempp_1=gt-12')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 400)
+
     def test_get_housekeeping_incorrect_id(self):
         with self.client:
             response = self.client.get('/api/housekeepinglog/123')
