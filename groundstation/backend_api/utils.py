@@ -154,6 +154,8 @@ def dynamic_filters_communications(filters):
             filter_ops.append(operator.ge(Communications.id, max_comm.id))
         else:
             pass
+            
+    return filter_ops
 
 
 def dynamic_filters_housekeeping(filters):
