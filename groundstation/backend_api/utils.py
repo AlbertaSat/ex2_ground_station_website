@@ -3,7 +3,7 @@ from flask import has_app_context, request, g, current_app
 import jwt
 from groundstation import create_app
 from groundstation.backend_api.models import Telecommands, FlightSchedules, \
-    FlightScheduleCommands, FlightScheduleCommandsArgs, User
+    FlightScheduleCommands, FlightScheduleCommandsArgs, User, Passover
 from groundstation import db
 import operator
 from groundstation.backend_api.models import Communications
@@ -133,6 +133,12 @@ def add_message_to_communications(timestamp, message, receiver, sender):
         db.session.add(message)
         db.session.commit()
         return message
+
+def add_passover(timestamp):
+    passover = Passover(timestamp=timestamp)
+    db.session.add(passover)
+    db.session.commit()
+    return passover
 
 
 # build a filter from query paramaters

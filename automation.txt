@@ -1,4 +1,5 @@
 ping
 ping
+ping
 get-hk
-get-hk
+turn-on 1
