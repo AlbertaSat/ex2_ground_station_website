@@ -604,6 +604,7 @@ class TestCommunicationsService(BaseTestCase):
     def test_post_valid_communication(self):
         # service = CommunicationsList()
         test_message = fake_message_as_dict()
+        test_message['timestamp'] = str(test_message['timestamp'])
         # response = service.post()
 
         with self.client:

@@ -1,3 +1,5 @@
+import datetime
+
 def fakeHousekeepingAsDict(timestamp):
     housekeepingData = {
         'satellite_mode' : 'Passive',
@@ -59,7 +61,8 @@ def fake_message_as_dict(message='test', sender='tester', receiver='tester2'):
     fake_message = {
         'message': message,
         'sender': sender,
-        'receiver': receiver
+        'receiver': receiver,
+        'timestamp':datetime.datetime.now(datetime.timezone.utc)
     }
 
     return fake_message
