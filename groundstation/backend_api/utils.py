@@ -145,14 +145,16 @@ def dynamic_filters_communications(filters):
             filter_ops.append(operator.gt(Communications.id, value))
         elif arg == 'receiver':
             filter_ops.append(operator.eq(Communications.receiver, value))
+        elif arg =='sender':
+            filter_ops.append(operator.eq(Communications.sender, value))
+        elif arg =='ignore_sender':
+            filter_ops.append(operator.ne(Communications.sender, value))
         elif arg == 'max':
             max_comm = Communications.query.order_by(Communications.id.desc()).limit(1).first()
             filter_ops.append(operator.ge(Communications.id, max_comm.id))
         else:
             pass
 
-
-    return filter_ops
 
 def dynamic_filters_housekeeping(filters):
     """build a filter from query paramaters, filters param will be a dict of query params of form <arg>:<value>
