@@ -90,7 +90,8 @@ def seed_db():
                 )
 
     timestamp = datetime.utcnow()
-    timestamp += timedelta(minutes=3)
+    timestamp += timedelta(minutes=5)
+    print(timestamp)
     passover = add_passover(timestamp=timestamp)
 
 
