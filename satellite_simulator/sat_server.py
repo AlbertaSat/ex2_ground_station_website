@@ -4,6 +4,10 @@ import time
 import json
 from datetime import datetime
 from satellite_simulator.sat_sim import Environment, Satellite, SatelliteComponent, Simulator
+import signal
+
+def handler(signum, frame):
+    exit()
 
 environment = Environment(connection_strength=10, connection_stability=10,
     packet_drop_probability=0)
@@ -23,6 +27,9 @@ satellite = Satellite(satellite_components)
 satellite._turn_on_channel(1)
 simulator = Simulator(environment, satellite)
 del environment, satellite
+
+signal.signal(signal.SIGALRM, handler)
+signal.alarm(300)
 
 HOST = '127.0.0.1'
 PORT = 65432

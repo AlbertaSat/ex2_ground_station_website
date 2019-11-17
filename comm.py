@@ -4,6 +4,7 @@ import satellite_simulator.antenna as antenna
 from groundstation.backend_api.communications import CommunicationList
 import time
 import json
+import signal
 
 def send(socket, data):
     """ Pipes the incoming data (probably a Command tuple) to the socket (probably the Simulator)
@@ -22,6 +23,10 @@ def example():
     for telecommand in telecommands:
         resp = send(antenna, telecommand)
         print(resp)
+
+# handle the sig alarm
+def handler(signum, frame):
+    exit()
 
 def communication_loop():
     request_data = {'last_id': 0, 'receiver': 'comm'}
@@ -52,4 +57,7 @@ def communication_loop():
         time.sleep(1)
 
 if __name__=='__main__':
+    # set a sigalarm so the comm module will close after a specified amount of time
+    signal.signal(signal.SIGALRM, handler)
+    signal.alarm(300)
     communication_loop()
