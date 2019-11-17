@@ -1,9 +1,11 @@
-from groundstation.satellite_simulator import helpers
+from . import helpers
 import random
 import json
 import time
 from ast import literal_eval as make_tuple
 import os
+import datetime
+from collections import defaultdict
 
 class Environment:
 
@@ -19,15 +21,19 @@ class Environment:
         self.connection_stability = connection_stability
         self.packet_drop_probability = packet_drop_probability
         self.no_delay = no_delay
+        self.current_time = datetime.datetime.now(datetime.timezone.utc)
+
+    def get_current_time(self):
+        return self.current_time
 
     def step(self):
         """Moves the environment one time step, change environment state in here
         """
-        pass
+        self.current_time = datetime.datetime.now(datetime.timezone.utc)
 
 class SatelliteComponent:
 
-    def __init__(self, name, effects_when_on, effects_when_off):
+    def __init__(self, name, channel, effects_when_on=[], effects_when_off=[]):
         """
         params:
             - name (string) : name of the component
@@ -39,6 +45,7 @@ class SatelliteComponent:
             - effects_when_off (list of 2 valued tupled), same concept as effects_when_on
         """
         self.name = name
+        self.channel = channel
         self.effects_when_on = effects_when_on
         self.effects_when_off = effects_when_off
         self.is_on = False
@@ -54,9 +61,9 @@ class Satellite:
 
     sat_modes =  ['Danger', 'Critical', 'Passive', 'Active Mission']
 
-    def __init__(self, components, satellite_mode=sat_modes[2], battery_voltage=4,
+    def __init__(self, components, satellite_mode=sat_modes[2], battery_voltage=16,
         current_in=0.3, current_out=0.3, no_MCU_resets=0,
-        last_beacon_time=None, current_time=helpers.get_unix_time(), beacon_interval=20):
+        last_beacon_time=None, beacon_interval=10):
         """
         Attributes:
             - flight_schedule (string) : a path to the flight schedule file.
@@ -70,13 +77,18 @@ class Satellite:
         self.current_out = current_out
         self.no_MCU_resets = no_MCU_resets
         self.last_beacon_time = last_beacon_time
+        self.watchdogs = [90*60] * 3
+        self.panel_currents = [2] * 6
+        self.temps = [8] * 6
+        self.power_channels = [{'enabled':False, 'current':0.5} for _ in range(24)]
 
-        self.current_time = current_time
+        self.last_step_time = None
         self.time_till_next_beacon = beacon_interval
         self.flight_schedule = None
-
         # convert list of components to dict for easier searching
-        self.components = {c.name:c for c in components}
+        self.components = defaultdict(list)
+        for c in components:
+            self.components[c.channel].append(c)
 
         # beacons will be 'broadcast' to this file every beacon interval
         self.BEACON_BROADCAST_FILE = os.path.join(os.path.dirname(__file__), 'beacons.json')
@@ -85,58 +97,72 @@ class Satellite:
         self.BEACON_INTERVAL = beacon_interval
 
 
-    def step(self):
+    def step(self, environment):
         """Moves the satellite one time step, change satellite state here
         """
-        self.current_time += 1
-        self.time_till_next_beacon  -= 1
+        current_time = environment.get_current_time()
+        self.time_till_next_beacon -= 0 if self.last_step_time is None else (current_time - self.last_step_time).total_seconds()
+        self._apply_component_effects_on_satellite_state(current_time)
 
-        self._apply_component_effects_on_satellite_state()
-        fs_command = self._get_fs_command_for_current_time()
-        if fs_command is not None:
-            response = self._execute_telecommand(fs_command[0], fs_command[1])
-            print('Executed FS command, resp = ', response)
+        # TODO: Maybe re-implement executing fs commands but not priority
 
-        if self.time_till_next_beacon == 0:
-            self._broadcast_beacon()
+        if self.time_till_next_beacon <= 0:
+            self._broadcast_beacon(current_time)
             self.time_till_next_beacon = self.BEACON_INTERVAL
 
-
-    def _apply_component_effects_on_satellite_state(self):
-        for component_name, component in self.components.items():
-            effects = component.effects_when_on if component.is_on else component.effects_when_off
-
-            for effect in effects:
-                attr, effect_function = effect
-                new_val = effect_function(getattr(self, attr))
-                setattr(self, attr, new_val)
+        self.last_step_time = current_time
 
 
-    def _turn_on_component(self, component_name):
-        # NOTE: Not sure if I should catch exceptions if component does not exist
-        component = self.components[component_name]
-        component.turn_on()
+    def _apply_component_effects_on_satellite_state(self, current_time):
+        if self.last_step_time is None:
+            return
+        time_since_last_step = (current_time - self.last_step_time).total_seconds()
+        for component_list in list(self.components.values()):
+            for component in component_list:
+                effects = component.effects_when_on if component.is_on else component.effects_when_off
+
+                for effect in effects:
+                    attr, effect_function = effect
+                    new_val = effect_function(getattr(self, attr), time_since_last_step)
+                    setattr(self, attr, new_val)
 
 
-    def _turn_off_component(self, component_name):
-        component = self.components[component_name]
-        component.turn_off()
+    def _pet_watchdog(self, watchdog_index, new_value):
+        self.watchdogs[watchdog_index] = new_value
+
+
+    def _turn_on_channel(self, channel_index):
+        self.power_channels[channel_index]['enabled'] = True
+        for component in self.components[channel_index]:
+            component.turn_on()
+
+
+    def _turn_off_channel(self, channel_index):
+        self.power_channels[channel_index]['enabled'] = False
+        for component in self.components[channel_index]:
+            component.turn_off()
 
 
     def _get_hk_as_dict(self):
-        lb = self.last_beacon_time if self.last_beacon_time is not None else ''
+        """Return a JSON serializable dict of the current housekeeping data
+        """
+        lb = str(self.last_beacon_time) if self.last_beacon_time is not None else ''
         return {
             'satellite_mode':self.satellite_mode,
             'battery_voltage':self.battery_voltage,
             'current_in':self.current_in,
             'current_out':self.current_out,
             'no_MCU_resets':self.no_MCU_resets,
-            'last_beacon_time':lb
+            'last_beacon_time':lb,
+            'watchdogs':self.watchdogs,
+            'panel_currents':self.panel_currents,
+            'temps':self.temps,
+            'power_channels':self.power_channels,
         }
 
 
-    def _broadcast_beacon(self):
-        self.last_beacon_time = self.current_time
+    def _broadcast_beacon(self, current_time):
+        self.last_beacon_time = current_time
         with open(self.BEACON_BROADCAST_FILE, 'r') as fptr:
             beacons_list = json.load(fptr)
             beacons_list.append(self._get_hk_as_dict())
@@ -145,17 +171,9 @@ class Satellite:
             json.dump(beacons_list, fptr, indent=4)
 
 
-    def _get_fs_command_for_current_time(self):
-        """
-        returns:
-            - command (tuple?)
-        """
-        if self.flight_schedule is not None:
-            with open(self.flight_schedule) as fptr:
-                for row in fptr:
-                    row = (row.strip()).split(',', 1)
-                    if int(row[0]) == self.current_time:
-                        return make_tuple(row[1])
+    # TODO: Needs updating if we want this feature
+    # def _get_fs_command_for_current_time(self):
+    #     pass
 
 
     def _execute_telecommand(self, telecommand_name, args):
@@ -165,15 +183,19 @@ class Satellite:
         elif telecommand_name == 'GET-HK':
             response = json.dumps(self._get_hk_as_dict())
         elif telecommand_name == 'TURN-ON':
-            self._turn_on_component(args[0])
+            self._turn_on_channel(int(args[0]))
             response = '200 OK'
         elif telecommand_name == 'TURN-OFF':
-            self._turn_off_component(args[0])
+            self._turn_off_channel(int(args[0]))
             response = '200 OK'
         elif telecommand_name == 'SET-FS':
-            # expecting string path to the flight schedule
+            # Currently sets but we dont have fs functionality
             self.flight_schedule = args[0]
             response = '201 Created'
+        elif telecommand_name == 'PET-WATCHDOG':
+            # expecting 2 args, 1.) watchdog timer index, 2.) new value
+            self._pet_watchdog(int(args[0]), int(args[1]))
+            response = '200 OK'
         else:
             response = 'UNRECOGNIZED-COMMAND'
 
@@ -198,9 +220,6 @@ class Satellite:
         if not environment.no_delay:
             response_latency = helpers.calculate_semi_random_latency(environment.connection_strength, environment.connection_stability)
             time.sleep(response_latency)
-        # TODO: separate incoming dropped packets with outgoing dropped packets
-        #       i.e.) packets sent to satellite might not even reach it (essentially what we have rn)
-        #           * but there is also the case where sat recieves, telecommand, executes, but we dont get its response (we need to add this)
         return response
 
 
@@ -212,19 +231,17 @@ class Simulator:
         self._log_file_path = os.path.join(os.path.dirname(__file__), 'log.txt')
 
     def send_to_sat(self, data):
+        self._step()
         self._add_to_log('groundstation', 'satellite', data)
         sat_resp = self.satellite.send(data, self.environment)
         self._add_to_log('satellite', 'groundstation', sat_resp)
         return sat_resp
 
-    def step(self):
+    def _step(self):
         """Step environment and satellite one step
         """
         self.environment.step()
-        self.satellite.step()
-
-    def get_current_satellite_time(self):
-        return self.satellite.current_time
+        self.satellite.step(self.environment)
 
     def _add_to_log(self, sender, recipient, message):
 
@@ -235,111 +252,3 @@ class Simulator:
 
         with open(self._log_file_path, 'a+') as fptr:
             fptr.write(log_message + '\n')
-
-
-
-def minimal_example():
-
-    environment = Environment(connection_strength=10, connection_stability=10,
-        packet_drop_probability=0.05)
-    satellite = Satellite(components=[])
-
-    simulator = Simulator(environment, satellite)
-    del environment, satellite
-
-    data = ('PING', [])
-    resp = simulator.send_to_sat(data)
-    print(resp)
-
-
-def example_usage():
-
-    environment = Environment(connection_strength=10, connection_stability=10,
-        packet_drop_probability=0.02)
-
-    def effect_of_gps_on(old_value):
-        new_value = old_value - 0.01
-        return new_value
-
-    satellite_components = [
-        SatelliteComponent('GPS', [('batteryVoltage', effect_of_gps_on)], []),
-        ]
-    satellite = Satellite(satellite_components)
-    simulator = Simulator(environment, satellite)
-    del environment, satellite
-
-    data = ('GET-HK', [])
-    resp = simulator.send_to_sat(data)
-    print(resp)
-
-    data = ('TURN-ON', ['GPS'])
-    resp = simulator.send_to_sat(data)
-    print(resp)
-
-    for i in range(50):
-        simulator.step()
-
-    data = ('GET-HK', [])
-    resp = simulator.send_to_sat(data)
-    print(resp)
-
-    # doing this so I dont have to keep creating it for each example
-    return simulator
-
-
-def flight_schedule_example():
-    # WARNING: This wont work now that time is referenced by current unix time
-    # just use it as visual reference
-
-    simulator = example_usage()
-
-    data = ('SET-FS', ['groundstation/satellite_simulator/test_flight_schedule1.txt'])
-    resp = simulator.send_to_sat(data)
-    print(resp)
-
-    for i in range(50):
-        simulator.step()
-
-    data = ('GET-HK', [])
-    resp = simulator.send_to_sat(data)
-    print(resp)
-    assert not simulator.satellite.components['GPS'].is_on, 'GPS is still on!'
-
-
-
-
-def run_interactively():
-
-    print('--- ENTER DATA TO SEND, enter \'Q\' to quit ---')
-
-    environment = Environment(10, 10, 0.05)
-
-    def effect_of_gps_on(old_value):
-        new_value = old_value - 0.01
-        return new_value
-
-    satellite_components = [SatelliteComponent('GPS', [('batteryVoltage', effect_of_gps_on)], [])]
-    satellite = Satellite(satellite_components)
-    simulator = Simulator(environment, satellite)
-    del environment, satellite
-
-    while 1:
-        inp = input('> ')
-        if inp == 'Q':
-            break
-        resp = simulator.send_to_sat(make_tuple(inp))
-        print('response: {}'.format(resp))
-
-        simulator.step()
-
-
-
-def main():
-
-    example_usage()
-
-
-
-
-if __name__=="__main__":
-    main()

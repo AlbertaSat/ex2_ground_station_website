@@ -5,7 +5,7 @@ from flask_restful import Resource, Api
 from marshmallow import ValidationError
 from groundstation import db
 from groundstation.backend_api.models import FlightSchedules, FlightScheduleCommands, FlightScheduleCommandsArgs
-from groundstation.backend_api.utils import create_context
+from groundstation.backend_api.utils import create_context, login_required
 from groundstation.backend_api.validators import FlightScheduleValidator, FlightSchedulePatchValidator
 from datetime import datetime
 
@@ -19,6 +19,7 @@ class Flightschedule(Resource):
         super(Flightschedule, self).__init__()
 
     @create_context
+    @login_required
     def get(self, flightschedule_id):
         flightschedule = FlightSchedules.query.filter_by(id=flightschedule_id).first()
 
@@ -33,6 +34,7 @@ class Flightschedule(Resource):
             return response_object, 200
 
     @create_context
+    @login_required
     def patch(self, flightschedule_id, local_data=None):
         if not local_data:
             post_data = request.get_json()
@@ -58,8 +60,9 @@ class Flightschedule(Resource):
 
         # if we are queuing this flightschedule, handle the normal checks
         # if it is valid, queue it
-        if validated_data['is_queued']:
-            num_queued = FlightSchedules.query.filter_by(is_queued=True).count()
+        # status 1=queued, 2=draft, 3=uploaded
+        if validated_data['status'] == 1:
+            num_queued = FlightSchedules.query.filter_by(status=1).count()
             if num_queued > 0:
                 response_object = {
                     'status': 'fail',
@@ -67,7 +70,7 @@ class Flightschedule(Resource):
                 }
                 return response_object, 400
 
-        flightschedule.is_queued = validated_data['is_queued']
+        flightschedule.status = validated_data['status']
 
         # go through the operations for this patch, inspired by the parse JSON syntax
         # we have replace, add, or remove as valid operations on the flight schedule
@@ -75,7 +78,7 @@ class Flightschedule(Resource):
         for command in flightschedule_commands:
             if command['op'] == 'add':
                 new_command = FlightScheduleCommands(
-                        command_id=command['command']['command_id'], 
+                        command_id=command['command']['command_id'],
                         timestamp=command['timestamp']
                     )
 
@@ -92,7 +95,7 @@ class Flightschedule(Resource):
                 this_command = FlightScheduleCommands.query.filter_by(id=command['flightschedule_command_id']).first()
                 this_command.timestamp = command['timestamp']
                 this_command.command_id = command['command']['command_id']
-                
+
                 this_command.arguments.clear()
                 arguments = command.pop('args')
 
@@ -120,6 +123,7 @@ class Flightschedule(Resource):
         return response_object, 200
 
     @create_context
+    @login_required
     def delete(self, flightschedule_id):
         flightschedule = FlightSchedules.query.filter_by(id=flightschedule_id).first()
 
@@ -146,6 +150,7 @@ class FlightScheduleList(Resource):
         super(FlightScheduleList, self).__init__()
 
     @create_context
+    @login_required
     def get(self, local_args=None):
         """
         local_args : dict
@@ -158,7 +163,10 @@ class FlightScheduleList(Resource):
             # local request
             query_limit = local_args.get('limit')
 
-        flightschedules = FlightSchedules.query.order_by(FlightSchedules.creation_date).limit(query_limit).all()
+        flightschedules = FlightSchedules.query.order_by(
+                            FlightSchedules.status, 
+                            FlightSchedules.creation_date
+                        ).limit(query_limit).all()
         response_object = {
             'status':'success',
             'data': {
@@ -169,6 +177,7 @@ class FlightScheduleList(Resource):
 
 
     @create_context
+    @login_required
     def post(self, local_data=None):
 
         if not local_data:
@@ -187,8 +196,8 @@ class FlightScheduleList(Resource):
             return response_object, 400
 
         # check that we are not queueing multiple flight schedules
-        if validated_data['is_queued']:
-            num_queued = FlightSchedules.query.filter_by(is_queued=True).count()
+        if validated_data['status'] == 1:
+            num_queued = FlightSchedules.query.filter_by(status=1).count()
             if num_queued > 0:
                 response_object = {
                     'status': 'fail',
@@ -213,7 +222,7 @@ class FlightScheduleList(Resource):
                 arg = arg_data['argument']
                 argument = FlightScheduleCommandsArgs(index=index, argument=arg)
                 command.arguments.append(argument)
-                
+
 
         db.session.add(flightschedule)
         db.session.commit()
