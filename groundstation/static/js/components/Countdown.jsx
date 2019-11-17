@@ -40,12 +40,29 @@ class Countdown extends Component{
         );
 	}
 
+	componentWillUnmount() {
+        clearInterval(this.timer);
+    }
+
 	updateCountdown(){
 		// this seems so ghetto, time sucks
 		// but update the time remaining until next passover
 		let today =  new Date(Date.now());
 		let utcToday = new Date(today.getTime() + (today.getTimezoneOffset() * 60000));
 		let subtract = this.state.nextPassover - utcToday;
+
+		// if passover is passed clear interval for now
+		// TODO probably have different behaviour than just stopping countdown
+		if(subtract <= 0){
+			clearInterval(this.timer);
+			this.setState({
+				hour: '00',
+				minute: '00',
+				second: '00'
+			})
+
+			return
+		}
 
 		let hour = Math.floor((subtract / (1000 * 60 * 60)) % 24);
 		let minute = Math.floor((subtract / (1000 * 60)) % 60);
