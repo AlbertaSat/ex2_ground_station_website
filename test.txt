@@ -1,3 +1,0 @@
-PING, here, there
-PONG, there, here
-Nuke_Planet, space, Earth

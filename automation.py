@@ -1,35 +1,47 @@
 from groundstation.backend_api.communications import CommunicationList
+from groundstation.backend_api.passover import PassoverList
+from datetime import datetime
 import json
+import subprocess
 
 def main():
     sender = CommunicationList()
-    fail = True
-    while fail:
-        fail = False
-        seq = input("Enter file name: ")
-        test = seq.split(".")
-        if len(test) != 2:
-            print("Invalid file name. Must be like file.txt")
-            fail = True
-        elif test[1] != "txt":
-            print("Invalid file type. Must be .txt")
-            fail = True
+    passover = PassoverList()
 
-    f = open(seq, "r")
+    with open('automation.txt', 'r') as f:
+        for line in f:
+            line = line.strip("\n")
 
-    for line in f:
-        line = line.strip("\n")
-        pieces = line.split(",")
-        message = {
-            'message': pieces[0],
-            'sender': pieces[1],
-            'receiver': pieces[2]
-        }
+            message = {
+                'message': line,
+                'sender': 'automation',
+                'receiver': 'comm'
+            }
 
-        #print(line, message)
+            message = json.dumps(message)
+            sender.post(local_data=message)
 
-        message = json.dumps(message)
+    # the automation will also handle queuing passover times
+    passovers = passover.get(local_args={'limit': 1, 'next-only' : 'true'})
+    print(passovers)
 
-        sender.post(local_data=message)
+    if passovers[1] == 200:
+        passover_data = passovers[0]['data']['passovers']
+        for passover in passover_data:
+            time_obj = datetime.strptime(passover['timestamp'], '%Y-%m-%d %H:%M:%S.%f')
+            f_time_min = time_obj.strftime('%H:%M')
+            f_time_date = time_obj.strftime('%m/%d/%Y')
+
+            subprocess.run(['at', f_time_min, f_time_date, '-f', 'test.sh'])
+
+
+
+
+
+
+
+
+
+
 
 main()

@@ -29,6 +29,7 @@ class PassoverList(Resource):
             next_only = local_args.get('next-only')
 
         if next_only == 'true':
+            # ignore for now
             current_time = datetime.datetime.now(datetime.timezone.utc)
             passovers = [Passover.query.filter(Passover.timestamp > current_time).order_by(Passover.timestamp).limit(query_limit).first()]
             passovers = [] if passovers[0] is None else passovers
