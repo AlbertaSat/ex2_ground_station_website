@@ -83,14 +83,14 @@ def seed_db():
                             )
 
     message = add_message_to_communications(
-                    timestamp=timestamp, 
-                    message='ping', 
+                    timestamp=timestamp,
+                    message='ping',
                     sender='user',
                     receiver='comm'
                 )
 
     timestamp = datetime.utcnow()
-    timestamp += timedelta(minutes=1)
+    timestamp += timedelta(seconds=25)
     print(timestamp)
     passover = add_passover(timestamp=timestamp)
 

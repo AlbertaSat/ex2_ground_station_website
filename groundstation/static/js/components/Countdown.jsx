@@ -19,6 +19,9 @@ class Countdown extends Component{
 			second: '00',
 			nextPassover: null,
 			untilPassover: null,
+            operationIsAdd:false,
+            operatorChar:'-',
+            color:'#ab000e'
 		}
 
 		this.updateCountdown = this.updateCountdown.bind(this);
@@ -51,24 +54,27 @@ class Countdown extends Component{
 		// but update the time remaining until next passover
 		let today =  new Date(Date.now());
 		let utcToday = new Date(today.getTime() + (today.getTimezoneOffset() * 60000));
-		let subtract = this.state.nextPassover - utcToday;
 
 		// if passover is passed clear interval for now
 		// TODO probably have different behaviour than just stopping countdown
-		if(subtract <= 0){
-			clearInterval(this.timer);
-			this.setState({
-				hour: '00',
-				minute: '00',
-				second: '00'
-			})
+        let timeDifference = this.state.nextPassover - utcToday;
+		if(timeDifference <= 0){
+			// clearInterval(this.timer);
+			// this.setState({
+			// 	hour: '00',
+			// 	minute: '00',
+			// 	second: '00'
+			// })
+            this.setState({operationIsAdd:true, operatorChar:'+', color:"#007C40"})
 
-			return
 		}
 
-		let hour = Math.floor((subtract / (1000 * 60 * 60)) % 24);
-		let minute = Math.floor((subtract / (1000 * 60)) % 60);
-		let second = Math.floor((subtract / 1000) % 60)
+        let new_value = this.state.operationIsAdd ? utcToday - this.state.nextPassover : this.state.nextPassover - utcToday;
+        console.log(new_value)
+
+		let hour = Math.floor((new_value / (1000 * 60 * 60)) % 24);
+		let minute = Math.floor((new_value / (1000 * 60)) % 60);
+		let second = Math.floor((new_value / 1000) % 60)
 
 		hour = (hour < 10)? "0" + hour : hour;
 		minute = (minute < 10)? "0" + minute : minute;
@@ -77,7 +83,7 @@ class Countdown extends Component{
 		this.setState({
 			hour: hour,
 			minute: minute,
-			second: second,	
+			second: second,
 		})
 
 	}
@@ -86,11 +92,11 @@ class Countdown extends Component{
 	render(){
 		return (
 			<span style={{marginLeft: '3em', display: 'inherit'}}>
-				<span style={{marginRight: '0.5em', color: '#007C40'}}>
+				<span style={{marginRight: '0.5em', color:this.state.color}}>
 					<SatelliteIcon style={{fontSize: '1.85em'}}/>
 				</span>
-				<span style={{color: '#007C40', fontWeight: 'bold', fontSize: '1.25em'}}>
-				  {this.state.hour}:{this.state.minute}:{this.state.second}
+				<span style={{color:this.state.color, fontWeight: 'bold', fontSize: '1.25em'}}>
+				  T{this.state.operatorChar} {this.state.hour}:{this.state.minute}:{this.state.second}
 				 </span>
 	        </span>
 		)
