@@ -55,7 +55,9 @@ class Login extends Component {
                         }, 
                         body: JSON.stringify(data)};
         fetch('/api/auth/login', options)
-            .then(response => {console.log(response)});
+            .then(results => {
+                return results.json();
+            }).then(response => {console.log(response)});
     }
 
     render(){
