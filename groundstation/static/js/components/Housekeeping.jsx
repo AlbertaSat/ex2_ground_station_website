@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import HousekeepingList from './HousekeepingListFull';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
 
 class HouseKeeping extends Component {
     constructor() {
@@ -36,8 +38,10 @@ class HouseKeeping extends Component {
     render() {
         return (
             <div>
-                <h1 style={{padding: '10px'}}>HouseKeeping</h1>
-                <HousekeepingList housekeeping={this.state.housekeeping} empty={this.state.empty} />
+                <Paper className="grid-containers">
+                    <Typography variant="h5" displayInline style={{padding: '10px'}}>Housekeeping</Typography>
+                    <HousekeepingList housekeeping={this.state.housekeeping} empty={this.state.empty} />
+                </Paper>
             </div>
         )
     }

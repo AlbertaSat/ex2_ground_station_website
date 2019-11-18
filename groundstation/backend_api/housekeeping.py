@@ -5,9 +5,9 @@ from marshmallow import ValidationError
 from datetime import datetime
 import json
 
-from groundstation.backend_api.models import Housekeeping
+from groundstation.backend_api.models import Housekeeping, PowerChannels
 from groundstation import db
-from groundstation.backend_api.utils import create_context, login_required
+from groundstation.backend_api.utils import create_context, login_required, dynamic_filters_housekeeping
 from groundstation.backend_api.validators import HousekeepingValidator
 
 housekeeping_blueprint = Blueprint('housekeeping', __name__)
@@ -59,7 +59,13 @@ class HousekeepingLogList(Resource):
             }
             return response_object, 400
 
+        channels = validated_data.pop('channels')
         housekeeping = Housekeeping(**validated_data)
+
+        for channel in channels:
+            p = PowerChannels(**channel)
+            housekeeping.channels.append(p)
+
         db.session.add(housekeeping)
         db.session.commit()
 
@@ -71,13 +77,23 @@ class HousekeepingLogList(Resource):
         return response_object, 201
 
     @create_context
-    def get(self):
-        # for query string ?limit=n
-        # if no limit defined it is none
-        # TODO: Get this working for local calls
-        query_limit = request.args.get('limit')
-        logs = Housekeeping.query.order_by(Housekeeping.last_beacon_time).limit(query_limit).all()
+    def get(self, local_args=None):
+        if not local_args:
+            request_args_dict = request.args.to_dict()
+            query_limit = request_args_dict.pop('limit', None)
+            args = dynamic_filters_housekeeping(request_args_dict)
+        else:
+            query_limit = local_args.pop('limit', None)
+            args = dynamic_filters_housekeeping(local_args)
 
+        if args is None:
+            response_object = {
+                'status': 'fail',
+                'message': 'Invalid query params',
+            }
+            return response_object, 400
+
+        logs = Housekeeping.query.filter(*args).limit(query_limit).all()
         response_object = {
             'status': 'success',
             'data': {
