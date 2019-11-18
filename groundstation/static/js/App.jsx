@@ -10,7 +10,7 @@ const styles = {
   navbarLinks: {
     color: '#fff',
     "&:hover": {
-        color: "#4bacb8"
+        color: "#55c4d3"
       }
   } 
 }
@@ -33,17 +33,17 @@ function App(props) {
                             </Typography>
                             <Typography className="menu-links">
                                 <a 
-                                  className={`link-items ${classes.navbarLinks}`}
+                                  className={`link-items hvr-underline-from-center ${classes.navbarLinks}` }
                                   href="/livecommands" >
                                     Live Commands
                                   </a>
                                 <a 
-                                  className={`link-items ${classes.navbarLinks}`} 
+                                  className={`link-items hvr-underline-from-center ${classes.navbarLinks}`} 
                                   href="/housekeeping">
                                   Housekeeping
                                 </a>
                                 <a 
-                                  className={`link-items ${classes.navbarLinks}`} 
+                                  className={`link-items hvr-underline-from-center ${classes.navbarLinks}`} 
                                   href="/flightschedule">
                                   Flight Schedule
                                 </a>
