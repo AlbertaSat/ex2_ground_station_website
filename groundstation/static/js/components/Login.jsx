@@ -29,26 +29,34 @@ class Login extends Component {
             password : null
         }
         this.handleUserChange = this.handleUserChange.bind(this);
+        this.handlePassChange = this.handlePassChange.bind(this);
+        this.handleLogin = this.handleLogin.bind(this);
     };
 
-    // ComponentDidMount(){
-
-    // }
     handleUserChange(event){
         this.setState({username: event.target.value});
-
-        console.log(event.target.value)
     }
 
-    // handlePassChange:function(info){
-    //     this.setState({password: info.target.value})
-    // },
+    handlePassChange(event){
+        this.setState({password: event.target.value});
+    }
 
-    // handleLogin(event){
-    //     event.preventDefault();
-    //     let data = {username:this.state.username, password:this.state.password}
-    //     fetch('/api/auth/login')
-    // }
+    handleLogin(){
+        // console.log("user: "+this.state.username+" password: "+this.state.password);
+
+        event.preventDefault();
+        let data = {username:this.state.username, password:this.state.password};
+        
+        // console.log(data)
+        let method = 'POST';
+        let options = { method: method, 
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }, 
+                        body: JSON.stringify(data)};
+        fetch('/api/auth/login', options)
+            .then(response => {console.log(response)});
+    }
 
     render(){
         const { classes } = this.props;
@@ -58,7 +66,7 @@ class Login extends Component {
                     <Grid item xs={12}>
                         <div className={classes.root}>
                             <Typography variant="h4" displayInline style={{color: '#28324C'}}>
-                                Login
+                                Login1
                             </Typography>
                         </div>
                     </Grid>
@@ -67,12 +75,9 @@ class Login extends Component {
                             required
                             id="outlined-required"
                             label="Username"
-                            autoComplete="example@email.com"
-                            className={classes.textField}
                             margin="normal"
                             variant="outlined"
-                            value={this.state.username}
-                            onChange={this.handleUserChange}
+                            onChange={(event) => this.handleUserChange(event)}
                         />
                     </Grid>
                     <Grid item xs={12}>
@@ -80,33 +85,22 @@ class Login extends Component {
                             required
                             id="outlined-password-input"
                             label="Password"
-                            className={classes.textField}
                             type="password"
-                            autoComplete="current-password"
                             margin="normal"
                             variant="outlined"
-                            value={this.state.password}
+                            onChange={(event) => this.handlePassChange(event)}
                         />
                     </Grid>
                     <Grid item xs={12}>    
                         <Button 
+                            onClick={ () => this.handleLogin()}
                             variant="contained"
-                            color="primary"
                             className={classes.button}
                         >
                             Submit
                         </Button>
                     </Grid>
                 </Grid>
-                /*<div>
-                    <Button 
-                        variant="contained"
-                        color="primary"
-                        className={classes.button}
-                    >
-                        Submit
-                    </Button>
-                </div>*/
             </div>
         )
     }
