@@ -6,6 +6,8 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import SatelliteIcon from '@material-ui/icons/Satellite';
+
 
 // inspired by https://www.cssscript.com/minimal-digital-clock-javascript-css/
 class Countdown extends Component{
@@ -83,24 +85,14 @@ class Countdown extends Component{
 
 	render(){
 		return (
-			<div>
-			  <Paper className="grid-containers">
-			  		<div className="container-text">
-			  		  <Table aria-label="simple table">
-			  		  	<TableHead>
-	                      <TableRow>
-	                      	<TableCell align="left" padding="none"><h5>Until Next Passover</h5></TableCell>
-	                        <TableCell align="center" padding="none"><h5>{this.state.hour}</h5></TableCell>
-	                        <TableCell align="center" padding="none"><h5>:</h5></TableCell>
-	                        <TableCell align="center" padding="none"><h5>{this.state.minute}</h5></TableCell>
-	                        <TableCell align="center" padding="none"><h5>:</h5></TableCell>
-	                        <TableCell align="center" padding="none"><h5>{this.state.second}</h5></TableCell>
-	                      </TableRow>
-	                    </TableHead>
-			  		  </Table>
-			  		</div>
-			  </Paper>
-	        </div>
+			<span style={{marginLeft: '3em', display: 'inherit'}}>
+				<span style={{marginRight: '0.5em', color: '#007C40'}}>
+					<SatelliteIcon style={{fontSize: '1.85em'}}/>
+				</span>
+				<span style={{color: '#007C40', fontWeight: 'bold', fontSize: '1.25em'}}>
+				  {this.state.hour}:{this.state.minute}:{this.state.second}
+				 </span>
+	        </span>
 		)
 	}
 }
