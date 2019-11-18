@@ -55,6 +55,9 @@ class CommunicationList(Resource):
             post_data = request.get_json()
         else:
             post_data = json.loads(local_data)
+
+        # NOTE: why do we do this
+        # TODO: also we need a validator...
         post_data.update({'timestamp': datetime.datetime.now(datetime.timezone.utc)})
 
 
