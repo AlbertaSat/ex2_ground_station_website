@@ -88,7 +88,7 @@ const FlightScheduleList = (props) => {
                           { statusDiv(flightschedule.status) }
                         </TableCell>
                         <TableCell align="right">
-                          {"Created at " + flightschedule.creation_date}
+                          {"Created at " + flightschedule.creation_date.split('.')[0]}
                         </TableCell>
                         {
                           !props.isMinified && 
