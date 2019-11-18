@@ -66,7 +66,7 @@ class Login extends Component {
                     <Grid item xs={12}>
                         <div className={classes.root}>
                             <Typography variant="h4" displayInline style={{color: '#28324C'}}>
-                                Login1
+                                Login
                             </Typography>
                         </div>
                     </Grid>
