@@ -24,12 +24,13 @@ function App(props) {
                     <AppBar position="static">
                         <Toolbar>
                             <Typography variant="h6">
-                              <a className="link-items indent" href="/">
+                              <a className="link-items" href="/">
                                 <img 
                                   src='https://albertasat.ca/wp-content/uploads/sites/43/2019/06/FINALLOGO_RGB_White.png' 
                                   style={{maxWidth: '55px'}}
                                 />
                               </a>
+                              <a className="indent">AlbertaSat</a>
                             </Typography>
                             <Typography className="menu-links">
                                 <a 
