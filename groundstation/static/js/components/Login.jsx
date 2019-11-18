@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -11,6 +12,7 @@ import Button from '@material-ui/core/Button';
 //     <h1>This is our Login test</h1>
 //   </div>
 // )
+// 
 
 const styles = {
   root: {
@@ -26,7 +28,10 @@ class Login extends Component {
         super();
         this.state = {
             username : null,
-            password : null
+            password : null,
+            auth_token : null,
+            redirect : false,
+            error_message : ''
         }
         this.handleUserChange = this.handleUserChange.bind(this);
         this.handlePassChange = this.handlePassChange.bind(this);
@@ -35,11 +40,11 @@ class Login extends Component {
 
     handleUserChange(event){
         this.setState({username: event.target.value});
-    }
+    };
 
     handlePassChange(event){
         this.setState({password: event.target.value});
-    }
+    };
 
     handleLogin(){
         // console.log("user: "+this.state.username+" password: "+this.state.password);
@@ -57,9 +62,46 @@ class Login extends Component {
         fetch('/api/auth/login', options)
             .then(results => {
                 return results.json();
-            }).then(response => {console.log(response)});
+            }).then(response => {
+                console.log(response);
+                if (response['status'] == 'success'){
+                    this.setState({auth_token:response['auth_token']});
+                
+                    localStorage.setItem('username', this.state.username);
+                    localStorage.setItem('auth_token', this.state.auth_token);
+
+                    // console.log(localStorage.getItem('username'));
+                    // console.log(localStorage.getItem('auth_token'));
+                     
+                     this.setState({redirect:true});
+                }
+                else {
+                    console.log("failed to log in");
+                    // TODO: add an invalid username or password update
+                    this.setState({error_message:response['message']});
+                    console.log(this.state.error_message)
+                }
+            });
     }
 
+    handleRedirect(){
+        if (this.state.redirect){
+            return (<Redirect to='/'/>);
+        }
+    }
+
+    handleError(){
+        if (!(this.state.error_message === '')){
+            console.log('error')
+            return  (
+                <div>
+                    <Typography style={{color: 'red'}}>
+                        {this.state.error_message}
+                    </Typography>
+                </div>
+            );
+        }
+    }
     render(){
         const { classes } = this.props;
         return (
@@ -80,6 +122,7 @@ class Login extends Component {
                             margin="normal"
                             variant="outlined"
                             onChange={(event) => this.handleUserChange(event)}
+                            error={!(this.state.error_message === '')}
                         />
                     </Grid>
                     <Grid item xs={12}>
@@ -91,9 +134,11 @@ class Login extends Component {
                             margin="normal"
                             variant="outlined"
                             onChange={(event) => this.handlePassChange(event)}
+                            error={!(this.state.error_message === '')}
                         />
                     </Grid>
-                    <Grid item xs={12}>    
+                    <Grid item xs={12}>  
+                        {this.handleRedirect()}  
                         <Button 
                             onClick={ () => this.handleLogin()}
                             variant="contained"
@@ -101,6 +146,9 @@ class Login extends Component {
                         >
                             Submit
                         </Button>
+                    </Grid>
+                    <Grid item xs={12}>
+                        {this.handleError()}
                     </Grid>
                 </Grid>
             </div>
