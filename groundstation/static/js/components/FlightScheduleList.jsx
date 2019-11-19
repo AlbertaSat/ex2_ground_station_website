@@ -65,10 +65,9 @@ const FlightScheduleList = (props) => {
             {
               !props.isMinified &&
                 <Grid item xs={1} style={{textAlign: 'right'}}>
-                  <Fab>
+                  <Fab onClick={ (event) => props.handleAddFlightOpenClick(event) }>
                     <AddIcon 
                               style={{ color: '#4bacb8', fontSize: '2rem'}} 
-                              onClick={ (event) => props.handleAddFlightOpenClick(event) }
                     />
                   </Fab>
                 </Grid>
