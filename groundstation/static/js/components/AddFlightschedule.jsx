@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -27,18 +27,18 @@ const AddFlightschedule = (props) =>{
 		{label: command.command_name, value: command.command_id, args: command.num_arguments}
 	))
 
-const useStyles = makeStyles({
-  cell: {
-  	borderBottom: '1px solid rgba(224, 224, 224, 1)',
-  	paddingTop: '0px',
-  },
-  argBottom: {
-  	borderBottom: '0px',
-  	paddingBottom: '0px',
-  },
-});
+	const useStyles = makeStyles({
+	  cell: {
+	  	borderBottom: '1px solid rgba(224, 224, 224, 1)',
+	  	paddingTop: '0px',
+	  },
+	  argBottom: {
+	  	borderBottom: '0px',
+	  	paddingBottom: '0px',
+	  },
+	});
 
-const classes = useStyles();
+	const classes = useStyles();
 
 	return (
 		<div>
@@ -124,8 +124,7 @@ const classes = useStyles();
 			              	}
 			              </TableRow>
 			          </TableBody>
-			          )	
-  					)}
+			          ))}
               </Table>
                 <DialogContentText>
 		          <AddIcon 
