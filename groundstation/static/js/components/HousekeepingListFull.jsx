@@ -47,8 +47,14 @@ const useStyles = makeStyles(theme => ({
   table: {
     minWidth: 650,
   },
+  customListItemText: {
+    display: 'flex',
+    alignItems: 'baseline',
+    justifyContent: 'space-between',
+    maxWidth: '78%',
+  },
 }));
-  
+
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -144,46 +150,46 @@ const HousekeepingLogListFull = (props) => {
                     </Typography>
                   </Toolbar>
                   </AppBar>
-                  
+
                   {/* HK log data being displayed */}
                   <List>
                   <ListItem >
-                    <ListItemText primary="ID" secondary={housekeeping.id} />
+                    <ListItemText classes={{root: classes.customListItemText}} primary="ID" secondary={housekeeping.id} />
                   </ListItem>
                   <ListItem >
-                    <ListItemText primary="Satellite Mode" secondary={housekeeping.satellite_mode} />
+                    <ListItemText classes={{root: classes.customListItemText}} primary="Satellite Mode" secondary={housekeeping.satellite_mode} />
                   </ListItem>
                   <ListItem >
-                    <ListItemText primary="Watchdog 1" secondary={housekeeping.watchdog_1} />
+                    <ListItemText classes={{root: classes.customListItemText}} primary="Watchdog 1" secondary={housekeeping.watchdog_1} />
                   </ListItem>
                   <ListItem >
-                    <ListItemText primary="Watchdog 2" secondary={housekeeping.watchdog_2} />
+                    <ListItemText classes={{root: classes.customListItemText}} primary="Watchdog 2" secondary={housekeeping.watchdog_2} />
                   </ListItem>
                   <ListItem >
-                    <ListItemText primary="Watchdog 3" secondary={housekeeping.watchdog_3} />
+                    <ListItemText classes={{root: classes.customListItemText}} primary="Watchdog 3" secondary={housekeeping.watchdog_3} />
                   </ListItem>
                   <ListItem >
-                    <ListItemText primary="MCU Resets" secondary={housekeeping.no_MCU_resets} />
+                    <ListItemText classes={{root: classes.customListItemText}} primary="MCU Resets" secondary={housekeeping.no_MCU_resets} />
                   </ListItem>
                   <ListItem >
-                    <ListItemText primary="Battery Voltage" secondary={housekeeping.battery_voltage} />
+                    <ListItemText classes={{root: classes.customListItemText}} primary="Battery Voltage" secondary={housekeeping.battery_voltage} />
                   </ListItem>
                   <ListItem >
-                    <ListItemText primary="Current In" secondary={housekeeping.current_in} />
+                    <ListItemText classes={{root: classes.customListItemText}} primary="Current In" secondary={housekeeping.current_in} />
                   </ListItem>
                   <ListItem >
-                    <ListItemText primary="Current Out" secondary={housekeeping.current_out} />
+                    <ListItemText classes={{root: classes.customListItemText}} primary="Current Out" secondary={housekeeping.current_out} />
                   </ListItem>
-                  <Divider />
+                  <br></br>
 
                   {/* Power Channels table */}
                   <ListItem>
                     <Table className={classes.table} size="small" aria-label="dense table">
                       <TableHead>
                         <TableRow>
-                          <TableCell>Power Channel</TableCell>
-                          <TableCell align="left">Enabled</TableCell>
-                          <TableCell align="left">Current (mA)</TableCell>
+                          <TableCell width="40%">Power Channel</TableCell>
+                          <TableCell width="30%" align="left">Enabled</TableCell>
+                          <TableCell width="30%" align="left">Current (mA)</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
@@ -205,8 +211,8 @@ const HousekeepingLogListFull = (props) => {
                     <Table className={classes.table} size="small" aria-label="dense table">
                       <TableHead>
                         <TableRow>
-                          <TableCell >Solar Panel</TableCell>
-                          <TableCell align="left">Current (mA)</TableCell>
+                          <TableCell width="70%">Solar Panel</TableCell>
+                          <TableCell width="30%" align="left">Current (mA)</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
@@ -243,8 +249,8 @@ const HousekeepingLogListFull = (props) => {
                     <Table className={classes.table} size="small" aria-label="dense table">
                       <TableHead>
                         <TableRow>
-                          <TableCell>Temperature Location</TableCell>
-                          <TableCell align="left">Temperature (°C)</TableCell>
+                          <TableCell width="70%">Temperature Location</TableCell>
+                          <TableCell width="30%" align="left">Temperature (°C)</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
@@ -275,11 +281,11 @@ const HousekeepingLogListFull = (props) => {
                       </TableBody>
                     </Table>
                   </ListItem><br></br>
-                  
+
                   </List>
               </Dialog>
           </Table>
-          
+
           ))}
       </Paper>
       </div>
