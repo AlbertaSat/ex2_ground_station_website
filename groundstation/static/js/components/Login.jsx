@@ -5,14 +5,6 @@ import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-// import Visibility from '@material-ui/icons/Visibility';
-// import VisibilityOff from '@material-ui/icons/VisibilityOff';
-// const Login = () => (
-//   <div>
-//     <h1>This is our Login test</h1>
-//   </div>
-// )
-// 
 
 const styles = {
   root: {
@@ -102,6 +94,12 @@ class Login extends Component {
             );
         }
     }
+
+    handleKeyPress(event){
+        if (event.key === 'Enter'){
+            this.handleLogin();
+        }
+    }
     render(){
         const { classes } = this.props;
         return (
@@ -135,6 +133,7 @@ class Login extends Component {
                             variant="outlined"
                             onChange={(event) => this.handlePassChange(event)}
                             error={!(this.state.error_message === '')}
+                            onKeyDown={ (event) => this.handleKeyPress(event)}
                         />
                     </Grid>
                     <Grid item xs={12}>  

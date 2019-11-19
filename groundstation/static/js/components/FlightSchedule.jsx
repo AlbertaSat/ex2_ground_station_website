@@ -34,8 +34,8 @@ class FlightSchedule extends Component{
 
 	componentDidMount(){
 		Promise.all([
-	      fetch('/api/flightschedules?limit=5'), 
-	      fetch('/api/telecommands')
+	      fetch('/api/flightschedules?limit=5',{headers: {'Authorization':'Bearer '+ localStorage.getItem('auth_token')}}), 
+	      fetch('/api/telecommands',{headers: {'Authorization':'Bearer '+ localStorage.getItem('auth_token')}})
 	    ]).then(([res1, res2]) => {
 	      return Promise.all([res1.json(), res2.json()])
 	    }).then(([res1, res2]) => {
@@ -83,7 +83,7 @@ class FlightSchedule extends Component{
 	deleteFlightschedule(event){
 		event.preventDefault();
 		fetch('/api/flightschedules/' + this.state.thisFlightscheduleId, {
-			method: 'DELETE',
+			method: 'DELETE',headers: {'Authorization':'Bearer '+ localStorage.getItem('auth_token')}
 		}).then(results => {
 			return results.json();
 		}).then(data => {
@@ -115,7 +115,8 @@ class FlightSchedule extends Component{
 		fetch(url, {
 			method: method,
 			headers: {
-      		  'Content-Type': 'application/json'
+      		  'Content-Type': 'application/json',
+      		  'Authorization':'Bearer '+ localStorage.getItem('auth_token')
       		},
       		body: JSON.stringify(data),	
 		}).then(results => {

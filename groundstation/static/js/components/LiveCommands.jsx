@@ -56,7 +56,7 @@ class LiveCommands extends Component {
     }
 
     componentDidMount() {
-        fetch('/api/telecommands')
+        fetch('/api/telecommands',{headers: {'Authorization':'Bearer '+ localStorage.getItem('auth_token')}})
         .then(results => {
             return results.json();
         }).then(data => {
@@ -72,7 +72,7 @@ class LiveCommands extends Component {
             console.log("Error loading telecommands!");
         }
      });
-        fetch('/api/communications?max=true')
+        fetch('/api/communications?max=true',{headers: {'Authorization':'Bearer '+ localStorage.getItem('auth_token')}})
         .then(results => {
             return results.json();
         }).then(data => {
@@ -108,7 +108,7 @@ class LiveCommands extends Component {
             console.log('splash jobs left!')
             return
         }
-        getNewMessages(this.state.last_id, 'nick')
+        getNewMessages(this.state.last_id, localStorage.getItem('username'))
         .then(new_messages => {
             let last_message = new_messages[new_messages.length - 1];
             if (last_message !== undefined) {
@@ -147,12 +147,13 @@ class LiveCommands extends Component {
             const text = event.target.value;
             if (this.telecommandIsValid(text)) {
                 console.log(text);
-                const post_data = {timestamp:new Date(Date.now()).toISOString(), message:text, sender:'nick', receiver:'comm'};
+                const post_data = {timestamp:new Date(Date.now()).toISOString(), message:text, sender:localStorage.getItem('username'), receiver:'comm'};
 
                 fetch('/api/communications', {
                     method: 'POST',
                     headers: {
-                      'Content-Type': 'application/json'
+                      'Content-Type': 'application/json',
+                      'Authorization':'Bearer '+ localStorage.getItem('auth_token')
                     },
                     body: JSON.stringify(post_data),
                 }).then(results => {
