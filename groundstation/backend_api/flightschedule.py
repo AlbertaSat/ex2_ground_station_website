@@ -159,14 +159,20 @@ class FlightScheduleList(Resource):
         if not local_args:
             # flask request
             query_limit = request.args.get('limit')
+            queued = request.args.get('queued')
         else:
             # local request
             query_limit = local_args.get('limit')
+            queued = local_args.get('queued')
 
-        flightschedules = FlightSchedules.query.order_by(
+        if queued:
+            flightschedules = FlightSchedules.query.filter(FlightSchedules.status == 1).limit(query_limit).all()
+        else:
+            flightschedules = FlightSchedules.query.order_by(
                             FlightSchedules.status, 
                             FlightSchedules.creation_date
                         ).limit(query_limit).all()
+
         response_object = {
             'status':'success',
             'data': {

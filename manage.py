@@ -53,6 +53,7 @@ def seed_db():
         'turn-on':(1,True),
         'turn-off':(1,True),
         'set-fs':(1,True),
+        'upload-fs': (0, False)
     }
 
     for name, (num_args, is_danger) in commands.items():
@@ -90,7 +91,7 @@ def seed_db():
                 )
 
     timestamp = datetime.utcnow()
-    timestamp += timedelta(minutes=3)
+    timestamp += timedelta(seconds=30)
     passover = add_passover(timestamp=timestamp)
 
 
