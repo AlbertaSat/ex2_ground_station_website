@@ -46,10 +46,12 @@ const CommunicationsList = (props) => {
     const divStyle = {margin:"2%"}
 
     const messagesEndRef = createRef();
-    const scrollToBottom = () => {
-        messagesEndRef.current.scrollIntoView({behavior: "smooth"});
-    };
-    useEffect(scrollToBottom, [props.displayLog]);
+    if (props.autoScroll === true) {
+        const scrollToBottom = () => {
+            messagesEndRef.current.scrollIntoView({behavior: "smooth"});
+        };
+        useEffect(scrollToBottom, [props.displayLog]);
+    }
 
 
 	if (props.isEmpty) {

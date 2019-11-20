@@ -3,6 +3,7 @@ import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import CommunicationsList from './CommunicationsListFull';
 import Button from '@material-ui/core/Button';
+import RefreshIcon from '@material-ui/icons/Refresh';
 
 class Logs extends Component {
     constructor(){
@@ -15,7 +16,7 @@ class Logs extends Component {
     }
 
     handleRefresh(){
-        fetch('/api/communications')
+        fetch('/api/communications?newest-first=true')
             .then( response => {
                 return response.json();
             }).then(data => {
@@ -39,7 +40,7 @@ class Logs extends Component {
     }
 
     componentDidMount(){
-        this.handleRefresh();        
+        this.handleRefresh();
     }
 
     handleError(){
@@ -58,17 +59,24 @@ class Logs extends Component {
         // const { classes } = this.props;
         return (
             <div>
-                <Typography variant="h4" displayInline style={{color: '#28324C'}}>
-                    LOGS
-                </Typography>
-                <CommunicationsList displayLog={this.state.messages} isEmpty={this.state.is_empty}/>       
                 {this.handleError()}
-                <Button 
-                    onClick={ () => this.handleRefresh()}
-                    variant="contained"
-                >
+                <div>
+                    <Button
+                        style={{
+                            marginBottom:"1%"
+                        }}
+                        color="primary"
+                        onClick={ () => this.handleRefresh()}
+                        variant="outlined">
+                    <RefreshIcon></RefreshIcon>
                     Refresh
-                </Button>
+                    </Button>
+                </div>
+                <div marginTop="10%">
+                    <Paper style={{paddingTop:"1%", paddingBottom:"2%"}}>
+                        <CommunicationsList autoScroll={false} displayLog={this.state.messages} isEmpty={this.state.is_empty}/>
+                    </Paper>
+                </div>
             </div>
         );
     }

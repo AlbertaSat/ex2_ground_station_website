@@ -773,6 +773,26 @@ class TestCommunicationsService(BaseTestCase):
             self.assertIn('test', data['data']['messages'][0]['message'])
             self.assertIn('test 2', data['data']['messages'][1]['message'])
 
+    def test_get_all_communications_newest_first(self):
+        messages = []
+        for i in range(10):
+            test_message = Communications(**fake_message_as_dict(message=f'test message {i}'))
+            messages.append(test_message)
+            db.session.add(test_message)
+
+        db.session.commit()
+
+        messages.sort(key=lambda obj : -1 * obj.id)
+
+        with self.client:
+            response=self.client.get('/api/communications?newest-first=true')
+            data=json.loads(response.data.decode())
+            # print(data)
+            for resp_message_idx in range(len(data['data']['messages'])):
+                self.assertEqual(messages[resp_message_idx].id, data['data']['messages'][resp_message_idx]['message_id'])
+
+
+
     def test_get_communications_with_query_params(self):
         test_message_1 = fake_message_as_dict()
         test_message_2 = fake_message_as_dict(message='test 2')

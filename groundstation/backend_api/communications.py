@@ -3,6 +3,7 @@ from flask import Blueprint
 from flask_restful import Resource, Api
 import datetime
 import json
+from sqlalchemy import desc
 
 from groundstation.backend_api.models import Communications
 from groundstation import db
@@ -88,8 +89,11 @@ class CommunicationList(Resource):
         # handle if this get is a local call or not
         # local_data will be a dictionary
         if not local_data:
+            request_args_dict = request.args.to_dict()
+            newest_first = request_args_dict.pop('newest-first', None)
             args = dynamic_filters_communications(request.args)
         else:
+            newest_first = local_data.pop('newest-first', None)
             args = dynamic_filters_communications(local_data)
 
         response_object = {
@@ -97,8 +101,13 @@ class CommunicationList(Resource):
             'message': 'no available messages'
         }
 
+        if newest_first == "true":
+            ordering = desc(Communications.id)
+        else:
+            ordering = Communications.id
+
         # order by ascending [min_id, min_id + 1, ..., max_id]
-        message_list = Communications.query.filter(*args).order_by(Communications.id)
+        message_list = Communications.query.filter(*args).order_by(ordering)
 
         if not message_list: # no messages for receiver
             response_object.update({'data':[]})
