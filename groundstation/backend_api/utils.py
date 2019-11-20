@@ -6,7 +6,7 @@ from groundstation.backend_api.models import Telecommands, FlightSchedules, \
     FlightScheduleCommands, FlightScheduleCommandsArgs, User, Passover
 from groundstation import db
 import operator
-from groundstation.backend_api.models import Communications
+from groundstation.backend_api.models import Communications, Housekeeping
 
 
 # a decorator to handle cases where backend api calls have no app context
@@ -141,8 +141,9 @@ def add_passover(timestamp):
     return passover
 
 
-# build a filter from query paramaters
 def dynamic_filters_communications(filters):
+    """Build a filter from query paramaters
+    """
     filter_ops = []
 
     for arg, value in filters.items():
@@ -156,9 +157,41 @@ def dynamic_filters_communications(filters):
             filter_ops.append(operator.ne(Communications.sender, value))
         elif arg == 'max':
             max_comm = Communications.query.order_by(Communications.id.desc()).limit(1).first()
-            filter_ops.append(operator.ge(Communications.id, max_comm.id))
+            max_id = -1 if max_comm is None else max_comm.id
+            filter_ops.append(operator.eq(Communications.id, max_id))
         else:
             pass
 
+    return filter_ops
+
+
+def dynamic_filters_housekeeping(filters):
+    """build a filter from query paramaters, filters param will be a dict of query params of form <arg>:<value>
+    """
+    filter_ops = []
+
+    # NOTE: cant search channels rn, maybe do later but also not a big concern
+    for arg, value in filters.items():
+        # arg will be an attribute of housekeeping like 'attn_temp_1'
+        # value will be of form '<operation>-<value>', eg.) 'gt-5'
+        arg = arg.split('_', 1)[1]
+        if not hasattr(Housekeeping, arg):
+            return None
+        if '-' in value:
+            operation, value = value.split('-')
+            if operation == 'lt':
+                filter_ops.append(operator.lt(getattr(Housekeeping, arg), value))
+            elif operation == 'le':
+                filter_ops.append(operator.le(getattr(Housekeeping, arg), value))
+            elif operation == 'eq':
+                filter_ops.append(operator.eq(getattr(Housekeeping, arg), value))
+            elif operation == 'ne':
+                filter_ops.append(operator.ne(getattr(Housekeeping, arg), value))
+            elif operation == 'ge':
+                filter_ops.append(operator.ge(getattr(Housekeeping, arg), value))
+            elif operation == 'gt':
+                filter_ops.append(operator.gt(getattr(Housekeeping, arg), value))
+            else:
+                pass
 
     return filter_ops

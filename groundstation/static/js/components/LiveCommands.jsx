@@ -4,6 +4,7 @@ import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import Typography from '@material-ui/core/Typography';
 
 // TODO posting messages should refer to current logged in user
 // TODO: figue out how to scroll paper automatically as responses are added dynamically
@@ -193,7 +194,8 @@ class LiveCommands extends Component {
             <div>
                 <div>
                     <Paper style={{height:"70%", overflow: 'auto'}}>
-                        <CommunicationsList displayLog={this.state.displayLog} isEmpty={this.state.isEmpty}/>
+                        <Typography className="header-title" variant="h5" displayInline style={{padding: '10px', margin: '20px'}}>Live Commands</Typography>
+                        <CommunicationsList autoScroll={true} displayLog={this.state.displayLog} isEmpty={this.state.isEmpty}/>
                     </Paper>
                 </div>
                 <div>

@@ -71,6 +71,134 @@ class TestHousekeepingService(BaseTestCase):
                 self.assertEqual(data['data']['channels'][i-1]['current'], 0.0)
             self.assertIn('success', data['status'])
 
+    def test_get_housekeeping_with_dynamic_filters_1(self):
+        timestamp = datetime.datetime.fromtimestamp(1570749472)
+        housekeepingData = fakeHousekeepingAsDict(timestamp)
+        housekeepingData['temp_1'] = 11
+        housekeeping = Housekeeping(**housekeepingData)
+
+        for i in range(1, 25):
+            channel = fake_power_channel_as_dict(i)
+            p = PowerChannels(**channel)
+            housekeeping.channels.append(p)
+
+        db.session.add(housekeeping)
+        db.session.commit()
+
+        with self.client:
+            response = self.client.get('/api/housekeepinglog?att1_temp_1=gt-12')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(data['data']['logs']), 0)
+            response = self.client.get('/api/housekeepinglog?att1_temp_1=gt-10')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(data['data']['logs']), 1)
+
+    def test_get_housekeeping_with_dynamic_filters_2(self):
+        timestamp = datetime.datetime.fromtimestamp(1570749472)
+        housekeepingData = fakeHousekeepingAsDict(timestamp)
+        housekeepingData['temp_1'] = 11
+        housekeepingData['temp_2'] = 12
+        housekeepingData['temp_3'] = 13
+        housekeeping = Housekeeping(**housekeepingData)
+
+        for i in range(1, 25):
+            channel = fake_power_channel_as_dict(i)
+            p = PowerChannels(**channel)
+            housekeeping.channels.append(p)
+
+        db.session.add(housekeeping)
+        db.session.commit()
+
+        with self.client:
+            response = self.client.get('/api/housekeepinglog?att1_temp_1=gt-10&att2_temp_2=gt-11&att3_temp_3=gt-12')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(data['data']['logs']), 1)
+            response = self.client.get('/api/housekeepinglog?att1_temp_1=gt-10&att2_temp_2=gt-11&att3_temp_3=gt-14')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(data['data']['logs']), 0)
+
+    def test_get_housekeeping_with_dynamic_filters_3(self):
+        timestamp = datetime.datetime.fromtimestamp(1570749472)
+        housekeepingData = fakeHousekeepingAsDict(timestamp)
+        housekeepingData['battery_voltage'] = 16
+        housekeepingData['watchdog_1'] = 140
+        housekeepingData['panel_5_current'] = 0.5
+        housekeeping = Housekeeping(**housekeepingData)
+
+        for i in range(1, 25):
+            channel = fake_power_channel_as_dict(i)
+            p = PowerChannels(**channel)
+            housekeeping.channels.append(p)
+
+        db.session.add(housekeeping)
+        db.session.commit()
+
+        with self.client:
+            response = self.client.get('/api/housekeepinglog?att1_battery_voltage=eq-16&att2_watchdog_1=lt-150&att3_panel_5_current=gt-0.2')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(data['data']['logs']), 1)
+            response = self.client.get('/api/housekeepinglog?att1_battery_voltage=eq-15&att2_watchdog_1=lt-150&att3_panel_5_current=gt-0.2')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(data['data']['logs']), 0)
+
+    def test_get_housekeeping_with_dynamic_filters_4(self):
+
+        for i in range(15):
+            timestamp = datetime.datetime.fromtimestamp(1570749472 + i)
+            housekeepingData = fakeHousekeepingAsDict(timestamp)
+            housekeepingData['battery_voltage'] = 16 + i
+            housekeeping = Housekeeping(**housekeepingData)
+
+            for i in range(1, 25):
+                channel = fake_power_channel_as_dict(i)
+                p = PowerChannels(**channel)
+                housekeeping.channels.append(p)
+
+            db.session.add(housekeeping)
+
+        db.session.commit()
+
+        with self.client:
+            response = self.client.get('/api/housekeepinglog?att1_battery_voltage=gt-20&att2_battery_voltage=lt-24')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(data['data']['logs']), 3)
+
+            response = self.client.get('/api/housekeepinglog?att1_battery_voltage=gt-20&att2_battery_voltage=lt-24&att3_battery_voltage=eq-17')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(data['data']['logs']), 0)
+
+            response = self.client.get('/api/housekeepinglog?att1_battery_voltage=gt-20&limit=1&att2_battery_voltage=lt-24')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(data['data']['logs']), 1)
+
+    def test_get_housekeeping_with_dynamic_filters_5_invalid_attribute(self):
+        timestamp = datetime.datetime.fromtimestamp(1570749472)
+        housekeepingData = fakeHousekeepingAsDict(timestamp)
+        housekeepingData['temp_1'] = 11
+        housekeeping = Housekeeping(**housekeepingData)
+
+        for i in range(1, 25):
+            channel = fake_power_channel_as_dict(i)
+            p = PowerChannels(**channel)
+            housekeeping.channels.append(p)
+
+        db.session.add(housekeeping)
+        db.session.commit()
+
+        with self.client:
+            response = self.client.get('/api/housekeepinglog?att1_tempp_1=gt-12')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 400)
+
     def test_get_housekeeping_incorrect_id(self):
         with self.client:
             response = self.client.get('/api/housekeepinglog/123')
@@ -645,6 +773,26 @@ class TestCommunicationsService(BaseTestCase):
             self.assertIn('test', data['data']['messages'][0]['message'])
             self.assertIn('test 2', data['data']['messages'][1]['message'])
 
+    def test_get_all_communications_newest_first(self):
+        messages = []
+        for i in range(10):
+            test_message = Communications(**fake_message_as_dict(message=f'test message {i}'))
+            messages.append(test_message)
+            db.session.add(test_message)
+
+        db.session.commit()
+
+        messages.sort(key=lambda obj : -1 * obj.id)
+
+        with self.client:
+            response=self.client.get('/api/communications?newest-first=true')
+            data=json.loads(response.data.decode())
+            # print(data)
+            for resp_message_idx in range(len(data['data']['messages'])):
+                self.assertEqual(messages[resp_message_idx].id, data['data']['messages'][resp_message_idx]['message_id'])
+
+
+
     def test_get_communications_with_query_params(self):
         test_message_1 = fake_message_as_dict()
         test_message_2 = fake_message_as_dict(message='test 2')
@@ -664,6 +812,41 @@ class TestCommunicationsService(BaseTestCase):
             self.assertEqual(data['status'], 'success')
             self.assertEqual(len(data['data']['messages']), 1)
             self.assertIn('test 2', data['data']['messages'][0]['message'])
+
+    def test_get_communication_with_max_id_empty_db(self):
+        """This test exposes a bug which was fixed on branch 'hotfix/communications-dynamic-filter'
+        """
+        with self.client:
+            response = self.client.get('/api/communications?max=true')
+            data = json.loads(response.data.decode())
+
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(data['status'], 'success')
+            self.assertEqual(len(data['data']['messages']), 0)
+
+    def test_get_communication_with_max_id_non_empty_db(self):
+        test_message_1 = fake_message_as_dict()
+        test_message_2 = fake_message_as_dict(message='test 2')
+
+        test_message_1 = Communications(**test_message_1)
+        test_message_2 = Communications(**test_message_2)
+
+        db.session.add(test_message_1)
+        db.session.add(test_message_2)
+        db.session.commit()
+
+        correct_max_id = test_message_2.id
+
+        with self.client:
+            response = self.client.get('/api/communications?max=true')
+            data = json.loads(response.data.decode())
+
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(data['status'], 'success')
+            self.assertEqual(len(data['data']['messages']), 1)
+            self.assertEqual(correct_max_id, data['data']['messages'][0]['message_id'])
+
+
 
 
 

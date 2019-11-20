@@ -15,6 +15,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Grid from '@material-ui/core/Grid';
+import Fab from '@material-ui/core/Fab';
 
 function isMinified(minify, elemt){
   if(!minify){
@@ -58,16 +59,17 @@ const FlightScheduleList = (props) => {
        <div>
 		<Paper className="grid-containers">
           <Grid container style={{paddingBottom: '12px'}}>
-            <Grid item xs={(props.isMinified) ? 12 : 11} style={{textAlign: 'center'}}>
-              <Typography variant="h5" displayInline>Flight Schedules</Typography>
+            <Grid item xs={(props.isMinified) ? 12 : 11}>
+              <Typography variant="h5" displayInline style={{padding: '10px'}}>Flight Schedules</Typography>
             </Grid>
             {
               !props.isMinified &&
                 <Grid item xs={1} style={{textAlign: 'right'}}>
-                  <AddIcon 
-                            style={{ color: '#4bacb8', fontSize: '2rem'}} 
-                            onClick={ (event) => props.handleAddFlightOpenClick(event) }
-                  />
+                  <Fab onClick={ (event) => props.handleAddFlightOpenClick(event) }>
+                    <AddIcon 
+                              style={{ color: '#4bacb8', fontSize: '2rem'}} 
+                    />
+                  </Fab>
                 </Grid>
             } 
           </Grid>
@@ -88,7 +90,7 @@ const FlightScheduleList = (props) => {
                           { statusDiv(flightschedule.status) }
                         </TableCell>
                         <TableCell align="right">
-                          {"Created at " + flightschedule.creation_date}
+                          {"Created at " + flightschedule.creation_date.split('.')[0]}
                         </TableCell>
                         {
                           !props.isMinified && 
