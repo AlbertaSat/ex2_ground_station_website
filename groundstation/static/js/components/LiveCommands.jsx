@@ -195,7 +195,7 @@ class LiveCommands extends Component {
                 <div>
                     <Paper style={{height:"70%", overflow: 'auto'}}>
                         <Typography className="header-title" variant="h5" displayInline style={{padding: '10px', margin: '20px'}}>Live Commands</Typography>
-                        <CommunicationsList displayLog={this.state.displayLog} isEmpty={this.state.isEmpty}/>
+                        <CommunicationsList autoScroll={true} displayLog={this.state.displayLog} isEmpty={this.state.isEmpty}/>
                     </Paper>
                 </div>
                 <div>

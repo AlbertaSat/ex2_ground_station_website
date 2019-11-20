@@ -48,6 +48,11 @@ function App(props) {
                                   href="/flightschedule">
                                   Flight Schedule
                                 </a>
+                                <a
+                                  className={`link-items hvr-underline-from-center ${classes.navbarLinks}`}
+                                  href="/logs">
+                                  Logs
+                                </a>
                             </Typography>
                         </Toolbar>
                     </AppBar>
