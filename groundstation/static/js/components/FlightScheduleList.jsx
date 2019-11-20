@@ -34,6 +34,7 @@ const FlightScheduleList = (props) => {
       )
   }
 
+
   function tableColour(status){
     if(status == 3){
       return {borderLeft: 'solid 8px #479b4e'}
@@ -122,12 +123,12 @@ const FlightScheduleList = (props) => {
                       	<TableRow>
                            <TableCell 
                       	      style={{backgroundColor: '#212529', color: '#fff', paddingTop: '8px', paddingBottom: '8px'}}>
-                      		     ID
+                      		     Command
                       		</TableCell>
                       		<TableCell 
-                            align="right"
+                            align="left"
                       		  style={{backgroundColor: '#212529', color: '#fff', paddingTop: '8px', paddingBottom: '8px'}}>
-                      		    Command
+                      		    Arguments
                       		</TableCell>
                       		<TableCell 
                              align="right"
@@ -140,9 +141,12 @@ const FlightScheduleList = (props) => {
                       <TableBody>
                         <TableRow>
                           <TableCell component ="th" scope="row">
-                            {commands.flightschedule_command_id}
+                            {commands.command.command_name}
                           </TableCell>
-                          <TableCell align="right">{commands.command.command_name}</TableCell>
+                          <TableCell align="left">
+                            {commands.args.map(arg => (
+                              arg.argument)).join(', ')}
+                          </TableCell>
                           <TableCell align="right">{commands.timestamp}</TableCell>
                         </TableRow>
                       </TableBody>
