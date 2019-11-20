@@ -84,8 +84,8 @@ def seed_db():
                             )
 
     message = add_message_to_communications(
-                    timestamp=timestamp, 
-                    message='ping', 
+                    timestamp=timestamp,
+                    message='ping',
                     sender='user',
                     receiver='comm'
                 )
