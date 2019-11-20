@@ -72,7 +72,7 @@ class Logs extends Component {
                     Refresh
                     </Button>
                 </div>
-                <div marginTop="10%">
+                <div>
                     <Paper style={{paddingTop:"1%", paddingBottom:"2%"}}>
                         <CommunicationsList autoScroll={false} displayLog={this.state.messages} isEmpty={this.state.is_empty}/>
                     </Paper>
