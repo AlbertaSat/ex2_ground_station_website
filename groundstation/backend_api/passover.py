@@ -8,7 +8,7 @@ import json
 from groundstation import db
 from groundstation.backend_api.models import Passover
 from groundstation.backend_api.validators import PassoverListValidator
-from groundstation.backend_api.utils import create_context
+from groundstation.backend_api.utils import create_context, login_required
 
 passover_blueprint = Blueprint('passover', __name__)
 api = Api(passover_blueprint)
@@ -44,6 +44,7 @@ class PassoverList(Resource):
         return response_object, 200
 
     @create_context
+    @login_required
     def post(self, local_data=None):
         if not local_data:
             post_data = request.get_json()

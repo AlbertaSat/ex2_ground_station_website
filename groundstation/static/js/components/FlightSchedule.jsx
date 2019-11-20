@@ -12,14 +12,12 @@ class FlightSchedule extends Component{
 			deleteFlightOpen: false,
 			editFlight: false,
 			allflightschedules: [],
-			queuedflightschedule: [],
 			thisFlightscheduleCommands: [{'command': {'command_id': ''}, 'timestamp': null, 'args' : []}],
 			thisFlightscheduleId: null,
 			thisIndex: null,
-			availCommands: [{ commandName: 'ping', id: 1, no_args: 0},
-  							{ commandName: 'get_hk', id: 2, no_args: 0 },
-  							{ commandName: 'turn_on', id: 3, no_args: 1}],
-  			patchCommands: []
+			availCommands: [],
+  			patchCommands: [],
+  			thisFlightScheduleStatus: 2
 		}
 		this.handleAddFlightOpenClick = this.handleAddFlightOpenClick.bind(this);
 		this.handleDeleteFlightOpenClick = this.handleDeleteFlightOpenClick.bind(this);
@@ -31,19 +29,22 @@ class FlightSchedule extends Component{
 		this.handleDeleteFlightClose = this.handleDeleteFlightClose.bind(this);
 		this.handleDeleteCommandClick = this.handleDeleteCommandClick.bind(this);
 		this.handleChangeArgument = this.handleChangeArgument.bind(this);
+		this.handleQueueClick = this.handleQueueClick.bind(this);
 	}
 
 	componentDidMount(){
-		fetch('/api/flightschedules?limit=5')
-		.then(results =>{
-			return results.json();
-		}).then(data =>{
-			console.log(data);
-			if(data.status=='success'){
-				console.log('success');
-				this.setState({'allflightschedules': data.data.flightschedules, empty: false});
-			}
-		})
+		Promise.all([
+	      fetch('/api/flightschedules?limit=5'), 
+	      fetch('/api/telecommands')
+	    ]).then(([res1, res2]) => {
+	      return Promise.all([res1.json(), res2.json()])
+	    }).then(([res1, res2]) => {
+	      if(res1.status == 'success'){
+	        this.setState({'allflightschedules': res1.data.flightschedules, empty: false});
+	      }if(res2.status == 'success'){
+	        this.setState({availCommands: res2.data.telecommands})
+	      }
+	    });
 	}
 
 	// handle add flight screen open
@@ -57,6 +58,7 @@ class FlightSchedule extends Component{
 						thisFlightscheduleId: null,
 						thisIndex: null,
 						thisFlightscheduleCommands: [{'command': {'command_id': ''}, 'timestamp': null, 'args': []}],
+						thisFlightScheduleStatus: 2,
 					});
 	};
 
@@ -104,7 +106,7 @@ class FlightSchedule extends Component{
 	addFlightschedule(event){
 		event.preventDefault();
 		// dependent on what state we are in, the url or method changes
-		let data = {is_queued: false, commands: this.state.thisFlightscheduleCommands}
+		let data = {status: this.state.thisFlightScheduleStatus, commands: this.state.thisFlightscheduleCommands}
 		let url = (this.state.editFlight)? 
 			'/api/flightschedules/' +  this.state.thisFlightscheduleId : 
 			'/api/flightschedules'
@@ -136,7 +138,12 @@ class FlightSchedule extends Component{
 					editFlight: false,
 					thisIndex: null,
 					thisFlightscheduleId: null,
+					thisFlightScheduleStatus: 2,
 				})
+			}else{
+				if(data.message == 'A Queued flight schedule already exists!'){
+					alert('A flight schedule is already queued. Please dequeue it first.');
+				}
 			}
 		});
 
@@ -147,7 +154,7 @@ class FlightSchedule extends Component{
 		console.log('event', event)
 		const obj = this.state.thisFlightscheduleCommands.slice();
 		if(type=='date'){
-			obj[idx].timestamp = event.toISOString();
+			obj[idx].timestamp = event.toISOString(); 
 		}else{
 			obj[idx].command.command_id = event.value;
 			obj[idx].command.command_name = event.label;
@@ -209,6 +216,9 @@ class FlightSchedule extends Component{
 	handleEditCommandClick(event, idx, id){
 		event.preventDefault();
 		event.stopPropagation();
+		// if the flightschedule is queued, we set the state
+		// so the button can show the correct value
+		let status = this.state.allflightschedules[idx].status;
 		const obj = this.state.allflightschedules[idx].commands.map((command) => (
 			{...command, op: 'none'}
 		))
@@ -216,7 +226,16 @@ class FlightSchedule extends Component{
 						thisFlightscheduleCommands: obj,
 						editFlight: true,
 						thisFlightscheduleId: id,
-						thisIndex: idx})
+						thisIndex: idx,
+						thisFlightScheduleStatus: status
+						});
+	}
+
+	// handles if we have queued a schedule or not based on the current state of is_queued
+	handleQueueClick(event){
+		event.preventDefault();
+		let thisIsQueued = ((this.state.thisFlightScheduleStatus == 1)? 2 : 1);
+		this.setState({thisFlightScheduleStatus: thisIsQueued});
 	}
 
 
@@ -241,6 +260,8 @@ class FlightSchedule extends Component{
     			handleAddCommandClick={this.handleAddCommandClick}
     			handleDeleteCommandClick={this.handleDeleteCommandClick}
     			handleChangeArgument={this.handleChangeArgument}
+    			status={this.state.thisFlightScheduleStatus}
+    			handleQueueClick={this.handleQueueClick}
     		  />
     		  <DeleteFlightschedule
     		    open={this.state.deleteFlightOpen}

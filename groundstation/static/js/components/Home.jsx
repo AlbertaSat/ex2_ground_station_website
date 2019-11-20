@@ -103,7 +103,7 @@ class Home extends Component {
     return (
       <div>
         <Grid container spacing={2} alignItems='flex-end'>
-          <Grid item sm={8}>
+          <Grid item sm={12}>
             <div className={classes.root}>
               <Typography variant="h4" displayInline style={{color: '#28324C'}}>
                 OVERVIEW
@@ -112,9 +112,6 @@ class Home extends Component {
                 Updates every 30 seconds
               </Typography>
             </div>
-          </Grid>
-          <Grid item sm={4}>
-            <Countdown />
           </Grid>
         </Grid>
         <Grid container spacing={2} alignItems='flex-start'>
