@@ -9,7 +9,8 @@ class Logs extends Component {
         super();
         this.state = {
             messages: [],
-            isEmpty: false
+            is_empty: false,
+            error_message: ''
         }
     }
 
@@ -20,33 +21,38 @@ class Logs extends Component {
             }).then(data => {
                 console.log(data);
                 if (data.status == 'success'){
-                    console.log(data.data)
-                    this.setState({messages: data.data.messages})
-                    console.log(this.state.messages)
+                    // console.log(data.data)
+                    this.setState({
+                        messages: data.data.messages,
+                        is_empty: false
+                    })
+                    // console.log(this.state.messages)
                 } else{
+
                     console.log('get failed')
+                    this.setState({
+                        is_empty: true,
+                        error_message: 'error fetching messages: '+ data.message
+                    })
                 }
             });
     }
 
     componentDidMount(){
-        console.log('mounted');
         this.handleRefresh();        
-        // fetch('/api/communications')
-        //     .then( response => {
-        //         return response.json();
-        //     }).then(data => {
-        //         console.log(data);
-        //         if (data.status == 'success'){
-        //             console.log(data.data)
-        //             this.setState({messages: data.data.messages})
-        //             console.log(this.state.messages)
-        //         } else{
-        //             console.log('get failed')
-        //         }
-        //     });
     }
 
+    handleError(){
+        if (!(this.state.error_message === '')){
+            return  (
+                <div>
+                    <Typography style={{color: 'red'}}>
+                        {this.state.error_message}
+                    </Typography>
+                </div>
+            );
+        }
+    }
 
     render(){
         // const { classes } = this.props;
@@ -55,15 +61,14 @@ class Logs extends Component {
                 <Typography variant="h4" displayInline style={{color: '#28324C'}}>
                     LOGS
                 </Typography>
-                <Paper>
-                    <CommunicationsList displayLog={this.state.messages} isEmpty={this.state.isEmpty}/>
-                    <Button 
-                        onClick={ () => this.handleRefresh()}
-                        variant="contained"
-                    >
-                        Refresh
-                    </Button>
-                </Paper>
+                <CommunicationsList displayLog={this.state.messages} isEmpty={this.state.is_empty}/>       
+                {this.handleError()}
+                <Button 
+                    onClick={ () => this.handleRefresh()}
+                    variant="contained"
+                >
+                    Refresh
+                </Button>
             </div>
         );
     }
