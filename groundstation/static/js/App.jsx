@@ -49,7 +49,7 @@ function App(props) {
                                   Flight Schedule
                                 </a>
                                 <a
-                                  className={`link-items ${classes.navbarLinks}`}
+                                  className={`link-items hvr-underline-from-center ${classes.navbarLinks}`}
                                   href="/login">
                                   Login
                                 </a>
