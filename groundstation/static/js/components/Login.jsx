@@ -9,9 +9,8 @@ import Paper from '@material-ui/core/Paper';
 
 const styles = {
   root: {
-    padding: '42px',
-    display: 'inline-flex',
-    alignItems: 'center'
+    padding: '20px',
+    textAlign: "center"
   },
 };
 
@@ -104,15 +103,19 @@ class Login extends Component {
     render(){
         const { classes } = this.props;
         return (
-            <div>
-                <Paper className="grid-containers">
-                            <div className={classes.root}>
-                                <Typography variant="h4" displayInline style={{color: '#28324C'}}>
-                                    Login
-                                </Typography>
-                            </div>
-                            <div>
+                <Paper className="grid-containers login-container">
+                    <div>
+                        <div className={classes.root}>
+                            <Typography variant="h4" style={{color: '#28324C'}}>
+                                Login
+                            </Typography>
+                        </div>
+                        <div>
+                            {this.handleError()}
+                        </div>
+                        <div>
                             <TextField
+                                style={{width: "100%"}}
                                 required
                                 id="outlined-required"
                                 label="Username"
@@ -121,9 +124,10 @@ class Login extends Component {
                                 onChange={(event) => this.handleUserChange(event)}
                                 error={!(this.state.error_message === '')}
                             />
-                            </div>
-                            <div>
+                        </div>
+                        <div>
                             <TextField
+                                style={{width: "100%"}}
                                 required
                                 id="outlined-password-input"
                                 label="Password"
@@ -134,24 +138,21 @@ class Login extends Component {
                                 error={!(this.state.error_message === '')}
                                 onKeyDown={ (event) => this.handleKeyPress(event)}
                             />
-                            </div>
-                            <div>
+                        </div>
+                        <div>
                             {this.handleRedirect()}  
-                            </div>
-                            <div>
-                            <Button 
+                        </div>
+                        <div>
+                            <Button
+                                style={{color: "#118851", marginTop: "10px"}} 
                                 onClick={ () => this.handleLogin()}
                                 variant="contained"
-                                className={classes.button}
                             >
                                 Submit
                             </Button>
-                            </div>
-                            <div>
-                            {this.handleError()}
-                            </div>
+                        </div>
+                    </div>
                 </Paper>
-            </div>
         )
     }
 }

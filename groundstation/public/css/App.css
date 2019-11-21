@@ -50,6 +50,11 @@
   padding-bottom: 10px;
 }
 
+.login-container {
+  max-width: 20em;
+  margin: 0 auto;
+}
+
 /* Underline From Center */
 .hvr-underline-from-center {
   display: inline-block;
