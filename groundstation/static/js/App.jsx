@@ -16,6 +16,10 @@ const styles = {
   } 
 }
 
+function isAuthenticated(){
+  return !!localStorage.getItem('auth_token');
+}
+
 
 function App(props) {
   const { classes } = props;
@@ -34,31 +38,47 @@ function App(props) {
                               <a className="indent">AlbertaSat</a>
                             </Typography>
                             <Typography className="menu-links" style={{display: 'inline-flex', alignItems: 'center'}}>
+                                { isAuthenticated() &&
                                 <a 
                                   className={`link-items hvr-underline-from-center ${classes.navbarLinks}` }
                                   href="/livecommands" >
                                     Live Commands
                                   </a>
+                                }
                                 <a 
                                   className={`link-items hvr-underline-from-center ${classes.navbarLinks}`} 
                                   href="/housekeeping">
                                   Housekeeping
                                 </a>
-                                <a 
-                                  className={`link-items hvr-underline-from-center ${classes.navbarLinks}`} 
-                                  href="/flightschedule">
-                                  Flight Schedule
-                                </a>
-                                <a
-                                  className={`link-items hvr-underline-from-center ${classes.navbarLinks}`}
-                                  href="/logs">
-                                  Logs
-                                </a>
-                                <a
-                                  className={`link-items hvr-underline-from-center ${classes.navbarLinks}`}
-                                  href="/login">
-                                  Login
-                                </a>
+                                { isAuthenticated() &&
+                                  <a 
+                                    className={`link-items hvr-underline-from-center ${classes.navbarLinks}`} 
+                                    href="/flightschedule">
+                                    Flight Schedule
+                                  </a>
+                                }
+                                { isAuthenticated() &&
+                                  <a
+                                    className={`link-items hvr-underline-from-center ${classes.navbarLinks}`}
+                                    href="/logs">
+                                    Logs
+                                  </a>
+                                }
+                                { !isAuthenticated() &&
+                                  <a
+                                    className={`link-items hvr-underline-from-center ${classes.navbarLinks}`}
+                                    href="/login">
+                                    Login
+                                  </a>
+                                }
+                                {
+                                  isAuthenticated() &&
+                                  <a
+                                    className={`link-items hvr-underline-from-center ${classes.navbarLinks}`}
+                                    href="/logout">
+                                    Logout
+                                  </a>
+                                }
                               <Countdown />
                             </Typography>
                         </Toolbar>
