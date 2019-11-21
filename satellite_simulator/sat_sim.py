@@ -188,13 +188,11 @@ class Satellite:
         elif telecommand_name == 'TURN-OFF':
             self._turn_off_channel(int(args[0]))
             response = '200 OK'
-        elif telecommand_name == 'SET-FS':
-            # Currently sets but we dont have fs functionality
-            self.flight_schedule = args[0]
-            response = '201 Created'
         elif telecommand_name == 'PET-WATCHDOG':
             # expecting 2 args, 1.) watchdog timer index, 2.) new value
             self._pet_watchdog(int(args[0]), int(args[1]))
+            response = '200 OK'
+        elif telecommand_name == 'UPLOAD-FS':
             response = '200 OK'
         else:
             response = 'UNRECOGNIZED-COMMAND'

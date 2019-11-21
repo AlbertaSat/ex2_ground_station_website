@@ -773,6 +773,26 @@ class TestCommunicationsService(BaseTestCase):
             self.assertIn('test', data['data']['messages'][0]['message'])
             self.assertIn('test 2', data['data']['messages'][1]['message'])
 
+    def test_get_all_communications_newest_first(self):
+        messages = []
+        for i in range(10):
+            test_message = Communications(**fake_message_as_dict(message=f'test message {i}'))
+            messages.append(test_message)
+            db.session.add(test_message)
+
+        db.session.commit()
+
+        messages.sort(key=lambda obj : -1 * obj.id)
+
+        with self.client:
+            response=self.client.get('/api/communications?newest-first=true')
+            data=json.loads(response.data.decode())
+            # print(data)
+            for resp_message_idx in range(len(data['data']['messages'])):
+                self.assertEqual(messages[resp_message_idx].id, data['data']['messages'][resp_message_idx]['message_id'])
+
+
+
     def test_get_communications_with_query_params(self):
         test_message_1 = fake_message_as_dict()
         test_message_2 = fake_message_as_dict(message='test 2')
@@ -792,6 +812,41 @@ class TestCommunicationsService(BaseTestCase):
             self.assertEqual(data['status'], 'success')
             self.assertEqual(len(data['data']['messages']), 1)
             self.assertIn('test 2', data['data']['messages'][0]['message'])
+
+    def test_get_communication_with_max_id_empty_db(self):
+        """This test exposes a bug which was fixed on branch 'hotfix/communications-dynamic-filter'
+        """
+        with self.client:
+            response = self.client.get('/api/communications?max=true')
+            data = json.loads(response.data.decode())
+
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(data['status'], 'success')
+            self.assertEqual(len(data['data']['messages']), 0)
+
+    def test_get_communication_with_max_id_non_empty_db(self):
+        test_message_1 = fake_message_as_dict()
+        test_message_2 = fake_message_as_dict(message='test 2')
+
+        test_message_1 = Communications(**test_message_1)
+        test_message_2 = Communications(**test_message_2)
+
+        db.session.add(test_message_1)
+        db.session.add(test_message_2)
+        db.session.commit()
+
+        correct_max_id = test_message_2.id
+
+        with self.client:
+            response = self.client.get('/api/communications?max=true')
+            data = json.loads(response.data.decode())
+
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(data['status'], 'success')
+            self.assertEqual(len(data['data']['messages']), 1)
+            self.assertEqual(correct_max_id, data['data']['messages'][0]['message_id'])
+
+
 
 
 

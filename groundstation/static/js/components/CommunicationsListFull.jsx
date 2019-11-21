@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useEffect, createRef } from 'react'
+
 
 const CommunicationEntry = (props) => {
     const divStyle = {
@@ -43,6 +44,16 @@ const CommunicationEntry = (props) => {
 
 const CommunicationsList = (props) => {
     const divStyle = {margin:"2%"}
+
+    const messagesEndRef = createRef();
+    if (props.autoScroll === true) {
+        const scrollToBottom = () => {
+            messagesEndRef.current.scrollIntoView({behavior: "smooth"});
+        };
+        useEffect(scrollToBottom, [props.displayLog]);
+    }
+
+
 	if (props.isEmpty) {
       return (
         <div style={divStyle}>
@@ -55,6 +66,7 @@ const CommunicationsList = (props) => {
             {props.displayLog.map(logEntry => (
                 <CommunicationEntry entry={logEntry}/>
             ))}
+            <div ref={messagesEndRef} />
         </div>
     );
 }

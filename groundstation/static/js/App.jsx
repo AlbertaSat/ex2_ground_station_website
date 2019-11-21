@@ -2,6 +2,7 @@ import React from 'react';
 import Routes from './routes'
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
+import Countdown from './components/Countdown';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 // import './App.css';
@@ -32,7 +33,7 @@ function App(props) {
                               </a>
                               <a className="indent">AlbertaSat</a>
                             </Typography>
-                            <Typography className="menu-links">
+                            <Typography className="menu-links" style={{display: 'inline-flex', alignItems: 'center'}}>
                                 <a 
                                   className={`link-items hvr-underline-from-center ${classes.navbarLinks}` }
                                   href="/livecommands" >
@@ -50,9 +51,15 @@ function App(props) {
                                 </a>
                                 <a
                                   className={`link-items hvr-underline-from-center ${classes.navbarLinks}`}
+                                  href="/logs">
+                                  Logs
+                                </a>
+                                <a
+                                  className={`link-items hvr-underline-from-center ${classes.navbarLinks}`}
                                   href="/login">
                                   Login
                                 </a>
+                              <Countdown />
                             </Typography>
                         </Toolbar>
                     </AppBar>

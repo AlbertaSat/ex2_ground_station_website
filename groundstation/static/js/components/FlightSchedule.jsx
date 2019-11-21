@@ -141,6 +141,10 @@ class FlightSchedule extends Component{
 					thisFlightscheduleId: null,
 					thisFlightScheduleStatus: 2,
 				})
+			}else{
+				if(data.message == 'A Queued flight schedule already exists!'){
+					alert('A flight schedule is already queued. Please dequeue it first.');
+				}
 			}
 		});
 

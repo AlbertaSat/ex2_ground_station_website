@@ -157,10 +157,11 @@ def dynamic_filters_communications(filters):
             filter_ops.append(operator.ne(Communications.sender, value))
         elif arg == 'max':
             max_comm = Communications.query.order_by(Communications.id.desc()).limit(1).first()
-            filter_ops.append(operator.ge(Communications.id, max_comm.id))
+            max_id = -1 if max_comm is None else max_comm.id
+            filter_ops.append(operator.eq(Communications.id, max_id))
         else:
             pass
-            
+
     return filter_ops
 
 
