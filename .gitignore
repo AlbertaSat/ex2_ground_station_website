@@ -146,7 +146,7 @@ ENV/
 env.bak/
 venv.bak/
 pip-selfcheck.json
-
+virtualenv
 # End of https://www.gitignore.io/api/venv,react,flask
 
 *.db
