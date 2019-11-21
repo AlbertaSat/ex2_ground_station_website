@@ -14,7 +14,6 @@ const styles = {
   },
 };
 
-
 class Login extends Component {
     constructor(){
         super();
