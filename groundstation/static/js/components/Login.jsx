@@ -5,6 +5,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import Paper from '@material-ui/core/Paper';
 
 const styles = {
   root: {
@@ -104,52 +105,52 @@ class Login extends Component {
         const { classes } = this.props;
         return (
             <div>
-                <Grid container spacing={2} alignItems='flex-end'>
-                    <Grid item xs={12}>
-                        <div className={classes.root}>
-                            <Typography variant="h4" displayInline style={{color: '#28324C'}}>
-                                Login
-                            </Typography>
-                        </div>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            required
-                            id="outlined-required"
-                            label="Username"
-                            margin="normal"
-                            variant="outlined"
-                            onChange={(event) => this.handleUserChange(event)}
-                            error={!(this.state.error_message === '')}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            required
-                            id="outlined-password-input"
-                            label="Password"
-                            type="password"
-                            margin="normal"
-                            variant="outlined"
-                            onChange={(event) => this.handlePassChange(event)}
-                            error={!(this.state.error_message === '')}
-                            onKeyDown={ (event) => this.handleKeyPress(event)}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>  
-                        {this.handleRedirect()}  
-                        <Button 
-                            onClick={ () => this.handleLogin()}
-                            variant="contained"
-                            className={classes.button}
-                        >
-                            Submit
-                        </Button>
-                    </Grid>
-                    <Grid item xs={12}>
-                        {this.handleError()}
-                    </Grid>
-                </Grid>
+                <Paper className="grid-containers">
+                            <div className={classes.root}>
+                                <Typography variant="h4" displayInline style={{color: '#28324C'}}>
+                                    Login
+                                </Typography>
+                            </div>
+                            <div>
+                            <TextField
+                                required
+                                id="outlined-required"
+                                label="Username"
+                                margin="normal"
+                                variant="outlined"
+                                onChange={(event) => this.handleUserChange(event)}
+                                error={!(this.state.error_message === '')}
+                            />
+                            </div>
+                            <div>
+                            <TextField
+                                required
+                                id="outlined-password-input"
+                                label="Password"
+                                type="password"
+                                margin="normal"
+                                variant="outlined"
+                                onChange={(event) => this.handlePassChange(event)}
+                                error={!(this.state.error_message === '')}
+                                onKeyDown={ (event) => this.handleKeyPress(event)}
+                            />
+                            </div>
+                            <div>
+                            {this.handleRedirect()}  
+                            </div>
+                            <div>
+                            <Button 
+                                onClick={ () => this.handleLogin()}
+                                variant="contained"
+                                className={classes.button}
+                            >
+                                Submit
+                            </Button>
+                            </div>
+                            <div>
+                            {this.handleError()}
+                            </div>
+                </Paper>
             </div>
         )
     }
