@@ -15,6 +15,6 @@ For more information, please visit our [wiki](https://github.com/UAlberta-CMPUT4
 3. Set environment variables: `source ./env.sh`    
 4. To run the local environment: `python3 run.py` or simply `flask run`
 
-To recreate the database: `python3 manage.py recreate_db`
-To seed the database with data: `python3 manage.py seed_db`
-Both of these commands are included in `update.sh`. If you make changes to the codebase, reset the database and reload the environment by running `source ./update.sh`. Then do `flask run` to run the app in development mode.
+To recreate the database: `python3 manage.py recreate_db`  
+To seed the database with data: `python3 manage.py seed_db`  
+Both of these commands are included in `update.sh`. If you make changes to the codebase, reset the database and reload the environment by running `source ./update.sh`. Then do `flask run` to run the app.
