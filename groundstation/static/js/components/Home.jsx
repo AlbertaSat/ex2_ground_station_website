@@ -40,12 +40,15 @@ class Home extends Component {
   }
 
   componentDidMount() {
+    // console.log(localStorage.getItem('auth_token'))
     Promise.all([
       fetch('/api/housekeepinglog'), 
-      fetch('/api/flightschedules?limit=5')
-    ]).then(([res1, res2]) => {
+      fetch('/api/flightschedules?limit=5',
+      {headers: {'Authorization':'Bearer '+ localStorage.getItem('auth_token')}}
+    )]).then(([res1, res2]) => {
       return Promise.all([res1.json(), res2.json()])
     }).then(([res1, res2]) => {
+      console.log(res2.message);
       if(res1.status == 'success'){
         this.setState({ housekeeping: res1.data.logs, isLoaded: true, empty: false});
       }if(res2.status == 'success'){

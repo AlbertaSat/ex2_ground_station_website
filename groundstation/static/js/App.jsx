@@ -54,7 +54,12 @@ function App(props) {
                                   href="/logs">
                                   Logs
                                 </a>
-                                <Countdown />
+                                <a
+                                  className={`link-items hvr-underline-from-center ${classes.navbarLinks}`}
+                                  href="/login">
+                                  Login
+                                </a>
+                              <Countdown />
                             </Typography>
                         </Toolbar>
                     </AppBar>
