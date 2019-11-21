@@ -21,7 +21,7 @@ class Countdown extends Component{
 			untilPassover: null,
             operationIsAdd:false,
             operatorChar:'-',
-            color:'#ab000e'
+            color:'#e50013', //'#ab000e'
 		}
 
 		this.updateCountdown = this.updateCountdown.bind(this);
@@ -65,7 +65,7 @@ class Countdown extends Component{
 			// 	minute: '00',
 			// 	second: '00'
 			// })
-            this.setState({operationIsAdd:true, operatorChar:'+', color:"#007C40"})
+            this.setState({operationIsAdd:true, operatorChar:'+', color:"#00cc69"}) // 007C40
 
 		}
 

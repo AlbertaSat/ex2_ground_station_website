@@ -3,7 +3,7 @@
     right: 0;
     margin-right: 3em !important;
   }
-  
+
 .MuiAppBar-colorPrimary {
   background-color: rgb(37, 37, 37) !important;
   color: rgb(37, 37, 37)
@@ -16,7 +16,7 @@
   color: rgb(243, 243, 243) !important
 }
 .indent {
-  color: #118851 !important
+  color: white !important /* #118851 */
 }
 
 .link-items {
