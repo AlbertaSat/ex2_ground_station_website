@@ -13,10 +13,13 @@ import Countdown from './Countdown'
 
 const styles = {
   root: {
-    padding: '42px',
+    width: '100%'
+  },
+  pageHeading: {
+    padding: '10px 40px',
     display: 'inline-flex',
     alignItems: 'center'
-  },
+  }
 };
 
 
@@ -42,7 +45,7 @@ class Home extends Component {
   componentDidMount() {
     // console.log(localStorage.getItem('auth_token'))
     Promise.all([
-      fetch('/api/housekeepinglog'), 
+      fetch('/api/housekeepinglog'),
       fetch('/api/flightschedules?limit=5',
       {headers: {'Authorization':'Bearer '+ localStorage.getItem('auth_token')}}
     )]).then(([res1, res2]) => {
@@ -104,16 +107,18 @@ class Home extends Component {
 
     console.log(flightschedule);
     return (
-      <div>
+      <div className={classes.root}>
         <Grid container spacing={2} alignItems='flex-end'>
           <Grid item sm={12}>
-            <div className={classes.root}>
+            <div className={classes.pageHeading}>
               <Typography variant="h4" displayInline style={{color: '#28324C'}}>
                 OVERVIEW
               </Typography>
+              {/*
               <Typography variant="h7" displayInline style={{marginLeft: '20px', borderBottom : '2px solid #28324C', color: '28324C'}}>
                 Updates every 30 seconds
               </Typography>
+              */}
             </div>
           </Grid>
         </Grid>
