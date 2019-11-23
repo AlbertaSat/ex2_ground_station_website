@@ -55,7 +55,10 @@ class FlightSchedule extends Component{
 	      return Promise.all([res1.json(), res2.json()])
 	    }).then(([res1, res2]) => {
 	      if(res1.status == 'success'){
-	        this.setState({'allflightschedules': res1.data.flightschedules, empty: false, 'isLoading': false});
+			this.setState({'allflightschedules': res1.data.flightschedules, 'isLoading': false});
+			if (res1.data.flightschedules.length > 0) {
+				this.setState({empty: false})
+			}
 	      }if(res2.status == 'success'){
 	        this.setState({availCommands: res2.data.telecommands})
 	      }
@@ -102,12 +105,12 @@ class FlightSchedule extends Component{
 		}).then(results => {
 			return results.json();
 		}).then(data => {
-			console.log(data);
 			if(data.status == 'success'){
-				console.log(this.state.thisIndex);
+				if (this.state.thisIndex == 0) {
+					this.setState({empty: true})
+				}
 				const obj = this.state.allflightschedules.slice();
 				obj.splice(this.state.thisIndex, 1)
-				console.log(obj)
 				this.setState({deleteFlightOpen: false,
 								thisIndex: null,
 								thisFlightscheduleId: null,
@@ -126,6 +129,7 @@ class FlightSchedule extends Component{
 			'/api/flightschedules/' +  this.state.thisFlightscheduleId : 
 			'/api/flightschedules'
 		let method = (this.state.editFlight)? 'PATCH' : 'POST'
+		this.setState({empty: false})
 		console.log('posted data', data);
 		fetch(url, {
 			method: method,

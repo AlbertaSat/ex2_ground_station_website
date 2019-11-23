@@ -29,8 +29,10 @@ class HouseKeeping extends Component {
         }).then(data => {
          console.log('data: ', data);
          if (data.status == 'success') {
-           this.setState({ housekeeping: data.data.logs, isLoaded: true, empty: false, 'isLoading': false})
-           console.log(this.state.housekeeping);
+           this.setState({ housekeeping: data.data.logs, 'isLoading': false})
+           if (data.data.logs.length > 0) {
+            this.setState({empty: false})
+          }
          }
         });
       }

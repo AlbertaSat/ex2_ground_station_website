@@ -27,7 +27,8 @@ class Home extends Component {
   constructor() {
     super();
     this.state = {
-      empty: true,
+      emptyhk: true,
+      emptyfs: true,
       isLoading: true,
       housekeeping: {
         id: null,
@@ -51,61 +52,24 @@ class Home extends Component {
     )]).then(([res1, res2]) => {
       return Promise.all([res1.json(), res2.json()])
     }).then(([res1, res2]) => {
-      console.log(res2.message);
+      console.log(res2);
       if(res1.status == 'success'){
-        this.setState({ housekeeping: res1.data.logs, isLoaded: true, empty: false, 'isLoading': false});
+        this.setState({ housekeeping: res1.data.logs, 'isLoading': false});
+        if (res1.data.logs.length > 0) {
+          this.setState({emptyhk: false})
+        }
       }if(res2.status == 'success'){
-        this.setState({flightschedule: res2.data.flightschedules, empty: false, 'isLoading': false})
+        this.setState({flightschedule: res2.data.flightschedules, 'isLoading': false})
+        console.log(res2.data.flightschedules.length)
+        if (res2.data.flightschedules.length > 0) {
+          this.setState({emptyfs: false})
+        }
       }
     });
-    //fetch('/api/housekeepinglog')
-    //.then(results => {
-    //  return results.json();
-    //}).then(data => {
-     // console.log('data: ', data);
-     // if (data.status == 'success') {
-     //   this.setState({ housekeeping: data.data.logs, isLoaded: true, empty: false })
-     //   console.log(this.state.housekeeping);
-     // }
-    //})
   }
 
   render() {
     const { classes } = this.props;
-    console.log({classes});
-    const { isLoaded, housekeeping, empty } = this.state;
-    const flightschedule = [
-      {id: 1, creationDate: '2019-10-10 17:17:52', timeStamp: '2019-10-10 17:17:52', uploadDate: '2019-10-10 17:17:52',
-        commands: [{
-        commandId: 1,
-        commandName: 'ping',
-        timeStamp: '2019-10-10 17:17:52'
-        },
-        {commandId: 2,
-        commandName: 'ddos',
-        timeStamp: '2019-10-10 17:17:52'
-        }
-      ]},
-      {id: 2, creationDate: '2019-10-10 17:17:52', timeStamp: '2019-10-10 17:17:52', uploadDate: '2019-10-10 17:17:52',
-        commands: [{
-        commandId: 1,
-        commandName: 'destroy',
-        timeStamp: '2019-10-10 17:17:52'
-        },
-        {commandId: 2,
-          commandName: 'ping',
-          timeStamp: '2019-10-10 17:17:52'
-        }
-      ]},
-      {id: 3, creationDate: '2019-10-10 17:17:52', timeStamp: '2019-10-10 17:17:52', uploadDate: '2019-10-10 17:17:52',
-        commands: [{
-        commandId: 1,
-        commandName: 'ping',
-        timeStamp: '2019-10-10 17:17:52'
-        }]
-      }];
-
-    console.log(flightschedule);
     return (
       <div className={classes.root}>
         <Grid container spacing={2} alignItems='flex-end'>
@@ -124,12 +88,12 @@ class Home extends Component {
         </Grid>
         <Grid container spacing={2} alignItems='flex-start'>
           <Grid item sm={8}>
-            <HousekeepingList isLoading={this.state.isLoading} housekeeping={this.state.housekeeping} empty={this.state.empty} />
+            <HousekeepingList isLoading={this.state.isLoading} housekeeping={this.state.housekeeping} empty={this.state.emptyhk} />
           </Grid>
           <Grid item sm={4}>
             <Paper className="grid-containers">
               <Typography variant="h5" displayInline style={{padding: '10px'}}>Flight Schedules</Typography>
-              <FlightScheduleList isLoading={this.state.isLoading} flightschedule={this.state.flightschedule} isMinified={true} empty={this.state.empty}/>
+              <FlightScheduleList isLoading={this.state.isLoading} flightschedule={this.state.flightschedule} isMinified={true} empty={this.state.emptyfs}/>
             </Paper>
           </Grid>
         </Grid>
