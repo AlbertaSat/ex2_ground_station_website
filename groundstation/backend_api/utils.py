@@ -8,6 +8,7 @@ from groundstation.backend_api.models import Telecommands, FlightSchedules, \
 from groundstation import db
 import operator
 from groundstation.backend_api.models import Communications, Housekeeping
+import dateutil.parser
 
 
 # a decorator to handle cases where backend api calls have no app context
@@ -193,7 +194,7 @@ def dynamic_filters_housekeeping(filters, ignore_keys=[]):
                 operation, value = value.split('-', 1)
                 if arg == 'last_beacon_time':
                     try:
-                        value = datetime.datetime.fromisoformat(value)
+                        value = dateutil.parser.parse(value)
                     except ValueError as e:
                         return None
 
