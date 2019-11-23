@@ -21,6 +21,7 @@ class FlightSchedule extends Component{
 	constructor(){
 		super();
 		this.state = {
+			isLoading: true,
 			empty: true,
 			addFlightOpen: false,
 			deleteFlightOpen: false,
@@ -51,6 +52,7 @@ class FlightSchedule extends Component{
 	      fetch('/api/flightschedules?limit=5',{headers: {'Authorization':'Bearer '+ localStorage.getItem('auth_token')}}), 
 	      fetch('/api/telecommands',{headers: {'Authorization':'Bearer '+ localStorage.getItem('auth_token')}})
 	    ]).then(([res1, res2]) => {
+		  this.setState({'isLoading': false})
 	      return Promise.all([res1.json(), res2.json()])
 	    }).then(([res1, res2]) => {
 	      if(res1.status == 'success'){
@@ -270,7 +272,8 @@ class FlightSchedule extends Component{
 					</Fab>
 				</Grid>
 			</Grid>
-    		  <FlightScheduleList 
+			  <FlightScheduleList 
+			    isLoading={this.state.isLoading}
     		    flightschedule={this.state.allflightschedules} 
     		    isMinified={false}
     		    handleAddFlightOpenClick={this.handleAddFlightOpenClick}

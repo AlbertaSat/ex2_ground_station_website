@@ -16,6 +16,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Grid from '@material-ui/core/Grid';
 import Fab from '@material-ui/core/Fab';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 function isMinified(minify, elemt){
   if(!minify){
@@ -26,12 +27,19 @@ function isMinified(minify, elemt){
 }
 
 const FlightScheduleList = (props) => {
-  if (props.empty) {
+  if (props.isLoading) {
       return (
         <div>
-          <ErrorOutlineIcon /> There are no flightschedules!
+          <LinearProgress />
         </div>
       )
+  }
+  if (props.empty && !props.isLoading) {
+    return (
+      <div>
+        <ErrorOutlineIcon /> There are no flightschedules!
+      </div>
+    )
   }
 
 
