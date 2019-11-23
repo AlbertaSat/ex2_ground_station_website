@@ -26,6 +26,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -78,13 +79,20 @@ function tableColor(status){
 }
 
 const HousekeepingLogListFull = (props) => {
-	if (props.empty) {
+  if (props.isLoading) {
     return (
       <div>
-        <ErrorOutlineIcon /> There is currently no housekeeping data!
+        <LinearProgress />
       </div>
     )
-  }
+}
+if (props.empty && !props.isLoading) {
+  return (
+    <div>
+      <ErrorOutlineIcon /> There is currently no housekeeping data!
+    </div>
+  )
+}
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
 

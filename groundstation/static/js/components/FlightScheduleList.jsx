@@ -16,6 +16,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Grid from '@material-ui/core/Grid';
 import Fab from '@material-ui/core/Fab';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 function isMinified(minify, elemt){
   if(!minify){
@@ -26,12 +27,19 @@ function isMinified(minify, elemt){
 }
 
 const FlightScheduleList = (props) => {
-  if (props.empty) {
+  if (props.isLoading) {
       return (
         <div>
-          <ErrorOutlineIcon /> There are no flightschedules!
+          <LinearProgress />
         </div>
       )
+  }
+  if (props.empty && !props.isLoading) {
+    return (
+      <div>
+        <ErrorOutlineIcon /> There are no flightschedules!
+      </div>
+    )
   }
 
 
@@ -58,8 +66,8 @@ const FlightScheduleList = (props) => {
 
 	return (
        <div>
-		<Paper className="grid-containers">
-          <Grid container style={{paddingBottom: '12px'}}>
+
+          {/* <Grid container style={{paddingBottom: '12px'}}>
             <Grid item xs={(props.isMinified) ? 12 : 11}>
               <Typography variant="h5" displayInline style={{padding: '10px'}}>Flight Schedules</Typography>
             </Grid>
@@ -73,7 +81,7 @@ const FlightScheduleList = (props) => {
                   </Fab>
                 </Grid>
             } 
-          </Grid>
+          </Grid> */}
           {props.flightschedule.map((flightschedule, idx) => (
              <ExpansionPanel key={flightschedule.flightschedule_id} style={tableColour(flightschedule.status)}>
                <ExpansionPanelSummary
@@ -155,7 +163,7 @@ const FlightScheduleList = (props) => {
                   </ExpansionPanelDetails>
                 </ExpansionPanel>
               ))}
-            </Paper>
+
           </div>
 	)
 }
