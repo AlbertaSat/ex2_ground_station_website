@@ -28,7 +28,7 @@ class Home extends Component {
     super();
     this.state = {
       empty: true,
-      isLoaded: false,
+      isLoading: true,
       housekeeping: {
         id: null,
         satelliteMode: null,
@@ -45,7 +45,7 @@ class Home extends Component {
   componentDidMount() {
     // console.log(localStorage.getItem('auth_token'))
     Promise.all([
-      fetch('/api/housekeepinglog'),
+      fetch('/api/housekeepinglog?limit=5'),
       fetch('/api/flightschedules?limit=5',
       {headers: {'Authorization':'Bearer '+ localStorage.getItem('auth_token')}}
     )]).then(([res1, res2]) => {
@@ -53,9 +53,9 @@ class Home extends Component {
     }).then(([res1, res2]) => {
       console.log(res2.message);
       if(res1.status == 'success'){
-        this.setState({ housekeeping: res1.data.logs, isLoaded: true, empty: false});
+        this.setState({ housekeeping: res1.data.logs, isLoaded: true, empty: false, 'isLoading': false});
       }if(res2.status == 'success'){
-        this.setState({flightschedule: res2.data.flightschedules, empty: false})
+        this.setState({flightschedule: res2.data.flightschedules, empty: false, 'isLoading': false})
       }
     });
     //fetch('/api/housekeepinglog')
@@ -124,12 +124,12 @@ class Home extends Component {
         </Grid>
         <Grid container spacing={2} alignItems='flex-start'>
           <Grid item sm={8}>
-            <HousekeepingList housekeeping={this.state.housekeeping} empty={this.state.empty} />
+            <HousekeepingList isLoading={this.state.isLoading} housekeeping={this.state.housekeeping} empty={this.state.empty} />
           </Grid>
           <Grid item sm={4}>
             <Paper className="grid-containers">
               <Typography variant="h5" displayInline style={{padding: '10px'}}>Flight Schedules</Typography>
-              <FlightScheduleList flightschedule={this.state.flightschedule} isMinified={true} empty={this.state.empty}/>
+              <FlightScheduleList isLoading={this.state.isLoading} flightschedule={this.state.flightschedule} isMinified={true} empty={this.state.empty}/>
             </Paper>
           </Grid>
         </Grid>

@@ -15,6 +15,7 @@ import TableRow from '@material-ui/core/TableRow';
 import WarningIcon from '@material-ui/icons/Warning';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { makeStyles } from '@material-ui/core/styles';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -50,12 +51,19 @@ function tableColor(status){
 }
 
 const HousekeepingLogListCompact = (props) => {
-	if (props.empty) {
+	if (props.isLoading) {
 		return (
-			<div>
-				<ErrorOutlineIcon /> There is currently no housekeeping data!
-			</div>
+		  <div>
+			<LinearProgress />
+		  </div>
 		)
+	}
+	if (props.empty && !props.isLoading) {
+	  return (
+		<div>
+		  <ErrorOutlineIcon /> There is currently no housekeeping data!
+		</div>
+	  )
 	}
 
 	const classes = useStyles();

@@ -52,11 +52,10 @@ class FlightSchedule extends Component{
 	      fetch('/api/flightschedules?limit=5',{headers: {'Authorization':'Bearer '+ localStorage.getItem('auth_token')}}), 
 	      fetch('/api/telecommands',{headers: {'Authorization':'Bearer '+ localStorage.getItem('auth_token')}})
 	    ]).then(([res1, res2]) => {
-		  this.setState({'isLoading': false})
 	      return Promise.all([res1.json(), res2.json()])
 	    }).then(([res1, res2]) => {
 	      if(res1.status == 'success'){
-	        this.setState({'allflightschedules': res1.data.flightschedules, empty: false});
+	        this.setState({'allflightschedules': res1.data.flightschedules, empty: false, 'isLoading': false});
 	      }if(res2.status == 'success'){
 	        this.setState({availCommands: res2.data.telecommands})
 	      }

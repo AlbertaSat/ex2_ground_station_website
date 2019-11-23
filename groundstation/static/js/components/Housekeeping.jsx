@@ -8,7 +8,7 @@ class HouseKeeping extends Component {
         super();
         this.state = {
           empty: true,
-          isLoaded: false,
+          isLoading: true,
           housekeeping: {
             id: null,
             satelliteMode: null,
@@ -29,7 +29,7 @@ class HouseKeeping extends Component {
         }).then(data => {
          console.log('data: ', data);
          if (data.status == 'success') {
-           this.setState({ housekeeping: data.data.logs, isLoaded: true, empty: false })
+           this.setState({ housekeeping: data.data.logs, isLoaded: true, empty: false, 'isLoading': false})
            console.log(this.state.housekeeping);
          }
         });
@@ -40,7 +40,7 @@ class HouseKeeping extends Component {
             <div>
                 <Paper className="grid-containers">
                     <Typography variant="h5" displayInline style={{padding: '10px'}}>Housekeeping</Typography>
-                    <HousekeepingList housekeeping={this.state.housekeeping} empty={this.state.empty} />
+                    <HousekeepingList isLoading={this.state.isLoading} housekeeping={this.state.housekeeping} empty={this.state.empty} />
                 </Paper>
             </div>
         )
