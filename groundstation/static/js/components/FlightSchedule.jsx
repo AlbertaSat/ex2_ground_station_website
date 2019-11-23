@@ -2,6 +2,20 @@ import React, { Component } from 'react';
 import FlightScheduleList from './FlightScheduleList';
 import AddFlightschedule from './AddFlightschedule';
 import DeleteFlightschedule from './DeleteFlightschedule';
+import Typography from '@material-ui/core/Typography';
+import Grid from '@material-ui/core/Grid';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
+import Paper from '@material-ui/core/Paper';
+
+
+function isMinified(minify, elemt){
+	if(!minify){
+	  return elmt
+	}else{
+	  return
+	}
+  }
 
 class FlightSchedule extends Component{
 	constructor(){
@@ -243,6 +257,19 @@ class FlightSchedule extends Component{
 	render(){
 		return (
 		    <div>
+			<Paper className="grid-containers">
+			<Grid container style={{paddingBottom: '12px'}}>
+				<Grid item xs={11}>
+					<Typography variant="h5" displayInline style={{padding: '10px'}}>Flight Schedules</Typography>
+				</Grid>
+				<Grid item xs={1} style={{textAlign: 'right'}}>
+					<Fab onClick={ (event) => this.handleAddFlightOpenClick(event) }>
+						<AddIcon 
+								style={{ color: '#4bacb8', fontSize: '2rem'}} 
+						/>
+					</Fab>
+				</Grid>
+			</Grid>
     		  <FlightScheduleList 
     		    flightschedule={this.state.allflightschedules} 
     		    isMinified={false}
@@ -270,6 +297,7 @@ class FlightSchedule extends Component{
     		    deleteFlightschedule={this.deleteFlightschedule}
     		    handleDeleteFlightClose={this.handleDeleteFlightClose}
     		  />
+			</Paper>
   			</div>
 		)
 	}

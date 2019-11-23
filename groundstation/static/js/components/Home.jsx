@@ -127,7 +127,10 @@ class Home extends Component {
             <HousekeepingList housekeeping={this.state.housekeeping} empty={this.state.empty} />
           </Grid>
           <Grid item sm={4}>
-            <FlightScheduleList flightschedule={this.state.flightschedule} isMinified={true} empty={this.state.empty}/>
+            <Paper className="grid-containers">
+              <Typography variant="h5" displayInline style={{padding: '10px'}}>Flight Schedules</Typography>
+              <FlightScheduleList flightschedule={this.state.flightschedule} isMinified={true} empty={this.state.empty}/>
+            </Paper>
           </Grid>
         </Grid>
 

@@ -58,8 +58,8 @@ const FlightScheduleList = (props) => {
 
 	return (
        <div>
-		<Paper className="grid-containers">
-          <Grid container style={{paddingBottom: '12px'}}>
+
+          {/* <Grid container style={{paddingBottom: '12px'}}>
             <Grid item xs={(props.isMinified) ? 12 : 11}>
               <Typography variant="h5" displayInline style={{padding: '10px'}}>Flight Schedules</Typography>
             </Grid>
@@ -73,7 +73,7 @@ const FlightScheduleList = (props) => {
                   </Fab>
                 </Grid>
             } 
-          </Grid>
+          </Grid> */}
           {props.flightschedule.map((flightschedule, idx) => (
              <ExpansionPanel key={flightschedule.flightschedule_id} style={tableColour(flightschedule.status)}>
                <ExpansionPanelSummary
@@ -155,7 +155,7 @@ const FlightScheduleList = (props) => {
                   </ExpansionPanelDetails>
                 </ExpansionPanel>
               ))}
-            </Paper>
+
           </div>
 	)
 }
