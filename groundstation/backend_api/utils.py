@@ -171,14 +171,6 @@ def dynamic_filters_housekeeping(filters, ignore_keys=[]):
     """build a filter from query paramaters, filters param will be a werkzeug.datastructures.MultiDict
     """
     filter_ops = []
-    operators = {
-        'lt':operator.lt,
-        'le':operator.le,
-        'eq':operator.eq,
-        'ne':operator.ne,
-        'ge':operator.ge,
-        'gt':operator.gt
-    }
     # NOTE: cant search channels rn, maybe do later but also not a big concern
     for arg, values in filters.lists():
         # arg will be an attribute of housekeeping like 'temp_1'
@@ -192,14 +184,15 @@ def dynamic_filters_housekeeping(filters, ignore_keys=[]):
         for value in values:
             if '-' in value:
                 operation, value = value.split('-', 1)
+                if not hasattr(operator, operation):
+                    return None
+
                 if arg == 'last_beacon_time':
                     try:
                         value = dateutil.parser.parse(value)
                     except ValueError as e:
                         return None
 
-                if operation not in operators.keys():
-                    return None
-                filter_ops.append(operators[operation](getattr(Housekeeping, arg), value))
+                filter_ops.append(getattr(operator, operation)(getattr(Housekeeping, arg), value))
 
     return filter_ops
