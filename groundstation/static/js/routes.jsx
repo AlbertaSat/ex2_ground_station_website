@@ -5,6 +5,7 @@ import Home from './components/Home';
 import LiveCommands from './components/LiveCommands';
 import HouseKeeping from './components/Housekeeping';
 import Login from './components/Login';
+import Logout from './components/Logout';
 import Logs from './components/ViewLogs';
 
 const Routes = () => (
@@ -14,6 +15,7 @@ const Routes = () => (
         <Route exact path='/livecommands' component={LiveCommands}/>
         <Route exact path='/housekeeping' component={HouseKeeping}/>
         <Route exact path='/login' component={Login}/>
+        <Route exact path='/logout' component={Logout}/>
         <Route exact path='/logs' component={Logs}/>
     </Switch>
 
