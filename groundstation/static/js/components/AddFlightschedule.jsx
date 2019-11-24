@@ -58,6 +58,15 @@ const AddFlightschedule = (props) =>{
 		      	>
                 	{(props.status == 1)? 'Dequeue' : 'Queue' }
               </Button>
+              <form>
+				  <MuiPickersUtilsProvider utils={DateFnsUtils}>
+				      <DateTimePicker 
+				          label="Execution Time"
+				          inputVariant="outlined"
+				          onChange={(event) => props.handleAddEvent(event, 'date', idx)}
+				      />
+				  </MuiPickersUtilsProvider>
+			  </form>
 		      <Table aria-label="simple table">
 		        {
 		          props.thisFlightschedule.map((flighschedule, idx) => (

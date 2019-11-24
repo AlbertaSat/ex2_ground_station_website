@@ -159,6 +159,7 @@ class FlightSchedules(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     creation_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     upload_date = db.Column(db.DateTime)
+    execution_time = db.Column(db.DateTime)
     # status is an integer, where 1=queued, 2=draft, 3=uploaded
     status = db.Column(db.Integer)
     commands = db.relationship('FlightScheduleCommands', backref='flightschedule', lazy=True, cascade='all')
@@ -169,6 +170,7 @@ class FlightSchedules(db.Model):
             'creation_date': str(self.creation_date),
             'upload_date': str(self.upload_date),
             'status': self.status,
+            'execution_time': self.execution_time.isoformat(),
             'commands': [command.to_json() for command in self.commands]
         }
 

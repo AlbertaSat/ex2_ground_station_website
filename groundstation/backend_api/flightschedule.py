@@ -71,6 +71,7 @@ class Flightschedule(Resource):
                 return response_object, 400
 
         flightschedule.status = validated_data['status']
+        flightschedule.execution_time = validated_data['execution_time']
 
         # go through the operations for this patch, inspired by the parse JSON syntax
         # we have replace, add, or remove as valid operations on the flight schedule
