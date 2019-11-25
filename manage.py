@@ -100,10 +100,25 @@ def seed_db():
 @cli.command('demo_db')
 def demo_db():
     timestamp = datetime.fromtimestamp(1570749472)
+    time2 = datetime.fromisoformat('2019-11-04 00:05:23.283+00:00')
+    time3 = datetime.fromisoformat('2019-11-05 00:08:43.203+00:00')
+    time4 = datetime.fromisoformat('2019-11-05 00:15:20.118+00:00')
+
     housekeepingData = fakeHousekeepingAsDict(timestamp)
+    hkd2 = fakeHousekeepingAsDict(time2)
+    hkd3 = fakeHousekeepingAsDict(time3)
+    hkd4 = fakeHousekeepingAsDict(time4)
 
     housekeeping = Housekeeping(**housekeepingData)
+    hk2 = Housekeeping(**hkd2)
+    hk3 = Housekeeping(**hkd3)
+    hk4 = Housekeeping(**hkd4)
+
     db.session.add(housekeeping)
+    db.session.add(hk2)
+    db.session.add(hk3)
+    db.session.add(hk4)
+    
     db.session.commit()
 
     commands = {
@@ -126,9 +141,14 @@ def demo_db():
                                 command_id=command.id
                             )
 
-    add_user(username='Admin_user', password='Admin_user', is_admin=True)
-    add_user(username='user1', password='user1', is_admin=False)
-    add_user(username='user2', password='user2', is_admin=False)
+    add_user(username='Ex-Alta-Master', password='master88', is_admin=True)
+    add_user(username='Ex-Alta-Safety', password='totalRecall', is_admin=True)
+    add_user(username='Manny1996', password='valientHearts', is_admin=False)
+    add_user(username='Impeach45', password='russia45', is_admin=False)
+    add_user(username='StarFinder', password='spaceForce', is_admin=False)
+    add_user(username='JojoBagins', password='ExOhExOhEx', is_admin=False)
+    add_user(username='HJDewit', password='simplify0923', is_admin=False)
+
     command = Telecommands.query.filter_by(command_name='turn-on').first()
     flightschedule_commands = add_command_to_flightschedule(
                                 timestamp=timestamp,
