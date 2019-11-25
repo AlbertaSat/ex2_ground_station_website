@@ -54,7 +54,6 @@ const HousekeepingDialog = (props) => {
     console.log(props.housekeeping)
     console.log(props.housekeeping.channels)
     return (
-        // <p>{props.housekeeping.id}</p>
           /* Display a HK log in a full screen dialog */
             <Dialog fullScreen open={props.open} onClose={() => props.handleClose()} TransitionComponent={Transition}>
             <AppBar>
