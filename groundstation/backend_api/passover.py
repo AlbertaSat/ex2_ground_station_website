@@ -14,6 +14,8 @@ passover_blueprint = Blueprint('passover', __name__)
 api = Api(passover_blueprint)
 
 class PassoverList(Resource):
+    """Endpoint for getting and receiving Passovers
+    """
 
     def __init__(self):
         self.validator = PassoverListValidator()

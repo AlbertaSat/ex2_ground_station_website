@@ -18,7 +18,13 @@ class User(db.Model):
         self.is_admin = is_admin
 
     def verify_password(self, password):
-        """ returns True if passes password is valid, else False """
+        """Returns True if passes password is valid, else False
+
+        :param str password: The password to validate
+
+        :returns: True if password is valid
+        :rtype: bool
+        """
         return bcrypt.check_password_hash(self.password_hash, password)
 
     def encode_auth_token_by_id(self):
@@ -41,18 +47,17 @@ class User(db.Model):
 
     @staticmethod
     def decode_auth_token(auth_token):
-        """
-        Decodes the auth token
-        params:
-            @auth_token
-        returns:
-            user_id (int)
+        """Decodes the auth token
+        :param auth_token: The authorization token
+        :returns: user_id (int)
         """
         payload = jwt.decode(auth_token, current_app.config.get('SECRET_KEY'))
         user_id = payload['sub']
         return user_id
 
     def to_json(self):
+        """Returns a dictionary of some selected model attributes
+        """
         return {
             'id' : self.id,
             'username': self.username
@@ -88,6 +93,8 @@ class Housekeeping(db.Model):
     channels = db.relationship('PowerChannels', backref='housekeeping', lazy=True, cascade='all')
 
     def to_json(self):
+        """Returns a dictionary of some selected model attributes
+        """
         return {
             'id': self.id,
             'satellite_mode': self.satellite_mode,
@@ -127,6 +134,7 @@ class PowerChannels(db.Model):
     # Might also need a 'Nominal' column? According to ASAT Common Commands doc.
 
     def to_json(self):
+
         return {
             'id': self.id,
             'hk_id': self.hk_id,
@@ -146,6 +154,8 @@ class Telecommands(db.Model):
 
 
     def to_json(self):
+        """Returns a dictionary of some selected model attributes
+        """
         return {
             'command_id': self.id,
             'command_name': self.command_name,
@@ -164,6 +174,8 @@ class FlightSchedules(db.Model):
     commands = db.relationship('FlightScheduleCommands', backref='flightschedule', lazy=True, cascade='all')
 
     def to_json(self):
+        """Returns a dictionary of some selected model attributes
+        """
         return {
             'flightschedule_id': self.id,
             'creation_date': str(self.creation_date),
@@ -186,6 +198,8 @@ class FlightScheduleCommands(db.Model):
                                 )
 
     def to_json(self):
+        """Returns a dictionary of some selected model attributes
+        """
         return {
             'flightschedule_command_id': self.id,
             'timestamp': str(self.timestamp),
@@ -202,6 +216,8 @@ class FlightScheduleCommandsArgs(db.Model):
     flightschedulecommand_id = db.Column(db.Integer, db.ForeignKey('flightschedulecommands.id'), nullable=False)
 
     def to_json(self):
+        """Returns a dictionary of some selected model attributes
+        """
         return {
             'index': self.index,
             'argument': self.argument
@@ -215,6 +231,8 @@ class Passover(db.Model):
     timestamp = db.Column(db.DateTime)
 
     def to_json(self):
+        """Returns a dictionary of some selected model attributes
+        """
         return {
             'passover_id': self.id,
             'timestamp': str(self.timestamp)
@@ -235,6 +253,8 @@ class Communications(db.Model):
     #response = db.Column(db.Integer, db.ForeignKey('communications.id')) # one possible value for connecting satellite responses to sent telecommands
 
     def to_json(self):
+        """Returns a dictionary of some selected model attributes
+        """
         return {
             'message_id': self.id,
             'message': self.message,
