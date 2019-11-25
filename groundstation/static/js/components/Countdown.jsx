@@ -12,7 +12,7 @@ function fetchPassovers(next, most_recent) {
 
     var url = '/api/passovers';
     if (next === true) {
-        url = url + '?next=true';
+        url = url + '?next=true&limit=1';
     }
     if (most_recent === true) {
         url = url + '&most-recent=true';
