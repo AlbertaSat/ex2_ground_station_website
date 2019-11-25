@@ -95,7 +95,7 @@ class LiveCommands extends Component {
         });
         this.poll_timer = setInterval(
           () => this.updateMessages(),
-          5000
+          1000
         );
     }
 
