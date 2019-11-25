@@ -90,9 +90,12 @@ def seed_db():
                     receiver='comm'
                 )
 
-    timestamp = datetime.utcnow()
-    timestamp += timedelta(seconds=30)
-    passover = add_passover(timestamp=timestamp)
+    now = datetime.utcnow()
+    add_passover(timestamp=now - timedelta(seconds=10))
+    for i in range(5):
+        add_passover(timestamp=now + timedelta(minutes=i*10))
+
+
 
 
 

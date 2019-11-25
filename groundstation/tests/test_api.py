@@ -734,7 +734,6 @@ class TestPassoverService(BaseTestCase):
                 continue
             if i == 1:
                 correct_next_passover = d
-                # print('correct_next_passover', correct_next_passover)
 
             p = Passover(timestamp=d)
             db.session.add(p)
@@ -742,11 +741,54 @@ class TestPassoverService(BaseTestCase):
         db.session.commit()
 
         with self.client:
-            response = self.client.get('/api/passovers?next-only=true')
+            response = self.client.get('/api/passovers?next=true')
             response_data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
-            self.assertEqual(len(response_data['data']['passovers']), 1)
-            self.assertEqual(str(correct_next_passover).split('+')[0], response_data['data']['passovers'][0]['timestamp'])
+            self.assertTrue('next_passover' in response_data['data'].keys())
+            self.assertEqual(str(correct_next_passover).split('+')[0], response_data['data']['next_passover']['timestamp'])
+
+    def test_get_most_recent_passover(self):
+
+        current_time = datetime.datetime.now(datetime.timezone.utc)
+        # print('current_time', str(current_time))
+        offset = datetime.timedelta(minutes=90)
+        correct_most_recent_passover = None
+        for i in range(-10, 10, 1):
+            d = current_time + i * offset
+            if i == 0:
+                continue
+            if i == -1:
+                correct_most_recent_passover = d
+
+            p = Passover(timestamp=d)
+            db.session.add(p)
+
+        db.session.commit()
+
+        with self.client:
+            response = self.client.get('/api/passovers?most-recent=true')
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertTrue('most_recent_passover' in response_data['data'].keys())
+            self.assertEqual(str(correct_most_recent_passover).split('+')[0], response_data['data']['most_recent_passover']['timestamp'])
+
+    def test_get_next_passover_when_none_exist(self):
+
+        current_time = datetime.datetime.now(datetime.timezone.utc)
+        offset = datetime.timedelta(minutes=90)
+        for i in range(-10, -5, 1):
+            d = current_time + i * offset
+            p = Passover(timestamp=d)
+            db.session.add(p)
+
+        db.session.commit()
+
+        with self.client:
+            response = self.client.get('/api/passovers?next=true')
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertTrue('next_passover' in response_data['data'].keys())
+            self.assertIsNone(response_data['data']['next_passover'])
 
 class TestUserService(BaseTestCase):
 
