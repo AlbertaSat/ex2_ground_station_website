@@ -107,7 +107,6 @@ class Countdown extends Component{
 
 		utcToday = new Date(today.getTime() + (today.getTimezoneOffset() * 60000));
         let new_value = this.state.operationIsAdd ? utcToday - this.state.mostRecentPassover : this.state.nextPassover - utcToday;
-        console.log(new_value)
 
         let hour = Math.floor((new_value / (1000 * 60 * 60)) % 24);
         let minute = Math.floor((new_value / (1000 * 60)) % 60);

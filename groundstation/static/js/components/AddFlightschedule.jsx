@@ -97,7 +97,7 @@ const AddFlightschedule = (props) =>{
   					  <TableBody>
             			<TableRow>
               				<TableCell className={(flighschedule.args.length > 0)? classes.argBottom : null }
-              							style={{minWidth: '20em'}}
+              							style={{minWidth: '18em'}}
               				>
               				  <form>
               					<Select 
@@ -132,10 +132,13 @@ const AddFlightschedule = (props) =>{
 			                  </form>
 			                </TableCell>
 			                <TableCell className={(flighschedule.args.length > 0)? classes.argBottom : null }>
-			                	<DeleteIcon 
-                                 style={{ color: '#4bacb8'}}
-                                 onClick={(event) => props.handleDeleteCommandClick(event, idx)}
-                               />
+			                	<Button
+			                		onClick={(event) => props.handleDeleteCommandClick(event, idx)}
+			                	>
+				                	<DeleteIcon 
+	                                 style={{ color: '#4bacb8'}}
+	                               />
+	                            </Button>
 			                </TableCell>
 			              </TableRow>
 			              <TableRow className={classes.cell}>
@@ -159,10 +162,13 @@ const AddFlightschedule = (props) =>{
 			          ))}
               </Table>
                 <DialogContentText>
-		          <AddIcon 
-                    style={{ color: '#4bacb8'}} 
-                    onClick={(event) => props.handleAddCommandClick(event)}
-                  />
+                	<Button
+                		onClick={(event) => props.handleAddCommandClick(event)}
+                	>
+			          <AddIcon 
+	                    style={{ color: '#4bacb8'}} 
+	                  />
+	                </Button>
 		      </DialogContentText>
 		    </DialogContent>
 		    <DialogActions>
