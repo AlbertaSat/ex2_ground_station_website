@@ -765,6 +765,31 @@ class TestPassoverService(BaseTestCase):
             self.assertEqual(len(response_data['data']['next_passovers']), 1)
             self.assertEqual(str(correct_next_passover).split('+')[0], response_data['data']['next_passovers'][0]['timestamp'])
 
+    def test_get_next_5_passovers(self):
+
+        current_time = datetime.datetime.now(datetime.timezone.utc)
+        offset = datetime.timedelta(minutes=90)
+        correct_next_passover = None
+        for i in range(-10, 20, 1):
+            d = current_time + i * offset
+            if i == 0:
+                continue
+            if i == 1:
+                correct_next_passover = d
+
+            p = Passover(timestamp=d)
+            db.session.add(p)
+
+        db.session.commit()
+
+        with self.client:
+            response = self.client.get('/api/passovers?next=true&limit=5')
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertTrue('next_passovers' in response_data['data'].keys())
+            self.assertEqual(len(response_data['data']['next_passovers']), 5)
+            self.assertEqual(str(correct_next_passover).split('+')[0], response_data['data']['next_passovers'][0]['timestamp'])
+
     def test_get_most_recent_passover(self):
 
         current_time = datetime.datetime.now(datetime.timezone.utc)
