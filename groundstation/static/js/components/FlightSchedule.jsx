@@ -178,17 +178,16 @@ class FlightSchedule extends Component{
 
 	// handle any changes in our form fields
 	handleAddEvent(event, type, idx){
-		console.log(this.state.thisExecutionTime);
 		const obj = this.state.thisFlightscheduleCommands.slice();
 		if(type == 'date'){
 			// when the time delta offset is changed, add the number of seconds
 			// to the execution time for the command timestamp
 			let thisTimeObj = this.state.thisExecutionTime;
 			if(this.state.editFlight && !thisTimeObj.endsWith('Z')){
+				console.log(this.state.thisExecutionTime)
 				thisTimeObj.slice(-3);
 				thisTimeObj = thisTimeObj.replace(' ', 'T').concat('Z');
 			}
-			console.log(thisTimeObj);
 			let thisTime = Date.parse(thisTimeObj);
 			let offsetSeconds = parseInt(event.target.value) * 1000;
 			thisTime = new Date(thisTime + offsetSeconds);
@@ -226,6 +225,12 @@ class FlightSchedule extends Component{
 		if(this.state.thisExecutionTime != null){
 			let adjustedCommands = obj.map(command => {
 				if(command.timestamp){
+					// handle a weird bug
+					if(command.op == 'add'){
+						command.timestamp = command.timestamp.replace('Z', '');
+						command.timestamp = command.timestamp.concat('000');
+					}
+					console.log(command.timestamp, command.op);
 					let oldTime = Date.parse(command.timestamp);
 					let oldExecTime = Date.parse(this.state.thisExecutionTime);
 					let origOffset = oldTime - oldExecTime;
@@ -233,7 +238,9 @@ class FlightSchedule extends Component{
 
 					command.timestamp = newTimestamp.toISOString();
 					if(this.state.editFlight){
-						command.op = 'replace';
+						if(command.op != 'add' || command.op != 'remove'){
+							command.op = 'replace';
+						}
 					}	
 				}
 			})
@@ -256,7 +263,6 @@ class FlightSchedule extends Component{
 	// handle when the add command button is clicked
 	handleAddCommandClick(event){
 		const obj = this.state.thisFlightscheduleCommands.slice();
-		console.log(this.state.thisExecutionTime);
 		let comm = {'command' : {'command_id': ''}, 'timestamp': null, 'args': []}
 		// if we are editing add a condition for adding
 		if(this.state.editFlight){
