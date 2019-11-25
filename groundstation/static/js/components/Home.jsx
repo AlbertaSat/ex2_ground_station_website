@@ -7,7 +7,7 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 
-import HousekeepingList from './HousekeepingListCompact';
+import HousekeepingList from './HousekeepingListFull';
 import FlightScheduleList from './FlightScheduleList'
 import Countdown from './Countdown'
 
@@ -88,7 +88,10 @@ class Home extends Component {
         </Grid>
         <Grid container spacing={2} alignItems='flex-start'>
           <Grid item sm={8}>
-            <HousekeepingList isLoading={this.state.isLoading} housekeeping={this.state.housekeeping} empty={this.state.emptyhk} />
+            <Paper className="grid-containers">
+              <Typography className="header-title" variant="h5" displayInline>Recent Housekeeping Data</Typography>
+              <HousekeepingList isLoading={this.state.isLoading} housekeeping={this.state.housekeeping} empty={this.state.emptyhk} />
+            </Paper>
           </Grid>
           <Grid item sm={4}>
             <Paper className="grid-containers">
