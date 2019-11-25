@@ -166,11 +166,15 @@ class FlightSchedule extends Component{
 			// when the time delta offset is changed, add the number of seconds
 			// to the execution time for the command timestamp
 			let thisTimeObj = this.state.thisExecutionTime;
-			thisTimeObj.slice(-3);
-			thisTimeObj = thisTimeObj.replace(' ', 'T').concat('Z');
+			if(this.state.editFlight && !thisTimeObj.endsWith('Z')){
+				thisTimeObj.slice(-3);
+				thisTimeObj = thisTimeObj.replace(' ', 'T').concat('Z');
+			}
+			console.log(thisTimeObj);
 			let thisTime = Date.parse(thisTimeObj);
 			let offsetSeconds = parseInt(event.target.value) * 1000;
 			thisTime = new Date(thisTime + offsetSeconds);
+
 
 			obj[idx].timestamp = thisTime.toISOString(); 
 		}else{
