@@ -99,7 +99,7 @@ const HousekeepingDialog = (props) => {
             <br></br>
 
             {/* Power Channels table */}
-            {/* <ListItem>
+            <ListItem>
                 <Table className={classes.table} size="small" aria-label="dense table">
                 <TableHead>
                     <TableRow>
@@ -120,7 +120,7 @@ const HousekeepingDialog = (props) => {
                     ))}
                 </TableBody>
                 </Table>
-            </ListItem><br></br> */}
+            </ListItem><br></br>
 
             {/* Solar Panels table */}
             <ListItem>

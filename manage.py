@@ -7,8 +7,8 @@ import click
 from flask.cli import FlaskGroup
 
 from groundstation import create_app, db
-from groundstation.backend_api.models import User, Housekeeping, Telecommands
-from groundstation.tests.utils import fakeHousekeepingAsDict
+from groundstation.backend_api.models import User, Housekeeping, Telecommands, PowerChannels
+from groundstation.tests.utils import fakeHousekeepingAsDict, fake_power_channel_as_dict
 from groundstation.backend_api.housekeeping import HousekeepingLogList
 from groundstation.backend_api.utils import add_telecommand, \
 add_flight_schedule, add_command_to_flightschedule, add_user, \
@@ -42,9 +42,15 @@ def test(path=None):
 def seed_db():
     timestamp = datetime.fromtimestamp(1570749472)
     housekeepingData = fakeHousekeepingAsDict(timestamp)
+    for i in range(100):
+        housekeeping = Housekeeping(**housekeepingData)
 
-    housekeeping = Housekeeping(**housekeepingData)
-    db.session.add(housekeeping)
+        for i in range(1, 25):
+            channel = fake_power_channel_as_dict(i)
+            p = PowerChannels(**channel)
+            housekeeping.channels.append(p)
+
+        db.session.add(housekeeping)
     db.session.commit()
 
     commands = {

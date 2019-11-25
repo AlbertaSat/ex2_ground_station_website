@@ -86,7 +86,7 @@ class HousekeepingLogListFull extends Component {
 		super();
 		this.state = {
       open: false,
-      selectedHousekeeping: [{
+      selectedHousekeeping: {
         id: null,
         satelliteMode: null,
         batteryVoltage: null,
@@ -94,12 +94,8 @@ class HousekeepingLogListFull extends Component {
         currentOut: null,
         lastBeaconTime: null,
         noMCUResets: null,
-        channels: {
-          channel_no: "1",
-          enabled: true,
-          current: "1"
-        }
-      }]
+        channels: []
+      }
     },
     this.handleOpenClick = this.handleOpenClick.bind(this)
     this.handleClose = this.handleClose.bind(this)
