@@ -12,7 +12,7 @@ function fetchPassovers(next, most_recent) {
 
     var url = '/api/passovers';
     if (next === true) {
-        url = url + '?next=true';
+        url = url + '?next=true&limit=1';
     }
     if (most_recent === true) {
         url = url + '&most-recent=true';
@@ -29,10 +29,10 @@ function fetchPassovers(next, most_recent) {
                 let mostRecentPassover;
 
                 console.log('RESPONSE', data);
-                if (data.data.next_passover === undefined || data.data.next_passover === null) {
+                if (data.data.next_passovers === undefined || data.data.next_passovers === []) {
                     nextPassover = null;
                 } else {
-                    let newNextDate = data.data.next_passover.timestamp.replace(' ', 'T');
+                    let newNextDate = data.data.next_passovers[0].timestamp.replace(' ', 'T');
                     newNextDate.slice(-3);
                     nextPassover = Date.parse(newNextDate);
                 }
@@ -67,7 +67,7 @@ class Countdown extends Component{
 			minute: '00',
 			second: '00',
             displayCountdown:false,
-            passoverDuration:5*60,
+            passoverDuration:1*60,
 			nextPassover: null,
 			untilPassover: null,
             operationIsAdd:false,
