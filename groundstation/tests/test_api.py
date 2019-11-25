@@ -631,9 +631,9 @@ class TestFlightScheduleService(BaseTestCase):
         command1 = Telecommands.query.filter_by(command_name='ping').first()
         command2 = Telecommands.query.filter_by(command_name='get-hk').first()
         flightschedule = add_flight_schedule(
-            creation_date=timestamp, 
-            upload_date=timestamp, 
-            status=2, 
+            creation_date=timestamp,
+            upload_date=timestamp,
+            status=2,
             execution_time=timestamp)
         flightschedule_commands1 = add_command_to_flightschedule(
                                 timestamp=timestamp,
@@ -669,9 +669,9 @@ class TestFlightScheduleService(BaseTestCase):
 
         command1 = Telecommands.query.filter_by(command_name='ping').first()
         flightschedule = add_flight_schedule(
-            creation_date=timestamp, 
-            upload_date=timestamp, 
-            status=2, 
+            creation_date=timestamp,
+            upload_date=timestamp,
+            status=2,
             execution_time=timestamp)
 
         flightschedule_commands = add_command_to_flightschedule(
@@ -758,11 +758,12 @@ class TestPassoverService(BaseTestCase):
         db.session.commit()
 
         with self.client:
-            response = self.client.get('/api/passovers?next=true')
+            response = self.client.get('/api/passovers?next=true&limit=1')
             response_data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
-            self.assertTrue('next_passover' in response_data['data'].keys())
-            self.assertEqual(str(correct_next_passover).split('+')[0], response_data['data']['next_passover']['timestamp'])
+            self.assertTrue('next_passovers' in response_data['data'].keys())
+            self.assertEqual(len(response_data['data']['next_passovers']), 1)
+            self.assertEqual(str(correct_next_passover).split('+')[0], response_data['data']['next_passovers'][0]['timestamp'])
 
     def test_get_most_recent_passover(self):
 
@@ -804,8 +805,8 @@ class TestPassoverService(BaseTestCase):
             response = self.client.get('/api/passovers?next=true')
             response_data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
-            self.assertTrue('next_passover' in response_data['data'].keys())
-            self.assertIsNone(response_data['data']['next_passover'])
+            self.assertTrue('next_passovers' in response_data['data'].keys())
+            self.assertEqual(len(response_data['data']['next_passovers']), 0)
 
 class TestUserService(BaseTestCase):
 
