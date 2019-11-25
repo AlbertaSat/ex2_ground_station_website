@@ -82,6 +82,28 @@ function tableColor(status){
 // class FlightSchedule extends Component{
 // const HousekeepingLogListFull = (props) => {
 class HousekeepingLogListFull extends Component {
+  constructor(){
+		super();
+		this.state = {
+      open: false,
+      selectedHousekeeping: [{
+        id: null,
+        satelliteMode: null,
+        batteryVoltage: null,
+        currentIn: null,
+        currentOut: null,
+        lastBeaconTime: null,
+        noMCUResets: null,
+        channels: {
+          channel_no: "1",
+          enabled: true,
+          current: "1"
+        }
+      }]
+    },
+    this.handleOpenClick = this.handleOpenClick.bind(this)
+    this.handleClose = this.handleClose.bind(this)
+	}
   componentDidMount() {
     console.log(this.props);
     if (this.props.isLoading) {
@@ -90,19 +112,33 @@ class HousekeepingLogListFull extends Component {
           <LinearProgress />
         </div>
       )
+    }
+    if (this.props.empty && !this.props.isLoading) {
+      return (
+        <div>
+          <ErrorOutlineIcon /> There is currently no housekeeping data!
+        </div>
+      )
+    }
   }
-  if (this.props.empty && !this.props.isLoading) {
-    return (
-      <div>
-        <ErrorOutlineIcon /> There is currently no housekeeping data!
-      </div>
-    )
+
+  handleOpenClick(housekeeping) {
+    console.log(housekeeping)
+    this.setState({
+      open: !this.state.open,
+      selectedHousekeeping: housekeeping
+    })
   }
+
+  handleClose() {
+    this.setState({
+      open: false
+    })
   }
+  
 
   render() {
     const { classes } = this.props;
-    console.log(this.props)
 	return (
 		<div className={classes.root}>
       <div>
@@ -111,7 +147,7 @@ class HousekeepingLogListFull extends Component {
         {this.props.housekeeping.map(housekeeping => (
           <Table aria-label="simple table">
               <TableBody>
-                <TableRow button key={housekeeping.name}>
+                <TableRow button key={housekeeping.name} onClick={() => this.handleOpenClick(housekeeping)}>
                 <TableCell width="15%" component="th" scope="row" style={tableColor(housekeeping.satellite_mode)}>
                   {housekeeping.last_beacon_time}
                 </TableCell>
@@ -124,8 +160,9 @@ class HousekeepingLogListFull extends Component {
 
           ))}
           <HousekeepingDialog 
-          test={"test"}
-
+          housekeeping={this.state.selectedHousekeeping}
+          open={this.state.open}
+          handleClose={this.handleClose}
           />
       </Paper>
       </div>

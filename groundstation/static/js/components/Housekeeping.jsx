@@ -16,7 +16,8 @@ class HouseKeeping extends Component {
             currentIn: null,
             currentOut: null,
             lastBeaconTime: null,
-            noMCUResets: null
+            noMCUResets: null,
+            channels: []
           }],
           flightschedule: []
         };
