@@ -104,6 +104,7 @@ class Countdown extends Component{
     drawCountdownAfterStateChange(){
         var utcToday;
 		let today =  new Date(Date.now());
+
 		utcToday = new Date(today.getTime() + (today.getTimezoneOffset() * 60000));
         let new_value = this.state.operationIsAdd ? utcToday - this.state.mostRecentPassover : this.state.nextPassover - utcToday;
         console.log(new_value)

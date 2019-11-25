@@ -19,6 +19,7 @@ class FlightScheduleCommandValidator(Schema):
 class FlightScheduleValidator(Schema):
     status = fields.Integer(required=True, validate=validate.Range(min=1, max=3))
     commands = fields.Nested(FlightScheduleCommandValidator, many=True, required=True)
+    execution_time = fields.DateTime(format='iso', required=True)
 
 class FlightSchedulePatchCommandValidator(Schema):
     op = fields.String(required=True)
@@ -30,6 +31,7 @@ class FlightSchedulePatchCommandValidator(Schema):
 class FlightSchedulePatchValidator(Schema):
     status = fields.Integer(required=True, validate=validate.Range(min=1, max=3))
     commands = fields.Nested(FlightSchedulePatchCommandValidator, many=True, required=True)
+    execution_time = fields.DateTime(format='iso', required=True)
 
 class PassoverValidator(Schema):
     timestamp = fields.DateTime(format='iso', required=True)
