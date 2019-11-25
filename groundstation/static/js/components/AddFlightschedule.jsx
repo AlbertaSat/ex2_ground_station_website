@@ -44,12 +44,11 @@ const AddFlightschedule = (props) =>{
 	const classes = useStyles();
 
 	function convertTimestamp(timestamp, executionTime){
-		console.log(timestamp, executionTime);
 		if(timestamp == null || executionTime == null){
 			return null
 		}else{
-			console.log(Date.parse(timestamp) - executionTime.getTime());
-			return (Date.parse(timestamp) - executionTime.getTime()) / 1000;
+			//console.log(Date.parse(timestamp) - executionTime.getTime());
+			return (Date.parse(timestamp) - Date.parse(executionTime)) / 1000;
 		}
 	}
 

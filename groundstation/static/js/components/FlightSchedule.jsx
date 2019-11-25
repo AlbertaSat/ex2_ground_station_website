@@ -43,6 +43,7 @@ class FlightSchedule extends Component{
 	    }).then(([res1, res2]) => {
 	      if(res1.status == 'success'){
 	        this.setState({'allflightschedules': res1.data.flightschedules, empty: false});
+	        console.log(res1.data.flightschedules);
 	      }if(res2.status == 'success'){
 	        this.setState({availCommands: res2.data.telecommands})
 	      }
@@ -159,13 +160,18 @@ class FlightSchedule extends Component{
 
 	// handle any changes in our form fields
 	handleAddEvent(event, type, idx){
+		console.log(this.state.thisExecutionTime);
 		const obj = this.state.thisFlightscheduleCommands.slice();
 		if(type == 'date'){
 			// when the time delta offset is changed, add the number of seconds
 			// to the execution time for the command timestamp
-			let thisTime = this.state.thisExecutionTime;
+			let thisTimeObj = this.state.thisExecutionTime;
+			thisTimeObj.slice(-3);
+			thisTimeObj = thisTimeObj.replace(' ', 'T').concat('Z');
+			let thisTime = Date.parse(thisTimeObj);
 			let offsetSeconds = parseInt(event.target.value) * 1000;
-			thisTime = new Date(thisTime.getTime() + offsetSeconds);
+			thisTime = new Date(thisTime + offsetSeconds);
+
 			obj[idx].timestamp = thisTime.toISOString(); 
 		}else{
 			obj[idx].command.command_id = event.value;
@@ -189,7 +195,6 @@ class FlightSchedule extends Component{
 
 	handleExecutionTimeChange(event){
 		let thisExecutionTime = event._d;
-		console.log(thisExecutionTime);
 		const obj = this.state.thisFlightscheduleCommands.slice();
 		// handle changing all flight schedule command timestamps if the execution 
 		// time is changed, that is all flightschedule timestamps should reflect
@@ -198,18 +203,20 @@ class FlightSchedule extends Component{
 		// handle when execution time is null, ie we are creating a new flightschedule
 		if(this.state.thisExecutionTime != null){
 			let adjustedCommands = obj.map(command => {
-				let oldTime = Date.parse(command.timestamp);
-				let oldExecTime = this.state.thisExecutionTime;
-				let origOffset = oldTime - oldExecTime.getTime();
-				let newTimestamp = new Date(thisExecutionTime.getTime() + origOffset)
+				if(command.timestamp){
+					let oldTime = Date.parse(command.timestamp);
+					let oldExecTime = Date.parse(this.state.thisExecutionTime);
+					let origOffset = oldTime - oldExecTime;
+					let newTimestamp = new Date(thisExecutionTime.getTime() + origOffset)
 
-				command.timestamp = newTimestamp.toISOString();
-				if(this.state.editFlight){
-					command.op = 'replace';
-				}	
+					command.timestamp = newTimestamp.toISOString();
+					if(this.state.editFlight){
+						command.op = 'replace';
+					}	
+				}
 			})
 		}
-		this.setState({thisExecutionTime: thisExecutionTime, thisFlightscheduleCommands: obj})
+		this.setState({thisExecutionTime: thisExecutionTime.toISOString(), thisFlightscheduleCommands: obj})
 
 	}
 
@@ -227,6 +234,7 @@ class FlightSchedule extends Component{
 	// handle when the add command button is clicked
 	handleAddCommandClick(event){
 		const obj = this.state.thisFlightscheduleCommands.slice();
+		console.log(this.state.thisExecutionTime);
 		let comm = {'command' : {'command_id': ''}, 'timestamp': null, 'args': []}
 		// if we are editing add a condition for adding
 		if(this.state.editFlight){
@@ -261,13 +269,15 @@ class FlightSchedule extends Component{
 		const obj = this.state.allflightschedules[idx].commands.map((command) => (
 			{...command, op: 'none'}
 		))
+		console.log(obj);
+
 		this.setState({addFlightOpen: !this.state.addFlightOpen,
 						thisFlightscheduleCommands: obj,
 						editFlight: true,
 						thisFlightscheduleId: id,
 						thisIndex: idx,
 						thisFlightScheduleStatus: status,
-						thisExecutionTime: new Date(Date.parse(executionTime)),
+						thisExecutionTime: executionTime,
 						});
 	}
 
