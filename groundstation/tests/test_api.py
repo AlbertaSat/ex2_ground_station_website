@@ -20,6 +20,8 @@ from groundstation.backend_api.utils import add_telecommand, \
     add_flight_schedule, add_command_to_flightschedule, add_user
 from groundstation.backend_api.communications import Communication, CommunicationList
 from unittest import mock
+from werkzeug.datastructures import MultiDict
+
 
 class TestHousekeepingService(BaseTestCase):
     """Test the housekeeping/satellite model service"""
@@ -86,11 +88,11 @@ class TestHousekeepingService(BaseTestCase):
         db.session.commit()
 
         with self.client:
-            response = self.client.get('/api/housekeepinglog?att1_temp_1=gt-12')
+            response = self.client.get('/api/housekeepinglog?temp_1=gt-12')
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertEqual(len(data['data']['logs']), 0)
-            response = self.client.get('/api/housekeepinglog?att1_temp_1=gt-10')
+            response = self.client.get('/api/housekeepinglog?temp_1=gt-10')
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertEqual(len(data['data']['logs']), 1)
@@ -112,11 +114,11 @@ class TestHousekeepingService(BaseTestCase):
         db.session.commit()
 
         with self.client:
-            response = self.client.get('/api/housekeepinglog?att1_temp_1=gt-10&att2_temp_2=gt-11&att3_temp_3=gt-12')
+            response = self.client.get('/api/housekeepinglog?temp_1=gt-10&temp_2=gt-11&temp_3=gt-12')
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertEqual(len(data['data']['logs']), 1)
-            response = self.client.get('/api/housekeepinglog?att1_temp_1=gt-10&att2_temp_2=gt-11&att3_temp_3=gt-14')
+            response = self.client.get('/api/housekeepinglog?temp_1=gt-10&temp_2=gt-11&temp_3=gt-14')
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertEqual(len(data['data']['logs']), 0)
@@ -138,11 +140,11 @@ class TestHousekeepingService(BaseTestCase):
         db.session.commit()
 
         with self.client:
-            response = self.client.get('/api/housekeepinglog?att1_battery_voltage=eq-16&att2_watchdog_1=lt-150&att3_panel_5_current=gt-0.2')
+            response = self.client.get('/api/housekeepinglog?battery_voltage=eq-16&watchdog_1=lt-150&panel_5_current=gt-0.2')
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertEqual(len(data['data']['logs']), 1)
-            response = self.client.get('/api/housekeepinglog?att1_battery_voltage=eq-15&att2_watchdog_1=lt-150&att3_panel_5_current=gt-0.2')
+            response = self.client.get('/api/housekeepinglog?battery_voltage=eq-15&watchdog_1=lt-150&panel_5_current=gt-0.2')
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertEqual(len(data['data']['logs']), 0)
@@ -165,17 +167,17 @@ class TestHousekeepingService(BaseTestCase):
         db.session.commit()
 
         with self.client:
-            response = self.client.get('/api/housekeepinglog?att1_battery_voltage=gt-20&att2_battery_voltage=lt-24')
+            response = self.client.get('/api/housekeepinglog?battery_voltage=gt-20&battery_voltage=lt-24')
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertEqual(len(data['data']['logs']), 3)
 
-            response = self.client.get('/api/housekeepinglog?att1_battery_voltage=gt-20&att2_battery_voltage=lt-24&att3_battery_voltage=eq-17')
+            response = self.client.get('/api/housekeepinglog?battery_voltage=gt-20&battery_voltage=lt-24&battery_voltage=eq-17')
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertEqual(len(data['data']['logs']), 0)
 
-            response = self.client.get('/api/housekeepinglog?att1_battery_voltage=gt-20&limit=1&att2_battery_voltage=lt-24')
+            response = self.client.get('/api/housekeepinglog?battery_voltage=gt-20&limit=1&battery_voltage=lt-24')
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertEqual(len(data['data']['logs']), 1)
@@ -190,12 +192,95 @@ class TestHousekeepingService(BaseTestCase):
             channel = fake_power_channel_as_dict(i)
             p = PowerChannels(**channel)
             housekeeping.channels.append(p)
-
         db.session.add(housekeeping)
         db.session.commit()
-
         with self.client:
-            response = self.client.get('/api/housekeepinglog?att1_tempp_1=gt-12')
+            response = self.client.get('/api/housekeepinglog?tempp_1=gt-12')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 400)
+
+    def test_get_housekeeping_with_valid_start_date(self):
+
+        for i in range(10):
+            timestamp = datetime.datetime.fromtimestamp(1570749472 + i * 100)
+            db.session.add(Housekeeping(**fakeHousekeepingAsDict(timestamp)))
+        db.session.commit()
+        with self.client:
+            start_ts = datetime.datetime.fromtimestamp(1570749472 + 5 + 700).isoformat()
+            url = '/api/housekeepinglog'
+            query_string = MultiDict([
+                ('last_beacon_time', f'ge-{start_ts}')
+            ])
+            response = self.client.get(url, query_string=query_string)
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(data['data']['logs']), 2)
+
+    def test_get_housekeeping_with_valid_end_date(self):
+        for i in range(10):
+            timestamp = datetime.datetime.fromtimestamp(1570749472 + i * 100)
+            db.session.add(Housekeeping(**fakeHousekeepingAsDict(timestamp)))
+        db.session.commit()
+        with self.client:
+            end_ts = datetime.datetime.fromtimestamp(1570749472 + 5 + 700).isoformat()
+            url = '/api/housekeepinglog'
+            query_string = MultiDict([
+                ('last_beacon_time', f'le-{end_ts}')
+            ])
+            response = self.client.get(url, query_string=query_string)
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(data['data']['logs']), 8)
+
+    def test_get_housekeeping_with_valid_start_and_end_date(self):
+        for i in range(10):
+            timestamp = datetime.datetime.fromtimestamp(1570749472 + i * 100)
+            db.session.add(Housekeeping(**fakeHousekeepingAsDict(timestamp)))
+        db.session.commit()
+        with self.client:
+            start_ts = datetime.datetime.fromtimestamp(1570749472 + 5 + 200).isoformat()
+            end_ts = datetime.datetime.fromtimestamp(1570749472 + 5 + 600).isoformat()
+            url = '/api/housekeepinglog'
+            query_string = MultiDict([
+                ('last_beacon_time', f'ge-{start_ts}'),
+                ('last_beacon_time', f'le-{end_ts}')
+            ])
+            response = self.client.get(url, query_string=query_string)
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(data['data']['logs']), 4)
+
+    def test_get_housekeeping_with_valid_start_and_end_date_locally(self):
+        for i in range(10):
+            timestamp = datetime.datetime.fromtimestamp(1570749472 + i * 100)
+            db.session.add(Housekeeping(**fakeHousekeepingAsDict(timestamp)))
+        db.session.commit()
+        start_ts = datetime.datetime.fromtimestamp(1570749472 + 5 + 200).isoformat()
+        end_ts = datetime.datetime.fromtimestamp(1570749472 + 5 + 600).isoformat()
+        local_args = MultiDict([
+            ('last_beacon_time', f'ge-{start_ts}'),
+            ('last_beacon_time', f'le-{end_ts}')
+        ])
+        endpoint = HousekeepingLogList()
+        data, status_code = endpoint.get(local_args=local_args)
+        self.assertEqual(status_code, 200)
+        self.assertEqual(len(data['data']['logs']), 4)
+
+    def test_get_housekeeping_with_invalid_start_and_valid_end_date(self):
+        for i in range(10):
+            timestamp = datetime.datetime.fromtimestamp(1570749472 + i * 100)
+            db.session.add(Housekeeping(**fakeHousekeepingAsDict(timestamp)))
+        db.session.commit()
+        with self.client:
+            start_ts = "ubinoanciwnaw"
+            end_ts = datetime.datetime.fromtimestamp(1570749472 + 5 + 600).isoformat()
+            url = '/api/housekeepinglog'
+            filter_string = f'last_beacon_time=ge-{start_ts}&last_beacon_time=le-{end_ts}'
+            query_string = MultiDict([
+                ('last_beacon_time', f'ge-{start_ts}'),
+                ('last_beacon_time', f'le-{end_ts}')
+            ])
+            response = self.client.get(url, query_string=query_string)
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 400)
 
@@ -666,7 +751,6 @@ class TestPassoverService(BaseTestCase):
                 continue
             if i == 1:
                 correct_next_passover = d
-                # print('correct_next_passover', correct_next_passover)
 
             p = Passover(timestamp=d)
             db.session.add(p)
@@ -674,11 +758,54 @@ class TestPassoverService(BaseTestCase):
         db.session.commit()
 
         with self.client:
-            response = self.client.get('/api/passovers?next-only=true')
+            response = self.client.get('/api/passovers?next=true')
             response_data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
-            self.assertEqual(len(response_data['data']['passovers']), 1)
-            self.assertEqual(str(correct_next_passover).split('+')[0], response_data['data']['passovers'][0]['timestamp'])
+            self.assertTrue('next_passover' in response_data['data'].keys())
+            self.assertEqual(str(correct_next_passover).split('+')[0], response_data['data']['next_passover']['timestamp'])
+
+    def test_get_most_recent_passover(self):
+
+        current_time = datetime.datetime.now(datetime.timezone.utc)
+        # print('current_time', str(current_time))
+        offset = datetime.timedelta(minutes=90)
+        correct_most_recent_passover = None
+        for i in range(-10, 10, 1):
+            d = current_time + i * offset
+            if i == 0:
+                continue
+            if i == -1:
+                correct_most_recent_passover = d
+
+            p = Passover(timestamp=d)
+            db.session.add(p)
+
+        db.session.commit()
+
+        with self.client:
+            response = self.client.get('/api/passovers?most-recent=true')
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertTrue('most_recent_passover' in response_data['data'].keys())
+            self.assertEqual(str(correct_most_recent_passover).split('+')[0], response_data['data']['most_recent_passover']['timestamp'])
+
+    def test_get_next_passover_when_none_exist(self):
+
+        current_time = datetime.datetime.now(datetime.timezone.utc)
+        offset = datetime.timedelta(minutes=90)
+        for i in range(-10, -5, 1):
+            d = current_time + i * offset
+            p = Passover(timestamp=d)
+            db.session.add(p)
+
+        db.session.commit()
+
+        with self.client:
+            response = self.client.get('/api/passovers?next=true')
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertTrue('next_passover' in response_data['data'].keys())
+            self.assertIsNone(response_data['data']['next_passover'])
 
 class TestUserService(BaseTestCase):
 

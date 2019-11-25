@@ -1,12 +1,14 @@
 from functools import wraps
 from flask import has_app_context, request, g, current_app
 import jwt
+import datetime
 from groundstation import create_app
 from groundstation.backend_api.models import Telecommands, FlightSchedules, \
     FlightScheduleCommands, FlightScheduleCommandsArgs, User, Passover
 from groundstation import db
 import operator
 from groundstation.backend_api.models import Communications, Housekeeping
+import dateutil.parser
 
 
 # a decorator to handle cases where backend api calls have no app context
@@ -170,33 +172,32 @@ def dynamic_filters_communications(filters):
     return filter_ops
 
 
-def dynamic_filters_housekeeping(filters):
-    """build a filter from query paramaters, filters param will be a dict of query params of form <arg>:<value>
+def dynamic_filters_housekeeping(filters, ignore_keys=[]):
+    """build a filter from query paramaters, filters param will be a werkzeug.datastructures.MultiDict
     """
     filter_ops = []
-
     # NOTE: cant search channels rn, maybe do later but also not a big concern
-    for arg, value in filters.items():
-        # arg will be an attribute of housekeeping like 'attn_temp_1'
+    for arg, values in filters.lists():
+        # arg will be an attribute of housekeeping like 'temp_1'
         # value will be of form '<operation>-<value>', eg.) 'gt-5'
-        arg = arg.split('_', 1)[1]
+        if arg in ignore_keys:
+            continue
+
         if not hasattr(Housekeeping, arg):
             return None
-        if '-' in value:
-            operation, value = value.split('-')
-            if operation == 'lt':
-                filter_ops.append(operator.lt(getattr(Housekeeping, arg), value))
-            elif operation == 'le':
-                filter_ops.append(operator.le(getattr(Housekeeping, arg), value))
-            elif operation == 'eq':
-                filter_ops.append(operator.eq(getattr(Housekeeping, arg), value))
-            elif operation == 'ne':
-                filter_ops.append(operator.ne(getattr(Housekeeping, arg), value))
-            elif operation == 'ge':
-                filter_ops.append(operator.ge(getattr(Housekeeping, arg), value))
-            elif operation == 'gt':
-                filter_ops.append(operator.gt(getattr(Housekeeping, arg), value))
-            else:
-                pass
+
+        for value in values:
+            if '-' in value:
+                operation, value = value.split('-', 1)
+                if not hasattr(operator, operation):
+                    return None
+
+                if arg == 'last_beacon_time':
+                    try:
+                        value = dateutil.parser.parse(value)
+                    except ValueError as e:
+                        return None
+
+                filter_ops.append(getattr(operator, operation)(getattr(Housekeeping, arg), value))
 
     return filter_ops

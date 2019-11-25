@@ -26,6 +26,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -78,13 +79,20 @@ function tableColor(status){
 }
 
 const HousekeepingLogListFull = (props) => {
-	if (props.empty) {
+  if (props.isLoading) {
     return (
       <div>
-        <ErrorOutlineIcon /> There is currently no housekeeping data!
+        <LinearProgress />
       </div>
     )
-  }
+}
+if (props.empty && !props.isLoading) {
+  return (
+    <div>
+      <ErrorOutlineIcon /> There is currently no housekeeping data!
+    </div>
+  )
+}
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
 
@@ -99,8 +107,9 @@ const HousekeepingLogListFull = (props) => {
 	return (
 		<div className={classes.root}>
 
+      {/*}
       <div>
-        {/* <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
+        <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
           <AppBar className={classes.appBar}>
           <Toolbar>
             <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
@@ -123,8 +132,8 @@ const HousekeepingLogListFull = (props) => {
             <ListItemText primary="Default notification ringtone" secondary="Tethys" />
           </ListItem>
           </List>
-        </Dialog> */}
-      </div>
+        </Dialog>
+      </div> */}
 
       <div>
       <Paper className={classes.paper}>
@@ -132,8 +141,11 @@ const HousekeepingLogListFull = (props) => {
           <Table aria-label="simple table">
               <TableBody>
                 <TableRow button key={housekeeping.name}>
-                <TableCell onClick={handleClickOpen} component="th" scope="row" style={tableColor(housekeeping.satellite_mode)}>
+                <TableCell width="15%" onClick={handleClickOpen} component="th" scope="row" style={tableColor(housekeeping.satellite_mode)}>
                   {housekeeping.last_beacon_time}
+                </TableCell>
+                <TableCell onClick={handleClickOpen} component="th" scope="row">
+                  {housekeeping.satellite_mode}
                 </TableCell>
                 </TableRow>
               </TableBody>

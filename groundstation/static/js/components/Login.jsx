@@ -12,6 +12,11 @@ const styles = {
     padding: '20px',
     textAlign: "center"
   },
+  buttonDivCenter: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
 };
 
 class Login extends Component {
@@ -42,13 +47,13 @@ class Login extends Component {
 
         event.preventDefault();
         let data = {username:this.state.username, password:this.state.password};
-        
+
         // console.log(data)
         let method = 'POST';
-        let options = { method: method, 
+        let options = { method: method,
                         headers: {
                             'Content-Type': 'application/json'
-                        }, 
+                        },
                         body: JSON.stringify(data)};
         fetch('/api/auth/login', options)
             .then(results => {
@@ -57,13 +62,13 @@ class Login extends Component {
                 console.log(response);
                 if (response['status'] == 'success'){
                     this.setState({auth_token:response['auth_token']});
-                
+
                     localStorage.setItem('username', this.state.username);
                     localStorage.setItem('auth_token', this.state.auth_token);
 
                     // console.log(localStorage.getItem('username'));
                     // console.log(localStorage.getItem('auth_token'));
-                     
+
                      this.setState({redirect:true});
                 }
                 else {
@@ -139,11 +144,11 @@ class Login extends Component {
                             />
                         </div>
                         <div>
-                            {this.handleRedirect()}  
+                            {this.handleRedirect()}
                         </div>
-                        <div>
+                        <div className={classes.buttonDivCenter}>
                             <Button
-                                style={{color: "#118851", marginTop: "10px"}} 
+                                style={{color: "#118851", marginTop: "10px"}}
                                 onClick={ () => this.handleLogin()}
                                 variant="contained"
                             >

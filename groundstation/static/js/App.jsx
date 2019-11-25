@@ -13,7 +13,7 @@ const styles = {
     "&:hover": {
         color: "#55c4d3"
       }
-  } 
+  }
 }
 
 function isAuthenticated(){
@@ -30,29 +30,29 @@ function App(props) {
                         <Toolbar>
                             <Typography variant="h6">
                               <a className="link-items" href="/">
-                                <img 
-                                  src='https://albertasat.ca/wp-content/uploads/sites/43/2019/06/FINALLOGO_RGB_White.png' 
+                                <img
+                                  src='https://albertasat.ca/wp-content/uploads/sites/43/2019/06/FINALLOGO_RGB_White.png'
                                   style={{maxWidth: '55px'}}
                                 />
                               </a>
-                              <a className="indent">AlbertaSat</a>
+                              <a className="indent" href="/">AlbertaSat</a>
                             </Typography>
                             <Typography className="menu-links" style={{display: 'inline-flex', alignItems: 'center'}}>
                                 { isAuthenticated() &&
-                                <a 
+                                <a
                                   className={`link-items hvr-underline-from-center ${classes.navbarLinks}` }
                                   href="/livecommands" >
                                     Live Commands
                                   </a>
                                 }
-                                <a 
-                                  className={`link-items hvr-underline-from-center ${classes.navbarLinks}`} 
+                                <a
+                                  className={`link-items hvr-underline-from-center ${classes.navbarLinks}`}
                                   href="/housekeeping">
                                   Housekeeping
                                 </a>
                                 { isAuthenticated() &&
-                                  <a 
-                                    className={`link-items hvr-underline-from-center ${classes.navbarLinks}`} 
+                                  <a
+                                    className={`link-items hvr-underline-from-center ${classes.navbarLinks}`}
                                     href="/flightschedule">
                                     Flight Schedule
                                   </a>
