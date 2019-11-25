@@ -17,7 +17,8 @@ class FlightSchedule extends Component{
 			thisIndex: null,
 			availCommands: [],
   			patchCommands: [],
-  			thisFlightScheduleStatus: 2
+  			thisFlightScheduleStatus: 2,
+  			thisExecutionTime: null,
 		}
 		this.handleAddFlightOpenClick = this.handleAddFlightOpenClick.bind(this);
 		this.handleDeleteFlightOpenClick = this.handleDeleteFlightOpenClick.bind(this);
@@ -30,6 +31,7 @@ class FlightSchedule extends Component{
 		this.handleDeleteCommandClick = this.handleDeleteCommandClick.bind(this);
 		this.handleChangeArgument = this.handleChangeArgument.bind(this);
 		this.handleQueueClick = this.handleQueueClick.bind(this);
+		this.handleExecutionTimeChange = this.handleExecutionTimeChange.bind(this);
 	}
 
 	componentDidMount(){
@@ -59,6 +61,7 @@ class FlightSchedule extends Component{
 						thisIndex: null,
 						thisFlightscheduleCommands: [{'command': {'command_id': ''}, 'timestamp': null, 'args': []}],
 						thisFlightScheduleStatus: 2,
+						thisExecutionTime: null,
 					});
 	};
 
@@ -96,7 +99,7 @@ class FlightSchedule extends Component{
 				this.setState({deleteFlightOpen: false,
 								thisIndex: null,
 								thisFlightscheduleId: null,
-								allflightschedules: obj})
+								allflightschedules: obj,})
 
 			}
 		})
@@ -106,7 +109,10 @@ class FlightSchedule extends Component{
 	addFlightschedule(event){
 		event.preventDefault();
 		// dependent on what state we are in, the url or method changes
-		let data = {status: this.state.thisFlightScheduleStatus, commands: this.state.thisFlightscheduleCommands}
+		let data = {status: this.state.thisFlightScheduleStatus, 
+					execution_time: this.state.thisExecutionTime,
+					commands: this.state.thisFlightscheduleCommands}
+
 		let url = (this.state.editFlight)? 
 			'/api/flightschedules/' +  this.state.thisFlightscheduleId : 
 			'/api/flightschedules'
@@ -140,6 +146,7 @@ class FlightSchedule extends Component{
 					thisIndex: null,
 					thisFlightscheduleId: null,
 					thisFlightScheduleStatus: 2,
+					thisExecutionTime: null,
 				})
 			}else{
 				if(data.message == 'A Queued flight schedule already exists!'){
@@ -152,10 +159,14 @@ class FlightSchedule extends Component{
 
 	// handle any changes in our form fields
 	handleAddEvent(event, type, idx){
-		console.log('event', event)
 		const obj = this.state.thisFlightscheduleCommands.slice();
-		if(type=='date'){
-			obj[idx].timestamp = event.toISOString(); 
+		if(type == 'date'){
+			// when the time delta offset is changed, add the number of seconds
+			// to the execution time for the command timestamp
+			let thisTime = this.state.thisExecutionTime;
+			let offsetSeconds = parseInt(event.target.value) * 1000;
+			thisTime = new Date(thisTime.getTime() + offsetSeconds);
+			obj[idx].timestamp = thisTime.toISOString(); 
 		}else{
 			obj[idx].command.command_id = event.value;
 			obj[idx].command.command_name = event.label;
@@ -174,6 +185,32 @@ class FlightSchedule extends Component{
 		// patched to the database
 		this.setState({thisFlightscheduleCommands: obj})
 		console.log(this.state.thisFlightscheduleCommands);
+	}
+
+	handleExecutionTimeChange(event){
+		let thisExecutionTime = event._d;
+		console.log(thisExecutionTime);
+		const obj = this.state.thisFlightscheduleCommands.slice();
+		// handle changing all flight schedule command timestamps if the execution 
+		// time is changed, that is all flightschedule timestamps should reflect
+		// the current execution time plus the offset
+
+		// handle when execution time is null, ie we are creating a new flightschedule
+		if(this.state.thisExecutionTime != null){
+			let adjustedCommands = obj.map(command => {
+				let oldTime = Date.parse(command.timestamp);
+				let oldExecTime = this.state.thisExecutionTime;
+				let origOffset = oldTime - oldExecTime.getTime();
+				let newTimestamp = new Date(thisExecutionTime.getTime() + origOffset)
+
+				command.timestamp = newTimestamp.toISOString();
+				if(this.state.editFlight){
+					command.op = 'replace';
+				}	
+			})
+		}
+		this.setState({thisExecutionTime: thisExecutionTime, thisFlightscheduleCommands: obj})
+
 	}
 
 	// handle changing/adding arguments
@@ -220,6 +257,7 @@ class FlightSchedule extends Component{
 		// if the flightschedule is queued, we set the state
 		// so the button can show the correct value
 		let status = this.state.allflightschedules[idx].status;
+		let executionTime = this.state.allflightschedules[idx].execution_time;
 		const obj = this.state.allflightschedules[idx].commands.map((command) => (
 			{...command, op: 'none'}
 		))
@@ -228,7 +266,8 @@ class FlightSchedule extends Component{
 						editFlight: true,
 						thisFlightscheduleId: id,
 						thisIndex: idx,
-						thisFlightScheduleStatus: status
+						thisFlightScheduleStatus: status,
+						thisExecutionTime: new Date(Date.parse(executionTime)),
 						});
 	}
 
@@ -262,7 +301,9 @@ class FlightSchedule extends Component{
     			handleDeleteCommandClick={this.handleDeleteCommandClick}
     			handleChangeArgument={this.handleChangeArgument}
     			status={this.state.thisFlightScheduleStatus}
+    			executionTime={this.state.thisExecutionTime}
     			handleQueueClick={this.handleQueueClick}
+    			handleExecutionTimeChange={this.handleExecutionTimeChange}
     		  />
     		  <DeleteFlightschedule
     		    open={this.state.deleteFlightOpen}

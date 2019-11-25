@@ -70,7 +70,6 @@ class Countdown extends Component{
 		}
 
         let new_value = this.state.operationIsAdd ? utcToday - this.state.nextPassover : this.state.nextPassover - utcToday;
-        console.log(new_value)
 
 		let hour = Math.floor((new_value / (1000 * 60 * 60)) % 24);
 		let minute = Math.floor((new_value / (1000 * 60)) % 60);

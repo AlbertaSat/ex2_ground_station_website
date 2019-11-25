@@ -12,7 +12,9 @@ import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
-import DateFnsUtils from '@date-io/date-fns';
+import moment from "moment";
+import 'moment-timezone';
+import MomentUtils from '@date-io/moment';
 import {
   DateTimePicker,
   MuiPickersUtilsProvider
@@ -21,6 +23,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
 import Typography from '@material-ui/core/Typography';
 import Select, { components } from 'react-select';
+import Grid from '@material-ui/core/Grid';
 	
 const AddFlightschedule = (props) =>{
   	const selects = props.availCommands.map((command) => (
@@ -40,6 +43,18 @@ const AddFlightschedule = (props) =>{
 
 	const classes = useStyles();
 
+	function convertTimestamp(timestamp, executionTime){
+		console.log(timestamp, executionTime);
+		if(timestamp == null || executionTime == null){
+			return null
+		}else{
+			console.log(Date.parse(timestamp) - executionTime.getTime());
+			return (Date.parse(timestamp) - executionTime.getTime()) / 1000;
+		}
+	}
+
+	moment.tz.setDefault("UTC")
+
 	return (
 		<div>
 		  <Dialog 
@@ -53,20 +68,27 @@ const AddFlightschedule = (props) =>{
 		      <DialogContentText>
 		        To add commands to this flight schedule, enter the command name followed by the timestamp.
 		      </DialogContentText>
-		      <Button style={{color: '#3f51b5', paddingLeft: '16px', paddingRight: '16px'}}
-		      		onClick={ (event) => props.handleQueueClick(event) }
-		      	>
-                	{(props.status == 1)? 'Dequeue' : 'Queue' }
-              </Button>
-              <form>
-				  <MuiPickersUtilsProvider utils={DateFnsUtils}>
-				      <DateTimePicker 
-				          label="Execution Time"
-				          inputVariant="outlined"
-				          onChange={(event) => props.handleAddEvent(event, 'date', idx)}
-				      />
-				  </MuiPickersUtilsProvider>
-			  </form>
+		      <Grid container spacing={2}>
+		      	<Grid item xs={5}>
+	              <form>
+					  <MuiPickersUtilsProvider moment={moment} utils={MomentUtils}>
+					      <DateTimePicker 
+					          label="Execution Time"
+					          inputVariant="outlined"
+					          value={props.executionTime}
+					          onChange={(event) => props.handleExecutionTimeChange(event)}
+					      />
+					  </MuiPickersUtilsProvider>
+				  </form>
+				</Grid>
+        		<Grid item xs={7}>
+			      <Button style={{color: '#3f51b5', fontSize: '1rem'}}
+			      		onClick={ (event) => props.handleQueueClick(event) }
+			      	>
+	                	{(props.status == 1)? 'Dequeue' : 'Queue' }
+	              </Button>
+	            </Grid>
+			  </Grid>
 		      <Table aria-label="simple table">
 		        {
 		          props.thisFlightschedule.map((flighschedule, idx) => (
@@ -75,7 +97,9 @@ const AddFlightschedule = (props) =>{
 		            flighschedule.op != 'remove' &&
   					  <TableBody>
             			<TableRow>
-              				<TableCell className={(flighschedule.args.length > 0)? classes.argBottom : null }>
+              				<TableCell className={(flighschedule.args.length > 0)? classes.argBottom : null }
+              							style={{minWidth: '20em'}}
+              				>
               				  <form>
               					<Select 
               						className="basic-single"
@@ -98,14 +122,14 @@ const AddFlightschedule = (props) =>{
 			                </TableCell>
 			                <TableCell className={(flighschedule.args.length > 0)? classes.argBottom : null}>
 			                  <form>
-				                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
-				                    <DateTimePicker 
-				                      label="Timestamp"
-				                      inputVariant="outlined"
-				                      value={props.thisFlightschedule[idx].timestamp}
-				                      onChange={(event) => props.handleAddEvent(event, 'date', idx)}
-				                    />
-				                  </MuiPickersUtilsProvider>
+			                  	<TextField
+						          id="outlined-basic"
+						          label="Delta Time"
+						          variant="outlined"
+						          type="number"
+						          defaultValue={convertTimestamp(flighschedule.timestamp, props.executionTime)}
+						          onChange={(event) => props.handleAddEvent(event, 'date', idx)}
+						        />
 			                  </form>
 			                </TableCell>
 			                <TableCell className={(flighschedule.args.length > 0)? classes.argBottom : null }>
