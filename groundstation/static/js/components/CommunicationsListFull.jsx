@@ -1,4 +1,5 @@
 import React, { useEffect, createRef } from 'react'
+import {formatDateToUTCString} from '../helpers.js'
 
 
 const CommunicationEntry = (props) => {
@@ -14,7 +15,7 @@ const CommunicationEntry = (props) => {
     const sender = props.entry.sender;
 
     let infoStringPrefix;
-    let infoStringTimestamp;
+    let infoTimestamp;
     if (sender === 'comm') {
         divStyle.backgroundColor = '#e3e3e3';
         messageStyle.color = '#007b40';
@@ -26,11 +27,12 @@ const CommunicationEntry = (props) => {
     }
 
     // this is pre janky but its the way it is
-    infoStringTimestamp = props.entry.timestamp;
-    if (infoStringTimestamp[infoStringTimestamp.length - 1] !== 'Z') {
-        infoStringTimestamp = infoStringTimestamp + 'Z';
+    infoTimestamp = props.entry.timestamp;
+    if (infoTimestamp[infoTimestamp.length - 1] !== 'Z') {
+        infoTimestamp = infoTimestamp + 'Z';
     }
-    infoStringTimestamp = new Date(infoStringTimestamp).toString();
+    infoTimestamp = new Date(infoTimestamp);
+    let infoStringTimestamp = formatDateToUTCString(infoTimestamp);
     return (
         <div style={divStyle}>
             <div>
