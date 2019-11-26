@@ -48,7 +48,9 @@ class User(db.Model):
     @staticmethod
     def decode_auth_token(auth_token):
         """Decodes the auth token
+
         :param auth_token: The authorization token
+        
         :returns: user_id (int)
         """
         payload = jwt.decode(auth_token, current_app.config.get('SECRET_KEY'))
