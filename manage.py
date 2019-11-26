@@ -99,7 +99,7 @@ def seed_db():
     now = datetime.utcnow()
     add_passover(timestamp=now - timedelta(seconds=10))
     for i in range(1, 20):
-        p = add_passover(timestamp=now + timedelta(minutes=i*2))
+        p = add_passover(timestamp=now + timedelta(minutes=i*5))
 
 
 
