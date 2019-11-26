@@ -68,7 +68,7 @@ class Home extends Component {
       }if(res2.status == 'success'){
         this.setState({passovers: res2.data.next_passovers, 'isLoading': false, mostRecentPass: res2.data.most_recent_passover})
         console.log(res2.data.next_passovers.length)
-        if (res2.data.next_passovers.length > 0) {
+        if (res2.data.next_passovers.length > 0 && res2.data.most_recent_passover !== null) {
           this.setState({emptypassover: false})
           this.timer = setInterval(
             () => this.updatePassoverProgressBars(),
