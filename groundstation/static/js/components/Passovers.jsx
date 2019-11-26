@@ -38,7 +38,7 @@ const Passovers = (props) => {
   if (props.empty && !props.isLoading) {
     return (
       <div>
-        <ErrorOutlineIcon /> There is currently no housekeeping data!
+        <ErrorOutlineIcon /> There is currently no upcoming passovers!
       </div>
     )
   }
