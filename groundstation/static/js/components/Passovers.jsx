@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
 function calculateProgessBar(startTime, currentTime, endTime) {
     let maxDifference = endTime - startTime;
     let progress = currentTime - startTime;
-    let progressPercent = (progress / maxDifference) * 100;
+    let progressPercent = Math.min((progress / maxDifference) * 100, 100);
     console.log(progressPercent)
     return progressPercent.toString();
 }
