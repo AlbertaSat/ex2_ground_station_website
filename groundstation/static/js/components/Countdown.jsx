@@ -175,7 +175,7 @@ class Countdown extends Component{
             )
         }
 		return (
-			<span style={{marginLeft: '3em', display: 'inherit'}}>
+			<span style={{marginLeft: '1.5em', display: 'inherit'}}>
 				<span style={{marginRight: '0.5em', color:this.state.color}}>
 					<SatelliteIcon style={{fontSize: '1.85em'}}/>
 				</span>
