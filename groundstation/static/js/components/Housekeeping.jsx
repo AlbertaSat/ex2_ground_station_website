@@ -16,6 +16,7 @@ import ClearIcon from '@material-ui/icons/Clear';
 
 class HouseKeeping extends Component {
   constructor() {
+    moment.tz.setDefault("UTC");
     super();
     this.state = {
       startDate: null,
@@ -25,7 +26,7 @@ class HouseKeeping extends Component {
       open: false,
       empty: true,
       isLoading: true,
-      housekeeping: {
+      housekeeping: [{
             id: null,
             satelliteMode: null,
             batteryVoltage: null,
@@ -34,7 +35,7 @@ class HouseKeeping extends Component {
             lastBeaconTime: null,
             noMCUResets: null,
             channels: []
-      },
+      }],
       flightschedule: []
     };
   }
@@ -147,13 +148,15 @@ class HouseKeeping extends Component {
                     </form>
                   </Grid>
                   <Grid item sm={2}>
-                    <Fab ref="filter-button" onClick={() => { this.handleFilter() }} variant="extended" style={{ height: '40px', marginBottom: '20px', backgroundColor: '#55c4d3' }}>
+                    <Fab ref="filter-button" onClick={() => { this.handleFilter() }} variant="extended" 
+                      style={{ fontSize: '0.75rem', height: '40px', marginBottom: '20px', backgroundColor: '#55c4d3' }}>
                       <FilterListIcon />
                       Filter
                     </Fab>
                   </Grid>
                   <Grid item xs={2}>
-                    <Fab onClick={() => { this.handleClearFilter() }} variant="extended" style={{ height: '40px', marginBottom: '20px', backgroundColor: '#55c4d3' }}>
+                    <Fab onClick={() => { this.handleClearFilter() }} variant="extended" 
+                      style={{ fontSize: '0.75rem', height: '40px', marginBottom: '20px', backgroundColor: '#55c4d3' }}>
                       <ClearIcon />
                       Clear
                     </Fab>
