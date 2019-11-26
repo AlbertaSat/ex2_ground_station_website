@@ -39,15 +39,22 @@ class Home extends Component {
         lastBeaconTime: null,
         noMCUResets: null
       }],
+      ticker:0,
       passovers: []
     };
+    this.updatePassoverProgressBars = this.updatePassoverProgressBars.bind(this);
+  }
+
+  updatePassoverProgressBars() {
+      // this is just to trigger the state change and re render lol, probably a better way to do it
+      this.setState(prevState => ({ticker: prevState.ticker + 1}));
   }
 
   componentDidMount() {
     // console.log(localStorage.getItem('auth_token'))
     Promise.all([
       fetch('/api/housekeepinglog?limit=5'),
-      fetch('/api/passovers?next=true&limit=10',
+      fetch('/api/passovers?next=true&most-recent=true&limit=10',
       {headers: {'Authorization':'Bearer '+ localStorage.getItem('auth_token')}}
     )]).then(([res1, res2]) => {
       return Promise.all([res1.json(), res2.json()])
@@ -59,10 +66,14 @@ class Home extends Component {
           this.setState({emptyhk: false})
         }
       }if(res2.status == 'success'){
-        this.setState({passovers: res2.data.next_passovers, 'isLoading': false})
+        this.setState({passovers: res2.data.next_passovers, 'isLoading': false, mostRecentPass: res2.data.most_recent_passover})
         console.log(res2.data.next_passovers.length)
         if (res2.data.next_passovers.length > 0) {
           this.setState({emptypassover: false})
+          this.timer = setInterval(
+            () => this.updatePassoverProgressBars(),
+            10000
+          );
         }
       }
     });
@@ -96,7 +107,7 @@ class Home extends Component {
           <Grid item sm={4}>
             <Paper className="grid-containers">
               <Typography variant="h5" displayInline style={{padding: '10px'}}>Upcoming Passovers</Typography>
-              <Passovers isLoading={this.state.isLoading} passovers={this.state.passovers} empty={this.state.emptypassover}/>
+              <Passovers isLoading={this.state.isLoading} passovers={this.state.passovers} empty={this.state.emptypassover} mostRecentPass={this.state.mostRecentPass}/>
             </Paper>
           </Grid>
         </Grid>

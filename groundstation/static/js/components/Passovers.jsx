@@ -9,6 +9,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import {formatDateToUTCString} from '../helpers.js'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -25,6 +26,43 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(2),
   },
 }));
+
+// export default function LinearDeterminate() {
+//   const classes = useStyles();
+//   const [completed, setCompleted] = React.useState(0);
+//
+//   React.useEffect(() => {
+//     function progress() {
+//       setCompleted(oldCompleted => {
+//         if (oldCompleted === 100) {
+//           return 0;
+//         }
+//         const diff = Math.random() * 10;
+//         return Math.min(oldCompleted + diff, 100);
+//       });
+//     }
+//
+//     const timer = setInterval(progress, 500);
+//     return () => {
+//       clearInterval(timer);
+//     };
+//   }, []);
+//
+//   return (
+//     <div className={classes.root}>
+//       <LinearProgress variant="determinate" value={completed} />
+//       <LinearProgress variant="determinate" value={completed} color="secondary" />
+//     </div>
+//   );
+// }
+
+function calculateProgessBar(startTime, currentTime, endTime) {
+    let maxDifference = endTime - startTime;
+    let progress = currentTime - startTime;
+    let progressPercent = (progress / maxDifference) * 100;
+    console.log(progressPercent)
+    return progressPercent.toString();
+}
 
 const Passovers = (props) => {
 	if (props.isLoading) {
@@ -52,10 +90,15 @@ const Passovers = (props) => {
 	  	   <Table aria-label="simple table">
 		  	  <TableBody>
 		        <TableRow key={passover.id}>
-		           <TableCell width="15%" component="th" scope="row">
-		              {passover.timestamp.split('.')[0]}
-		           </TableCell>
-		        </TableRow>
+                    <div>
+    		           <TableCell width="15%" component="th" scope="row">
+    		              {formatDateToUTCString(new Date(passover.timestamp + 'Z'))}
+    		           </TableCell>
+                   </div>
+                   <div>
+                       <LinearProgress color="secondary" variant="determinate" value={calculateProgessBar(new Date(props.mostRecentPass.timestamp + 'Z'), new Date(), new Date(passover.timestamp + 'Z'))} />
+                   </div>
+               </TableRow>
 		      </TableBody>
 	       </Table>
     	))}
