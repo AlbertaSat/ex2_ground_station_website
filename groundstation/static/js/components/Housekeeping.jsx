@@ -26,13 +26,14 @@ class HouseKeeping extends Component {
       empty: true,
       isLoading: true,
       housekeeping: {
-        id: null,
-        satelliteMode: null,
-        batteryVoltage: null,
-        currentIn: null,
-        currentOut: null,
-        lastBeaconTime: null,
-        noMCUResets: null
+            id: null,
+            satelliteMode: null,
+            batteryVoltage: null,
+            currentIn: null,
+            currentOut: null,
+            lastBeaconTime: null,
+            noMCUResets: null,
+            channels: []
       },
       flightschedule: []
     };

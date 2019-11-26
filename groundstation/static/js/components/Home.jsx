@@ -30,7 +30,7 @@ class Home extends Component {
       emptyhk: true,
       emptyfs: true,
       isLoading: true,
-      housekeeping: {
+      housekeeping: [{
         id: null,
         satelliteMode: null,
         batteryVoltage: null,
@@ -38,7 +38,7 @@ class Home extends Component {
         currentOut: null,
         lastBeaconTime: null,
         noMCUResets: null
-      },
+      }],
       flightschedule: []
     };
   }
