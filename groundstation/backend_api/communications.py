@@ -16,8 +16,13 @@ class Communication(Resource):
 
     @create_context
     def get(self, message_id):
-        #given some id, fetch a message from the communications table
+        """Endpoint for getting a specific message
 
+        :param int message_id: The message id
+
+        :returns: response_object, status_code
+        :rtype: tuple (dict, int)
+        """
         response_object = {
             'status': 'fail',
             'message': 'message does not exist'
@@ -39,14 +44,13 @@ class Communication(Resource):
 class CommunicationList(Resource):
     @create_context
     def post(self, local_data=None):
+        """Endpoint for posting a new message to communications table
 
-        #JSON object expected
-        # dict {
-        # command : string of the form "COMMAND_NAME ARG1 ARG2 ... ARGN"
-        # sender : string
-        # receiver : string
-        # }
+        :param json_string local_data: This should be used in place of the POST body that would be used through HTTP, used for local calls.
 
+        :returns: response_object, status_code
+        :rtype: tuple (dict, int)
+        """
         response_object = {
             'status': 'fail',
             'message': 'Invalid payload'
@@ -85,9 +89,13 @@ class CommunicationList(Resource):
 
     @create_context
     def get(self, local_data=None):
+        """Endpoint for getting messages
 
-        # handle if this get is a local call or not
-        # local_data will be a dictionary
+        :param dict local_data: This should be used in place of the QUERY PARAMS that would be used through HTTP, used for local calls.
+
+        :returns: response_object, status_code
+        :rtype: tuple (dict, int)
+        """
         if not local_data:
             request_args_dict = request.args.to_dict()
             newest_first = request_args_dict.pop('newest-first', None)

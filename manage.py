@@ -1,3 +1,16 @@
+""" The Manage Module is how you can run the flask application through the command line,
+it also you to define your own command line functions that can be called as::
+
+    python3 manage.py <command_line_command>
+
+As is you can also run tests by specifying the module path like so::
+
+    python3 manage.py test test_api.TestHousekeepingService
+
+or::
+
+    python3 manage.py test test_api.TestHousekeepingService.test_get_housekeeping
+"""
 import sys
 import unittest
 from datetime import datetime, timedelta

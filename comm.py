@@ -1,5 +1,5 @@
-# The Communications Module. Responsible for sending and retrieving data with the satellite.
-# (or the simulator)
+"""The Communications Module is responsible for sending and retrieving data with the satellite (or the simulator).
+"""
 import satellite_simulator.antenna as antenna
 from groundstation.backend_api.communications import CommunicationList
 from groundstation.backend_api.flightschedule import FlightScheduleList, Flightschedule
@@ -11,9 +11,13 @@ import signal
 communication_list = CommunicationList()
 
 def send(socket, data):
-    """ Pipes the incoming data (probably a Command tuple) to the socket (probably the Simulator)
-        - socket (something that implements .send(data) interface):
-        - data (str) : Message string
+    """Pipes the incoming data (probably a Command tuple) to the socket (probably the Simulator)
+
+    :param int socket: The socket for sending data into
+    :param str data: the data to send
+
+    :returns: response from the socket
+    :rtype: str
     """
     return socket.send(data)
 
@@ -63,6 +67,14 @@ gs_commands = {
 
 # handle message in communication table
 def handle_message(message):
+    """Messages sent to comm will pass through this function, essentially acting as a decorator.
+    You can implement message-interpreting and message-triggered functionality here.
+
+    :param str message: The incoming message to comm
+
+    :returns: Return is dependent on the handler function triggered
+    :rtype: Optional
+    """
     handle = gs_commands.get(message)
     if handle:
         return handle()
@@ -73,6 +85,9 @@ def handle_message(message):
 
 
 def communication_loop():
+    """Main communication loop which polls for messages addressed to comm (i.e. messages it needs to send to satellite)
+    """
+
     request_data = {'last_id': 0, 'receiver': 'comm'}
     # get the id of the last entry in the communication list
     # so we dont send anything before that

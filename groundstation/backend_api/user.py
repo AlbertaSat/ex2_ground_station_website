@@ -17,6 +17,14 @@ class UserEntity(Resource):
 
     @create_context
     def get(self, user_id, local_args=None):
+        """Endpoint for getting a user
+
+        :param int user_id: The id of the user to get
+        :param dict local_args: This should be used in place of the QUERY PARAMS that would be used through HTTP, used for local calls.
+
+        :returns: response_object, status_code
+        :rtype: tuple (dict, int)
+        """
         user = User.query.filter_by(id=user_id).first()
         response_object = {
             'status':None,
@@ -44,6 +52,17 @@ class UserList(Resource):
     @create_context
     @login_required
     def post(self, local_data=None):
+        """Endpoint for creating a new user. WARNING: This currently should not
+        be used for local calls, since it references flasks g.user which will
+        only be set to a valid user when requests are made over http, refer to login_required decorator in
+        groundstation.backend_api.utils. If you want to make a new user, its probably best to just make a new User object
+        and save it in a shell.
+
+        :param json_string local_data: This should be used in place of the POST body that would be used through HTTP, used for local calls.
+
+        :returns: response_object, status_code
+        :rtype: tuple (dict, int)
+        """
         if not g.user.is_admin:
             response_object = {
                 'status':'fail',

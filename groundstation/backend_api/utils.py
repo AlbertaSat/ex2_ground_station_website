@@ -11,10 +11,13 @@ from groundstation.backend_api.models import Communications, Housekeeping
 import dateutil.parser
 
 
-# a decorator to handle cases where backend api calls have no app context
-# namely for when locally using the api, db session must be initiated
-# in order to access models and database operation
 def create_context(function):
+    """A decorator to handle cases where backend api calls have no app context,
+    namely for when locally using the api, db session must be initiated
+    in order to access models and database operation. This is required because flask
+    requires an 'application context' to exist in order to work.
+    """
+    @wraps(function)
     def decorate(*args, **kwargs):
         if not has_app_context():
             app = create_app()
@@ -28,19 +31,25 @@ def create_context(function):
     return decorate
 
 def add_telecommand(command_name, num_arguments, is_dangerous):
-        command = Telecommands(command_name=command_name, num_arguments=num_arguments, is_dangerous=is_dangerous)
+    """Add a new telecommand to the database
+    """
+    command = Telecommands(command_name=command_name, num_arguments=num_arguments, is_dangerous=is_dangerous)
 
-        db.session.add(command)
-        db.session.commit()
-        return command
+    db.session.add(command)
+    db.session.commit()
+    return command
 
 def add_flight_schedule(creation_date, upload_date, status):
+    """Add a new flight schedule to the database
+    """
     flightschedule = FlightSchedules(creation_date=creation_date, upload_date=upload_date, status=status)
     db.session.add(flightschedule)
     db.session.commit()
     return flightschedule
 
 def add_command_to_flightschedule(timestamp, flightschedule_id, command_id):
+    """Add a new command to a pre-existing flight schedule
+    """
     flightschedule_commands = FlightScheduleCommands(
                                 timestamp=timestamp,
                                 flightschedule_id=flightschedule_id,
@@ -51,21 +60,19 @@ def add_command_to_flightschedule(timestamp, flightschedule_id, command_id):
     return flightschedule_commands
 
 def add_user(username, password, is_admin=False):
+    """Add a new user to the database
+    """
     user = User(username=username, password=password, is_admin=is_admin)
     db.session.add(user)
     db.session.commit()
     return user
 
 def login_required(f):
+    """This is a wrapper which can be used to protect endpoints behind authentication
+    """
     @wraps(f)
     def decorated_function(*args, **kwargs):
         """Handles authentication logic before calling the wrapped function
-        # TODO: ideally if we ever 'reach' the wrapped function then that means the
-            user was successfully authenticated, meaning the user is an authentic user,
-            so g.user should point to a valid user, however there are two paths where this isnt the case:
-                - the first if was needed so we could bypass auth for testing, but now we dont have a valid user...
-                - the second if was needed so we can make local calls to the api
-                    - ideally local calls would still use an authenticated user somehow, but for now we just skip it
         """
 
         if current_app.config.get('BYPASS_AUTH'):
@@ -115,6 +122,8 @@ def login_required(f):
     return decorated_function
 
 def add_arg_to_flightschedulecommand(index, argument, flightschedule_command_id):
+    """Add a new argument to a pre-existing flightschedule command
+    """
     flightschedule_command_arg = FlightScheduleCommandsArgs(
                                     index=index,
                                     argument=argument,
@@ -126,17 +135,21 @@ def add_arg_to_flightschedulecommand(index, argument, flightschedule_command_id)
     return flightschedule_command_arg
 
 def add_message_to_communications(timestamp, message, receiver, sender):
-        message = Communications(
-                            timestamp=timestamp,
-                            message=message,
-                            receiver=receiver,
-                            sender=sender)
+    """Add a new message to the communications table
+    """
+    message = Communications(
+                        timestamp=timestamp,
+                        message=message,
+                        receiver=receiver,
+                        sender=sender)
 
-        db.session.add(message)
-        db.session.commit()
-        return message
+    db.session.add(message)
+    db.session.commit()
+    return message
 
 def add_passover(timestamp):
+    """Add a new passover to the database
+    """
     passover = Passover(timestamp=timestamp)
     db.session.add(passover)
     db.session.commit()
@@ -144,7 +157,12 @@ def add_passover(timestamp):
 
 
 def dynamic_filters_communications(filters):
-    """Build a filter from query paramaters
+    """Build a filter dynamically for communications table from query paramaters
+
+    :param dict filters: Dictionary of arg-value pairs
+
+    :returns: a list of filters which can be passed into SQL alchemy filter queries.
+    :rtype: list
     """
     filter_ops = []
 
@@ -168,7 +186,14 @@ def dynamic_filters_communications(filters):
 
 
 def dynamic_filters_housekeeping(filters, ignore_keys=[]):
-    """build a filter from query paramaters, filters param will be a werkzeug.datastructures.MultiDict
+    """Build a filter dynamically for housekeeping from query paramaters.
+
+    :param werkzeug.datastructures.MultiDict filters: Dictionary of key-value pairs, using a multi dict allows
+        users to have filters which overload the keys, ex.) if you want a filter like: ?current_in>5&current_in<10
+    :param list ignore_keys: Optional list, any keys in this list will not be used when building the filter
+
+    :returns: a list of filters which can be passed into SQL alchemy filter queries.
+    :rtype: list
     """
     filter_ops = []
     # NOTE: cant search channels rn, maybe do later but also not a big concern

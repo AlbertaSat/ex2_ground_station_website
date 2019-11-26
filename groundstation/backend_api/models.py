@@ -134,7 +134,8 @@ class PowerChannels(db.Model):
     # Might also need a 'Nominal' column? According to ASAT Common Commands doc.
 
     def to_json(self):
-
+        """Returns a dictionary of some selected model attributes
+        """
         return {
             'id': self.id,
             'hk_id': self.hk_id,
