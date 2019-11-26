@@ -42,7 +42,7 @@ def test(path=None):
 def seed_db():
     timestamp = datetime.fromtimestamp(1570749472)
     housekeepingData = fakeHousekeepingAsDict(timestamp)
-    for i in range(100):
+    for i in range(5):
         housekeeping = Housekeeping(**housekeepingData)
 
         for i in range(1, 25):
