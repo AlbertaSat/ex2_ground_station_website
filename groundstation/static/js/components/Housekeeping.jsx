@@ -122,7 +122,6 @@ class HouseKeeping extends Component {
                       <MuiPickersUtilsProvider moment={moment} utils={MomentUtils}>
                         <DateTimePicker
                           label="Start Date"
-                          format="MMM d YYYY hh:mm a"
                           showTodayButton
                           onChange={(event) => { this.handleStartDateChange(event) }}
                           value={this.state.startDate}
@@ -137,7 +136,6 @@ class HouseKeeping extends Component {
                       <MuiPickersUtilsProvider moment={moment} utils={MomentUtils}>
                         <DateTimePicker
                           label="End Date"
-                          format="MMM d YYYY hh:mm a"
                           showTodayButton
                           onChange={(event) => { this.handleEndDateChange(event) }}
                           value={this.state.endDate}
