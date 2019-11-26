@@ -101,7 +101,6 @@ class HousekeepingLogListFull extends Component {
     this.handleClose = this.handleClose.bind(this)
 	}
   componentDidMount() {
-    console.log(this.props);
     if (this.props.isLoading) {
       return (
         <div>
@@ -119,7 +118,6 @@ class HousekeepingLogListFull extends Component {
   }
 
   handleOpenClick(housekeeping) {
-    console.log(housekeeping)
     this.setState({
       open: !this.state.open,
       selectedHousekeeping: housekeeping
