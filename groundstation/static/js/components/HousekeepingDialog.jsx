@@ -51,8 +51,6 @@ const useStyles = makeStyles(theme => ({
   });
 const HousekeepingDialog = (props) => {
     const classes = useStyles();
-    console.log(props.housekeeping)
-    console.log(props.housekeeping.channels)
     return (
           /* Display a HK log in a full screen dialog */
             <Dialog fullScreen open={props.open} onClose={() => props.handleClose()} TransitionComponent={Transition}>
