@@ -72,7 +72,7 @@ class Countdown extends Component{
 			untilPassover: null,
             operationIsAdd:false,
             operatorChar:'-',
-            color:'red'
+            color:'#ffe21f'
 		}
 
 		this.updateCountdown = this.updateCountdown.bind(this);
@@ -143,12 +143,12 @@ class Countdown extends Component{
 
         if (timeDifferenceWithMostRecent <= this.state.passoverDuration*1000) {
             this.setState(
-                {operationIsAdd:true, operatorChar:'+', color:"green"},
+                {operationIsAdd:true, operatorChar:'+', color:"#2ecc40"},
                 this.drawCountdownAfterStateChange
             )
         } else if (timeDifferenceWithNext > 0) {
             this.setState(
-                {operationIsAdd:false, operatorChar:'-', color:"red"},
+                {operationIsAdd:false, operatorChar:'-', color:"#ffe21f"},
                 this.drawCountdownAfterStateChange,
             )
         } else if (timeDifferenceWithNext <= 0) {
@@ -157,7 +157,7 @@ class Countdown extends Component{
                 nextPassover:null,
                 operationIsAdd:true,
                 operatorChar:'+',
-                color:"green"
+                color:"#2ecc40"
             }), this.drawCountdownAfterStateChange);
             fetchPassovers(true, false).then(data => {
         		this.setState({
