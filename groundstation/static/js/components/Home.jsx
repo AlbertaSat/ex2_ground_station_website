@@ -54,7 +54,7 @@ class Home extends Component {
     // console.log(localStorage.getItem('auth_token'))
     Promise.all([
       fetch('/api/housekeepinglog?limit=5'),
-      fetch('/api/passovers?next=true&most-recent=true&limit=10',
+      fetch('/api/passovers?next=true&most-recent=true&limit=5',
       {headers: {'Authorization':'Bearer '+ localStorage.getItem('auth_token')}}
     )]).then(([res1, res2]) => {
       return Promise.all([res1.json(), res2.json()])
