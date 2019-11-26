@@ -33,7 +33,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function isAuthenticated(){
-  // console.log(localStorage.getItem('username'));
   return !!localStorage.getItem('auth_token');
 }
 
