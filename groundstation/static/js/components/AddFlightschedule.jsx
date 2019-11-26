@@ -65,9 +65,10 @@ const AddFlightschedule = (props) =>{
 		    </DialogTitle>
 		    <DialogContent>
 		      <DialogContentText>
-		        To add commands to this flight schedule, enter the command name followed by the timestamp.
+		        To add commands to this flight schedule, enter the command name followed by the timestamp, 
+		        and the arguments if applicable.
 		      </DialogContentText>
-		      <Grid container spacing={2}>
+		      <Grid container spacing={2} style={{marginTop: '2em'}}>
 		      	<Grid item xs={5}>
 	              <form>
 					  <MuiPickersUtilsProvider moment={moment} utils={MomentUtils}>

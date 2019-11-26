@@ -25,10 +25,10 @@ def automate_passovers():
     passover = PassoverList()
 
     # the automation will also handle queuing passover times
-    passovers = passover.get(local_args={'limit': 1, 'next-only' : 'true'})
+    passovers = passover.get(local_args={'limit': 1, 'next' : 'true'})
 
     if passovers[1] == 200:
-        passover_data = passovers[0]['data']['passovers']
+        passover_data = passovers[0]['data']['next_passovers']
         for passover in passover_data:
             time_obj = datetime.strptime(passover['timestamp'], '%Y-%m-%d %H:%M:%S.%f')
             time_obj = time_obj.replace(tzinfo=timezone.utc).astimezone(tz=None)
