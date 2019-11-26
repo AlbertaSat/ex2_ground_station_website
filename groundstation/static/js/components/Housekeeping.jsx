@@ -9,15 +9,16 @@ class HouseKeeping extends Component {
         this.state = {
           empty: true,
           isLoading: true,
-          housekeeping: {
+          housekeeping: [{
             id: null,
             satelliteMode: null,
             batteryVoltage: null,
             currentIn: null,
             currentOut: null,
             lastBeaconTime: null,
-            noMCUResets: null
-          },
+            noMCUResets: null,
+            channels: []
+          }],
           flightschedule: []
         };
       }
