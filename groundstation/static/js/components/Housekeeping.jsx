@@ -41,7 +41,7 @@ class HouseKeeping extends Component {
   }
 
   componentDidMount() {
-    fetch('/api/housekeepinglog')
+    fetch('/api/housekeepinglog?newest-first=true')
       .then(results => {
         return results.json();
       }).then(data => {
@@ -70,7 +70,7 @@ class HouseKeeping extends Component {
     } else if (this.state.endDate == null) {
       this.setState({ endDateError: true })
     } else {
-      let queryString = "?last_beacon_time=ge-" + this.state.startDate + "&last_beacon_time=le-" + this.state.endDate
+      let queryString = "?last_beacon_time=ge-" + this.state.startDate + "&last_beacon_time=le-" + this.state.endDate + "&newest-first=true"
       fetch('/api/housekeepinglog' + queryString)
         .then(results => {
           return results.json();
@@ -91,7 +91,7 @@ class HouseKeeping extends Component {
     this.setState({ startDate: null, endDate: null })
     this.setState({ startDateError: false });
     this.setState({ endDateError: false });
-    fetch('/api/housekeepinglog')
+    fetch('/api/housekeepinglog?newest-first=true')
       .then(results => {
         return results.json();
       }).then(data => {
@@ -146,14 +146,14 @@ class HouseKeeping extends Component {
                     </form>
                   </Grid>
                   <Grid item sm={2}>
-                    <Fab ref="filter-button" onClick={() => { this.handleFilter() }} variant="extended" 
+                    <Fab ref="filter-button" onClick={() => { this.handleFilter() }} variant="extended"
                       style={{ fontSize: '0.75rem', height: '40px', marginBottom: '20px', backgroundColor: '#55c4d3' }}>
                       <FilterListIcon />
                       Filter
                     </Fab>
                   </Grid>
                   <Grid item xs={2}>
-                    <Fab onClick={() => { this.handleClearFilter() }} variant="extended" 
+                    <Fab onClick={() => { this.handleClearFilter() }} variant="extended"
                       style={{ fontSize: '0.75rem', height: '40px', marginBottom: '20px', backgroundColor: '#55c4d3' }}>
                       <ClearIcon />
                       Clear
