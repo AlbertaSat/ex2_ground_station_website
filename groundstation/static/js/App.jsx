@@ -122,9 +122,10 @@ function App() {
                                     Login
                                   </a>
                                 }
+                                <Countdown />
                                 {
                                   isAuthenticated() &&
-                                  <div>
+                                  <div style={{marginLeft: '3em'}}>
                                   <Button
                                     ref={anchorRef}
                                     aria-controls={open ? 'menu-list-grow' : undefined}
@@ -132,7 +133,7 @@ function App() {
                                     onClick={handleToggle}
                                   >
                                     <Avatar style={{backgroundColor: '#55c4d3'}}>
-                                    {username.charAt(0).toUpperCase()} 
+                                    {username.charAt(0).toUpperCase()}
                                     </Avatar>
                                   </Button>
                                   <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
@@ -145,7 +146,7 @@ function App() {
                                           <ClickAwayListener onClickAway={handleClose}>
                                             <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
                                               <MenuItem disabled>{username}</MenuItem>
-                                                <MenuItem onClick={handleClose}> 
+                                                <MenuItem onClick={handleClose}>
                                                   <a style={{color: 'rgb(40, 50, 76)'}}href="/logout">Logout</a>
                                                 </MenuItem>
                                             </MenuList>
@@ -156,7 +157,6 @@ function App() {
                                   </Popper>
                                 </div>
                                 }
-                              <Countdown />
                             </Typography>
                         </Toolbar>
                     </AppBar>
