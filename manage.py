@@ -41,16 +41,19 @@ def test(path=None):
 @cli.command('seed_db')
 def seed_db():
     timestamp = datetime.fromtimestamp(1570749472)
-    for i in range(20):
-        housekeepingData = fakeHousekeepingAsDict(timestamp + timedelta(minutes=i*15))
-        housekeeping = Housekeeping(**housekeepingData)
+    for x in range(20):
+        # 10 days
+        for y in range(3):
+        # 3 entries per day
+            housekeepingData = fakeHousekeepingAsDict(timestamp + timedelta(days=x, minutes=y*15))
+            housekeeping = Housekeeping(**housekeepingData)
 
-        for i in range(1, 25):
-            channel = fake_power_channel_as_dict(i)
-            p = PowerChannels(**channel)
-            housekeeping.channels.append(p)
+            for i in range(1, 25):
+                channel = fake_power_channel_as_dict(i)
+                p = PowerChannels(**channel)
+                housekeeping.channels.append(p)
 
-        db.session.add(housekeeping)
+            db.session.add(housekeeping)
     db.session.commit()
 
     commands = {
