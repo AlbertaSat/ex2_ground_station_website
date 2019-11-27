@@ -1,19 +1,25 @@
 Module API reference
 ==============================================
 
-Comm Module
+comm
 -----------
 
 .. automodule:: comm
     :members:
 
-Automation
+gs_commands
+-----------------------------------
+
+.. automodule:: gs_commands
+    :members:
+
+automation
 ----------
 
 .. automodule:: automation
     :members:
 
-Manage
+manage
 ------
 
 .. automodule:: manage

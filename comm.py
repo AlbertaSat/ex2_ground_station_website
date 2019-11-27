@@ -36,8 +36,7 @@ def handler(signum, frame):
 
 # handle message in communication table
 def handle_message(message):
-    """Messages sent to comm will pass through this function, essentially acting as a decorator.
-    You can implement message-interpreting and message-triggered functionality here.
+    """Messages sent to comm will pass through this function, essentially acting as a decorator. Refer to gs_commands module
 
     :param str message: The incoming message to comm
 

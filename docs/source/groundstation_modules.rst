@@ -1,20 +1,17 @@
-General Modules
+Other groundstation modules
 =======================================
 
-The Data Models
----------------
 
-.. automodule:: groundstation.backend_api.models
-    :members:
+config
+------
+This module allows you to create different application configurations which can be used in different situations.
 
-Utility Functions
------------------
+.. automodule:: groundstation.config
+   :members:
 
-.. automodule:: groundstation.backend_api.utils
-    :members:
+views
+-----
+This module defines the pages accessible from the react application.
 
-Validators
-----------
-
-.. automodule:: groundstation.backend_api.validators
+.. automodule:: groundstation.views
     :members:

@@ -8,6 +8,8 @@ sys.path.append(".")
 from satellite_simulator.sat_sim import Environment, Satellite, Simulator, SatelliteComponent
 
 class TestSatelliteSimulator(BaseTestCase):
+    """Tests the satellite simulator
+    """
 
     @mock.patch('satellite_simulator.sat_sim.Satellite._broadcast_beacon')
     @mock.patch('satellite_simulator.sat_sim.open')
