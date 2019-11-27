@@ -13,19 +13,6 @@ from groundstation.backend_api.utils import create_context, login_required
 auth_blueprint = Blueprint('auth', __name__)
 api = Api(auth_blueprint)
 
-
-# TODO
-# remove this
-# """Endpoint for EDIT
-#
-# :param dict local_data: This should be used in place of the POST body that would be used through HTTP, used for local calls.
-#
-# :returns: response_object, status_code
-# :rtype: tuple
-# """
-
-
-
 class AuthLogin(Resource):
 
     def __init__(self):
