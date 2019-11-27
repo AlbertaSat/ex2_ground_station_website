@@ -2,11 +2,26 @@ import React, { Component } from 'react';
 import FlightScheduleList from './FlightScheduleList';
 import AddFlightschedule from './AddFlightschedule';
 import DeleteFlightschedule from './DeleteFlightschedule';
+import Typography from '@material-ui/core/Typography';
+import Grid from '@material-ui/core/Grid';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
+import Paper from '@material-ui/core/Paper';
+
+
+function isMinified(minify, elemt){
+	if(!minify){
+	  return elmt
+	}else{
+	  return
+	}
+  }
 
 class FlightSchedule extends Component{
 	constructor(){
 		super();
 		this.state = {
+			isLoading: true,
 			empty: true,
 			addFlightOpen: false,
 			deleteFlightOpen: false,
@@ -42,8 +57,10 @@ class FlightSchedule extends Component{
 	      return Promise.all([res1.json(), res2.json()])
 	    }).then(([res1, res2]) => {
 	      if(res1.status == 'success'){
-	        this.setState({'allflightschedules': res1.data.flightschedules, empty: false});
-	        console.log(res1.data.flightschedules);
+			this.setState({'allflightschedules': res1.data.flightschedules, 'isLoading': false});
+			if (res1.data.flightschedules.length > 0) {
+				this.setState({empty: false})
+			}
 	      }if(res2.status == 'success'){
 	        this.setState({availCommands: res2.data.telecommands})
 	      }
@@ -91,12 +108,12 @@ class FlightSchedule extends Component{
 		}).then(results => {
 			return results.json();
 		}).then(data => {
-			console.log(data);
 			if(data.status == 'success'){
-				console.log(this.state.thisIndex);
+				if (this.state.thisIndex == 0) {
+					this.setState({empty: true})
+				}
 				const obj = this.state.allflightschedules.slice();
 				obj.splice(this.state.thisIndex, 1)
-				console.log(obj)
 				this.setState({deleteFlightOpen: false,
 								thisIndex: null,
 								thisFlightscheduleId: null,
@@ -118,6 +135,7 @@ class FlightSchedule extends Component{
 			'/api/flightschedules/' +  this.state.thisFlightscheduleId : 
 			'/api/flightschedules'
 		let method = (this.state.editFlight)? 'PATCH' : 'POST'
+		this.setState({empty: false})
 		console.log('posted data', data);
 		fetch(url, {
 			method: method,
@@ -160,17 +178,16 @@ class FlightSchedule extends Component{
 
 	// handle any changes in our form fields
 	handleAddEvent(event, type, idx){
-		console.log(this.state.thisExecutionTime);
 		const obj = this.state.thisFlightscheduleCommands.slice();
 		if(type == 'date'){
 			// when the time delta offset is changed, add the number of seconds
 			// to the execution time for the command timestamp
 			let thisTimeObj = this.state.thisExecutionTime;
 			if(this.state.editFlight && !thisTimeObj.endsWith('Z')){
+				console.log(this.state.thisExecutionTime)
 				thisTimeObj.slice(-3);
 				thisTimeObj = thisTimeObj.replace(' ', 'T').concat('Z');
 			}
-			console.log(thisTimeObj);
 			let thisTime = Date.parse(thisTimeObj);
 			let offsetSeconds = parseInt(event.target.value) * 1000;
 			thisTime = new Date(thisTime + offsetSeconds);
@@ -208,6 +225,12 @@ class FlightSchedule extends Component{
 		if(this.state.thisExecutionTime != null){
 			let adjustedCommands = obj.map(command => {
 				if(command.timestamp){
+					// handle a weird bug
+					if(command.op == 'add'){
+						command.timestamp = command.timestamp.replace('Z', '');
+						command.timestamp = command.timestamp.concat('000');
+					}
+					console.log(command.timestamp, command.op);
 					let oldTime = Date.parse(command.timestamp);
 					let oldExecTime = Date.parse(this.state.thisExecutionTime);
 					let origOffset = oldTime - oldExecTime;
@@ -215,7 +238,9 @@ class FlightSchedule extends Component{
 
 					command.timestamp = newTimestamp.toISOString();
 					if(this.state.editFlight){
-						command.op = 'replace';
+						if(command.op != 'add' || command.op != 'remove'){
+							command.op = 'replace';
+						}
 					}	
 				}
 			})
@@ -238,7 +263,6 @@ class FlightSchedule extends Component{
 	// handle when the add command button is clicked
 	handleAddCommandClick(event){
 		const obj = this.state.thisFlightscheduleCommands.slice();
-		console.log(this.state.thisExecutionTime);
 		let comm = {'command' : {'command_id': ''}, 'timestamp': null, 'args': []}
 		// if we are editing add a condition for adding
 		if(this.state.editFlight){
@@ -296,7 +320,21 @@ class FlightSchedule extends Component{
 	render(){
 		return (
 		    <div>
-    		  <FlightScheduleList 
+			<Paper className="grid-containers">
+			<Grid container style={{paddingBottom: '12px'}}>
+				<Grid item xs={11}>
+					<Typography variant="h5" displayInline style={{padding: '10px'}}>Flight Schedules</Typography>
+				</Grid>
+				<Grid item xs={1} style={{textAlign: 'right'}}>
+					<Fab onClick={ (event) => this.handleAddFlightOpenClick(event) }>
+						<AddIcon 
+								style={{ color: '#4bacb8', fontSize: '2rem'}} 
+						/>
+					</Fab>
+				</Grid>
+			</Grid>
+			  <FlightScheduleList 
+			    isLoading={this.state.isLoading}
     		    flightschedule={this.state.allflightschedules} 
     		    isMinified={false}
     		    handleAddFlightOpenClick={this.handleAddFlightOpenClick}
@@ -325,6 +363,7 @@ class FlightSchedule extends Component{
     		    deleteFlightschedule={this.deleteFlightschedule}
     		    handleDeleteFlightClose={this.handleDeleteFlightClose}
     		  />
+			</Paper>
   			</div>
 		)
 	}

@@ -16,6 +16,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Grid from '@material-ui/core/Grid';
 import Fab from '@material-ui/core/Fab';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import Button from '@material-ui/core/Button';
 
 function isMinified(minify, elemt){
   if(!minify){
@@ -26,12 +28,19 @@ function isMinified(minify, elemt){
 }
 
 const FlightScheduleList = (props) => {
-  if (props.empty) {
+  if (props.isLoading) {
       return (
         <div>
-          <ErrorOutlineIcon /> There are no flightschedules!
+          <LinearProgress />
         </div>
       )
+  }
+  if (props.empty && !props.isLoading) {
+    return (
+      <div>
+        <ErrorOutlineIcon /> There are no flightschedules!
+      </div>
+    )
   }
 
 
@@ -58,8 +67,8 @@ const FlightScheduleList = (props) => {
 
 	return (
        <div>
-		<Paper className="grid-containers">
-          <Grid container style={{paddingBottom: '12px'}}>
+
+          {/* <Grid container style={{paddingBottom: '12px'}}>
             <Grid item xs={(props.isMinified) ? 12 : 11}>
               <Typography variant="h5" displayInline style={{padding: '10px'}}>Flight Schedules</Typography>
             </Grid>
@@ -73,7 +82,7 @@ const FlightScheduleList = (props) => {
                   </Fab>
                 </Grid>
             } 
-          </Grid>
+          </Grid> */}
           {props.flightschedule.map((flightschedule, idx) => (
              <ExpansionPanel key={flightschedule.flightschedule_id} style={tableColour(flightschedule.status)}>
                <ExpansionPanelSummary
@@ -98,17 +107,23 @@ const FlightScheduleList = (props) => {
                              <TableCell align="right" style={{minWidth: '80px'}}>
                               {flightschedule.status != 3 &&
                                <div>
-                                 <EditIcon
-                                   display='none'
-                                   style={{ color: '#4bacb8', marginRight: '20px' }}
-                                   onClick={ (event) => props.handleEditCommandClick(event, idx, 
-                                                        flightschedule.flightschedule_id) }
-                                 />
-                                 <DeleteIcon 
-                                   style={{ color: '#4bacb8'}}
-                                   onClick={ (event) => props.handleDeleteFlightOpenClick(event, idx,
-                                                      flightschedule.flightschedule_id)}
-                                 />
+                                  <Button
+                                    onClick={ (event) => props.handleEditCommandClick(event, idx, 
+                                                          flightschedule.flightschedule_id) }
+                                    >
+                                      <EditIcon 
+                                        display='none'
+                                        style={{ color: '#4bacb8' }}
+                                      />
+                                  </Button>
+                                  <Button
+                                    onClick={ (event) => props.handleDeleteFlightOpenClick(event, idx,
+                                                        flightschedule.flightschedule_id)}
+                                  >
+                                     <DeleteIcon 
+                                       style={{ color: '#4bacb8'}}
+                                     />
+                                  </Button>
                                </div>
                              }
                              </TableCell>
@@ -155,7 +170,7 @@ const FlightScheduleList = (props) => {
                   </ExpansionPanelDetails>
                 </ExpansionPanel>
               ))}
-            </Paper>
+
           </div>
 	)
 }

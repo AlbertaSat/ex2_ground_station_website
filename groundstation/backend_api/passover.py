@@ -21,26 +21,33 @@ class PassoverList(Resource):
 
     @create_context
     def get(self, local_args=None):
-        if not local_args:
-            query_limit = request.args.get('limit')
-            next_only = request.args.get('next-only')
-        else:
-            query_limit = local_args.get('limit')
-            next_only = local_args.get('next-only')
-
-        if next_only == 'true':
-            current_time = datetime.datetime.now(datetime.timezone.utc)
-            passovers = [Passover.query.filter(Passover.timestamp > current_time).order_by(Passover.timestamp).limit(query_limit).first()]
-            passovers = [] if passovers[0] is None else passovers
-        else:
-            passovers = Passover.query.order_by(Passover.timestamp).limit(query_limit).all()
-
         response_object = {
             'status':'success',
-            'data': {
-                'passovers':[p.to_json() for p in passovers]
-            }
+            'data':{}
         }
+        if not local_args:
+            query_limit = request.args.get('limit')
+            next = request.args.get('next')
+            most_recent = request.args.get('most-recent')
+        else:
+            query_limit = local_args.get('limit')
+            next = local_args.get('next')
+            most_recent = local_args.get('most-recent')
+
+        current_time = datetime.datetime.now(datetime.timezone.utc)
+        if next == 'true':
+            passovers = Passover.query.filter(Passover.timestamp > current_time).order_by(Passover.timestamp).limit(query_limit)
+            next_passovers = [p.to_json() for p in passovers]
+            response_object['data']['next_passovers'] = next_passovers
+        if most_recent == 'true':
+            passover = Passover.query.filter(Passover.timestamp < current_time).order_by(Passover.timestamp.desc()).limit(query_limit).first()
+            passover = passover.to_json() if passover is not None else passover
+            response_object['data']['most_recent_passover'] = passover
+
+        if next != 'true' and most_recent != 'true':
+            passovers = Passover.query.order_by(Passover.timestamp).limit(query_limit).all()
+            response_object['data']['passovers'] = [p.to_json() for p in passovers]
+
         return response_object, 200
 
     @create_context

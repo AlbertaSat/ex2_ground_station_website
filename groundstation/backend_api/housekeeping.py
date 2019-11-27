@@ -9,6 +9,8 @@ from groundstation.backend_api.models import Housekeeping, PowerChannels
 from groundstation import db
 from groundstation.backend_api.utils import create_context, login_required, dynamic_filters_housekeeping
 from groundstation.backend_api.validators import HousekeepingValidator
+from werkzeug.datastructures import MultiDict
+from sqlalchemy import desc
 
 housekeeping_blueprint = Blueprint('housekeeping', __name__)
 api = Api(housekeeping_blueprint)
@@ -79,12 +81,14 @@ class HousekeepingLogList(Resource):
     @create_context
     def get(self, local_args=None):
         if not local_args:
-            request_args_dict = request.args.to_dict()
-            query_limit = request_args_dict.pop('limit', None)
-            args = dynamic_filters_housekeeping(request_args_dict)
+            query_limit = request.args.get('limit', None)
+            newest_first = request.args.get('newest-first', None)
+            args = dynamic_filters_housekeeping(request.args, ignore_keys=['limit', 'newest-first'])
         else:
-            query_limit = local_args.pop('limit', None)
-            args = dynamic_filters_housekeeping(local_args)
+            local_args = MultiDict(local_args)
+            query_limit = local_args.get('limit', None)
+            newest_first = local_args.get('newest-first', None)
+            args = dynamic_filters_housekeeping(local_args, ignore_keys=['limit', 'newest-first'])
 
         if args is None:
             response_object = {
@@ -93,7 +97,12 @@ class HousekeepingLogList(Resource):
             }
             return response_object, 400
 
-        logs = Housekeeping.query.filter(*args).limit(query_limit).all()
+        if newest_first == "true":
+            ordering = desc(Housekeeping.last_beacon_time)
+        else:
+            ordering = Housekeeping.last_beacon_time
+
+        logs = Housekeeping.query.filter(*args).order_by(ordering).limit(query_limit).all()
         response_object = {
             'status': 'success',
             'data': {

@@ -7,8 +7,8 @@ import click
 from flask.cli import FlaskGroup
 
 from groundstation import create_app, db
-from groundstation.backend_api.models import User, Housekeeping, Telecommands
-from groundstation.tests.utils import fakeHousekeepingAsDict
+from groundstation.backend_api.models import User, Housekeeping, Telecommands, PowerChannels
+from groundstation.tests.utils import fakeHousekeepingAsDict, fake_power_channel_as_dict
 from groundstation.backend_api.housekeeping import HousekeepingLogList
 from groundstation.backend_api.utils import add_telecommand, \
 add_flight_schedule, add_command_to_flightschedule, add_user, \
@@ -41,10 +41,16 @@ def test(path=None):
 @cli.command('seed_db')
 def seed_db():
     timestamp = datetime.fromtimestamp(1570749472)
-    housekeepingData = fakeHousekeepingAsDict(timestamp)
+    for i in range(20):
+        housekeepingData = fakeHousekeepingAsDict(timestamp + timedelta(minutes=i*15))
+        housekeeping = Housekeeping(**housekeepingData)
 
-    housekeeping = Housekeeping(**housekeepingData)
-    db.session.add(housekeeping)
+        for i in range(1, 25):
+            channel = fake_power_channel_as_dict(i)
+            p = PowerChannels(**channel)
+            housekeeping.channels.append(p)
+
+        db.session.add(housekeeping)
     db.session.commit()
 
     commands = {
@@ -90,9 +96,12 @@ def seed_db():
                     receiver='comm'
                 )
 
-    timestamp = datetime.utcnow()
-    timestamp += timedelta(seconds=30)
-    passover = add_passover(timestamp=timestamp)
+    now = datetime.utcnow()
+    add_passover(timestamp=now - timedelta(seconds=10))
+    for i in range(1, 20):
+        p = add_passover(timestamp=now + timedelta(minutes=i*5))
+
+
 
 
 
