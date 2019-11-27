@@ -41,8 +41,8 @@ def test(path=None):
 @cli.command('seed_db')
 def seed_db():
     timestamp = datetime.fromtimestamp(1570749472)
-    housekeepingData = fakeHousekeepingAsDict(timestamp)
-    for i in range(5):
+    for i in range(20):
+        housekeepingData = fakeHousekeepingAsDict(timestamp + timedelta(minutes=i*15))
         housekeeping = Housekeeping(**housekeepingData)
 
         for i in range(1, 25):
