@@ -78,7 +78,7 @@ class AuthLogout(Resource):
         # TODO: implement logout logic (blacklisted tokens?), currently logging out from backend is NOT supported
         response_object = {
             'status':'success',
-            'message':'FAKE - Successfully logged out.'
+            'message':'FAKE NEWS - Successfully logged out.'
         }
         return response_object, 200
 
