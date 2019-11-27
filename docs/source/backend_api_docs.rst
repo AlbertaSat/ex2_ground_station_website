@@ -1,6 +1,5 @@
 Backend API
 =======================================
-text here
 
 .. toctree::
    :maxdepth: 2
