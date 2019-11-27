@@ -8,8 +8,8 @@ import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 
 import HousekeepingList from './HousekeepingListFull';
-import FlightScheduleList from './FlightScheduleList'
-import Countdown from './Countdown'
+import Passovers from './Passovers';
+import Countdown from './Countdown';
 
 const styles = {
   root: {
@@ -28,9 +28,9 @@ class Home extends Component {
     super();
     this.state = {
       emptyhk: true,
-      emptyfs: true,
+      emptypassover: true,
       isLoading: true,
-      housekeeping: {
+      housekeeping: [{
         id: null,
         satelliteMode: null,
         batteryVoltage: null,
@@ -38,16 +38,23 @@ class Home extends Component {
         currentOut: null,
         lastBeaconTime: null,
         noMCUResets: null
-      },
-      flightschedule: []
+      }],
+      ticker:0,
+      passovers: []
     };
+    this.updatePassoverProgressBars = this.updatePassoverProgressBars.bind(this);
+  }
+
+  updatePassoverProgressBars() {
+      // this is just to trigger the state change and re render lol, probably a better way to do it
+      this.setState(prevState => ({ticker: prevState.ticker + 1}));
   }
 
   componentDidMount() {
     // console.log(localStorage.getItem('auth_token'))
     Promise.all([
-      fetch('/api/housekeepinglog?limit=5'),
-      fetch('/api/flightschedules?limit=5',
+      fetch('/api/housekeepinglog?newest-first=true&limit=5'),
+      fetch('/api/passovers?next=true&most-recent=true&limit=5',
       {headers: {'Authorization':'Bearer '+ localStorage.getItem('auth_token')}}
     )]).then(([res1, res2]) => {
       return Promise.all([res1.json(), res2.json()])
@@ -59,10 +66,14 @@ class Home extends Component {
           this.setState({emptyhk: false})
         }
       }if(res2.status == 'success'){
-        this.setState({flightschedule: res2.data.flightschedules, 'isLoading': false})
-        console.log(res2.data.flightschedules.length)
-        if (res2.data.flightschedules.length > 0) {
-          this.setState({emptyfs: false})
+        this.setState({passovers: res2.data.next_passovers, 'isLoading': false, mostRecentPass: res2.data.most_recent_passover})
+        console.log(res2.data.next_passovers.length)
+        if (res2.data.next_passovers.length > 0 && res2.data.most_recent_passover !== null) {
+          this.setState({emptypassover: false})
+          this.timer = setInterval(
+            () => this.updatePassoverProgressBars(),
+            10000
+          );
         }
       }
     });
@@ -95,8 +106,8 @@ class Home extends Component {
           </Grid>
           <Grid item sm={4}>
             <Paper className="grid-containers">
-              <Typography variant="h5" displayInline style={{padding: '10px'}}>Flight Schedules</Typography>
-              <FlightScheduleList isLoading={this.state.isLoading} flightschedule={this.state.flightschedule} isMinified={true} empty={this.state.emptyfs}/>
+              <Typography variant="h5" displayInline style={{padding: '10px'}}>Upcoming Passovers</Typography>
+              <Passovers isLoading={this.state.isLoading} passovers={this.state.passovers} empty={this.state.emptypassover} mostRecentPass={this.state.mostRecentPass}/>
             </Paper>
           </Grid>
         </Grid>

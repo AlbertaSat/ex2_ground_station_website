@@ -1,6 +1,6 @@
 export function formatDateToUTCString(dateObj) {
     let year = dateObj.getUTCFullYear().toString();
-    let month = dateObj.getUTCMonth().toString();
+    let month = (dateObj.getUTCMonth() + 1).toString();
     let date = dateObj.getUTCDate().toString();
     let hours = dateObj.getUTCHours().toString();
     let minutes = dateObj.getUTCMinutes().toString();

@@ -41,10 +41,11 @@ def fake_power_channel_as_dict(channel_no):
     return power_channel
 
 
-def fake_flight_schedule_as_dict(status=2, commands=[]):
+def fake_flight_schedule_as_dict(status=2, commands=[], execution_time=None):
     flightschedule = {
         'status':status,
-        'commands':commands
+        'commands':commands,
+        'execution_time': execution_time
     }
     return flightschedule
 
@@ -69,6 +70,7 @@ def fake_message_as_dict(message='test', sender='tester', receiver='tester2'):
 
 def fake_patch_update_as_dict(timestamp):
     return {'status': 2,
+            'execution_time': str(timestamp),
             'commands': [
                 {'op': 'replace',
                 'flightschedule_command_id': 1,

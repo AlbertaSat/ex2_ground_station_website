@@ -29,7 +29,7 @@ simulator = Simulator(environment, satellite)
 del environment, satellite
 
 signal.signal(signal.SIGALRM, handler)
-signal.alarm(300)
+signal.alarm(60)
 
 HOST = '127.0.0.1'
 PORT = 65432

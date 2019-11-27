@@ -508,7 +508,8 @@ class TestTelecommandList(BaseTestCase):
 class TestFlightScheduleService(BaseTestCase):
 
     def test_post_with_no_commands(self):
-        flightschedule = fake_flight_schedule_as_dict()
+        timestamp = datetime.datetime.fromtimestamp(1570749472)
+        flightschedule = fake_flight_schedule_as_dict(execution_time=str(timestamp))
         self.assertEqual(len(FlightSchedules.query.all()), 0)
 
         with self.client:
@@ -525,7 +526,8 @@ class TestFlightScheduleService(BaseTestCase):
         self.assertTrue(num_flightschedules > 0)
 
     def test_local_post_no_commands(self):
-        flightschedule = fake_flight_schedule_as_dict()
+        timestamp = datetime.datetime.fromtimestamp(1570749472)
+        flightschedule = fake_flight_schedule_as_dict(execution_time=str(timestamp))
         self.assertEqual(len(FlightSchedules.query.all()), 0)
 
         post_data = json.dumps(flightschedule)
@@ -536,7 +538,8 @@ class TestFlightScheduleService(BaseTestCase):
         self.assertTrue(num_flightschedules > 0)
 
     def test_with_missing_commands(self):
-        flightschedule = fake_flight_schedule_as_dict()
+        timestamp = datetime.datetime.fromtimestamp(1570749472)
+        flightschedule = fake_flight_schedule_as_dict(execution_time=str(timestamp))
         flightschedule.pop('commands')
 
         with self.client:
@@ -551,7 +554,8 @@ class TestFlightScheduleService(BaseTestCase):
             self.assertIn('commands', response_data['errors'].keys())
 
     def test_multiple_queued_posts(self):
-        flightschedule = fake_flight_schedule_as_dict(status=1, commands=[])
+        timestamp = datetime.datetime.fromtimestamp(1570749472)
+        flightschedule = fake_flight_schedule_as_dict(status=1, commands=[], execution_time=str(timestamp))
 
         with self.client:
             post_data = json.dumps(flightschedule)
@@ -567,8 +571,9 @@ class TestFlightScheduleService(BaseTestCase):
             self.assertIn('A Queued flight schedule already exists!', response_data['message'])
 
     def test_get_all_flightschedules(self):
+        timestamp = datetime.datetime.fromtimestamp(1570749472)
         for i in range(10):
-            flightschedule = FlightSchedules(**fake_flight_schedule_as_dict())
+            flightschedule = FlightSchedules(**fake_flight_schedule_as_dict(execution_time=timestamp))
             db.session.add(flightschedule)
         db.session.commit()
 
@@ -579,8 +584,9 @@ class TestFlightScheduleService(BaseTestCase):
             self.assertEqual(len(flightschedules), 10)
 
     def test_get_all_flightschedules_limit_by(self):
+        timestamp = datetime.datetime.fromtimestamp(1570749472)
         for i in range(10):
-            flightschedule = FlightSchedules(**fake_flight_schedule_as_dict())
+            flightschedule = FlightSchedules(**fake_flight_schedule_as_dict(execution_time=timestamp))
             db.session.add(flightschedule)
         db.session.commit()
         with self.client:
@@ -590,8 +596,9 @@ class TestFlightScheduleService(BaseTestCase):
             self.assertEqual(len(flightschedules), 3)
 
     def test_get_all_flightschedules_locally_limit_by(self):
+        timestamp = datetime.datetime.fromtimestamp(1570749472)
         for i in range(10):
-            flightschedule = FlightSchedules(**fake_flight_schedule_as_dict())
+            flightschedule = FlightSchedules(**fake_flight_schedule_as_dict(execution_time=timestamp))
             db.session.add(flightschedule)
         db.session.commit()
 
@@ -600,7 +607,8 @@ class TestFlightScheduleService(BaseTestCase):
         self.assertEqual(len(response[0]['data']['flightschedules']), 3)
 
     def test_get_flight_schedule_by_id(self):
-        flightschedule = FlightSchedules(**fake_flight_schedule_as_dict())
+        timestamp = datetime.datetime.fromtimestamp(1570749472)
+        flightschedule = FlightSchedules(**fake_flight_schedule_as_dict(execution_time=timestamp))
         db.session.add(flightschedule)
         db.session.commit()
         id = flightschedule.id
@@ -622,7 +630,11 @@ class TestFlightScheduleService(BaseTestCase):
 
         command1 = Telecommands.query.filter_by(command_name='ping').first()
         command2 = Telecommands.query.filter_by(command_name='get-hk').first()
-        flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp, status=2)
+        flightschedule = add_flight_schedule(
+            creation_date=timestamp,
+            upload_date=timestamp,
+            status=2,
+            execution_time=timestamp)
         flightschedule_commands1 = add_command_to_flightschedule(
                                 timestamp=timestamp,
                                 flightschedule_id=flightschedule.id,
@@ -656,7 +668,12 @@ class TestFlightScheduleService(BaseTestCase):
             c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
 
         command1 = Telecommands.query.filter_by(command_name='ping').first()
-        flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp, status=2)
+        flightschedule = add_flight_schedule(
+            creation_date=timestamp,
+            upload_date=timestamp,
+            status=2,
+            execution_time=timestamp)
+
         flightschedule_commands = add_command_to_flightschedule(
                                 timestamp=timestamp,
                                 flightschedule_id=flightschedule.id,
@@ -741,11 +758,37 @@ class TestPassoverService(BaseTestCase):
         db.session.commit()
 
         with self.client:
-            response = self.client.get('/api/passovers?next=true')
+            response = self.client.get('/api/passovers?next=true&limit=1')
             response_data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
-            self.assertTrue('next_passover' in response_data['data'].keys())
-            self.assertEqual(str(correct_next_passover).split('+')[0], response_data['data']['next_passover']['timestamp'])
+            self.assertTrue('next_passovers' in response_data['data'].keys())
+            self.assertEqual(len(response_data['data']['next_passovers']), 1)
+            self.assertEqual(str(correct_next_passover).split('+')[0], response_data['data']['next_passovers'][0]['timestamp'])
+
+    def test_get_next_5_passovers(self):
+
+        current_time = datetime.datetime.now(datetime.timezone.utc)
+        offset = datetime.timedelta(minutes=90)
+        correct_next_passover = None
+        for i in range(-10, 20, 1):
+            d = current_time + i * offset
+            if i == 0:
+                continue
+            if i == 1:
+                correct_next_passover = d
+
+            p = Passover(timestamp=d)
+            db.session.add(p)
+
+        db.session.commit()
+
+        with self.client:
+            response = self.client.get('/api/passovers?next=true&limit=5')
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertTrue('next_passovers' in response_data['data'].keys())
+            self.assertEqual(len(response_data['data']['next_passovers']), 5)
+            self.assertEqual(str(correct_next_passover).split('+')[0], response_data['data']['next_passovers'][0]['timestamp'])
 
     def test_get_most_recent_passover(self):
 
@@ -787,8 +830,8 @@ class TestPassoverService(BaseTestCase):
             response = self.client.get('/api/passovers?next=true')
             response_data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
-            self.assertTrue('next_passover' in response_data['data'].keys())
-            self.assertIsNone(response_data['data']['next_passover'])
+            self.assertTrue('next_passovers' in response_data['data'].keys())
+            self.assertEqual(len(response_data['data']['next_passovers']), 0)
 
 class TestUserService(BaseTestCase):
 

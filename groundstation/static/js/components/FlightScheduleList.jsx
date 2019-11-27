@@ -17,6 +17,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Grid from '@material-ui/core/Grid';
 import Fab from '@material-ui/core/Fab';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import Button from '@material-ui/core/Button';
 
 function isMinified(minify, elemt){
   if(!minify){
@@ -106,17 +107,23 @@ const FlightScheduleList = (props) => {
                              <TableCell align="right" style={{minWidth: '80px'}}>
                               {flightschedule.status != 3 &&
                                <div>
-                                 <EditIcon
-                                   display='none'
-                                   style={{ color: '#4bacb8', marginRight: '20px' }}
-                                   onClick={ (event) => props.handleEditCommandClick(event, idx, 
-                                                        flightschedule.flightschedule_id) }
-                                 />
-                                 <DeleteIcon 
-                                   style={{ color: '#4bacb8'}}
-                                   onClick={ (event) => props.handleDeleteFlightOpenClick(event, idx,
-                                                      flightschedule.flightschedule_id)}
-                                 />
+                                  <Button
+                                    onClick={ (event) => props.handleEditCommandClick(event, idx, 
+                                                          flightschedule.flightschedule_id) }
+                                    >
+                                      <EditIcon 
+                                        display='none'
+                                        style={{ color: '#4bacb8' }}
+                                      />
+                                  </Button>
+                                  <Button
+                                    onClick={ (event) => props.handleDeleteFlightOpenClick(event, idx,
+                                                        flightschedule.flightschedule_id)}
+                                  >
+                                     <DeleteIcon 
+                                       style={{ color: '#4bacb8'}}
+                                     />
+                                  </Button>
                                </div>
                              }
                              </TableCell>

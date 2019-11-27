@@ -45,9 +45,9 @@ class PassoverList(Resource):
 
         current_time = datetime.datetime.now(datetime.timezone.utc)
         if next == 'true':
-            passover = Passover.query.filter(Passover.timestamp > current_time).order_by(Passover.timestamp).limit(query_limit).first()
-            passover = passover.to_json() if passover is not None else passover
-            response_object['data']['next_passover'] = passover
+            passovers = Passover.query.filter(Passover.timestamp > current_time).order_by(Passover.timestamp).limit(query_limit)
+            next_passovers = [p.to_json() for p in passovers]
+            response_object['data']['next_passovers'] = next_passovers
         if most_recent == 'true':
             passover = Passover.query.filter(Passover.timestamp < current_time).order_by(Passover.timestamp.desc()).limit(query_limit).first()
             passover = passover.to_json() if passover is not None else passover

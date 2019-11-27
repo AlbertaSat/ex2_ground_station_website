@@ -79,13 +79,16 @@ class Flightschedule(Resource):
         if validated_data['status'] == 1:
             num_queued = FlightSchedules.query.filter_by(status=1).count()
             if num_queued > 0:
-                response_object = {
-                    'status': 'fail',
-                    'message': 'A Queued flight schedule already exists!'
-                }
-                return response_object, 400
+                queued_id = FlightSchedules.query.filter_by(status=1).first().id
+                if int(flightschedule_id) != queued_id:
+                    response_object = {
+                        'status': 'fail',
+                        'message': 'A Queued flight schedule already exists!'
+                    }
+                    return response_object, 400
 
         flightschedule.status = validated_data['status']
+        flightschedule.execution_time = validated_data['execution_time']
 
         # go through the operations for this patch, inspired by the parse JSON syntax
         # we have replace, add, or remove as valid operations on the flight schedule

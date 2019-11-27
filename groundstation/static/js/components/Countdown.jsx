@@ -12,7 +12,7 @@ function fetchPassovers(next, most_recent) {
 
     var url = '/api/passovers';
     if (next === true) {
-        url = url + '?next=true';
+        url = url + '?next=true&limit=1';
     }
     if (most_recent === true) {
         url = url + '&most-recent=true';
@@ -29,10 +29,10 @@ function fetchPassovers(next, most_recent) {
                 let mostRecentPassover;
 
                 console.log('RESPONSE', data);
-                if (data.data.next_passover === undefined || data.data.next_passover === null) {
+                if (data.data.next_passovers === undefined || data.data.next_passovers === []) {
                     nextPassover = null;
                 } else {
-                    let newNextDate = data.data.next_passover.timestamp.replace(' ', 'T');
+                    let newNextDate = data.data.next_passovers[0].timestamp.replace(' ', 'T');
                     newNextDate.slice(-3);
                     nextPassover = Date.parse(newNextDate);
                 }
@@ -67,12 +67,12 @@ class Countdown extends Component{
 			minute: '00',
 			second: '00',
             displayCountdown:false,
-            passoverDuration:5*60,
+            passoverDuration:1*60,
 			nextPassover: null,
 			untilPassover: null,
             operationIsAdd:false,
             operatorChar:'-',
-            color:'red'
+            color:'#ffe21f'
 		}
 
 		this.updateCountdown = this.updateCountdown.bind(this);
@@ -104,9 +104,9 @@ class Countdown extends Component{
     drawCountdownAfterStateChange(){
         var utcToday;
 		let today =  new Date(Date.now());
+
 		utcToday = new Date(today.getTime() + (today.getTimezoneOffset() * 60000));
         let new_value = this.state.operationIsAdd ? utcToday - this.state.mostRecentPassover : this.state.nextPassover - utcToday;
-        console.log(new_value)
 
         let hour = Math.floor((new_value / (1000 * 60 * 60)) % 24);
         let minute = Math.floor((new_value / (1000 * 60)) % 60);
@@ -143,12 +143,12 @@ class Countdown extends Component{
 
         if (timeDifferenceWithMostRecent <= this.state.passoverDuration*1000) {
             this.setState(
-                {operationIsAdd:true, operatorChar:'+', color:"green"},
+                {operationIsAdd:true, operatorChar:'+', color:"#2ecc40"},
                 this.drawCountdownAfterStateChange
             )
         } else if (timeDifferenceWithNext > 0) {
             this.setState(
-                {operationIsAdd:false, operatorChar:'-', color:"red"},
+                {operationIsAdd:false, operatorChar:'-', color:"#ffe21f"},
                 this.drawCountdownAfterStateChange,
             )
         } else if (timeDifferenceWithNext <= 0) {
@@ -157,7 +157,7 @@ class Countdown extends Component{
                 nextPassover:null,
                 operationIsAdd:true,
                 operatorChar:'+',
-                color:"green"
+                color:"#2ecc40"
             }), this.drawCountdownAfterStateChange);
             fetchPassovers(true, false).then(data => {
         		this.setState({
@@ -175,7 +175,7 @@ class Countdown extends Component{
             )
         }
 		return (
-			<span style={{marginLeft: '3em', display: 'inherit'}}>
+			<span style={{marginLeft: '1.5em', display: 'inherit'}}>
 				<span style={{marginRight: '0.5em', color:this.state.color}}>
 					<SatelliteIcon style={{fontSize: '1.85em'}}/>
 				</span>
