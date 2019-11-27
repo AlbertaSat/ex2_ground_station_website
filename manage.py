@@ -42,7 +42,7 @@ def test(path=None):
 def seed_db():
     timestamp = datetime.fromtimestamp(1570749472)
     for x in range(20):
-        # 10 days
+        # 20 days
         for y in range(3):
         # 3 entries per day
             housekeepingData = fakeHousekeepingAsDict(timestamp + timedelta(days=x, minutes=y*15))
