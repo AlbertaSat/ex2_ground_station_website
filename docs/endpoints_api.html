@@ -1,0 +1,548 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>RESTful endpoints Reference &#8212; AlbertaSat 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Groundstation Tests" href="groundstation_tests.html" />
+    <link rel="prev" title="Backend API" href="backend_api_docs.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="restful-endpoints-reference">
+<h1>RESTful endpoints Reference<a class="headerlink" href="#restful-endpoints-reference" title="Permalink to this headline">¶</a></h1>
+<p>These are the endpoints that essentially govern all user interaction/communication. The endpoints are
+callable internally through python, which allows for ‘local’ clients (such as the automator and comm module) to
+make api calls. These endpoints are also ‘exposed’ to the outside world via flask, which allows external clients to
+make api requests (such as the react app client).</p>
+<div class="section" id="module-groundstation.backend_api.auth">
+<span id="authentication"></span><h2>Authentication<a class="headerlink" href="#module-groundstation.backend_api.auth" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="groundstation.backend_api.auth.AuthLogin">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.auth.</code><code class="sig-name descname">AuthLogin</code><a class="headerlink" href="#groundstation.backend_api.auth.AuthLogin" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="groundstation.backend_api.auth.AuthLogin.post">
+<code class="sig-name descname">post</code><span class="sig-paren">(</span><em class="sig-param">local_data=None</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.auth.AuthLogin.post" title="Permalink to this definition">¶</a></dt>
+<dd><p>Endpoint for logging in</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>local_data</strong> (<em>json_string</em>) – This should be used in place of the POST body that would be used through HTTP, used for local calls.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>response_object, status_code</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="groundstation.backend_api.auth.AuthLogout">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.auth.</code><code class="sig-name descname">AuthLogout</code><a class="headerlink" href="#groundstation.backend_api.auth.AuthLogout" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-groundstation.backend_api.communications">
+<span id="communications"></span><h2>Communications<a class="headerlink" href="#module-groundstation.backend_api.communications" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="groundstation.backend_api.communications.Communication">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.communications.</code><code class="sig-name descname">Communication</code><a class="headerlink" href="#groundstation.backend_api.communications.Communication" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="groundstation.backend_api.communications.Communication.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">message_id</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.communications.Communication.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Endpoint for getting a specific message</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>message_id</strong> (<em>int</em>) – The message id</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>response_object, status_code</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple (dict, int)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="groundstation.backend_api.communications.CommunicationList">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.communications.</code><code class="sig-name descname">CommunicationList</code><a class="headerlink" href="#groundstation.backend_api.communications.CommunicationList" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="groundstation.backend_api.communications.CommunicationList.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">local_data=None</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.communications.CommunicationList.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Endpoint for getting messages</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>local_data</strong> (<em>dict</em>) – This should be used in place of the QUERY PARAMS that would be used through HTTP, used for local calls.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>response_object, status_code</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple (dict, int)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="groundstation.backend_api.communications.CommunicationList.post">
+<code class="sig-name descname">post</code><span class="sig-paren">(</span><em class="sig-param">local_data=None</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.communications.CommunicationList.post" title="Permalink to this definition">¶</a></dt>
+<dd><p>Endpoint for posting a new message to communications table</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>local_data</strong> (<em>json_string</em>) – This should be used in place of the POST body that would be used through HTTP, used for local calls.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>response_object, status_code</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple (dict, int)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-groundstation.backend_api.flightschedule">
+<span id="flightschedule"></span><h2>Flightschedule<a class="headerlink" href="#module-groundstation.backend_api.flightschedule" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="groundstation.backend_api.flightschedule.FlightScheduleList">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.flightschedule.</code><code class="sig-name descname">FlightScheduleList</code><a class="headerlink" href="#groundstation.backend_api.flightschedule.FlightScheduleList" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="groundstation.backend_api.flightschedule.FlightScheduleList.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">local_args=None</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.flightschedule.FlightScheduleList.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Endpoint for getting a list of FlightSchedules</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>local_args</strong> (<em>dict</em>) – This should be used in place of the QUERY PARAMS that would be used through HTTP, used for local calls.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>response_object, status_code</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple (dict, int)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="groundstation.backend_api.flightschedule.FlightScheduleList.post">
+<code class="sig-name descname">post</code><span class="sig-paren">(</span><em class="sig-param">local_data=None</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.flightschedule.FlightScheduleList.post" title="Permalink to this definition">¶</a></dt>
+<dd><p>Endpoint for creating a new FlightSchedule</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>local_data</strong> (<em>json_string</em>) – This should be used in place of the POST body that would be used through HTTP, used for local calls.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>response_object, status_code</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple (dict, int)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="groundstation.backend_api.flightschedule.Flightschedule">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.flightschedule.</code><code class="sig-name descname">Flightschedule</code><a class="headerlink" href="#groundstation.backend_api.flightschedule.Flightschedule" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="groundstation.backend_api.flightschedule.Flightschedule.delete">
+<code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param">flightschedule_id</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.flightschedule.Flightschedule.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Endpoint for deleting a specific flightschedule</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>flightschedule_id</strong> (<em>int</em>) – The flightschedule_id id</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>response_object, status_code</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple (dict, int)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="groundstation.backend_api.flightschedule.Flightschedule.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">flightschedule_id</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.flightschedule.Flightschedule.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Endpoint for getting a specific flightschedule</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>flightschedule_id</strong> (<em>int</em>) – The flightschedule_id</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>response_object, status_code</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple (dict, int)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="groundstation.backend_api.flightschedule.Flightschedule.patch">
+<code class="sig-name descname">patch</code><span class="sig-paren">(</span><em class="sig-param">flightschedule_id</em>, <em class="sig-param">local_data=None</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.flightschedule.Flightschedule.patch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Endpoint for patching a specific flightschedule</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>flightschedule_id</strong> (<em>int</em>) – The flightschedule_id id</p></li>
+<li><p><strong>local_data</strong> (<em>json_string</em>) – This should be used in place of the POST body that would be used through HTTP, used for local calls.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>response_object, status_code</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple (dict, int)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-groundstation.backend_api.housekeeping">
+<span id="housekeeping"></span><h2>Housekeeping<a class="headerlink" href="#module-groundstation.backend_api.housekeeping" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="groundstation.backend_api.housekeeping.HousekeepingLog">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.housekeeping.</code><code class="sig-name descname">HousekeepingLog</code><a class="headerlink" href="#groundstation.backend_api.housekeeping.HousekeepingLog" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="groundstation.backend_api.housekeeping.HousekeepingLog.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">housekeeping_id</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.housekeeping.HousekeepingLog.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Endpoint for getting a specific housekeeping log</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>housekeeping_id</strong> (<em>int</em>) – The housekeeping_id</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>response_object, status_code</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple (dict, int)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="groundstation.backend_api.housekeeping.HousekeepingLogList">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.housekeeping.</code><code class="sig-name descname">HousekeepingLogList</code><a class="headerlink" href="#groundstation.backend_api.housekeeping.HousekeepingLogList" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="groundstation.backend_api.housekeeping.HousekeepingLogList.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">local_args=None</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.housekeeping.HousekeepingLogList.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Endpoint for getting a list of housekeeping logs</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>local_args</strong> (<em>dict</em>) – This should be used in place of the QUERY PARAMS that would be used through HTTP, used for local calls.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>response_object, status_code</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple (dict, int)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="groundstation.backend_api.housekeeping.HousekeepingLogList.post">
+<code class="sig-name descname">post</code><span class="sig-paren">(</span><em class="sig-param">local_data=None</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.housekeeping.HousekeepingLogList.post" title="Permalink to this definition">¶</a></dt>
+<dd><p>Endpoint for creating a new Housekeeping log</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>local_data</strong> (<em>json_string</em>) – This should be used in place of the POST body that would be used through HTTP, used for local calls.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>response_object, status_code</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple (dict, int)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-groundstation.backend_api.passover">
+<span id="passovers"></span><h2>Passovers<a class="headerlink" href="#module-groundstation.backend_api.passover" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="groundstation.backend_api.passover.PassoverList">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.passover.</code><code class="sig-name descname">PassoverList</code><a class="headerlink" href="#groundstation.backend_api.passover.PassoverList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Endpoint for getting and receiving Passovers</p>
+<dl class="method">
+<dt id="groundstation.backend_api.passover.PassoverList.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">local_args=None</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.passover.PassoverList.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Endpoint for getting a list of passovers</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>local_args</strong> (<em>dict</em>) – This should be used in place of the QUERY PARAMS that would be used through HTTP, used for local calls.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>response_object, status_code</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple (dict, int)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="groundstation.backend_api.passover.PassoverList.post">
+<code class="sig-name descname">post</code><span class="sig-paren">(</span><em class="sig-param">local_data=None</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.passover.PassoverList.post" title="Permalink to this definition">¶</a></dt>
+<dd><p>Endpoint for creating a new passover</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>local_data</strong> (<em>json_string</em>) – This should be used in place of the POST body that would be used through HTTP, used for local calls.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>response_object, status_code</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple (dict, int)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-groundstation.backend_api.telecommand">
+<span id="telecommands"></span><h2>Telecommands<a class="headerlink" href="#module-groundstation.backend_api.telecommand" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="groundstation.backend_api.telecommand.Telecommand">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.telecommand.</code><code class="sig-name descname">Telecommand</code><a class="headerlink" href="#groundstation.backend_api.telecommand.Telecommand" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="groundstation.backend_api.telecommand.Telecommand.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">telecommand_id</em>, <em class="sig-param">local_args=None</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.telecommand.Telecommand.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Endpoint for getting a single telecommand</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>telecommand_id</strong> (<em>int</em>) – The id of the telecommand to get</p></li>
+<li><p><strong>local_args</strong> (<em>dict</em>) – This should be used in place of the QUERY PARAMS that would be used through HTTP, used for local calls.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>response_object, status_code</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple (dict, int)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="groundstation.backend_api.telecommand.TelecommandList">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.telecommand.</code><code class="sig-name descname">TelecommandList</code><a class="headerlink" href="#groundstation.backend_api.telecommand.TelecommandList" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="groundstation.backend_api.telecommand.TelecommandList.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.telecommand.TelecommandList.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Endpoint for getting all valid telecommands</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>response_object, status_code</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>tuple (dict, int)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="groundstation.backend_api.telecommand.TelecommandList.post">
+<code class="sig-name descname">post</code><span class="sig-paren">(</span><em class="sig-param">local_data=None</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.telecommand.TelecommandList.post" title="Permalink to this definition">¶</a></dt>
+<dd><p>Endpoint for creating a new telecommand (virtually never used)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>local_data</strong> (<em>json_string</em>) – This should be used in place of the POST body that would be used through HTTP, used for local calls.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>response_object, status_code</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple (dict, int)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-groundstation.backend_api.user">
+<span id="users"></span><h2>Users<a class="headerlink" href="#module-groundstation.backend_api.user" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="groundstation.backend_api.user.UserEntity">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.user.</code><code class="sig-name descname">UserEntity</code><a class="headerlink" href="#groundstation.backend_api.user.UserEntity" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="groundstation.backend_api.user.UserEntity.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">user_id</em>, <em class="sig-param">local_args=None</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.user.UserEntity.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Endpoint for getting a user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<em>int</em>) – The id of the user to get</p></li>
+<li><p><strong>local_args</strong> (<em>dict</em>) – This should be used in place of the QUERY PARAMS that would be used through HTTP, used for local calls.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>response_object, status_code</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple (dict, int)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="groundstation.backend_api.user.UserList">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.user.</code><code class="sig-name descname">UserList</code><a class="headerlink" href="#groundstation.backend_api.user.UserList" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="groundstation.backend_api.user.UserList.post">
+<code class="sig-name descname">post</code><span class="sig-paren">(</span><em class="sig-param">local_data=None</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.user.UserList.post" title="Permalink to this definition">¶</a></dt>
+<dd><p>Endpoint for creating a new user. WARNING: This currently should not
+be used for local calls, since it references flasks g.user which will
+only be set to a valid user when requests are made over http, refer to login_required decorator in
+groundstation.backend_api.utils. If you want to make a new user, its probably best to just make a new User object
+and save it in a shell.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>local_data</strong> (<em>json_string</em>) – This should be used in place of the POST body that would be used through HTTP, used for local calls.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>response_object, status_code</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple (dict, int)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">AlbertaSat</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="groundstation.html">groundstation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="backend_api_docs.html">Backend API</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">RESTful endpoints Reference</a></li>
+<li class="toctree-l3"><a class="reference internal" href="backend_api_docs.html#module-groundstation.backend_api.models">The Data Models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="backend_api_docs.html#module-groundstation.backend_api.utils">Utility Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="backend_api_docs.html#module-groundstation.backend_api.validators">Validators</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="groundstation_tests.html">Groundstation Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="groundstation_modules.html">Other groundstation modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules_api.html">Module API reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="groundstation.html">groundstation</a><ul>
+  <li><a href="backend_api_docs.html">Backend API</a><ul>
+      <li>Previous: <a href="backend_api_docs.html" title="previous chapter">Backend API</a></li>
+      <li>Next: <a href="groundstation_tests.html" title="next chapter">Groundstation Tests</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Cmput 401 AlbertaSat Team.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/endpoints_api.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
