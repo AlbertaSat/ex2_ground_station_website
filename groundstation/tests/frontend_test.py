@@ -28,6 +28,44 @@ class TestHome(BaseTestCaseFrontEnd):
 		self.assertTrue(self.driver.find_element_by_id("passover-4"))
 		self.assertTrue(self.driver.find_element_by_id("passover-5"))
 
+class TestLogin(BaseTestCaseFrontEnd):
+	"""Test the logging in UI"""
+
+	def test_login_with_correct_creds(self):
+		login = self.get_server_url() + "/login"
+		self.driver.get(login)
+
+		user_elmt = self.driver.find_element_by_name("username").send_keys("user1")
+		password_elm = self.driver.find_element_by_name("password").send_keys("user1")
+
+		time.sleep(1)
+		submit_btn = self.driver.find_element_by_name("submit").click()
+		time.sleep(2)
+
+		self.assertEqual(self.driver.current_url, self.get_server_url() + "/")
+
+	def test_login_with_incorrect_creds(self):
+		login = self.get_server_url() + "/login"
+		self.driver.get(login)
+
+		user_elmt = self.driver.find_element_by_name("username").send_keys("fakeuser")
+		password_elm = self.driver.find_element_by_name("password").send_keys("fakeuser")
+
+		time.sleep(1)
+		submit_btn = self.driver.find_element_by_name("submit").click()
+		time.sleep(2)
+
+		# make sure an incorrect message is displayed
+		message = self.driver.find_element_by_css_selector("p.MuiTypography-root:nth-child(1)")
+		self.assertTrue(message)
+		self.assertEqual(message.get_attribute("innerText"), "Username and/or password is incorrect")
+
+
+
+
+
+
+
 
 
 
