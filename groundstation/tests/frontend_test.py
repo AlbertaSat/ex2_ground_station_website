@@ -2,6 +2,7 @@ import unittest
 from groundstation.tests.base import BaseTestCaseFrontEnd
 import time
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 
 class TestHome(BaseTestCaseFrontEnd):
 	"""Test the homepage"""
@@ -62,7 +63,11 @@ class TestLogin(BaseTestCaseFrontEnd):
 
 
 class TestHousekeepingPage(BaseTestCaseFrontEnd):
+	""""Test the housekeeping page"""
 
+	"""The date picker is too hard to simulate picking a date, however we cab pick an impossible date range
+		(now-now) and ensire this returns no logs
+	"""
 	def test_date_filter_no_matches(self):
 		housekeeping = self.get_server_url() + "/housekeeping"
 		self.driver.get(housekeeping)
@@ -84,6 +89,21 @@ class TestHousekeepingPage(BaseTestCaseFrontEnd):
 
 		entries = self.driver.find_elements_by_css_selector("th.MuiTableCell-root")
 		self.assertEqual(len(entries), 0)
+
+class TestFlightScheduleBuilder(BaseTestCaseFrontEnd):
+	"""Test the flightschedule builder"""
+	def test_open_builder(self):
+		flightschedule = self.get_server_url() + "/flightschedule"
+		self.driver.get(flightschedule)
+
+		self.driver.find_element_by_css_selector(".MuiFab-root").click()
+		time.sleep(1)
+
+		header = self.driver.find_element_by_css_selector("h2.MuiTypography-root")
+		self.assertTrue(header)
+		self.assertEqual(header.get_attribute("innerText"), "Add/Edit Flightschedule")
+
+
 
 
 
