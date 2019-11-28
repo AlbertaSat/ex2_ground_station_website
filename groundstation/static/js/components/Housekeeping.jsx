@@ -148,14 +148,14 @@ class HouseKeeping extends Component {
                     </form>
                   </Grid>
                   <Grid item sm={2}>
-                    <Fab ref="filter-button" onClick={() => { this.handleFilter() }} variant="extended"
+                    <Fab ref="filter-button" onClick={() => { this.handleFilter() }} variant="extended" name="filter"
                       style={{ fontSize: '0.75rem', height: '40px', marginBottom: '20px', backgroundColor: '#55c4d3' }}>
                       <FilterListIcon />
                       Filter
                     </Fab>
                   </Grid>
                   <Grid item xs={2}>
-                    <Fab onClick={() => { this.handleClearFilter() }} variant="extended"
+                    <Fab onClick={() => { this.handleClearFilter() }} variant="extended" name="clear"
                       style={{ fontSize: '0.75rem', height: '40px', marginBottom: '20px', backgroundColor: '#55c4d3' }}>
                       <ClearIcon />
                       Clear

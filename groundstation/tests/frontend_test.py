@@ -7,14 +7,14 @@ class TestHome(BaseTestCaseFrontEnd):
 	"""Test the homepage"""
 
 	def test_housekeeping_displays_last_5_entries(self):
-		self.assertTrue(self.driver.find_element_by_id("housekeeping-20"))
-		self.assertTrue(self.driver.find_element_by_id("housekeeping-19"))
-		self.assertTrue(self.driver.find_element_by_id("housekeeping-18"))
-		self.assertTrue(self.driver.find_element_by_id("housekeeping-17"))
-		self.assertTrue(self.driver.find_element_by_id("housekeeping-16"))
+		self.assertTrue(self.driver.find_element_by_id("housekeeping-60"))
+		self.assertTrue(self.driver.find_element_by_id("housekeeping-59"))
+		self.assertTrue(self.driver.find_element_by_id("housekeeping-58"))
+		self.assertTrue(self.driver.find_element_by_id("housekeeping-58"))
+		self.assertTrue(self.driver.find_element_by_id("housekeeping-56"))
 
 	def test_housekeeping_dialog(self):
-		elemt = self.driver.find_element_by_id("housekeeping-20")
+		elemt = self.driver.find_element_by_id("housekeeping-60")
 		action = webdriver.ActionChains(self.driver)
 		action.move_to_element(elemt).click(elemt)
 		action.perform()
@@ -63,17 +63,31 @@ class TestLogin(BaseTestCaseFrontEnd):
 
 class TestHousekeepingPage(BaseTestCaseFrontEnd):
 
-	def test_date_filter(self):
+	def test_date_filter_no_matches(self):
 		housekeeping = self.get_server_url() + "/housekeeping"
 		self.driver.get(housekeeping)
 
-		start_date = self.driver.find_element_by_name("startdate")
-		end_date = self.driver.find_element_by_name("enddate")
+		filter_btn = self.driver.find_element_by_name("filter")
 
-		driver.execute_script("setValue(November 8th 06:02 am)", start_date)
-		driver.execute_script("setValue(November 18th 06:02 am)", end_date)
+		self.driver.find_element_by_name("startdate").click()
+		time.sleep(1)
+		self.driver.find_element_by_css_selector("button.MuiButton-textPrimary:nth-child(3)").click()
+		time.sleep(1)
+		self.driver.find_element_by_name("enddate").click()
+		time.sleep(1)
+		self.driver.find_element_by_css_selector("button.MuiButton-textPrimary:nth-child(3)").click()
+		time.sleep(1)
 
-		
+		filter_btn.click()
+
+		time.sleep(1)
+
+		entries = self.driver.find_elements_by_css_selector("th.MuiTableCell-root")
+		self.assertEqual(len(entries), 0)
+
+
+
+
 
 
 
