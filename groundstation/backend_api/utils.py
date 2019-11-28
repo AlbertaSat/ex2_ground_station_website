@@ -36,9 +36,9 @@ def add_telecommand(command_name, num_arguments, is_dangerous):
 
 def add_flight_schedule(creation_date, upload_date, status, execution_time):
     flightschedule = FlightSchedules(
-        creation_date=creation_date, 
-        upload_date=upload_date, 
-        status=status, 
+        creation_date=creation_date,
+        upload_date=upload_date,
+        status=status,
         execution_time=execution_time
     )
     db.session.add(flightschedule)

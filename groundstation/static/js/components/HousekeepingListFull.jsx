@@ -148,7 +148,7 @@ class HousekeepingLogListFull extends Component {
                   onClick={() => this.handleOpenClick(housekeeping)
                 }>
                 <TableCell width="30%" component="th" scope="row" style={tableColor(housekeeping.satellite_mode)}>
-                  {this.props.isLoading ? '' : formatDateToUTCString(new Date(housekeeping.last_beacon_time))}
+                  {this.props.isLoading ? '' : formatDateToUTCString(new Date(housekeeping.last_beacon_time + 'Z'))}
                 </TableCell>
                 <TableCell component="th" scope="row">
                   {housekeeping.satellite_mode}
