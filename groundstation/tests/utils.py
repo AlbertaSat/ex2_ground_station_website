@@ -50,9 +50,9 @@ def fake_flight_schedule_as_dict(status=2, commands=[], execution_time=None):
     return flightschedule
 
 def fake_passover_as_dict(timestamps):
-    """
-    params:
-        @timestamps : [datetime.datetime.utcnow()] : (a list of datetime objects)
+    """Create mock passovers as a dictionary
+    
+    :param list(datetime.datetime) timestamps: The passover timestamps to use
     """
     return {
         'passovers':[{'timestamp':str(timestamp)} for timestamp in timestamps]
