@@ -126,6 +126,7 @@ class HouseKeeping extends Component {
                           onChange={(event) => { this.handleStartDateChange(event) }}
                           value={this.state.startDate}
                           style={{ width: '100%' }}
+                          name="startdate"
                           error={this.state.startDateError}
                         />
                       </MuiPickersUtilsProvider>
@@ -140,6 +141,7 @@ class HouseKeeping extends Component {
                           onChange={(event) => { this.handleEndDateChange(event) }}
                           value={this.state.endDate}
                           style={{ width: '100%' }}
+                          name="enddate"
                           error={this.state.endDateError}
                         />
                       </MuiPickersUtilsProvider>

@@ -61,6 +61,22 @@ class TestLogin(BaseTestCaseFrontEnd):
 		self.assertEqual(message.get_attribute("innerText"), "Username and/or password is incorrect")
 
 
+class TestHousekeepingPage(BaseTestCaseFrontEnd):
+
+	def test_date_filter(self):
+		housekeeping = self.get_server_url() + "/housekeeping"
+		self.driver.get(housekeeping)
+
+		start_date = self.driver.find_element_by_name("startdate")
+		end_date = self.driver.find_element_by_name("enddate")
+
+		driver.execute_script("setValue(November 8th 06:02 am)", start_date)
+		driver.execute_script("setValue(November 18th 06:02 am)", end_date)
+
+		
+
+
+
 
 
 
