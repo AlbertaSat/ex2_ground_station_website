@@ -190,9 +190,9 @@ class Help extends Component {
                         On the navigation bar, you will see a timer. This denotes when the next
                         scheduled satellite passover is. If the timer is yellow, it is counting down until
                         the next expected passover. When an expected passover begins, the timer
-                        will turn green and begin counting up signifying how long much time has elapsed
+                        will turn green and begin counting up signifying how much time has elapsed
                         during the current passover. Once a passover ends, the timer will turn 
-                        yellow again and begin bounting down until the next passover.
+                        yellow again and begin counting down until the next passover.
                     </Typography>
                 </Paper>
             </div>       
