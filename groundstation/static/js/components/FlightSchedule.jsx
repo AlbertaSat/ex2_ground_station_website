@@ -8,7 +8,6 @@ import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import Paper from '@material-ui/core/Paper';
 
-
 function isMinified(minify, elemt){
 	if(!minify){
 	  return elmt

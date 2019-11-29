@@ -1,15 +1,11 @@
 import React, { Component } from 'react';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
-
 import HousekeepingList from './HousekeepingListFull';
 import Passovers from './Passovers';
-import Countdown from './Countdown';
 
 const styles = {
   root: {
