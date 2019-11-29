@@ -29,7 +29,7 @@ function fetchPassovers(next, most_recent) {
                 let mostRecentPassover;
 
                 console.log('RESPONSE', data);
-                if (data.data.next_passovers === undefined || data.data.next_passovers === []) {
+                if (data.data.next_passovers === undefined || data.data.next_passovers.length == 0) {
                     nextPassover = null;
                 } else {
                     let newNextDate = data.data.next_passovers[0].timestamp.replace(' ', 'T');
@@ -44,8 +44,6 @@ function fetchPassovers(next, most_recent) {
                     newMostRecentDate.slice(-3);
                     mostRecentPassover = Date.parse(newMostRecentDate)
                 }
-                console.log('resolving...' + nextPassover);
-                console.log('resolving...' + mostRecentPassover);
                 resolve({
                     nextPassover: nextPassover,
                     mostRecentPassover: mostRecentPassover
