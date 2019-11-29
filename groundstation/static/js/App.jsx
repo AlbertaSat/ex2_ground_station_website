@@ -115,6 +115,13 @@ function App() {
                   Logs
                 </a>
               }
+              { isAuthenticated() &&
+                <a
+                  className={`link-items hvr-underline-from-center ${classes.navbarLinks}`}
+                  href="/help">
+                  Help
+                </a>
+              }
               { !isAuthenticated() &&
                 <a
                   className={`link-items hvr-underline-from-center ${classes.navbarLinks}`}
