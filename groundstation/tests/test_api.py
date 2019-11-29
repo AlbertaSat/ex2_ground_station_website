@@ -899,6 +899,53 @@ class TestUserService(BaseTestCase):
 #Test Communications functions
 class TestCommunicationsService(BaseTestCase):
 
+    def test_post_as_authenticated_user(self):
+        current_app.config.update(BYPASS_AUTH=False)
+        user = add_user('Bob', 'password', is_admin=False)
+        auth_token = user.encode_auth_token_by_id().decode()
+        test_message = fake_message_as_dict(sender='Bob')
+        test_message['timestamp'] = str(test_message['timestamp'])
+        with self.client:
+            response = self.client.post(
+                '/api/communications',
+                headers={'Authorization': f'Bearer {auth_token}'},
+                data=json.dumps(test_message),
+                content_type='application/json'
+            )
+            data=json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 201)
+
+    def test_post_as_unauthenticated_user(self):
+        current_app.config.update(BYPASS_AUTH=False)
+        user = add_user('Bob', 'password', is_admin=False)
+        auth_token = user.encode_auth_token_by_id().decode()
+        test_message = fake_message_as_dict(sender='Bob')
+        test_message['timestamp'] = str(test_message['timestamp'])
+        with self.client:
+            response = self.client.post(
+                '/api/communications',
+                data=json.dumps(test_message),
+                content_type='application/json'
+            )
+            data=json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 401)
+
+    def test_post_with_invalid_token(self):
+        current_app.config.update(BYPASS_AUTH=False)
+        user = add_user('Bob', 'password', is_admin=False)
+        auth_token = "uydbisjanxsifbinewkrnieuwd"
+        test_message = fake_message_as_dict(sender='Bob')
+        test_message['timestamp'] = str(test_message['timestamp'])
+        with self.client:
+            response = self.client.post(
+                '/api/communications',
+                headers={'Authorization': f'Bearer {auth_token}'},
+                data=json.dumps(test_message),
+                content_type='application/json'
+            )
+            data=json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 401)
+
     def test_post_valid_communication(self):
         # service = CommunicationsList()
         test_message = fake_message_as_dict()
