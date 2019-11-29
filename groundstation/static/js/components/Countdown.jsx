@@ -1,11 +1,5 @@
 import React, { Component } from 'react';
 
-import Paper from '@material-ui/core/Paper';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
 import SatelliteIcon from '@material-ui/icons/Satellite';
 
 function fetchPassovers(next, most_recent) {
@@ -28,8 +22,7 @@ function fetchPassovers(next, most_recent) {
                 let nextPassover;
                 let mostRecentPassover;
 
-                console.log('RESPONSE', data);
-                if (data.data.next_passovers === undefined || data.data.next_passovers === []) {
+                if (data.data.next_passovers === undefined || data.data.next_passovers.length == 0) {
                     nextPassover = null;
                 } else {
                     let newNextDate = data.data.next_passovers[0].timestamp.replace(' ', 'T');
@@ -44,8 +37,6 @@ function fetchPassovers(next, most_recent) {
                     newMostRecentDate.slice(-3);
                     mostRecentPassover = Date.parse(newMostRecentDate)
                 }
-                console.log('resolving...' + nextPassover);
-                console.log('resolving...' + mostRecentPassover);
                 resolve({
                     nextPassover: nextPassover,
                     mostRecentPassover: mostRecentPassover

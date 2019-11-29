@@ -8,7 +8,6 @@ import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import Paper from '@material-ui/core/Paper';
 
-
 function isMinified(minify, elemt){
 	if(!minify){
 	  return elmt
@@ -147,8 +146,6 @@ class FlightSchedule extends Component{
 		}).then(results => {
 			return results.json();
 		}).then(data => {
-			console.log(data)
-
 			if(data.status == 'success'){
 				const obj = this.state.allflightschedules.slice();
 				// depending on what we are doing, we handle the resulting data differently
@@ -211,7 +208,6 @@ class FlightSchedule extends Component{
 		// however it is newly created, so deleting it shouldnt be
 		// patched to the database
 		this.setState({thisFlightscheduleCommands: obj})
-		console.log(this.state.thisFlightscheduleCommands);
 	}
 
 	handleExecutionTimeChange(event){
