@@ -1,5 +1,5 @@
 """ The Manage Module is how you can run the flask application through the command line,
-it also you to define your own command line functions that can be called as::
+it also allows you to define your own command line functions that can be called as::
 
     python3 manage.py <command_line_command>
 
@@ -33,7 +33,8 @@ cli = FlaskGroup(create_app=create_app)
 
 @cli.command('recreate_db')
 def recreate_db():
-    """Recreate the database"""
+    """Recreate the database
+    """
     db.drop_all()
     db.create_all()
     db.session.commit()
@@ -41,7 +42,8 @@ def recreate_db():
 @cli.command()
 @click.argument('path', required=False)
 def test(path=None):
-    """Runs all tests in tests folder"""
+    """Runs all tests in tests folder
+    """
     if path is None:
         tests = unittest.TestLoader().discover('groundstation/tests', pattern='test*.py')
     else:
@@ -53,6 +55,8 @@ def test(path=None):
 
 @cli.command('seed_db')
 def seed_db():
+    """Seed the database with a set of users and flight schedules
+    """
     timestamp = datetime.fromtimestamp(1570749472)
     for x in range(20):
         # 20 days
