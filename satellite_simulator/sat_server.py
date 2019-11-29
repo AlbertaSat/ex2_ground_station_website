@@ -1,3 +1,8 @@
+"""This file uses the Classes defined in sat_sim.py to simulate a satellite in a controlled environment. At the same time, 
+it opens a port and lisens for a client to send commands to the satellite. All commands recieved are then parsed and then
+passed onto the satellite which attempts to respond.
+"""
+
 import socket
 
 import time
