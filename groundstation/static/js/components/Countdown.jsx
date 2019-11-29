@@ -58,7 +58,7 @@ class Countdown extends Component{
 			minute: '00',
 			second: '00',
             displayCountdown:false,
-            passoverDuration:1*60,
+            passoverDuration:2*60,
 			nextPassover: null,
 			untilPassover: null,
             operationIsAdd:false,
