@@ -12,8 +12,8 @@ In this repository we are attempting to make a functional and extendable ground 
 
 **[Contributing tutorial](CONTRIBUTING.md)** - Find out how to develop and extend the project.
 
-**[Source code documentation](#)** - Automatically generated documentation for the source code. Update the documentation to match any changes to the code using `source ./update_docs.sh`
+**[Source code documentation](#)** - Automatically generated documentation for the source code. When you make changes to the code, update the documentation to match it using `source ./update_docs.sh`
 
-**[RESTful API backend documentation](https://documenter.getpostman.com/view/9298924/SW11YKEd)** - Documentation for the REST backend of this Flask app. There are examples of requests that you can make to the backend and what responses to expect.
+**[RESTful API backend documentation](https://documenter.getpostman.com/view/9298924/SW11YKEd)** - Documentation for the RESTful backend API of this Flask app. Relevant source code located in `groundstation/backend_api`. There are examples of requests that you can make to the backend and what responses to expect.
 
 **[Wiki](https://github.com/UAlberta-CMPUT401/AlbertaSat/wiki)** - See more information about the project's development.
