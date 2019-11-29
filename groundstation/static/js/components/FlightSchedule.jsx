@@ -108,15 +108,15 @@ class FlightSchedule extends Component{
 			return results.json();
 		}).then(data => {
 			if(data.status == 'success'){
-				if (this.state.thisIndex == 0) {
-					this.setState({empty: true})
-				}
 				const obj = this.state.allflightschedules.slice();
 				obj.splice(this.state.thisIndex, 1)
 				this.setState({deleteFlightOpen: false,
 								thisIndex: null,
 								thisFlightscheduleId: null,
 								allflightschedules: obj,})
+				if (this.state.allflightschedules.length == 0) {
+					this.setState({empty: true})
+				}
 
 			}
 		})
