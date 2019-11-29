@@ -946,6 +946,15 @@ class TestCommunicationsService(BaseTestCase):
             data=json.loads(response.data.decode())
             self.assertEqual(response.status_code, 401)
 
+    def test_local_post_with_auth(self):
+        current_app.config.update(BYPASS_AUTH=False)
+        test_message = fake_message_as_dict(sender='Bob')
+        test_message['timestamp'] = str(test_message['timestamp'])
+        endpoint = CommunicationList()
+        response = endpoint.post(local_data=json.dumps(test_message))
+        self.assertEqual(response[1], 201)
+        self.assertIn('success', response[0]['status'])
+
     def test_post_valid_communication(self):
         # service = CommunicationsList()
         test_message = fake_message_as_dict()
