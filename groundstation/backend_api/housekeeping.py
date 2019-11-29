@@ -19,7 +19,13 @@ class HousekeepingLog(Resource):
 
     @create_context
     def get(self, housekeeping_id):
-        """Get a single housekeeping log via its id"""
+        """Endpoint for getting a specific housekeeping log
+
+        :param int housekeeping_id: The housekeeping_id
+
+        :returns: response_object, status_code
+        :rtype: tuple (dict, int)
+        """
         response_object = {
             'status': 'fail',
             'message': 'Housekeeping Log does not exist'
@@ -46,6 +52,13 @@ class HousekeepingLogList(Resource):
     @create_context
     @login_required
     def post(self, local_data=None):
+        """Endpoint for creating a new Housekeeping log
+
+        :param json_string local_data: This should be used in place of the POST body that would be used through HTTP, used for local calls.
+
+        :returns: response_object, status_code
+        :rtype: tuple (dict, int)
+        """
         if not local_data:
             post_data = request.get_json()
         else:
@@ -80,6 +93,13 @@ class HousekeepingLogList(Resource):
 
     @create_context
     def get(self, local_args=None):
+        """Endpoint for getting a list of housekeeping logs
+
+        :param dict local_args: This should be used in place of the QUERY PARAMS that would be used through HTTP, used for local calls.
+
+        :returns: response_object, status_code
+        :rtype: tuple (dict, int)
+        """
         if not local_args:
             query_limit = request.args.get('limit', None)
             newest_first = request.args.get('newest-first', None)

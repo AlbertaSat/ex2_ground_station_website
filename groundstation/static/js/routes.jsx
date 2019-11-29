@@ -7,6 +7,7 @@ import HouseKeeping from './components/Housekeeping';
 import Login from './components/Login';
 import Logout from './components/Logout';
 import Logs from './components/ViewLogs';
+import Help from './components/Help';
 
 const Routes = () => (
     <Switch>
@@ -17,6 +18,7 @@ const Routes = () => (
         <Route exact path='/login' component={Login}/>
         <Route exact path='/logout' component={Logout}/>
         <Route exact path='/logs' component={Logs}/>
+        <Route exact path='/help' component={Help}/>
     </Switch>
 
 )

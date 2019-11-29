@@ -21,6 +21,13 @@ class AuthLogin(Resource):
 
     @create_context
     def post(self, local_data=None):
+        """Endpoint for logging in
+
+        :param json_string local_data: This should be used in place of the POST body that would be used through HTTP, used for local calls.
+
+        :returns: response_object, status_code
+        :rtype: tuple
+        """
         if not local_data:
             post_data = request.get_json()
         else:
@@ -68,10 +75,10 @@ class AuthLogout(Resource):
     @create_context
     @login_required
     def get(self, local_args=None):
-        # TODO: implement logout logic (blacklisted tokens?)
+        # TODO: implement logout logic (blacklisted tokens?), currently logging out from backend is NOT supported
         response_object = {
             'status':'success',
-            'message':'Successfully logged out.'
+            'message':'FAKE NEWS - Successfully logged out.'
         }
         return response_object, 200
 

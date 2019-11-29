@@ -46,8 +46,8 @@ class Home extends Component {
   }
 
   updatePassoverProgressBars() {
-      // this is just to trigger the state change and re render lol, probably a better way to do it
-      this.setState(prevState => ({ticker: prevState.ticker + 1}));
+    // this is just to trigger the state change and re render lol, probably a better way to do it
+    this.setState(prevState => ({ticker: prevState.ticker + 1}));
   }
 
   componentDidMount() {

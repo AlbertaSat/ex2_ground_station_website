@@ -16,6 +16,14 @@ class Telecommand(Resource):
 
     @create_context
     def get(self, telecommand_id, local_args=None):
+        """Endpoint for getting a single telecommand
+
+        :param int telecommand_id: The id of the telecommand to get
+        :param dict local_args: This should be used in place of the QUERY PARAMS that would be used through HTTP, used for local calls.
+
+        :returns: response_object, status_code
+        :rtype: tuple (dict, int)
+        """
         response_object = {
             'status': 'fail',
             'message': 'telecommand does not exist'
@@ -39,6 +47,11 @@ class TelecommandList(Resource):
 
     @create_context
     def get(self):
+        """Endpoint for getting all valid telecommands
+
+        :returns: response_object, status_code
+        :rtype: tuple (dict, int)
+        """
         telecommands = Telecommands.query.all()
         response_object = {
             'status': 'success',
@@ -52,6 +65,13 @@ class TelecommandList(Resource):
     @create_context
     @login_required
     def post(self, local_data=None):
+        """Endpoint for creating a new telecommand (virtually never used)
+
+        :param json_string local_data: This should be used in place of the POST body that would be used through HTTP, used for local calls.
+
+        :returns: response_object, status_code
+        :rtype: tuple (dict, int)
+        """
         if not local_data:
             post_data = request.get_json()
         else:

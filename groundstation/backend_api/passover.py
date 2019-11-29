@@ -14,6 +14,8 @@ passover_blueprint = Blueprint('passover', __name__)
 api = Api(passover_blueprint)
 
 class PassoverList(Resource):
+    """Endpoint for getting and receiving Passovers
+    """
 
     def __init__(self):
         self.validator = PassoverListValidator()
@@ -21,6 +23,13 @@ class PassoverList(Resource):
 
     @create_context
     def get(self, local_args=None):
+        """Endpoint for getting a list of passovers
+
+        :param dict local_args: This should be used in place of the QUERY PARAMS that would be used through HTTP, used for local calls.
+
+        :returns: response_object, status_code
+        :rtype: tuple (dict, int)
+        """
         response_object = {
             'status':'success',
             'data':{}
@@ -53,6 +62,13 @@ class PassoverList(Resource):
     @create_context
     @login_required
     def post(self, local_data=None):
+        """Endpoint for creating a new passover
+
+        :param json_string local_data: This should be used in place of the POST body that would be used through HTTP, used for local calls.
+
+        :returns: response_object, status_code
+        :rtype: tuple (dict, int)
+        """
         if not local_data:
             post_data = request.get_json()
         else:

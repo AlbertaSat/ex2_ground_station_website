@@ -326,7 +326,7 @@ class FlightSchedule extends Component{
 					<Typography variant="h5" displayInline style={{padding: '10px'}}>Flight Schedules</Typography>
 				</Grid>
 				<Grid item xs={1} style={{textAlign: 'right'}}>
-					<Fab onClick={ (event) => this.handleAddFlightOpenClick(event) }>
+					<Fab style={{position: 'inherit'}}onClick={ (event) => this.handleAddFlightOpenClick(event) }>
 						<AddIcon 
 								style={{ color: '#4bacb8', fontSize: '2rem'}} 
 						/>
