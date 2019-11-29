@@ -4,6 +4,8 @@ import time
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
+"""Note these tests must be run manually by python3 manage.py test frontend_test"""
+
 class TestHome(BaseTestCaseFrontEnd):
 	"""Test the homepage"""
 
