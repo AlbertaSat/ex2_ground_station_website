@@ -94,7 +94,7 @@ class Home extends Component {
           </Grid>
           <Grid item sm={4}>
             <Paper className="grid-containers">
-              <Typography variant="h5" displayInline style={{padding: '10px'}}>Upcoming Passovers</Typography>
+              <Typography variant="h5" displayInline>Upcoming Passovers</Typography>
               <Passovers isLoading={this.state.isLoading} passovers={this.state.passovers} empty={this.state.emptypassover} mostRecentPass={this.state.mostRecentPass}/>
             </Paper>
           </Grid>
