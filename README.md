@@ -4,17 +4,14 @@
 
 In this repository we are attempting to make a functional and extendable ground station for use by the operators of the [Ex-Alta 2 satellite](https://albertasat.ca/ex-alta-2/).
 
-For more information, please visit our [wiki](https://github.com/UAlberta-CMPUT401/AlbertaSat/wiki).
-
 [![Build Status](https://travis-ci.com/UAlberta-CMPUT401/AlbertaSat.svg?token=TRHuLXSMdv9x8426GEpU&branch=dev)](https://travis-ci.com/UAlberta-CMPUT401/AlbertaSat)
 
+<hr>
 
-## Setting up the local development environment
-1. Make sure you have python, npm, and pip installed on your machine
-2. Install local environment: `source ./update.sh`
-3. Set environment variables: `source ./env.sh`    
-4. To run the local environment: `python3 run.py` or simply `flask run`
+### Links
+  
+**[Contributing tutorial](CONTRIBUTING.md)** - Find out how to develop and extend the project.
 
-To recreate the database: `python3 manage.py recreate_db`  
-To seed the database with data: `python3 manage.py seed_db`  
-Both of these commands are included in `update.sh`. If you make changes to the codebase, reset the database and reload the environment by running `source ./update.sh`. Then do `flask run` to run the app.
+**[Online documentation](#)** - See the automatically generated documentation for the source code. Update the documentation to match any changes to the code using `source ./update_docs.sh`
+
+**[Wiki](https://github.com/UAlberta-CMPUT401/AlbertaSat/wiki)** - See more information about the project's development.
