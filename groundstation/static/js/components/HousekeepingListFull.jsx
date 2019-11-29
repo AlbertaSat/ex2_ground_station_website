@@ -101,22 +101,6 @@ class HousekeepingLogListFull extends Component {
     this.handleOpenClick = this.handleOpenClick.bind(this)
     this.handleClose = this.handleClose.bind(this)
 	}
-  componentDidMount() {
-    if (this.props.isLoading) {
-      return (
-        <div>
-          <LinearProgress />
-        </div>
-      )
-    }
-    if (this.props.empty && !this.props.isLoading) {
-      return (
-        <div>
-          <ErrorOutlineIcon /> There is currently no housekeeping data!
-        </div>
-      )
-    }
-  }
 
   handleOpenClick(housekeeping) {
     this.setState({
@@ -134,6 +118,22 @@ class HousekeepingLogListFull extends Component {
 
   render() {
     const { classes } = this.props;
+
+    if (this.props.isLoading) {
+      return (
+        <div>
+          <LinearProgress />
+        </div>
+      )
+    }
+    if (this.props.empty && !this.props.isLoading) {
+      return (
+        <div>
+          <ErrorOutlineIcon /> There is currently no housekeeping data!
+        </div>
+      )
+    }
+
 	return (
 		<div className={classes.root}>
       <div>
@@ -142,9 +142,9 @@ class HousekeepingLogListFull extends Component {
         {this.props.housekeeping.map(housekeeping => (
           <Table aria-label="simple table">
               <TableBody>
-                <TableRow 
-                  button key={housekeeping.name} 
-                  id={'housekeeping-' + housekeeping.id} 
+                <TableRow
+                  button key={housekeeping.name}
+                  id={'housekeeping-' + housekeeping.id}
                   onClick={() => this.handleOpenClick(housekeeping)
                 }>
                 <TableCell width="30%" component="th" scope="row" style={tableColor(housekeeping.satellite_mode)}>
