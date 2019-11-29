@@ -4,7 +4,10 @@ import time
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
-"""Note these tests must be run manually by python3 manage.py test frontend_test"""
+"""Note these tests must be run manually by python3 manage.py test frontend_test
+server must also be running, in addition to a newly seeded database in order to pass
+"""
+
 
 class TestHome(BaseTestCaseFrontEnd):
 	"""Test the homepage"""
