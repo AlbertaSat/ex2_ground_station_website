@@ -12,7 +12,7 @@ In this repository we are attempting to make a functional and extendable ground 
 
 **[How to Develop and Extend this project](CONTRIBUTING.md)** - A guide to developing this project further. Includes instructions for setting up the development environment, running the app, testing the app, and expanding critical parts of the app.
 
-**[Source code documentation](#)** - This is automatically generated documentation for the source code. When you make changes to the code, update this documentation to match it using `source ./update_docs.sh`
+**[Source code documentation](#)** - This is automatically generated documentation for the source code. It lives in `/docs`. When you make changes to the code, update this documentation to match it using `source ./update_docs.sh`
 
 **[RESTful API backend documentation](https://documenter.getpostman.com/view/9298924/SW11YKEd)** - This is documentation for the RESTful backend API of this Flask app. There are examples of requests that you can make to the backend and what responses to expect. The relevant source code is located in `groundstation/backend_api`.
 
