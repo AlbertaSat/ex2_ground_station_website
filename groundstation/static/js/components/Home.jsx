@@ -47,7 +47,6 @@ class Home extends Component {
   }
 
   componentDidMount() {
-    // console.log(localStorage.getItem('auth_token'))
     Promise.all([
       fetch('/api/housekeepinglog?newest-first=true&limit=5'),
       fetch('/api/passovers?next=true&most-recent=true&limit=5',
@@ -83,11 +82,6 @@ class Home extends Component {
               <Typography variant="h4" displayInline style={{color: '#28324C'}}>
                 OVERVIEW
               </Typography>
-              {/*
-              <Typography variant="h7" displayInline style={{marginLeft: '20px', borderBottom : '2px solid #28324C', color: '28324C'}}>
-                Updates every 30 seconds
-              </Typography>
-              */}
             </div>
           </Grid>
         </Grid>

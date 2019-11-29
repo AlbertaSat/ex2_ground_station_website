@@ -14,14 +14,6 @@ import TableRow from '@material-ui/core/TableRow';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Button from '@material-ui/core/Button';
 
-function isMinified(minify, elemt){
-  if(!minify){
-    return elmt
-  }else{
-    return
-  }
-}
-
 const FlightScheduleList = (props) => {
   if (props.isLoading) {
       return (
@@ -62,22 +54,6 @@ const FlightScheduleList = (props) => {
 
 	return (
     <div>
-
-      {/* <Grid container style={{paddingBottom: '12px'}}>
-        <Grid item xs={(props.isMinified) ? 12 : 11}>
-          <Typography variant="h5" displayInline style={{padding: '10px'}}>Flight Schedules</Typography>
-        </Grid>
-        {
-          !props.isMinified &&
-            <Grid item xs={1} style={{textAlign: 'right'}}>
-              <Fab onClick={ (event) => props.handleAddFlightOpenClick(event) }>
-                <AddIcon 
-                          style={{ color: '#4bacb8', fontSize: '2rem'}} 
-                />
-              </Fab>
-            </Grid>
-        } 
-      </Grid> */}
       {props.flightschedule.map((flightschedule, idx) => (
         <ExpansionPanel key={flightschedule.flightschedule_id} style={tableColour(flightschedule.status)}>
           <ExpansionPanelSummary
