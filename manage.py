@@ -81,7 +81,6 @@ def seed_db():
         'get-hk':(0,False),
         'turn-on':(1,True),
         'turn-off':(1,True),
-        'set-fs':(1,True),
         'upload-fs': (0, False)
     }
 
