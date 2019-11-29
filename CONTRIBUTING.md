@@ -47,7 +47,7 @@ The logic of the app is written in Python with the help of [Flask](https://flask
 **To run all of the unit tests for the app:** `python3 manage.py test`
 
 ## Extending The Comm Module
-The comm module is the main point of interaction between the groundstation application and the satellite. It acts a client to both, and interprets commands sent from the operator to the satellite, and also interprets telemetry sent from the satellite. To extend the comm module, there are 3 files of interest in the root directory of the project:
+The comm module is the main point of interaction between the groundstation application and the satellite. It acts a client to both, and interprets commands sent from the operator to the satellite, and also interprets telemetry sent from the satellite. To extend the comm module, there are 4 files of interest in the root directory of the project:
 
 **comm.py**
 Acts a loop for constantly checking commands sent by an operator in the communications table, and sending them to a socket.
@@ -61,4 +61,7 @@ Handling satellite responses is also implemented here, through the function hand
 Automation.py is the script ran at the time of the passover. It first reads from **automation.txt**, a file with commands seperated by newlines. The commands in automation.txt will be posted to the communications table, and sent to the satellite automatically.
 
 The script then loads the next passover time, and utlizes the linux `at` program to schedule the next time automation will run.
+
+**seed_passovers.sh**
+Run this script to schedule automation.py to run at the next passover time. Only necessary to run if no automation is scheduled (ie passovers have ran out, or for initially setting up automation)
 
