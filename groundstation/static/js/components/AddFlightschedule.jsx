@@ -20,7 +20,7 @@ import {
 } from "@material-ui/pickers";
 import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
-import Select, { components } from 'react-select';
+import Select from 'react-select';
 import Grid from '@material-ui/core/Grid';
 	
 const AddFlightschedule = (props) =>{
