@@ -117,8 +117,6 @@ class Help extends Component {
                         the flight schedule using the <DeleteIcon style={{ color: '#4bacb8'}}/> to the right of
                         the command.
                     </Typography> 
-
-
                 </Paper>
                 <Paper className="Housekeeping" style={{marginBottom: '20px'}}>
                     <Typography variant="h5" displayInline style={{ padding: '10px' }}>
@@ -128,7 +126,8 @@ class Help extends Component {
                         Use Housekeeping to view the status and health of the satellite.
                         Each housekeeping log contains information about the satellite like
                         the watchdog timers as well as voltages. A housekeeping file with
-                        a green tag means that the housekeeping log detected no issues
+                        a green tag means that the housekeeping log is healthy and detected 
+                        no issues
                         <Paper style={{marginLeft: '20px', borderLeft: 'solid 8px #479b4e', marginBottom: '10px', marginRight: '20px'}}>
                             <div style={{fontWeight: 'bold'}}>
                                 Healthy Log
@@ -137,13 +136,13 @@ class Help extends Component {
                         Whereas a red tag signifies that there may be an issue with the satellite
                         <Paper style={{marginLeft: '20px', borderLeft: 'solid 8px #721c24', marginBottom: '10px', marginRight: '20px'}}>
                             <div style={{fontWeight: 'bold'}}>
-                                Draft Flight Schedule
+                                Critical Status
                             </div>
                         </Paper>
                         You can also filter housekeeping logs by timestamp using the filter options
                     </Typography>
                 </Paper>
-                <Paper className="Live Commands">
+                <Paper className="Live Commands" style={{marginBottom: '20px'}}>
                     <Typography variant="h5" displayInline style={{ padding: '10px' }}>
                         Live Commands
                     </Typography>
@@ -166,9 +165,36 @@ class Help extends Component {
                             ))}
                         </Paper>
                         The live commands page displays any messages sent to or received from the satellite
-                        communications module.  
+                        communications module. Note that the live commands window will only display the commands
+                        for the duration you are on the page. To view a complete history of the communications with
+                        the satellite, go to the logs page. The messages will be from one of a username (ie a human 
+                        operator), the satellite (comm), or sent as part of an automated script (automation). 
                     </Typography>
                 </Paper> 
+                <Paper className="Logs" style={{marginBottom: '20px' }}>
+                    <Typography variant="h5" displayInline style={{ padding: '10px' }}>
+                        Logs
+                    </Typography>
+                    <Typography variant="body1" style={{paddingLeft: '20px' }}>
+                        The logs page displays all of the communications to and from the satellite.
+                        To update the page, press the refresh button. All messages will be denoted
+                        as from one of a username (ie a human operator), the satellite (comm), or 
+                        sent as part of an automated script (automation).
+                    </Typography>
+                </Paper>
+                <Paper className="Timer">
+                    <Typography variant="h5" displayInline style={{ padding: '10px' }}>
+                        Passover Timer
+                    </Typography>
+                    <Typography variant="body1" style={{paddingLeft: '20px' }}>
+                        On the navigation bar, you will see a timer. This denotes when the next
+                        scheduled satellite passover is. If the timer is yellow, it is counting down until
+                        the next expected passover. When an expected passover begins, the timer
+                        will turn green and begin counting up signifying how long much time has elapsed
+                        during the current passover. Once a passover ends, the timer will turn 
+                        yellow again and begin bounting down until the next passover.
+                    </Typography>
+                </Paper>
             </div>       
         )   
     }
