@@ -7,7 +7,7 @@ from sqlalchemy import desc
 
 from groundstation.backend_api.models import Communications
 from groundstation import db
-from groundstation.backend_api.utils import create_context, dynamic_filters_communications
+from groundstation.backend_api.utils import create_context, dynamic_filters_communications, login_required
 
 communications_blueprint = Blueprint('communications', __name__)
 api = Api(communications_blueprint)
@@ -43,6 +43,7 @@ class Communication(Resource):
 
 class CommunicationList(Resource):
     @create_context
+    @login_required
     def post(self, local_data=None):
         """Endpoint for posting a new message to communications table
 
