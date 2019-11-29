@@ -63,6 +63,9 @@ def seed_db():
         for y in range(3):
         # 3 entries per day
             housekeepingData = fakeHousekeepingAsDict(timestamp + timedelta(days=x, minutes=y*15))
+            if (x+y) % 10 == 0:
+                housekeepingData['satellite_mode'] = 'Danger'
+
             housekeeping = Housekeeping(**housekeepingData)
 
             for i in range(1, 25):

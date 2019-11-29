@@ -60,7 +60,6 @@ class LiveCommands extends Component {
         .then(results => {
             return results.json();
         }).then(data => {
-        console.log('data: ', data);
         if (data.status == 'success') {
             this.setState(prevState => ({
                 validTelecommands: data.data.telecommands,
@@ -146,7 +145,6 @@ class LiveCommands extends Component {
         if (event.key === 'Enter') {
             const text = event.target.value;
             if (this.telecommandIsValid(text)) {
-                console.log(text);
                 const post_data = {timestamp:new Date(Date.now()).toISOString(), message:text, sender:localStorage.getItem('username'), receiver:'comm'};
 
                 fetch('/api/communications', {
@@ -182,10 +180,8 @@ class LiveCommands extends Component {
     }
 
     render() {
-        console.log('rendering')
         if (this.state.splashJobsLeft > 0) {
             return (
-                // NOTE: This looks kinda bad since page loades instantly (local host) but might look alright in deployment
                 <div>
                     <LinearProgress />
                 </div>

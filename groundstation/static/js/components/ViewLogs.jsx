@@ -20,14 +20,11 @@ class Logs extends Component {
             .then( response => {
                 return response.json();
             }).then(data => {
-                console.log(data);
                 if (data.status == 'success'){
-                    // console.log(data.data)
                     this.setState({
                         messages: data.data.messages,
                         is_empty: false
                     })
-                    // console.log(this.state.messages)
                 } else{
 
                     console.log('get failed')

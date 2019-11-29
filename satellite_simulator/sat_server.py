@@ -1,4 +1,4 @@
-"""This file uses the Classes defined in sat_sim.py to simulate a satellite in a controlled environment. At the same time, 
+"""This file uses the Classes defined in sat_sim.py to simulate a satellite in a controlled environment. At the same time,
 it opens a port and lisens for a client to send commands to the satellite. All commands recieved are then parsed and then
 passed onto the satellite which attempts to respond.
 """
@@ -34,7 +34,7 @@ simulator = Simulator(environment, satellite)
 del environment, satellite
 
 signal.signal(signal.SIGALRM, handler)
-signal.alarm(60)
+signal.alarm(120)
 
 HOST = '127.0.0.1'
 PORT = 65432
