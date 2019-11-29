@@ -75,7 +75,7 @@ const FlightScheduleList = (props) => {
                   </TableCell>
                   {
                     !props.isMinified && 
-                        <TableCell align="right" style={{minWidth: '80px'}}>
+                        <TableCell align="right" style={{minWidth: '126px'}}>
                         {flightschedule.status != 3 &&
                           <div>
                             <Button
