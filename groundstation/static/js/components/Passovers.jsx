@@ -7,7 +7,6 @@ import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import {formatDateToUTCString} from '../helpers.js'
 
@@ -31,7 +30,6 @@ function calculateProgessBar(startTime, currentTime, endTime) {
     let maxDifference = endTime - startTime;
     let progress = currentTime - startTime;
     let progressPercent = Math.min((progress / maxDifference) * 100, 100);
-    console.log(progressPercent)
     return progressPercent.toString();
 }
 

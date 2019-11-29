@@ -86,7 +86,7 @@ def communication_loop():
 def main():
     # set a sigalarm so the comm module will close after a specified amount of time
     signal.signal(signal.SIGALRM, handler)
-    signal.alarm(60)
+    signal.alarm(120)
     communication_loop()
 
 
