@@ -10,10 +10,12 @@ In this repository we are attempting to make a functional and extendable ground 
 
 ### Links
 
-**[Contributing tutorial](CONTRIBUTING.md)** - Find out how to develop and extend the project.
+**[How to Develop and Extend this project](CONTRIBUTING.md)** - A guide to developing this project further. Includes instructions for setting up the development environment, running the app, testing the app, and expanding critical parts of the app.
 
-**[Source code documentation](#)** - Automatically generated documentation for the source code. When you make changes to the code, update the documentation to match it using `source ./update_docs.sh`
+**[Source code documentation](#)** - This is automatically generated documentation for the source code. When you make changes to the code, update this documentation to match it using `source ./update_docs.sh`
 
-**[RESTful API backend documentation](https://documenter.getpostman.com/view/9298924/SW11YKEd)** - Documentation for the RESTful backend API of this Flask app. Relevant source code located in `groundstation/backend_api`. There are examples of requests that you can make to the backend and what responses to expect.
+**[RESTful API backend documentation](https://documenter.getpostman.com/view/9298924/SW11YKEd)** - This is documentation for the RESTful backend API of this Flask app. Relevant source code is located in `groundstation/backend_api`. There are examples of requests that you can make to the backend and what responses to expect.
 
-**[Wiki](https://github.com/UAlberta-CMPUT401/AlbertaSat/wiki)** - See more information about the project's development.
+**[Glossary](https://github.com/UAlberta-CMPUT401/AlbertaSat/wiki/Glossary)** - Go here if you're confused about a word or phrase that we keep using.
+
+**[Wiki](https://github.com/UAlberta-CMPUT401/AlbertaSat/wiki)** - See more information about the project's design and development.
