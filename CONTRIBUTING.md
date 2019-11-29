@@ -6,7 +6,7 @@ To work on this project you will need several tools.
 
 ## Setting up the local development environment
 
-First, let's download the project from Github using git.
+First, let's download the project from Github using git. We recommend that you fork the repository, but for simplicity's sake we'll just download it.
 
 `git clone https://github.com/UAlberta-CMPUT401/AlbertaSat.git`
 
