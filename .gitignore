@@ -155,3 +155,6 @@ log.txt
 beacons.json
 bundle.js
 nohup.out
+
+.jekyll-cache
+docs/_site
