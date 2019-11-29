@@ -35,7 +35,8 @@ class GsCommands:
             return None
         else:
             fs_id = fs[0]['data']['flightschedules'][0]['flightschedule_id']
-            local_data = {'status': 3, 'commands': []}
+            fs_ex = fs[0]['data']['flightschedules'][0]['execution_time']
+            local_data = {'status': 3, 'execution_time':fs_ex, 'commands': []}
 
             flightschedule_patch.patch(fs_id, local_data=json.dumps(local_data))
 
