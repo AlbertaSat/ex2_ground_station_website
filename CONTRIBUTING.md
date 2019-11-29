@@ -6,7 +6,7 @@ To work on this project you will need several tools.
 
 ## Setting up the local development environment
 
-First, let's download the project from Github using git. We recommend that you fork the repository, but for simplicity's sake we'll just download it.
+First, let's download the project from Github using git.
 
 `git clone https://github.com/UAlberta-CMPUT401/AlbertaSat.git`
 
@@ -45,3 +45,20 @@ The logic of the app is written in Python with the help of [Flask](https://flask
 **To start the app in development mode:** `flask run` or `python3 run.py`, then open it in your browser (typically http://127.0.0.1:5000/)
 
 **To run all of the unit tests for the app:** `python3 manage.py test`
+
+## Extending The Comm Module
+The comm module is the main point of interaction between the groundstation application and the satellite. It acts a client to both, and interprets commands sent from the operator to the satellite, and also interprets telemetry sent from the satellite. To extend the comm module, there are 3 files of interest in the root directory of the project:
+
+**comm.py**
+Acts a loop for constantly checking commands sent by an operator in the communications table, and sending them to a socket.
+If no function is defined for that command, the command string will be sent by default.
+
+**gs_commands.py**
+Additional functionality for commands can be implemented here. The return value is what is to be sent, or None if nothing is to be sent. Defined functions must be added to the gs_commands dictionary, with the command string as the key, and the function as the value, in order for comm.py to interpret commands properly.
+Handling satellite responses is also implemented here, through the function handle_response(). By default the satellite response is posted to the communication table.
+
+**automation.py**
+Automation.py is the script ran at the time of the passover. It first reads from **automation.txt**, a file with commands seperated by newlines. The commands in automation.txt will be posted to the communications table, and sent to the satellite automatically.
+
+The script then loads the next passover time, and utlizes the linux `at` program to schedule the next time automation will run.
+
