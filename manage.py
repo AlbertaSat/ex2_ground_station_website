@@ -99,6 +99,9 @@ def seed_db():
     add_user(username='Admin_user', password='Admin_user', is_admin=True)
     add_user(username='user1', password='user1', is_admin=False)
     add_user(username='user2', password='user2', is_admin=False)
+    add_user(username='albert', password='albert', is_admin=False)
+    add_user(username='berta', password='berta', is_admin=True)
+
     command = Telecommands.query.filter_by(command_name='turn-on').first()
     flightschedule_commands = add_command_to_flightschedule(
                                 timestamp=timestamp,
