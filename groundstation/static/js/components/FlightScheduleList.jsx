@@ -66,112 +66,112 @@ const FlightScheduleList = (props) => {
   }
 
 	return (
-       <div>
+    <div>
 
-          {/* <Grid container style={{paddingBottom: '12px'}}>
-            <Grid item xs={(props.isMinified) ? 12 : 11}>
-              <Typography variant="h5" displayInline style={{padding: '10px'}}>Flight Schedules</Typography>
+      {/* <Grid container style={{paddingBottom: '12px'}}>
+        <Grid item xs={(props.isMinified) ? 12 : 11}>
+          <Typography variant="h5" displayInline style={{padding: '10px'}}>Flight Schedules</Typography>
+        </Grid>
+        {
+          !props.isMinified &&
+            <Grid item xs={1} style={{textAlign: 'right'}}>
+              <Fab onClick={ (event) => props.handleAddFlightOpenClick(event) }>
+                <AddIcon 
+                          style={{ color: '#4bacb8', fontSize: '2rem'}} 
+                />
+              </Fab>
             </Grid>
-            {
-              !props.isMinified &&
-                <Grid item xs={1} style={{textAlign: 'right'}}>
-                  <Fab onClick={ (event) => props.handleAddFlightOpenClick(event) }>
-                    <AddIcon 
-                              style={{ color: '#4bacb8', fontSize: '2rem'}} 
-                    />
-                  </Fab>
-                </Grid>
-            } 
-          </Grid> */}
-          {props.flightschedule.map((flightschedule, idx) => (
-             <ExpansionPanel key={flightschedule.flightschedule_id} style={tableColour(flightschedule.status)}>
-               <ExpansionPanelSummary
-                 expandIcon={<ExpandMoreIcon style={{ color: '#4bacb8'}}/>}
-                 aria-controls="panel1a-content"
-                 id="panel1a-header"
-               >
-                  <Table aria-label="simple table">
-                    <TableBody>
-                      <TableRow>
-                        <TableCell component="th" scope="row">
-                          <div style={{fontWeight: 'bold'}}>
-                            {"Flight Schedule #" + flightschedule.flightschedule_id}
+        } 
+      </Grid> */}
+      {props.flightschedule.map((flightschedule, idx) => (
+        <ExpansionPanel key={flightschedule.flightschedule_id} style={tableColour(flightschedule.status)}>
+          <ExpansionPanelSummary
+            expandIcon={<ExpandMoreIcon style={{ color: '#4bacb8'}}/>}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+          >
+            <Table aria-label="simple table">
+              <TableBody>
+                <TableRow>
+                  <TableCell component="th" scope="row">
+                    <div style={{fontWeight: 'bold'}}>
+                      {"Flight Schedule #" + flightschedule.flightschedule_id}
+                    </div>
+                    { statusDiv(flightschedule.status) }
+                  </TableCell>
+                  <TableCell align="right">
+                    {"Created at " + flightschedule.creation_date.split('.')[0]}
+                  </TableCell>
+                  {
+                    !props.isMinified && 
+                        <TableCell align="right" style={{minWidth: '80px'}}>
+                        {flightschedule.status != 3 &&
+                          <div>
+                            <Button
+                              onClick={ (event) => props.handleEditCommandClick(event, idx, 
+                                                    flightschedule.flightschedule_id) }
+                              >
+                                <EditIcon 
+                                  display='none'
+                                  style={{ color: '#4bacb8' }}
+                                />
+                            </Button>
+                            <Button
+                              onClick={ (event) => props.handleDeleteFlightOpenClick(event, idx,
+                                                  flightschedule.flightschedule_id)}
+                            >
+                                <DeleteIcon 
+                                  style={{ color: '#4bacb8'}}
+                                />
+                            </Button>
                           </div>
-                          { statusDiv(flightschedule.status) }
-                        </TableCell>
-                        <TableCell align="right">
-                          {"Created at " + flightschedule.creation_date.split('.')[0]}
-                        </TableCell>
-                        {
-                          !props.isMinified && 
-                             <TableCell align="right" style={{minWidth: '80px'}}>
-                              {flightschedule.status != 3 &&
-                               <div>
-                                  <Button
-                                    onClick={ (event) => props.handleEditCommandClick(event, idx, 
-                                                          flightschedule.flightschedule_id) }
-                                    >
-                                      <EditIcon 
-                                        display='none'
-                                        style={{ color: '#4bacb8' }}
-                                      />
-                                  </Button>
-                                  <Button
-                                    onClick={ (event) => props.handleDeleteFlightOpenClick(event, idx,
-                                                        flightschedule.flightschedule_id)}
-                                  >
-                                     <DeleteIcon 
-                                       style={{ color: '#4bacb8'}}
-                                     />
-                                  </Button>
-                               </div>
-                             }
-                             </TableCell>
                         }
-                      </TableRow>
-                    </TableBody>
-                  </Table>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails>
-                  <Table aria-label="simple table">
-                      <TableHead>
-                      	<TableRow>
-                           <TableCell 
-                      	      style={{backgroundColor: '#212529', color: '#fff', paddingTop: '8px', paddingBottom: '8px'}}>
-                      		     Command
-                      		</TableCell>
-                      		<TableCell 
-                            align="left"
-                      		  style={{backgroundColor: '#212529', color: '#fff', paddingTop: '8px', paddingBottom: '8px'}}>
-                      		    Arguments
-                      		</TableCell>
-                      		<TableCell 
-                             align="right"
-                      		   style={{backgroundColor: '#212529', color: '#fff', paddingTop: '8px', paddingBottom: '8px'}}>
-                      		      Timestamp
-                      		</TableCell>
-                      	</TableRow>
-                      </TableHead>
-                    {flightschedule.commands.map(commands => (
-                      <TableBody>
-                        <TableRow>
-                          <TableCell component ="th" scope="row">
-                            {commands.command.command_name}
-                          </TableCell>
-                          <TableCell align="left">
-                            {commands.args.map(arg => (
-                              arg.argument)).join(', ')}
-                          </TableCell>
-                          <TableCell align="right">{commands.timestamp}</TableCell>
-                        </TableRow>
-                      </TableBody>
-                    ))} 
-                   </Table>
-                  </ExpansionPanelDetails>
-                </ExpansionPanel>
-              ))}
+                        </TableCell>
+                  }
+                </TableRow>
+              </TableBody>
+            </Table>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails>
+            <Table aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                      <TableCell 
+                        style={{backgroundColor: '#212529', color: '#fff', paddingTop: '8px', paddingBottom: '8px'}}>
+                          Command
+                    </TableCell>
+                    <TableCell 
+                      align="left"
+                      style={{backgroundColor: '#212529', color: '#fff', paddingTop: '8px', paddingBottom: '8px'}}>
+                        Arguments
+                    </TableCell>
+                    <TableCell 
+                        align="right"
+                        style={{backgroundColor: '#212529', color: '#fff', paddingTop: '8px', paddingBottom: '8px'}}>
+                          Timestamp
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+              {flightschedule.commands.map(commands => (
+                <TableBody>
+                  <TableRow>
+                    <TableCell component ="th" scope="row">
+                      {commands.command.command_name}
+                    </TableCell>
+                    <TableCell align="left">
+                      {commands.args.map(arg => (
+                        arg.argument)).join(', ')}
+                    </TableCell>
+                    <TableCell align="right">{commands.timestamp}</TableCell>
+                  </TableRow>
+                </TableBody>
+              ))} 
+              </Table>
+            </ExpansionPanelDetails>
+          </ExpansionPanel>
+        ))}
 
-          </div>
+    </div>
 	)
 }
 

@@ -50,7 +50,7 @@ class User(db.Model):
         """Decodes the auth token
 
         :param auth_token: The authorization token
-        
+
         :returns: user_id (int)
         """
         payload = jwt.decode(auth_token, current_app.config.get('SECRET_KEY'))
@@ -155,7 +155,6 @@ class Telecommands(db.Model):
     flightschedulecommands = db.relationship('FlightScheduleCommands', backref='command', lazy=True)
     is_dangerous = db.Column(db.Boolean)
 
-
     def to_json(self):
         """Returns a dictionary of some selected model attributes
         """
@@ -243,10 +242,10 @@ class Passover(db.Model):
             'timestamp': str(self.timestamp)
         }
 
-#This will be the table of telecommands being sent to the satellite as well as the responses
-#the table will allow us to send and receive all commands transactionally allowing us to log
-#them as well as their responses
-#TODO: discuss with team the design/structure for the communications table
+# This will be the table of telecommands being sent to the satellite as well as the responses
+# the table will allow us to send and receive all commands transactionally allowing us to log
+# them as well as their responses
+# TODO: discuss with team the design/structure for the communications table
 class Communications(db.Model):
     __tablename__ = 'communications'
 

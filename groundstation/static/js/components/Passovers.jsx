@@ -37,11 +37,11 @@ function calculateProgessBar(startTime, currentTime, endTime) {
 
 const Passovers = (props) => {
 	if (props.isLoading) {
-      return (
-        <div>
-          <LinearProgress />
-        </div>
-      )
+    return (
+      <div>
+        <LinearProgress />
+      </div>
+    )
 	}
 
   if (props.empty && !props.isLoading) {

@@ -71,8 +71,8 @@ class Flightschedule(Resource):
                 'errors': err.messages
             }
             return response_object, 400
-        # change our flightschedule is queued
 
+        # change whether our flightschedule is queued
         # if we are queuing this flightschedule, handle the normal checks
         # if it is valid, queue it
         # status 1=queued, 2=draft, 3=uploaded
@@ -165,7 +165,6 @@ class Flightschedule(Resource):
         }
 
         return response_object, 200
-
 
 
 class FlightScheduleList(Resource):

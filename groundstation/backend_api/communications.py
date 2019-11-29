@@ -28,10 +28,10 @@ class Communication(Resource):
             'message': 'message does not exist'
         }
 
-        #get a single message via it's ID
-        message = Communications.filter_by(id=message_id).first() #should only be one
+        # get a single message via it's ID
+        message = Communications.filter_by(id=message_id).first() # should only be one
 
-        if not message: #query of Communications returned nothing
+        if not message: # query of Communications returned nothing
             return response_object, 404
         else: # there is a message in Communications with message_id
             response_object = {
@@ -64,7 +64,6 @@ class CommunicationList(Resource):
         # NOTE: why do we do this
         # TODO: also we need a validator...
         post_data.update({'timestamp': datetime.datetime.now(datetime.timezone.utc)})
-
 
         #TODO: assertion checks for proper data types
 
