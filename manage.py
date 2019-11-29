@@ -81,7 +81,10 @@ def seed_db():
         'get-hk':(0,False),
         'turn-on':(1,True),
         'turn-off':(1,True),
-        'upload-fs': (0, False)
+        'upload-fs': (0, False),
+        'adjust-attitude': (1,True),
+        'magnetometer': (0,False),
+        'imaging': (0,False)
     }
 
     for name, (num_args, is_danger) in commands.items():
