@@ -130,13 +130,13 @@ class Help extends Component {
                         no issues
                         <Paper style={{marginLeft: '20px', borderLeft: 'solid 8px #479b4e', marginBottom: '10px', marginRight: '20px'}}>
                             <div style={{fontWeight: 'bold'}}>
-                                Healthy Log
+                                Healthy Housekeeping Log
                             </div>
                         </Paper>
                         Whereas a red tag signifies that there may be an issue with the satellite
                         <Paper style={{marginLeft: '20px', borderLeft: 'solid 8px #721c24', marginBottom: '10px', marginRight: '20px'}}>
                             <div style={{fontWeight: 'bold'}}>
-                                Critical Status
+                                Critical Housekeeping Log
                             </div>
                         </Paper>
                         You can also filter housekeeping logs by timestamp using the filter options
