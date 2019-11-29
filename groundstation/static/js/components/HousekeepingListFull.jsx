@@ -142,7 +142,11 @@ class HousekeepingLogListFull extends Component {
         {this.props.housekeeping.map(housekeeping => (
           <Table aria-label="simple table">
               <TableBody>
-                <TableRow button key={housekeeping.name} onClick={() => this.handleOpenClick(housekeeping)}>
+                <TableRow 
+                  button key={housekeeping.name} 
+                  id={'housekeeping-' + housekeeping.id} 
+                  onClick={() => this.handleOpenClick(housekeeping)
+                }>
                 <TableCell width="30%" component="th" scope="row" style={tableColor(housekeeping.satellite_mode)}>
                   {this.props.isLoading ? '' : formatDateToUTCString(new Date(housekeeping.last_beacon_time + 'Z'))}
                 </TableCell>

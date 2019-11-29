@@ -123,6 +123,7 @@ class Login extends Component {
                                 required
                                 id="outlined-required"
                                 label="Username"
+                                name="username"
                                 margin="normal"
                                 variant="outlined"
                                 onChange={(event) => this.handleUserChange(event)}
@@ -136,6 +137,7 @@ class Login extends Component {
                                 id="outlined-password-input"
                                 label="Password"
                                 type="password"
+                                name="password"
                                 margin="normal"
                                 variant="outlined"
                                 onChange={(event) => this.handlePassChange(event)}
@@ -151,6 +153,7 @@ class Login extends Component {
                                 style={{color: "#118851", marginTop: "10px"}}
                                 onClick={ () => this.handleLogin()}
                                 variant="contained"
+                                name="submit"
                             >
                                 Submit
                             </Button>

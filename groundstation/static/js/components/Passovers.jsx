@@ -60,7 +60,7 @@ const Passovers = (props) => {
   	    {props.passovers.map(passover => (
 	  	   <Table aria-label="simple table">
 		  	  <TableBody>
-		        <TableRow key={passover.id}>
+		        <TableRow key={passover.passover_id} id={"passover-" + passover.passover_id}>
                     <div>
     		           <TableCell width="15%" component="th" scope="row">
     		              {formatDateToUTCString(new Date(passover.timestamp + 'Z'))}
