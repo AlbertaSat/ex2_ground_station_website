@@ -44,7 +44,7 @@ class GsCommands:
     # probably handle errors in the post, if not 200 OK
     def handle_response(self, data):
         logged_data = {'message': data, 'receiver': 'all', 'sender': 'comm'}
-        resp = self.communication_list.post(json.dumps(logged_data))
+        resp = self.communication_list.post(local_data=json.dumps(logged_data))
 
     # groundstation functions with additional capabilities rather than just sending a string
     # are handled here
