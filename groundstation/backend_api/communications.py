@@ -7,7 +7,7 @@ from sqlalchemy import desc
 
 from groundstation.backend_api.models import Communications
 from groundstation import db
-from groundstation.backend_api.utils import create_context, dynamic_filters_communications
+from groundstation.backend_api.utils import create_context, dynamic_filters_communications, login_required
 
 communications_blueprint = Blueprint('communications', __name__)
 api = Api(communications_blueprint)
@@ -16,17 +16,22 @@ class Communication(Resource):
 
     @create_context
     def get(self, message_id):
-        #given some id, fetch a message from the communications table
+        """Endpoint for getting a specific message
 
+        :param int message_id: The message id
+
+        :returns: response_object, status_code
+        :rtype: tuple (dict, int)
+        """
         response_object = {
             'status': 'fail',
             'message': 'message does not exist'
         }
 
-        #get a single message via it's ID
-        message = Communications.filter_by(id=message_id).first() #should only be one
+        # get a single message via it's ID
+        message = Communications.filter_by(id=message_id).first() # should only be one
 
-        if not message: #query of Communications returned nothing
+        if not message: # query of Communications returned nothing
             return response_object, 404
         else: # there is a message in Communications with message_id
             response_object = {
@@ -38,15 +43,15 @@ class Communication(Resource):
 
 class CommunicationList(Resource):
     @create_context
+    @login_required
     def post(self, local_data=None):
+        """Endpoint for posting a new message to communications table
 
-        #JSON object expected
-        # dict {
-        # command : string of the form "COMMAND_NAME ARG1 ARG2 ... ARGN"
-        # sender : string
-        # receiver : string
-        # }
+        :param json_string local_data: This should be used in place of the POST body that would be used through HTTP, used for local calls.
 
+        :returns: response_object, status_code
+        :rtype: tuple (dict, int)
+        """
         response_object = {
             'status': 'fail',
             'message': 'Invalid payload'
@@ -60,7 +65,6 @@ class CommunicationList(Resource):
         # NOTE: why do we do this
         # TODO: also we need a validator...
         post_data.update({'timestamp': datetime.datetime.now(datetime.timezone.utc)})
-
 
         #TODO: assertion checks for proper data types
 
@@ -85,9 +89,13 @@ class CommunicationList(Resource):
 
     @create_context
     def get(self, local_data=None):
+        """Endpoint for getting messages
 
-        # handle if this get is a local call or not
-        # local_data will be a dictionary
+        :param dict local_data: This should be used in place of the QUERY PARAMS that would be used through HTTP, used for local calls.
+
+        :returns: response_object, status_code
+        :rtype: tuple (dict, int)
+        """
         if not local_data:
             request_args_dict = request.args.to_dict()
             newest_first = request_args_dict.pop('newest-first', None)

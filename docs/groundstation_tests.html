@@ -1,0 +1,300 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Groundstation Tests &#8212; AlbertaSat 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Other groundstation modules" href="groundstation_modules.html" />
+    <link rel="prev" title="RESTful endpoints Reference" href="endpoints_api.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="groundstation-tests">
+<h1>Groundstation Tests<a class="headerlink" href="#groundstation-tests" title="Permalink to this headline">¶</a></h1>
+<p>This folder contains the test for the groundstation application</p>
+<div class="section" id="module-groundstation.tests.test_api">
+<span id="test-backend-api"></span><h2>Test Backend API<a class="headerlink" href="#module-groundstation.tests.test_api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="groundstation.tests.test_api.TestCommunicationsService">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.tests.test_api.</code><code class="sig-name descname">TestCommunicationsService</code><span class="sig-paren">(</span><em class="sig-param">methodName='runTest'</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.tests.test_api.TestCommunicationsService" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="groundstation.tests.test_api.TestCommunicationsService.test_get_communication_with_max_id_empty_db">
+<code class="sig-name descname">test_get_communication_with_max_id_empty_db</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.tests.test_api.TestCommunicationsService.test_get_communication_with_max_id_empty_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>This test exposes a bug which was fixed on branch ‘hotfix/communications-dynamic-filter’</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="groundstation.tests.test_api.TestFlightScheduleService">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.tests.test_api.</code><code class="sig-name descname">TestFlightScheduleService</code><span class="sig-paren">(</span><em class="sig-param">methodName='runTest'</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.tests.test_api.TestFlightScheduleService" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="groundstation.tests.test_api.TestHousekeepingService">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.tests.test_api.</code><code class="sig-name descname">TestHousekeepingService</code><span class="sig-paren">(</span><em class="sig-param">methodName='runTest'</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.tests.test_api.TestHousekeepingService" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the housekeeping/satellite model service</p>
+<dl class="method">
+<dt id="groundstation.tests.test_api.TestHousekeepingService.test_get_all_housekeeping">
+<code class="sig-name descname">test_get_all_housekeeping</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.tests.test_api.TestHousekeepingService.test_get_all_housekeeping" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all housekeeping that is currently in the database</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="groundstation.tests.test_api.TestHousekeepingService.test_get_all_housekeeping_order_by_date">
+<code class="sig-name descname">test_get_all_housekeeping_order_by_date</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.tests.test_api.TestHousekeepingService.test_get_all_housekeeping_order_by_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ensure that housekeeping is returned by date</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="groundstation.tests.test_api.TestHousekeepingService.test_get_housekeeping">
+<code class="sig-name descname">test_get_housekeeping</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.tests.test_api.TestHousekeepingService.test_get_housekeeping" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test getting a housekeeping log</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="groundstation.tests.test_api.TestHousekeepingService.test_post_housekeeping_locally">
+<code class="sig-name descname">test_post_housekeeping_locally</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.tests.test_api.TestHousekeepingService.test_post_housekeeping_locally" title="Permalink to this definition">¶</a></dt>
+<dd><p>Since local data is wrapped differently than data over http,
+we must send and receive it differently (locally it is a tuple of dicts)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="groundstation.tests.test_api.TestHousekeepingService.test_post_housekeeping_with_invalid_timestamp">
+<code class="sig-name descname">test_post_housekeeping_with_invalid_timestamp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.tests.test_api.TestHousekeepingService.test_post_housekeeping_with_invalid_timestamp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ensure that the timestamp is a valid datetime</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="groundstation.tests.test_api.TestHousekeepingService.test_post_housekeeping_with_no_timestamp">
+<code class="sig-name descname">test_post_housekeeping_with_no_timestamp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.tests.test_api.TestHousekeepingService.test_post_housekeeping_with_no_timestamp" title="Permalink to this definition">¶</a></dt>
+<dd><p>all housekeeping logs/beacons should have a timestamp with them
+ensure that this timestamp exists</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="groundstation.tests.test_api.TestPassoverService">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.tests.test_api.</code><code class="sig-name descname">TestPassoverService</code><span class="sig-paren">(</span><em class="sig-param">methodName='runTest'</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.tests.test_api.TestPassoverService" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="groundstation.tests.test_api.TestTelecommandList">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.tests.test_api.</code><code class="sig-name descname">TestTelecommandList</code><span class="sig-paren">(</span><em class="sig-param">methodName='runTest'</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.tests.test_api.TestTelecommandList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="groundstation.tests.test_api.TestTelecommandService">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.tests.test_api.</code><code class="sig-name descname">TestTelecommandService</code><span class="sig-paren">(</span><em class="sig-param">methodName='runTest'</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.tests.test_api.TestTelecommandService" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="groundstation.tests.test_api.TestUserService">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.tests.test_api.</code><code class="sig-name descname">TestUserService</code><span class="sig-paren">(</span><em class="sig-param">methodName='runTest'</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.tests.test_api.TestUserService" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-groundstation.tests.test_auth">
+<span id="test-authentication"></span><h2>Test Authentication<a class="headerlink" href="#module-groundstation.tests.test_auth" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="groundstation.tests.test_auth.TestAuthentication">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.tests.test_auth.</code><code class="sig-name descname">TestAuthentication</code><span class="sig-paren">(</span><em class="sig-param">methodName='runTest'</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.tests.test_auth.TestAuthentication" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="groundstation.tests.test_auth.TestAuthentication.setUp">
+<code class="sig-name descname">setUp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.tests.test_auth.TestAuthentication.setUp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hook method for setting up the test fixture before exercising it.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-groundstation.tests.test_backend_utils">
+<span id="test-backend-utilities"></span><h2>Test Backend Utilities<a class="headerlink" href="#module-groundstation.tests.test_backend_utils" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="groundstation.tests.test_backend_utils.TestUtils">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.tests.test_backend_utils.</code><code class="sig-name descname">TestUtils</code><span class="sig-paren">(</span><em class="sig-param">methodName='runTest'</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.tests.test_backend_utils.TestUtils" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-groundstation.tests.test_config">
+<span id="test-app-configurations"></span><h2>Test App Configurations<a class="headerlink" href="#module-groundstation.tests.test_config" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="groundstation.tests.test_config.TestTestingConfig">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.tests.test_config.</code><code class="sig-name descname">TestTestingConfig</code><span class="sig-paren">(</span><em class="sig-param">methodName='runTest'</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.tests.test_config.TestTestingConfig" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-groundstation.tests.test_models">
+<span id="test-data-models"></span><h2>Test Data Models<a class="headerlink" href="#module-groundstation.tests.test_models" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="groundstation.tests.test_models.TestCommandModel">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.tests.test_models.</code><code class="sig-name descname">TestCommandModel</code><span class="sig-paren">(</span><em class="sig-param">methodName='runTest'</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.tests.test_models.TestCommandModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test adding a command</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="groundstation.tests.test_models.TestFlightScheduleCommandsArgsModel">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.tests.test_models.</code><code class="sig-name descname">TestFlightScheduleCommandsArgsModel</code><span class="sig-paren">(</span><em class="sig-param">methodName='runTest'</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.tests.test_models.TestFlightScheduleCommandsArgsModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test adding an argument to a command</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="groundstation.tests.test_models.TestFlightScheduleCommandsModel">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.tests.test_models.</code><code class="sig-name descname">TestFlightScheduleCommandsModel</code><span class="sig-paren">(</span><em class="sig-param">methodName='runTest'</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.tests.test_models.TestFlightScheduleCommandsModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test adding a command to the flight schedule</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="groundstation.tests.test_models.TestFlightScheduleModel">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.tests.test_models.</code><code class="sig-name descname">TestFlightScheduleModel</code><span class="sig-paren">(</span><em class="sig-param">methodName='runTest'</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.tests.test_models.TestFlightScheduleModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>“Test adding a flight schedule</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="groundstation.tests.test_models.TestHousekeepingModel">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.tests.test_models.</code><code class="sig-name descname">TestHousekeepingModel</code><span class="sig-paren">(</span><em class="sig-param">methodName='runTest'</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.tests.test_models.TestHousekeepingModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test adding a housekeeping entry</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="groundstation.tests.test_models.TestUserModel">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.tests.test_models.</code><code class="sig-name descname">TestUserModel</code><span class="sig-paren">(</span><em class="sig-param">methodName='runTest'</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.tests.test_models.TestUserModel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-groundstation.tests.test_sat_sim">
+<span id="test-satellite-simulator"></span><h2>Test Satellite Simulator<a class="headerlink" href="#module-groundstation.tests.test_sat_sim" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="groundstation.tests.test_sat_sim.TestSatelliteSimulator">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.tests.test_sat_sim.</code><code class="sig-name descname">TestSatelliteSimulator</code><span class="sig-paren">(</span><em class="sig-param">methodName='runTest'</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.tests.test_sat_sim.TestSatelliteSimulator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests the satellite simulator</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-groundstation.tests.utils">
+<span id="utilities-for-testing"></span><h2>Utilities for Testing<a class="headerlink" href="#module-groundstation.tests.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="groundstation.tests.utils.fake_passover_as_dict">
+<code class="sig-prename descclassname">groundstation.tests.utils.</code><code class="sig-name descname">fake_passover_as_dict</code><span class="sig-paren">(</span><em class="sig-param">timestamps</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.tests.utils.fake_passover_as_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create mock passovers as a dictionary</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>timestamps</strong> (<em>list</em><em>(</em><em>datetime.datetime</em><em>)</em>) – The passover timestamps to use</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">AlbertaSat</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="groundstation.html">groundstation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="backend_api_docs.html">Backend API</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Groundstation Tests</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-groundstation.tests.test_api">Test Backend API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-groundstation.tests.test_auth">Test Authentication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-groundstation.tests.test_backend_utils">Test Backend Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-groundstation.tests.test_config">Test App Configurations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-groundstation.tests.test_models">Test Data Models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-groundstation.tests.test_sat_sim">Test Satellite Simulator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-groundstation.tests.utils">Utilities for Testing</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="groundstation_modules.html">Other groundstation modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules_api.html">Module API reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="groundstation.html">groundstation</a><ul>
+      <li>Previous: <a href="endpoints_api.html" title="previous chapter">RESTful endpoints Reference</a></li>
+      <li>Next: <a href="groundstation_modules.html" title="next chapter">Other groundstation modules</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Cmput 401 AlbertaSat Team.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/groundstation_tests.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

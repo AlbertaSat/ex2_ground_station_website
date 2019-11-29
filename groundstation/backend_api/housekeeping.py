@@ -10,6 +10,7 @@ from groundstation import db
 from groundstation.backend_api.utils import create_context, login_required, dynamic_filters_housekeeping
 from groundstation.backend_api.validators import HousekeepingValidator
 from werkzeug.datastructures import MultiDict
+from sqlalchemy import desc
 
 housekeeping_blueprint = Blueprint('housekeeping', __name__)
 api = Api(housekeeping_blueprint)
@@ -18,7 +19,13 @@ class HousekeepingLog(Resource):
 
     @create_context
     def get(self, housekeeping_id):
-        """Get a single housekeeping log via its id"""
+        """Endpoint for getting a specific housekeeping log
+
+        :param int housekeeping_id: The housekeeping_id
+
+        :returns: response_object, status_code
+        :rtype: tuple (dict, int)
+        """
         response_object = {
             'status': 'fail',
             'message': 'Housekeeping Log does not exist'
@@ -45,6 +52,13 @@ class HousekeepingLogList(Resource):
     @create_context
     @login_required
     def post(self, local_data=None):
+        """Endpoint for creating a new Housekeeping log
+
+        :param json_string local_data: This should be used in place of the POST body that would be used through HTTP, used for local calls.
+
+        :returns: response_object, status_code
+        :rtype: tuple (dict, int)
+        """
         if not local_data:
             post_data = request.get_json()
         else:
@@ -79,13 +93,22 @@ class HousekeepingLogList(Resource):
 
     @create_context
     def get(self, local_args=None):
+        """Endpoint for getting a list of housekeeping logs
+
+        :param dict local_args: This should be used in place of the QUERY PARAMS that would be used through HTTP, used for local calls.
+
+        :returns: response_object, status_code
+        :rtype: tuple (dict, int)
+        """
         if not local_args:
             query_limit = request.args.get('limit', None)
-            args = dynamic_filters_housekeeping(request.args, ignore_keys=['limit'])
+            newest_first = request.args.get('newest-first', None)
+            args = dynamic_filters_housekeeping(request.args, ignore_keys=['limit', 'newest-first'])
         else:
             local_args = MultiDict(local_args)
             query_limit = local_args.get('limit', None)
-            args = dynamic_filters_housekeeping(local_args, ignore_keys=['limit'])
+            newest_first = local_args.get('newest-first', None)
+            args = dynamic_filters_housekeeping(local_args, ignore_keys=['limit', 'newest-first'])
 
         if args is None:
             response_object = {
@@ -94,7 +117,12 @@ class HousekeepingLogList(Resource):
             }
             return response_object, 400
 
-        logs = Housekeeping.query.filter(*args).limit(query_limit).all()
+        if newest_first == "true":
+            ordering = desc(Housekeeping.last_beacon_time)
+        else:
+            ordering = Housekeeping.last_beacon_time
+
+        logs = Housekeeping.query.filter(*args).order_by(ordering).limit(query_limit).all()
         response_object = {
             'status': 'success',
             'data': {

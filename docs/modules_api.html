@@ -1,0 +1,218 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Module API reference &#8212; AlbertaSat 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Other groundstation modules" href="groundstation_modules.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-api-reference">
+<h1>Module API reference<a class="headerlink" href="#module-api-reference" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-comm">
+<span id="comm"></span><h2>comm<a class="headerlink" href="#module-comm" title="Permalink to this headline">¶</a></h2>
+<p>The Communications Module is responsible for sending and retrieving data with the satellite (or the simulator).</p>
+<dl class="function">
+<dt id="comm.communication_loop">
+<code class="sig-prename descclassname">comm.</code><code class="sig-name descname">communication_loop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#comm.communication_loop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main communication loop which polls for messages addressed to comm (i.e. messages it needs to send to satellite)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="comm.handle_message">
+<code class="sig-prename descclassname">comm.</code><code class="sig-name descname">handle_message</code><span class="sig-paren">(</span><em class="sig-param">message</em><span class="sig-paren">)</span><a class="headerlink" href="#comm.handle_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Messages sent to comm will pass through this function, essentially acting as a decorator. Refer to gs_commands module</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>message</strong> (<em>str</em>) – The incoming message to comm</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Return is dependent on the handler function triggered</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="comm.send">
+<code class="sig-prename descclassname">comm.</code><code class="sig-name descname">send</code><span class="sig-paren">(</span><em class="sig-param">socket</em>, <em class="sig-param">data</em><span class="sig-paren">)</span><a class="headerlink" href="#comm.send" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pipes the incoming data (probably a Command tuple) to the socket (probably the Simulator)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>socket</strong> (<em>int</em>) – The socket for sending data into</p></li>
+<li><p><strong>data</strong> (<em>str</em>) – the data to send</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>response from the socket</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-gs_commands">
+<span id="gs-commands"></span><h2>gs_commands<a class="headerlink" href="#module-gs_commands" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="gs_commands.GsCommands">
+<em class="property">class </em><code class="sig-prename descclassname">gs_commands.</code><code class="sig-name descname">GsCommands</code><a class="headerlink" href="#gs_commands.GsCommands" title="Permalink to this definition">¶</a></dt>
+<dd><p>This file is mainly for decorating additional functionality on top of commands
+By default the behaviour for interpreting commands is to send the command as a string
+This class allows for additonal functionality when the comm module reads the string of the command
+the return value of the fuction should be what is sent to the satellite
+if nothing should be sent, return None
+An example below is upload_fs
+To include decorator commands, store then in thr gs_commands dict,
+With the command string as the key and the function as the value</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-automation">
+<span id="automation"></span><h2>automation<a class="headerlink" href="#module-automation" title="Permalink to this headline">¶</a></h2>
+<p>The Automation Module allows operators to execute commands automatically at the next pass.</p>
+<dl class="function">
+<dt id="automation.automate_communication">
+<code class="sig-prename descclassname">automation.</code><code class="sig-name descname">automate_communication</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#automation.automate_communication" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads from a pre-defined script file called ‘automation.txt’ which contains messages
+separated by newlines. The Automation module will open this file and send each message to the comm module,
+which will then interpret and pass the message along to the satellite. The ‘automation.txt’ essentially mimicks a human
+user entering commands through the ‘live commands’ portal.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="automation.automate_passovers">
+<code class="sig-prename descclassname">automation.</code><code class="sig-name descname">automate_passovers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#automation.automate_passovers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Before Automation terminates, this function is run to set a ‘wake up’ timer for the next passover, so that it will
+be automatically run again during the next pass.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="automation.main">
+<code class="sig-prename descclassname">automation.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#automation.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main function called when automation is run, calls automate_communication(), sleeps for a bit, and then calls automate_passovers().</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-manage">
+<span id="manage"></span><h2>manage<a class="headerlink" href="#module-manage" title="Permalink to this headline">¶</a></h2>
+<p>The Manage Module is how you can run the flask application through the command line,
+it also you to define your own command line functions that can be called as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="o">&lt;</span><span class="n">command_line_command</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>As is you can also run tests by specifying the module path like so:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">test</span> <span class="n">test_api</span><span class="o">.</span><span class="n">TestHousekeepingService</span>
+</pre></div>
+</div>
+<p>or:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">test</span> <span class="n">test_api</span><span class="o">.</span><span class="n">TestHousekeepingService</span><span class="o">.</span><span class="n">test_get_housekeeping</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">AlbertaSat</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="groundstation.html">groundstation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Module API reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-comm">comm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-gs_commands">gs_commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-automation">automation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-manage">manage</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="groundstation_modules.html" title="previous chapter">Other groundstation modules</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Cmput 401 AlbertaSat Team.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/modules_api.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

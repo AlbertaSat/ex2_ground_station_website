@@ -1,0 +1,457 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Backend API &#8212; AlbertaSat 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="RESTful endpoints Reference" href="endpoints_api.html" />
+    <link rel="prev" title="groundstation" href="groundstation.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="backend-api">
+<h1>Backend API<a class="headerlink" href="#backend-api" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="endpoints_api.html">RESTful endpoints Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="endpoints_api.html#module-groundstation.backend_api.auth">Authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="endpoints_api.html#module-groundstation.backend_api.communications">Communications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="endpoints_api.html#module-groundstation.backend_api.flightschedule">Flightschedule</a></li>
+<li class="toctree-l2"><a class="reference internal" href="endpoints_api.html#module-groundstation.backend_api.housekeeping">Housekeeping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="endpoints_api.html#module-groundstation.backend_api.passover">Passovers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="endpoints_api.html#module-groundstation.backend_api.telecommand">Telecommands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="endpoints_api.html#module-groundstation.backend_api.user">Users</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="module-groundstation.backend_api.models">
+<span id="the-data-models"></span><h2>The Data Models<a class="headerlink" href="#module-groundstation.backend_api.models" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="groundstation.backend_api.models.Communications">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.models.</code><code class="sig-name descname">Communications</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.models.Communications" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="groundstation.backend_api.models.Communications.to_json">
+<code class="sig-name descname">to_json</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.models.Communications.to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a dictionary of some selected model attributes</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="groundstation.backend_api.models.FlightScheduleCommands">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.models.</code><code class="sig-name descname">FlightScheduleCommands</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.models.FlightScheduleCommands" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="groundstation.backend_api.models.FlightScheduleCommands.to_json">
+<code class="sig-name descname">to_json</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.models.FlightScheduleCommands.to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a dictionary of some selected model attributes</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="groundstation.backend_api.models.FlightScheduleCommandsArgs">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.models.</code><code class="sig-name descname">FlightScheduleCommandsArgs</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.models.FlightScheduleCommandsArgs" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="groundstation.backend_api.models.FlightScheduleCommandsArgs.to_json">
+<code class="sig-name descname">to_json</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.models.FlightScheduleCommandsArgs.to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a dictionary of some selected model attributes</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="groundstation.backend_api.models.FlightSchedules">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.models.</code><code class="sig-name descname">FlightSchedules</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.models.FlightSchedules" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="groundstation.backend_api.models.FlightSchedules.to_json">
+<code class="sig-name descname">to_json</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.models.FlightSchedules.to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a dictionary of some selected model attributes</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="groundstation.backend_api.models.Housekeeping">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.models.</code><code class="sig-name descname">Housekeeping</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.models.Housekeeping" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="groundstation.backend_api.models.Housekeeping.to_json">
+<code class="sig-name descname">to_json</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.models.Housekeeping.to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a dictionary of some selected model attributes</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="groundstation.backend_api.models.Passover">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.models.</code><code class="sig-name descname">Passover</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.models.Passover" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="groundstation.backend_api.models.Passover.to_json">
+<code class="sig-name descname">to_json</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.models.Passover.to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a dictionary of some selected model attributes</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="groundstation.backend_api.models.PowerChannels">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.models.</code><code class="sig-name descname">PowerChannels</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.models.PowerChannels" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="groundstation.backend_api.models.PowerChannels.to_json">
+<code class="sig-name descname">to_json</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.models.PowerChannels.to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a dictionary of some selected model attributes</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="groundstation.backend_api.models.Telecommands">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.models.</code><code class="sig-name descname">Telecommands</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.models.Telecommands" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="groundstation.backend_api.models.Telecommands.to_json">
+<code class="sig-name descname">to_json</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.models.Telecommands.to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a dictionary of some selected model attributes</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="groundstation.backend_api.models.User">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.models.</code><code class="sig-name descname">User</code><span class="sig-paren">(</span><em class="sig-param">username</em>, <em class="sig-param">password</em>, <em class="sig-param">is_admin=False</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.models.User" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="groundstation.backend_api.models.User.decode_auth_token">
+<em class="property">static </em><code class="sig-name descname">decode_auth_token</code><span class="sig-paren">(</span><em class="sig-param">auth_token</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.models.User.decode_auth_token" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decodes the auth token</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>auth_token</strong> – The authorization token</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>user_id (int)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="groundstation.backend_api.models.User.encode_auth_token_by_id">
+<code class="sig-name descname">encode_auth_token_by_id</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.models.User.encode_auth_token_by_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates the auth token</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="groundstation.backend_api.models.User.to_json">
+<code class="sig-name descname">to_json</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.models.User.to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a dictionary of some selected model attributes</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="groundstation.backend_api.models.User.verify_password">
+<code class="sig-name descname">verify_password</code><span class="sig-paren">(</span><em class="sig-param">password</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.models.User.verify_password" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if passes password is valid, else False</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>password</strong> (<em>str</em>) – The password to validate</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if password is valid</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-groundstation.backend_api.utils">
+<span id="utility-functions"></span><h2>Utility Functions<a class="headerlink" href="#module-groundstation.backend_api.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="groundstation.backend_api.utils.add_arg_to_flightschedulecommand">
+<code class="sig-prename descclassname">groundstation.backend_api.utils.</code><code class="sig-name descname">add_arg_to_flightschedulecommand</code><span class="sig-paren">(</span><em class="sig-param">index</em>, <em class="sig-param">argument</em>, <em class="sig-param">flightschedule_command_id</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.utils.add_arg_to_flightschedulecommand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new argument to a pre-existing flightschedule command</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="groundstation.backend_api.utils.add_command_to_flightschedule">
+<code class="sig-prename descclassname">groundstation.backend_api.utils.</code><code class="sig-name descname">add_command_to_flightschedule</code><span class="sig-paren">(</span><em class="sig-param">timestamp</em>, <em class="sig-param">flightschedule_id</em>, <em class="sig-param">command_id</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.utils.add_command_to_flightschedule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new command to a pre-existing flight schedule</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="groundstation.backend_api.utils.add_flight_schedule">
+<code class="sig-prename descclassname">groundstation.backend_api.utils.</code><code class="sig-name descname">add_flight_schedule</code><span class="sig-paren">(</span><em class="sig-param">creation_date</em>, <em class="sig-param">upload_date</em>, <em class="sig-param">status</em>, <em class="sig-param">execution_time</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.utils.add_flight_schedule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new flight schedule to the database</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="groundstation.backend_api.utils.add_message_to_communications">
+<code class="sig-prename descclassname">groundstation.backend_api.utils.</code><code class="sig-name descname">add_message_to_communications</code><span class="sig-paren">(</span><em class="sig-param">timestamp</em>, <em class="sig-param">message</em>, <em class="sig-param">receiver</em>, <em class="sig-param">sender</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.utils.add_message_to_communications" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new message to the communications table</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="groundstation.backend_api.utils.add_passover">
+<code class="sig-prename descclassname">groundstation.backend_api.utils.</code><code class="sig-name descname">add_passover</code><span class="sig-paren">(</span><em class="sig-param">timestamp</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.utils.add_passover" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new passover to the database</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="groundstation.backend_api.utils.add_telecommand">
+<code class="sig-prename descclassname">groundstation.backend_api.utils.</code><code class="sig-name descname">add_telecommand</code><span class="sig-paren">(</span><em class="sig-param">command_name</em>, <em class="sig-param">num_arguments</em>, <em class="sig-param">is_dangerous</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.utils.add_telecommand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new telecommand to the database</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="groundstation.backend_api.utils.add_user">
+<code class="sig-prename descclassname">groundstation.backend_api.utils.</code><code class="sig-name descname">add_user</code><span class="sig-paren">(</span><em class="sig-param">username</em>, <em class="sig-param">password</em>, <em class="sig-param">is_admin=False</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.utils.add_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new user to the database</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="groundstation.backend_api.utils.create_context">
+<code class="sig-prename descclassname">groundstation.backend_api.utils.</code><code class="sig-name descname">create_context</code><span class="sig-paren">(</span><em class="sig-param">function</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.utils.create_context" title="Permalink to this definition">¶</a></dt>
+<dd><p>A decorator to handle cases where backend api calls have no app context,
+namely for when locally using the api, db session must be initiated
+in order to access models and database operation. This is required because flask
+requires an ‘application context’ to exist in order to work.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="groundstation.backend_api.utils.dynamic_filters_communications">
+<code class="sig-prename descclassname">groundstation.backend_api.utils.</code><code class="sig-name descname">dynamic_filters_communications</code><span class="sig-paren">(</span><em class="sig-param">filters</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.utils.dynamic_filters_communications" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build a filter dynamically for communications table from query paramaters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filters</strong> (<em>dict</em>) – Dictionary of arg-value pairs</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a list of filters which can be passed into SQL alchemy filter queries.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="groundstation.backend_api.utils.dynamic_filters_housekeeping">
+<code class="sig-prename descclassname">groundstation.backend_api.utils.</code><code class="sig-name descname">dynamic_filters_housekeeping</code><span class="sig-paren">(</span><em class="sig-param">filters</em>, <em class="sig-param">ignore_keys=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.utils.dynamic_filters_housekeeping" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build a filter dynamically for housekeeping from query paramaters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filters</strong> (<em>werkzeug.datastructures.MultiDict</em>) – Dictionary of key-value pairs, using a multi dict allows
+users to have filters which overload the keys, ex.) if you want a filter like: ?current_in&gt;5&amp;current_in&lt;10</p></li>
+<li><p><strong>ignore_keys</strong> (<em>list</em>) – Optional list, any keys in this list will not be used when building the filter</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a list of filters which can be passed into SQL alchemy filter queries.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="groundstation.backend_api.utils.login_required">
+<code class="sig-prename descclassname">groundstation.backend_api.utils.</code><code class="sig-name descname">login_required</code><span class="sig-paren">(</span><em class="sig-param">f</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.utils.login_required" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a wrapper which can be used to protect endpoints behind authentication</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-groundstation.backend_api.validators">
+<span id="validators"></span><h2>Validators<a class="headerlink" href="#module-groundstation.backend_api.validators" title="Permalink to this headline">¶</a></h2>
+<p>This module contains Validators which can be used to validated JSON payloads or dicts to make sure they follow
+the expected format and contain the required information needed by the backend_api endpoints. Refer to backend_api endpoints
+for examples, eg.) backend_api.housekeeping.HousekeepingLogList.post. Note: You can nest validators using the Nested field.</p>
+<dl class="class">
+<dt id="groundstation.backend_api.validators.ArgumentValidator">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.validators.</code><code class="sig-name descname">ArgumentValidator</code><span class="sig-paren">(</span><em class="sig-param">*, only: Union[Sequence[str], Set[str]] = None, exclude: Union[Sequence[str], Set[str]] = (), many: bool = False, context: Dict = None, load_only: Union[Sequence[str], Set[str]] = (), dump_only: Union[Sequence[str], Set[str]] = (), partial: Union[bool, Sequence[str], Set[str]] = False, unknown: str = None</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.validators.ArgumentValidator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validator for arguments to flight schedule commands</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="groundstation.backend_api.validators.AuthLoginValidator">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.validators.</code><code class="sig-name descname">AuthLoginValidator</code><span class="sig-paren">(</span><em class="sig-param">*, only: Union[Sequence[str], Set[str]] = None, exclude: Union[Sequence[str], Set[str]] = (), many: bool = False, context: Dict = None, load_only: Union[Sequence[str], Set[str]] = (), dump_only: Union[Sequence[str], Set[str]] = (), partial: Union[bool, Sequence[str], Set[str]] = False, unknown: str = None</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.validators.AuthLoginValidator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validator for checking login information is present</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="groundstation.backend_api.validators.CommandValidator">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.validators.</code><code class="sig-name descname">CommandValidator</code><span class="sig-paren">(</span><em class="sig-param">*, only: Union[Sequence[str], Set[str]] = None, exclude: Union[Sequence[str], Set[str]] = (), many: bool = False, context: Dict = None, load_only: Union[Sequence[str], Set[str]] = (), dump_only: Union[Sequence[str], Set[str]] = (), partial: Union[bool, Sequence[str], Set[str]] = False, unknown: str = None</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.validators.CommandValidator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validator for a single flight schedule command</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="groundstation.backend_api.validators.FlightScheduleCommandValidator">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.validators.</code><code class="sig-name descname">FlightScheduleCommandValidator</code><span class="sig-paren">(</span><em class="sig-param">*, only: Union[Sequence[str], Set[str]] = None, exclude: Union[Sequence[str], Set[str]] = (), many: bool = False, context: Dict = None, load_only: Union[Sequence[str], Set[str]] = (), dump_only: Union[Sequence[str], Set[str]] = (), partial: Union[bool, Sequence[str], Set[str]] = False, unknown: str = None</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.validators.FlightScheduleCommandValidator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validator for flighschedule commands</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="groundstation.backend_api.validators.FlightSchedulePatchCommandValidator">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.validators.</code><code class="sig-name descname">FlightSchedulePatchCommandValidator</code><span class="sig-paren">(</span><em class="sig-param">*, only: Union[Sequence[str], Set[str]] = None, exclude: Union[Sequence[str], Set[str]] = (), many: bool = False, context: Dict = None, load_only: Union[Sequence[str], Set[str]] = (), dump_only: Union[Sequence[str], Set[str]] = (), partial: Union[bool, Sequence[str], Set[str]] = False, unknown: str = None</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.validators.FlightSchedulePatchCommandValidator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validator for patching (editing) a flightschedule’s commands</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="groundstation.backend_api.validators.FlightSchedulePatchValidator">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.validators.</code><code class="sig-name descname">FlightSchedulePatchValidator</code><span class="sig-paren">(</span><em class="sig-param">*, only: Union[Sequence[str], Set[str]] = None, exclude: Union[Sequence[str], Set[str]] = (), many: bool = False, context: Dict = None, load_only: Union[Sequence[str], Set[str]] = (), dump_only: Union[Sequence[str], Set[str]] = (), partial: Union[bool, Sequence[str], Set[str]] = False, unknown: str = None</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.validators.FlightSchedulePatchValidator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validator for patching (editing) a flightschedule</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="groundstation.backend_api.validators.FlightScheduleValidator">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.validators.</code><code class="sig-name descname">FlightScheduleValidator</code><span class="sig-paren">(</span><em class="sig-param">*, only: Union[Sequence[str], Set[str]] = None, exclude: Union[Sequence[str], Set[str]] = (), many: bool = False, context: Dict = None, load_only: Union[Sequence[str], Set[str]] = (), dump_only: Union[Sequence[str], Set[str]] = (), partial: Union[bool, Sequence[str], Set[str]] = False, unknown: str = None</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.validators.FlightScheduleValidator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validator for flight schedules</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="groundstation.backend_api.validators.HousekeepingValidator">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.validators.</code><code class="sig-name descname">HousekeepingValidator</code><span class="sig-paren">(</span><em class="sig-param">*, only: Union[Sequence[str], Set[str]] = None, exclude: Union[Sequence[str], Set[str]] = (), many: bool = False, context: Dict = None, load_only: Union[Sequence[str], Set[str]] = (), dump_only: Union[Sequence[str], Set[str]] = (), partial: Union[bool, Sequence[str], Set[str]] = False, unknown: str = None</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.validators.HousekeepingValidator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validator for houskeeping</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="groundstation.backend_api.validators.PassoverListValidator">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.validators.</code><code class="sig-name descname">PassoverListValidator</code><span class="sig-paren">(</span><em class="sig-param">*, only: Union[Sequence[str], Set[str]] = None, exclude: Union[Sequence[str], Set[str]] = (), many: bool = False, context: Dict = None, load_only: Union[Sequence[str], Set[str]] = (), dump_only: Union[Sequence[str], Set[str]] = (), partial: Union[bool, Sequence[str], Set[str]] = False, unknown: str = None</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.validators.PassoverListValidator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validator list of passovers</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="groundstation.backend_api.validators.PassoverValidator">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.validators.</code><code class="sig-name descname">PassoverValidator</code><span class="sig-paren">(</span><em class="sig-param">*, only: Union[Sequence[str], Set[str]] = None, exclude: Union[Sequence[str], Set[str]] = (), many: bool = False, context: Dict = None, load_only: Union[Sequence[str], Set[str]] = (), dump_only: Union[Sequence[str], Set[str]] = (), partial: Union[bool, Sequence[str], Set[str]] = False, unknown: str = None</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.validators.PassoverValidator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validator for passovers</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="groundstation.backend_api.validators.PowerChannelValidator">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.validators.</code><code class="sig-name descname">PowerChannelValidator</code><span class="sig-paren">(</span><em class="sig-param">*, only: Union[Sequence[str], Set[str]] = None, exclude: Union[Sequence[str], Set[str]] = (), many: bool = False, context: Dict = None, load_only: Union[Sequence[str], Set[str]] = (), dump_only: Union[Sequence[str], Set[str]] = (), partial: Union[bool, Sequence[str], Set[str]] = False, unknown: str = None</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.validators.PowerChannelValidator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validator for power channels</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="groundstation.backend_api.validators.TelecommandListValidator">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.validators.</code><code class="sig-name descname">TelecommandListValidator</code><span class="sig-paren">(</span><em class="sig-param">*, only: Union[Sequence[str], Set[str]] = None, exclude: Union[Sequence[str], Set[str]] = (), many: bool = False, context: Dict = None, load_only: Union[Sequence[str], Set[str]] = (), dump_only: Union[Sequence[str], Set[str]] = (), partial: Union[bool, Sequence[str], Set[str]] = False, unknown: str = None</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.validators.TelecommandListValidator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validator for new telecommands</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="groundstation.backend_api.validators.UserValidator">
+<em class="property">class </em><code class="sig-prename descclassname">groundstation.backend_api.validators.</code><code class="sig-name descname">UserValidator</code><span class="sig-paren">(</span><em class="sig-param">*, only: Union[Sequence[str], Set[str]] = None, exclude: Union[Sequence[str], Set[str]] = (), many: bool = False, context: Dict = None, load_only: Union[Sequence[str], Set[str]] = (), dump_only: Union[Sequence[str], Set[str]] = (), partial: Union[bool, Sequence[str], Set[str]] = False, unknown: str = None</em><span class="sig-paren">)</span><a class="headerlink" href="#groundstation.backend_api.validators.UserValidator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validator for creating new users</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">AlbertaSat</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="groundstation.html">groundstation</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Backend API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="endpoints_api.html">RESTful endpoints Reference</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-groundstation.backend_api.models">The Data Models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-groundstation.backend_api.utils">Utility Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-groundstation.backend_api.validators">Validators</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="groundstation_tests.html">Groundstation Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="groundstation_modules.html">Other groundstation modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules_api.html">Module API reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="groundstation.html">groundstation</a><ul>
+      <li>Previous: <a href="groundstation.html" title="previous chapter">groundstation</a></li>
+      <li>Next: <a href="endpoints_api.html" title="next chapter">RESTful endpoints Reference</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Cmput 401 AlbertaSat Team.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/backend_api_docs.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

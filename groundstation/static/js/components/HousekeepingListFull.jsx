@@ -29,6 +29,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import HousekeepingDialog from './HousekeepingDialog';
+import {formatDateToUTCString} from '../helpers.js'
 
 const styles = {
   root: {
@@ -129,7 +130,7 @@ class HousekeepingLogListFull extends Component {
       open: false
     })
   }
-  
+
 
   render() {
     const { classes } = this.props;
@@ -141,9 +142,13 @@ class HousekeepingLogListFull extends Component {
         {this.props.housekeeping.map(housekeeping => (
           <Table aria-label="simple table">
               <TableBody>
-                <TableRow button key={housekeeping.name} onClick={() => this.handleOpenClick(housekeeping)}>
-                <TableCell width="15%" component="th" scope="row" style={tableColor(housekeeping.satellite_mode)}>
-                  {housekeeping.last_beacon_time}
+                <TableRow 
+                  button key={housekeeping.name} 
+                  id={'housekeeping-' + housekeeping.id} 
+                  onClick={() => this.handleOpenClick(housekeeping)
+                }>
+                <TableCell width="30%" component="th" scope="row" style={tableColor(housekeeping.satellite_mode)}>
+                  {this.props.isLoading ? '' : formatDateToUTCString(new Date(housekeeping.last_beacon_time + 'Z'))}
                 </TableCell>
                 <TableCell component="th" scope="row">
                   {housekeeping.satellite_mode}
@@ -153,7 +158,7 @@ class HousekeepingLogListFull extends Component {
           </Table>
 
           ))}
-          <HousekeepingDialog 
+          <HousekeepingDialog
           housekeeping={this.state.selectedHousekeeping}
           open={this.state.open}
           handleClose={this.handleClose}

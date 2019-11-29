@@ -21,6 +21,13 @@ class Flightschedule(Resource):
     @create_context
     @login_required
     def get(self, flightschedule_id):
+        """Endpoint for getting a specific flightschedule
+
+        :param int flightschedule_id: The flightschedule_id
+
+        :returns: response_object, status_code
+        :rtype: tuple (dict, int)
+        """
         flightschedule = FlightSchedules.query.filter_by(id=flightschedule_id).first()
 
         if not flightschedule:
@@ -36,6 +43,14 @@ class Flightschedule(Resource):
     @create_context
     @login_required
     def patch(self, flightschedule_id, local_data=None):
+        """Endpoint for patching a specific flightschedule
+
+        :param int flightschedule_id: The flightschedule_id id
+        :param json_string local_data: This should be used in place of the POST body that would be used through HTTP, used for local calls.
+
+        :returns: response_object, status_code
+        :rtype: tuple (dict, int)
+        """
         if not local_data:
             post_data = request.get_json()
         else:
@@ -56,8 +71,8 @@ class Flightschedule(Resource):
                 'errors': err.messages
             }
             return response_object, 400
-        # change our flightschedule is queued
 
+        # change whether our flightschedule is queued
         # if we are queuing this flightschedule, handle the normal checks
         # if it is valid, queue it
         # status 1=queued, 2=draft, 3=uploaded
@@ -128,6 +143,13 @@ class Flightschedule(Resource):
     @create_context
     @login_required
     def delete(self, flightschedule_id):
+        """Endpoint for deleting a specific flightschedule
+
+        :param int flightschedule_id: The flightschedule_id id
+
+        :returns: response_object, status_code
+        :rtype: tuple (dict, int)
+        """
         flightschedule = FlightSchedules.query.filter_by(id=flightschedule_id).first()
 
         if not flightschedule:
@@ -145,7 +167,6 @@ class Flightschedule(Resource):
         return response_object, 200
 
 
-
 class FlightScheduleList(Resource):
 
     def __init__(self):
@@ -155,8 +176,12 @@ class FlightScheduleList(Resource):
     @create_context
     @login_required
     def get(self, local_args=None):
-        """
-        local_args : dict
+        """Endpoint for getting a list of FlightSchedules
+
+        :param dict local_args: This should be used in place of the QUERY PARAMS that would be used through HTTP, used for local calls.
+
+        :returns: response_object, status_code
+        :rtype: tuple (dict, int)
         """
 
         if not local_args:
@@ -172,7 +197,7 @@ class FlightScheduleList(Resource):
             flightschedules = FlightSchedules.query.filter(FlightSchedules.status == 1).limit(query_limit).all()
         else:
             flightschedules = FlightSchedules.query.order_by(
-                            FlightSchedules.status, 
+                            FlightSchedules.status,
                             FlightSchedules.creation_date
                         ).limit(query_limit).all()
 
@@ -188,6 +213,13 @@ class FlightScheduleList(Resource):
     @create_context
     @login_required
     def post(self, local_data=None):
+        """Endpoint for creating a new FlightSchedule
+
+        :param json_string local_data: This should be used in place of the POST body that would be used through HTTP, used for local calls.
+
+        :returns: response_object, status_code
+        :rtype: tuple (dict, int)
+        """
 
         if not local_data:
             post_data = request.get_json()
