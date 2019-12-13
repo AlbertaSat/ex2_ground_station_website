@@ -1,0 +1,21 @@
+/etc/systemd/system/app.service
+
+[Unit]
+Description=Gunicorn instance to serve myproject
+After=network.target
+#We will give our regular user account ownership of the process since it owns all of the relevant files
+[Service]
+User=ubuntu
+Environment="FLASK_APP=groundstation/__init__.py"
+Environment="FLASK_ENV=development"
+Environment="APP_SETTINGS=groundstation.config.DevelopmentConfig"
+#give group ownership to the www-data group so that Nginx can communicate easily with the Gunicorn processes.
+Group=www-data
+# We'll then map out the working directory and set the PATH environmental variable so that the init system knows where our the executables for the process are located (within our virtual environment).
+WorkingDirectory=/home/ubuntu/AlbertaSat
+Environment="PATH=/home/ubuntu/AlbertaSat/venv/bin"
+# We'll then specify the commanded to start the service
+ExecStart=/home/ubuntu/AlbertaSat/entrypoint.sh
+# This will tell systemd what to link this service to if we enable it to start at boot. We want this service to start when the regular multi-user system is up and running:
+[Install]
+WantedBy=multi-user.target
