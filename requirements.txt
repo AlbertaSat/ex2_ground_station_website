@@ -1,5 +1,7 @@
 alembic==1.2.1
 aniso8601==8.0.0
+bcrypt==3.1.7
+cffi==1.14.0
 Click==7.0
 Flask==1.1.1
 Flask-Migrate==2.4.0
@@ -12,7 +14,9 @@ Jinja2==2.10.1
 Mako==1.1.0
 MarkupSafe==1.1.1
 marshmallow==3.2.1
-psycopg2-binary==2.7.7
+psycopg2==2.8.5
+psycopg2-binary==2.8.3
+pycparser==2.20
 python-dateutil==2.8.0
 python-editor==1.0.4
 pytz==2019.3
