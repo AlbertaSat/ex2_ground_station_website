@@ -21,6 +21,7 @@ def send(socket, data):
     :returns: response from the socket
     :rtype: str
     """
+    print("SENDING ", data)
     return socket.send(data)
 
 def example():
@@ -59,7 +60,11 @@ def communication_loop():
     # so we dont send anything before that
     # for our request arguments include max to get the entry with the max id
     comm_last_id = communication_list.get(local_data={'max' : True})[0]
-    request_data['last_id'] = comm_last_id['data']['messages'][0]['message_id']
+    if len(comm_last_id['data']['messages']) > 0:
+        request_data['last_id'] = comm_last_id['data']['messages'][0]['message_id']
+    else:
+        print("NOTE: there are no communications recorded.\n")
+
 
     # loop to continuously check communication table
     # if we have messages address to comm greater than the last id

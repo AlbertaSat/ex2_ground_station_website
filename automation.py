@@ -46,6 +46,9 @@ def automate_passovers():
             f_time_date = time_obj.strftime('%m/%d/%Y')
 
             subprocess.run(['at', f_time_min, f_time_date, '-f', 'automate.sh'])
+            print("Scheduled to automate at the next passover.")
+    else:
+        print("AUTOMATION: no more passovers found.")
 
 
 def main():

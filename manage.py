@@ -38,6 +38,7 @@ def recreate_db():
     db.drop_all()
     db.create_all()
     db.session.commit()
+    print("Database has been dropped and recreated.")
 
 @cli.command()
 @click.argument('path', required=False)
@@ -125,10 +126,10 @@ def seed_db():
                 )
 
     now = datetime.utcnow()
-    add_passover(timestamp=now - timedelta(seconds=10))
+    add_passover(timestamp=now - timedelta(seconds=20))
     for i in range(1, 20):
         p = add_passover(timestamp=now + timedelta(minutes=i*5))
-
+    print("Database has been seeded with dummy data.")
 
 
 @cli.command('demo_db')

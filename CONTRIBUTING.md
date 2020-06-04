@@ -62,8 +62,7 @@ Handling satellite responses is also implemented here, through the function hand
 **automation.py**
 Automation.py is the script ran at the time of the passover. It first reads from **automation.txt**, a file with commands seperated by newlines. The commands in automation.txt will be posted to the communications table, and sent to the satellite automatically.
 
-The script then loads the next passover time, and utlizes the linux `at` program to schedule the next time automation will run.
+The script then loads the next passover time, and utlizes the linux `at` program to schedule the next time automation will run. You will need to install `at`, which can be done with `sudo apt install at` on Ubuntu. 
 
 **seed_passovers.sh**
 Run this script to schedule automation.py to run at the next passover time. Only necessary to run if no automation is scheduled (ie. passovers have ran out, or for initially setting up automation).
-
