@@ -8,6 +8,7 @@ class BaseConfig(object):
     DEBUG = True
     TESTING = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///' + os.path.join(basedir, 'app.db')
     BCRYPT_LOG_ROUNDS = 12
     SECRET_KEY = os.getenv('SECRET_KEY')
     TOKEN_EXPIRATION_DAYS = 1
@@ -19,13 +20,14 @@ class ProductionConfig(BaseConfig):
     Production specific config
     """
     DEBUG = False
+
 class DevelopmentConfig(BaseConfig):
     """
     Development environment specific configuration
     """
     DEBUG = True
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///' + os.path.join(basedir, 'app.db')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///' + os.path.join(basedir, 'dev.db')
 
 class TestingConfig(BaseConfig):
     TESTING = True
