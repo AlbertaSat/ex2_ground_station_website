@@ -10,11 +10,11 @@ In this repository we are attempting to make a functional and extendable grounds
 
 ### Links
 
-**[How to Develop and Extend this project](CONTRIBUTING.md)** - A guide to developing this project further. Includes instructions for setting up the development environment, running the app, testing the app, and expanding critical parts of the app.
+**[How to Develop and Extend this project](CONTRIBUTING.md)** - A guide to developing this project further. Includes instructions for setting up the development environment, running the app, testing the app, and expanding the `comm.py` module.
 
-**[Python source code documentation](https://ualberta-cmput401.github.io/AlbertaSat/)** - This is automatically generated documentation for the source code. It lives in `/docs`. When you make changes to the code, update this documentation to match it using `source ./update_docs.sh`. If you would like to view the docs locally, do `cd docs` and `python3 -m http.server`. Then go to http://0.0.0.0:8000/ in your browser.
+**[Generated source code documentation](https://ualberta-cmput401.github.io/AlbertaSat/)** - This is automatically generated documentation from the source code. It lives in `/docs`. Github pages has it served [here](https://ualberta-cmput401.github.io/AlbertaSat/). When you make changes to the Python code, update this documentation to match it using `source ./update_docs.sh`. If you would like to view the docs locally, serve it with `python3 -m http.server` and go to http://0.0.0.0:8000/ in your browser.
 
-**[REST API backend documentation](https://documenter.getpostman.com/view/9298924/SW11YKEd)** - This is documentation for the REST backend API of this Flask app. There are examples of requests that you can make to the backend and what responses to expect. The relevant source code is located in `groundstation/backend_api`.
+**[REST API backend documentation](https://documenter.getpostman.com/view/9298924/SW11YKEd)** - This is documentation for the REST backend API (`groundstation/backend_api`) of this Flask app. There are examples of requests that you can make to the backend and what responses to expect.
 
 **[Glossary](https://github.com/UAlberta-CMPUT401/AlbertaSat/wiki/Glossary)** - Go here if you're confused about a word or phrase that we keep using.
 
