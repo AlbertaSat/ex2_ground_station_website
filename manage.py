@@ -85,7 +85,8 @@ def seed_db():
         'upload-fs': (0, False),
         'adjust-attitude': (1,True),
         'magnetometer': (0,False),
-        'imaging': (0,False)
+        'imaging': (0,False),
+        'DEMO.TIME_MANAGEMENT.SET_TIME': (1, False)
     }
 
     for name, (num_args, is_danger) in commands.items():
@@ -129,7 +130,7 @@ def seed_db():
     add_passover(timestamp=now - timedelta(seconds=20))
     for i in range(1, 20):
         p = add_passover(timestamp=now + timedelta(minutes=i*5))
-    print("Database has been seeded with dummy data.")
+    print("Database has been seeded.")
 
 
 @cli.command('demo_db')
