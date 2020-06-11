@@ -1,8 +1,6 @@
-# AlbertaSat
+# ex2_ground_station_website
 
->*AlbertaSat is a group of students and faculty at the University of Alberta that have come together to design, build, test, launch and operate satellites. Our goal is to support a commercial space industry, global space culture, global space expansionism and global space education through our missions in space. - https://albertasat.ca/*
-
-In this repository we are attempting to make a functional and extendable groundstation for the operators of the [Ex-Alta 2 satellite](https://albertasat.ca/ex-alta-2/). It is a Flask web app that uses a REST API for the back end (Python), paired with a React MaterialUI interface on the front end (JavaScript). Also included in this repository is a satellite simulator used to simulate the interaction between our app and a real cubesat. A "comm" (communications) module intermediates this exchange. Finally, a collection of scripts are used to achieve the goal of automating some aspects of the groundstation app. Follow the links below to see the documentation.
+In this repository we are attempting to make a functional and extendable groundstation for the operators of the [Ex-Alta 2 satellite](https://albertasat.ca/ex-alta-2/). It is a Flask web app that uses a REST API for the back end (Python), paired with a React MaterialUI interface on the front end (JavaScript). Also included in this repository is a "satellite simulator" python module used to simulate the interaction between our app and a real cubesat. A "comm" (communications) module intermediates this exchange. Finally, a collection of scripts are used to achieve the goal of automating some aspects of the groundstation app. Follow the links below to see the documentation.
 
 [![Build Status](https://travis-ci.com/UAlberta-CMPUT401/AlbertaSat.svg?token=TRHuLXSMdv9x8426GEpU&branch=dev)](https://travis-ci.com/UAlberta-CMPUT401/AlbertaSat)
 
@@ -19,3 +17,10 @@ In this repository we are attempting to make a functional and extendable grounds
 **[Glossary](https://github.com/UAlberta-CMPUT401/AlbertaSat/wiki/Glossary)** - Go here if you're confused about a word or phrase that we keep using.
 
 **[Wiki](https://github.com/UAlberta-CMPUT401/AlbertaSat/wiki)** - See more information about the project's design and development.
+
+### Docker commands
+
+`sudo docker build --tag ground_website:latest . --build-arg FLASK_APP=groundstation/__init__.py --build-arg FLASK_ENV=development --build-arg APP_SETTINGS=groundstation.config.DevelopmentConfig --build-arg SECRET_KEY="\xffY\x8dG\xfbu\x96S\x86\xdfu\x98\xe8S\x9f\x0e\xc6\xde\xb6$\xab:\x9d\x8b"`
+
+`sudo docker run --rm -it --network=host ground_website:latest`
+
