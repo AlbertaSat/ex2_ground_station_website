@@ -20,7 +20,22 @@ In this repository we are attempting to make a functional and extendable grounds
 
 ### Docker commands
 
-`sudo docker build --tag ground_website:latest . --build-arg FLASK_APP=groundstation/__init__.py --build-arg FLASK_ENV=development --build-arg APP_SETTINGS=groundstation.config.DevelopmentConfig --build-arg SECRET_KEY="\xffY\x8dG\xfbu\x96S\x86\xdfu\x98\xe8S\x9f\x0e\xc6\xde\xb6$\xab:\x9d\x8b"`
+To install the app using [Docker](https://docs.docker.com/get-docker/), `cd` into the project and run this command:
 
-`sudo docker run --rm -it --network=host ground_website:latest`
+`docker build --tag ground_website:latest . --build-arg FLASK_APP=groundstation/__init__.py --build-arg FLASK_ENV=development --build-arg APP_SETTINGS=groundstation.config.DevelopmentConfig --build-arg SECRET_KEY="\xffY\x8dG\xfbu\x96S\x86\xdfu\x98\xe8S\x9f\x0e\xc6\xde\xb6$\xab:\x9d\x8b"`
+
+**NOTE: depending on your installation, you may need to use `sudo` on Docker commands.**
+
+This will build the docker image. It may take several minutes. The --build-args are for setting the app's configuration settings; the above arguments configure the app for developing. Read the Dockerfile to see the build steps.
+
+To run the docker container:
+
+`docker run --rm -it --network=host ground_website:latest`
+
+The Dockerfile tells docker to start the container with a bash shell:  
+Do `flask run` to run the app.  
+Do `python3 manage.py recreate_db` to erase the database.  
+Do `python3 manage.py seed_db` to seed the database with data.  
+Do `cd groundstation/static && npm run build` to rebuild the React frontend.  
+Do `exit` to exit the container.  
 

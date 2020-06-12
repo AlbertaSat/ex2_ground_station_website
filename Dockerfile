@@ -5,10 +5,8 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update
 RUN apt-get install build-essential -y
 RUN apt-get install wget curl -y
-RUN apt-get install gcc-multilib g++-multilib -y
 RUN apt-get install git -y
-RUN apt-get install libsocketcan-dev -y
-# postgres pip dependencies:
+# Flask PostgreSQL pip dependencies:
 RUN apt-get install libpq-dev python3-dev -y
 
 # install python
@@ -40,6 +38,7 @@ WORKDIR /home/ex2_ground_station_website/groundstation/static
 RUN npm install
 RUN npm run build
 
-EXPOSE 5000
 WORKDIR /home/ex2_ground_station_website
-CMD flask run
+EXPOSE 5000
+# Starts a bash shell in the container when running
+CMD /bin/bash
