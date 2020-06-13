@@ -1,15 +1,18 @@
-""" The Manage Module is how you can run the flask application through the command line,
-it also allows you to define your own command line functions that can be called as::
+""" 
+The Manage Module is how you can run the flask application through the command 
+line. It also allows you to define your own command line functions 
+that can be called as:
 
     python3 manage.py <command_line_command>
 
-As is you can also run tests by specifying the module path like so::
+As is you can also run tests by specifying the module path like so:
 
     python3 manage.py test test_api.TestHousekeepingService
 
-or::
+or:
 
     python3 manage.py test test_api.TestHousekeepingService.test_get_housekeeping
+
 """
 import sys
 import unittest
@@ -27,9 +30,15 @@ from groundstation.backend_api.utils import add_telecommand, \
 add_flight_schedule, add_command_to_flightschedule, add_user, \
 add_arg_to_flightschedulecommand, add_message_to_communications, \
 add_passover
+#from ex2_ground_station_software.Src.system import SystemValues
+from ex2_ground_station_software.Src.groundStation import apps
 
 app = create_app()
 cli = FlaskGroup(create_app=create_app)
+
+# vals = SystemValues()
+# apps = vals.APP_DICT
+# services = vals.SERVICES
 
 @cli.command('recreate_db')
 def recreate_db():
@@ -88,6 +97,7 @@ def seed_db():
         'imaging': (0,False),
         'DEMO.TIME_MANAGEMENT.SET_TIME': (1, False)
     }
+
 
     for name, (num_args, is_danger) in commands.items():
         c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
