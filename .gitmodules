@@ -1,0 +1,6 @@
+[submodule "ex2_ground_station_software"]
+	path = ex2_ground_station_software
+	url = https://github.com/AlbertaSat/ex2_ground_station_software
+[submodule "libcsp"]
+	path = libcsp
+	url = https://github.com/libcsp/libcsp
