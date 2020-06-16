@@ -1,5 +1,1 @@
-ping
-ping
-ping
-get-hk
-turn-on 1
+DEMO.TIME_MANAGEMENT.SET_TIME 1623773940

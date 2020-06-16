@@ -30,8 +30,8 @@ from groundstation.backend_api.utils import add_telecommand, \
 add_flight_schedule, add_command_to_flightschedule, add_user, \
 add_arg_to_flightschedulecommand, add_message_to_communications, \
 add_passover
-#from ex2_ground_station_software.Src.system import SystemValues
-from ex2_ground_station_software.Src.groundStation import apps
+
+# TODO: import groundStation commands (apps, services) instead of hardcoding
 
 app = create_app()
 cli = FlaskGroup(create_app=create_app)

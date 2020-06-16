@@ -1,6 +1,10 @@
-"""The Communications Module is responsible for sending and retrieving data with the satellite (or the simulator).
 """
-import satellite_simulator.antenna as antenna
+The Communications Module is responsible for sending and retrieving data 
+with the satellite (or the simulator).
+"""
+#import satellite_simulator.antenna as antenna
+# TODO: 'antenna' isn't the correct word to describe this.
+import ex2_ground_station_software.Src.groundStation as antenna
 from groundstation.backend_api.communications import CommunicationList
 from gs_commands import GsCommands
 import time
@@ -12,8 +16,11 @@ communication_list = CommunicationList()
 gs_commands_obj = GsCommands()
 gs_commands_dict = gs_commands_obj.get_gs_commands_dict()
 
+
 def send(socket, data):
-    """Pipes the incoming data (probably a Command tuple) to the socket (probably the Simulator)
+    """
+    Pipes the incoming data (probably a Command tuple) to the socket 
+    (probably the Simulator)
 
     :param int socket: The socket for sending data into
     :param str data: the data to send
@@ -24,11 +31,13 @@ def send(socket, data):
     print("SENDING ", data)
     return socket.send(data)
 
+
 def example():
     telecommands = ['ping', 'get-hk', 'turn-on 0', 'ping', 'get-hk']
     for telecommand in telecommands:
         resp = send(antenna, telecommand)
         print(resp)
+
 
 # handle the sig alarm
 def handler(signum, frame):
@@ -37,7 +46,9 @@ def handler(signum, frame):
 
 # handle message in communication table
 def handle_message(message):
-    """Messages sent to comm will pass through this function, essentially acting as a decorator. Refer to gs_commands module
+    """
+    Messages sent to comm will pass through this function, essentially acting 
+    as a decorator. Refer to gs_commands module
 
     :param str message: The incoming message to comm
 
@@ -51,8 +62,12 @@ def handle_message(message):
         return message
 
 
-def communication_loop():
-    """Main communication loop which polls for messages addressed to comm (i.e. messages it needs to send to satellite)
+def communication_loop(csp):
+    """
+    Main communication loop which polls for messages addressed to comm 
+    (i.e. messages it needs to send to satellite)
+
+    :param Csp csp: The Csp instance. See groundStation.py
     """
 
     request_data = {'last_id': 0, 'receiver': 'comm'}
@@ -64,7 +79,6 @@ def communication_loop():
         request_data['last_id'] = comm_last_id['data']['messages'][0]['message_id']
     else:
         print("NOTE: there are no communications recorded.\n")
-
 
     # loop to continuously check communication table
     # if we have messages address to comm greater than the last id
@@ -78,21 +92,32 @@ def communication_loop():
         if len(messages['data']['messages']) > 0:
             for message in messages['data']['messages']:
                 if message['message']:
-                    data = handle_message(message['message'])
+                    # TODO: is handle_message() pointless?
+                    # data = handle_message(message['message'])
 
-                    if data:
-                        resp = send(antenna, data)
-                        gs_commands_obj.handle_response(resp)
+                    # if data:
+                    #     response = send(antenna, data)
+                    #     gs_commands_obj.handle_response(resp)
+                    outMsg = message['message'].replace(" ", ".")
+                    print(outMsg)
+                    toSend, server, port = csp.getInput(inVal=outMsg)
+                    csp.send(server, port, toSend)
+
 
             request_data['last_id'] = messages['data']['messages'][-1]['message_id']
-
         time.sleep(1)
+
 
 def main():
     # set a sigalarm so the comm module will close after a specified amount of time
     signal.signal(signal.SIGALRM, handler)
     signal.alarm(120)
-    communication_loop()
+
+    # init the ground station CSP instance
+    opts = antenna.getOptions()
+    csp = antenna.Csp(opts)
+
+    communication_loop(csp)
 
 
 if __name__=='__main__':
