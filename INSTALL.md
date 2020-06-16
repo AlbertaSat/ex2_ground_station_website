@@ -1,74 +1,102 @@
-# Developing the Groundstation app
+# Installation
+---
 
-To work on this project you will need several tools.
-1. First, this guide assumes that you are familiar with the unix-style terminal (eg. bash). If you're on Windows, you can use a [virtual machine](https://www.virtualbox.org/), [git bash for Windows](https://gitforwindows.org/), or the [Windows subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/about). If you are not comfortable using a terminal, we recommend you use [other guides](https://linuxjourney.com/lesson/the-shell) to practice it first.
-2. We'll need [`git`](https://git-scm.com/), [Python 3](https://www.python.org/), [`npm`](https://www.npmjs.com/get-npm), and [`pip`](https://pypi.org/project/pip/) installed on your machine. We are also assuming that you [know how to use Git](https://try.github.io/).
+## Docker installation & usage
 
-## Setting up the local development environment
+To install the app using [Docker](https://docs.docker.com/get-docker/), `cd` into the project (where the Dockerfile is) and run this command to build the docker image:
 
-First, let's download the project from Github using git. We recommend that you fork the repository, but for simplicity's sake we'll just download it.
+```
+docker build --tag ground_website:latest . --build-arg FLASK_APP=groundstation/__init__.py --build-arg FLASK_ENV=development --build-arg APP_SETTINGS=groundstation.config.DevelopmentConfig --build-arg SECRET_KEY="\xffY\x8dG\xfbu\x96S\x86\xdfu\x98\xe8S\x9f\x0e\xc6\xde\xb6$\xab:\x9d\x8b"
+```
 
-`git clone https://github.com/UAlberta-CMPUT401/AlbertaSat.git`
+*NOTE: depending on your installation, you may need to use* `sudo` *on Docker commands.*
 
-The backend uses Python and the pip package manager, and the frontend uses JavaScript and the npm package manager.
+It may take several minutes. The --build-args are for setting the app's configuration settings; the above arguments configure the app for developing. Read the Dockerfile to see the build steps.
 
-### node.js & npm
+To run the docker container:
 
-This project uses [React](https://reactjs.org/), which means we need npm & node.js. If you're unfamiliar, I recommend nvm, the Node Version Manager. [Install it with their install script](https://github.com/nvm-sh/nvm#about). Then install the stable release of node & npm:  
+```
+docker run --rm -it --network=host ground_website:latest
+```
 
-`nvm install stable`
+The Dockerfile tells docker to start the container with a bash shell:  
+Do `flask run` to run the app.  
+Do `python3 manage.py recreate_db` to erase the database.  
+Do `python3 manage.py seed_db` to seed the database with data.  
+Do `cd groundstation/static && npm run build` to rebuild the React frontend.  
+Do `exit` to exit the container.  
 
-Now activate it:
+---
 
-`nvm use stable`
+## Manual installation
 
-### Python pip dependencies
+**1. Clone the repository**
 
-We need a virtual environment in the project's root directory. A virtual environment isolates the version of Python and pip packages to this project alone. For more information, [see this guide](https://docs.python.org/3/tutorial/venv.html). You only need to create the virtual environment *once* (it lives inside the project's folder).
+```
+git clone https://github.com/AlbertaSat/ex2_ground_station_website.git && cd ex2_ground_station_website
+```
 
-`cd AlbertaSat`  
-`python3 -m venv venv`
+**2. Install OS dependencies.** These are dependencies for PostgreSQL, libCSP, and scheduling tasks.
 
-Make sure you **activate** the virtual environment in every terminal window.
+**Ubuntu**
+```
+sudo apt install at build-essential wget curl libpq-dev python3-dev gcc-multilib g++-multilib libsocketcan-dev
+```
 
-`source venv/bin/activate`
+**3. Have node & npm installed**, at least version 8. If you don't have node & npm installed, I recommend using the [Node Version Manager](https://github.com/nvm-sh/nvm).
 
-Now that the venv is activated, we need to install all of the project's libraries inside the venv. Luckily, we wrote a script to do this for you:
+**4. Make sure you have a [Python virtual environment](https://docs.python.org/3/tutorial/venv.html)** installed and active!
 
-`source ./update.sh`
+```
+source venv/bin/activate
+```
 
-And to run the app:
+**5. Set the environment variables.** These environment variables tell Flask which configuration settings to use.
 
-`flask run`.
+```
+source ./env.sh
+```
 
-### at
+**6. Install pip and npm libraries.** Luckily, we made a script to do all of this for you. Peek inside `update.sh` to see what it's doing.
 
-The automation module uses a command line program called `at` to schedule tasks. Install it on Ubuntu with `sudo apt install at`.
+```
+source ./update.sh
+```  
+
+**7. Then, to run the app:**
+
+```
+flask run
+```
+This command works because we set the environment variables earlier to enter the app at `groundstation/__init__.py`
+
+---
 
 ## Cheatsheet
 
-**Every time you open the project:** `source venv/bin/activate`  
-As mentioned above, none of your tools will work if you're not in the venv.
+**Activate virtual environment (every terminal window):** `source venv/bin/activate`  
+Flask won't work if the venv is not activated. You'll know it's active when there is a `(venv)` at the start of your command prompt.
 
-**In every terminal window:** `source ./env.sh`  
-You will get strange errors if the environment variables are not set. They specify the app's configuration file and entry point.
+**Set environment variables (every terminal window)** `source ./env.sh`  
+You will get strange errors if the environment variables are not set. They specify Flask's configuration file and entry point.
 
 **To install pip libraries, set Flask environment variables, recreate & seed the database, and rebuild frontend:** `source ./update.sh`  
-Try doing things manually, step by step if you run into problems.
+Try doing things manually, step by step, if you run into problems.
 
 **To recreate the database:** `python3 manage.py recreate_db`  
+
 **To seed the database with example data:** `python3 manage.py seed_db`  
 Both `recreate_db` and `seed_db` are functions inside `manage.py`; look at them and change them as you see fit (particularly `seed_db`) to initialize the database with different data.
 
 **To rebuild the React frontend code with npm:** `cd groundstation/static && npm run build`  
 The code that makes the app look good is written in Javascript, and can be found in `groundstation/static`.
 
-The logic of the app is written in Python with the help of [Flask](https://flask.palletsprojects.com/en/1.1.x/).
-
 **To start the app in development mode:** `flask run` or `python3 run.py`, then open it in your browser (typically http://127.0.0.1:5000/)
 
 **To run all of the unit tests for the app:** `python3 manage.py test`  
 **To run the front end GUI tests with Selenium:** `python3 manage.py test frontend_test` NOTE: you will need the `geckodriver` in order to do this. Get it [here](https://github.com/mozilla/geckodriver/releases).
+
+---
 
 ## Extending The Comm Module
 
