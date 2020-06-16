@@ -43,6 +43,17 @@ git clone https://github.com/AlbertaSat/ex2_ground_station_website.git && cd ex2
 sudo apt install at build-essential wget curl libpq-dev python3-dev gcc-multilib g++-multilib libsocketcan-dev
 ```
 
+**3. Get git submodules** for the libCSP and the ground station network software.
+
+```
+git submodule init
+git submodule update
+cd ex2_ground_station_software
+git switch feature-website
+git pull
+cd ..
+```
+
 **3. Have node & npm installed**, at least version 8. If you don't have node & npm installed, I recommend using the [Node Version Manager](https://github.com/nvm-sh/nvm).
 
 **4. Make sure you have a [Python virtual environment](https://docs.python.org/3/tutorial/venv.html)** installed and active!
@@ -68,7 +79,15 @@ source ./update.sh
 ```
 flask run
 ```
+
 This command works because we set the environment variables earlier to enter the app at `groundstation/__init__.py`
+
+**8. Running with CSP**
+
+First, run the app with `flask run` as normal.  
+Also run the [ex2_command_handling_demo repo](https://github.com/AlbertaSat/ex2_command_handling_demo) with docker at the same time. It will start a zmqproxy server.  
+Then also run `LD_LIBRARY_PATH=./libcsp/build source ./automate.sh`, which will run whatever commands are inside `automation.txt`. The command first has to be specified in `manage.py`. All of these should be running simultaneously.  
+Not yet compatible with docker.
 
 ---
 
