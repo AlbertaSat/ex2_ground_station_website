@@ -1,9 +1,18 @@
 # Installation
 ---
 
-## Docker installation & usage
+## Docker installation
 
-To install the app using [Docker](https://docs.docker.com/get-docker/), `cd` into the project (where the Dockerfile is) and run this command to build the docker image:
+Before anything else, make sure to...
+
+```
+git submodule init
+git submodule update
+```
+
+... since the Docker image is still going to need the git modules.
+
+To install the app using [Docker](https://docs.docker.com/get-docker/), `cd` into the project (where the Dockerfile is) and run this to build the docker image:
 
 ```
 docker build --tag ground_website:latest . --build-arg FLASK_APP=groundstation/__init__.py --build-arg FLASK_ENV=development --build-arg APP_SETTINGS=groundstation.config.DevelopmentConfig --build-arg SECRET_KEY="\xffY\x8dG\xfbu\x96S\x86\xdfu\x98\xe8S\x9f\x0e\xc6\xde\xb6$\xab:\x9d\x8b"
@@ -19,12 +28,9 @@ To run the docker container:
 docker run --rm -it --network=host ground_website:latest
 ```
 
-The Dockerfile tells docker to start the container with a bash shell:  
-Do `flask run` to run the app.  
-Do `python3 manage.py recreate_db` to erase the database.  
-Do `python3 manage.py seed_db` to seed the database with data.  
-Do `cd groundstation/static && npm run build` to rebuild the React frontend.  
-Do `exit` to exit the container.  
+To exit the container, type `exit`
+
+The Dockerfile tells docker to start the container with a bash shell, which means that all of the commands will be the same as when you're not running the app in a docker container. [Skip down to the Usage section to read more](#usage)
 
 ---
 
@@ -48,15 +54,11 @@ sudo apt install at build-essential wget curl libpq-dev python3-dev gcc-multilib
 ```
 git submodule init
 git submodule update
-cd ex2_ground_station_software
-git switch feature-website
-git pull
-cd ..
 ```
 
 **3. Have node & npm installed**, at least version 8. If you don't have node & npm installed, I recommend using the [Node Version Manager](https://github.com/nvm-sh/nvm).
 
-**4. Make sure you have a [Python virtual environment](https://docs.python.org/3/tutorial/venv.html)** installed and active!
+**4. Make sure you have a [Python virtual environment](https://docs.python.org/3/tutorial/venv.html)** installed and active! Please note that with the manual installation you will need to activate it in every terminal that's running the app.
 
 ```
 source venv/bin/activate
@@ -80,44 +82,35 @@ source ./update.sh
 flask run
 ```
 
-This command works because we set the environment variables earlier to enter the app at `groundstation/__init__.py`
-
-**8. Running with CSP**
-
-First, run the app with `flask run` as normal.  
-Also run the [ex2_command_handling_demo repo](https://github.com/AlbertaSat/ex2_command_handling_demo) with docker at the same time. It will start a zmqproxy server.  
-Then also run `LD_LIBRARY_PATH=./libcsp/build source ./automate.sh`, which will run whatever commands are inside `automation.txt`. The command first has to be specified in `manage.py`. All of these should be running simultaneously.  
-Not yet compatible with docker.
+This command works because we set the environment variables earlier to enter the app at `groundstation/__init__.py`. Read on to the Usage section to see what else you can do.
 
 ---
 
-## Cheatsheet
+## Usage
 
-**Activate virtual environment (every terminal window):** `source venv/bin/activate`  
-Flask won't work if the venv is not activated. You'll know it's active when there is a `(venv)` at the start of your command prompt.
+This should be the same regardless of which method of installation you're using.
 
-**Set environment variables (every terminal window)** `source ./env.sh`  
-You will get strange errors if the environment variables are not set. They specify Flask's configuration file and entry point.
+* `source ./env.sh` - Set the Flask environment variables (tells the app which config settings to use and where the entrypoint is).
 
-**To install pip libraries, set Flask environment variables, recreate & seed the database, and rebuild frontend:** `source ./update.sh`  
-Try doing things manually, step by step, if you run into problems.
+* `python3 manage.py recreate_db` - erase the database.
 
-**To recreate the database:** `python3 manage.py recreate_db`  
+* `python3 manage.py seed_db` - seed the database with data.
 
-**To seed the database with example data:** `python3 manage.py seed_db`  
-Both `recreate_db` and `seed_db` are functions inside `manage.py`; look at them and change them as you see fit (particularly `seed_db`) to initialize the database with different data.
+* `cd groundstation/static && npm run build` - rebuild the React JS frontend.
 
-**To rebuild the React frontend code with npm:** `cd groundstation/static && npm run build`  
-The code that makes the app look good is written in Javascript, and can be found in `groundstation/static`.
+* `source ./run_comm.sh` - start the comm module. This will enable the app to send data to whatever socket is specified in `comm.py`, probably [ex2_command_handling_demo repo](https://github.com/AlbertaSat/ex2_command_handling_demo), in which case, run that at the same time as well.
 
-**To start the app in development mode:** `flask run` or `python3 run.py`, then open it in your browser (typically http://127.0.0.1:5000/)
+* `source ./automate.sh` - run the automation module. It will execute whatever commands are inside `automation.txt`. (Note: the command first has to be specified in `manage.py`, which the app refers to as "telecommands").
 
-**To run all of the unit tests for the app:** `python3 manage.py test`  
-**To run the front end GUI tests with Selenium:** `python3 manage.py test frontend_test` NOTE: you will need the `geckodriver` in order to do this. Get it [here](https://github.com/mozilla/geckodriver/releases).
+* `flask run` - run the app.
+
+* `python3 manage.py test` - run the unit tests.
+
+* `python3 manage.py test frontend_test` - run the GUI frontend tests with Selenium. NOTE: you will need the `geckodriver` in order to do this. Get it [here](https://github.com/mozilla/geckodriver/releases).
 
 ---
 
-## Extending The Comm Module
+# Extending The Comm Module
 
 The comm module is the main point of interaction between the groundstation application and the satellite. It acts a client to both, and interprets commands sent from the operator to the satellite, and also interprets telemetry sent from the satellite. To extend the comm module, there are 4 files of interest in the root directory of the project:
 
