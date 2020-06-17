@@ -1,5 +1,5 @@
 #!/bin/sh
-echo "Setting Flask app settings with environment variables..."
+echo "Setting Flask environment variables..."
 export FLASK_APP=groundstation/__init__.py
 export FLASK_ENV=development
 export APP_SETTINGS=groundstation.config.DevelopmentConfig

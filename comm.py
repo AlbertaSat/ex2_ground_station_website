@@ -4,7 +4,7 @@ with the satellite (or the simulator).
 """
 #import satellite_simulator.antenna as antenna
 # TODO: 'antenna' isn't the correct word to describe this.
-import ex2_ground_station_software.Src.groundStation as antenna
+import ex2_ground_station_software.src.groundstation as antenna
 from groundstation.backend_api.communications import CommunicationList
 from gs_commands import GsCommands
 import time
