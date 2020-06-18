@@ -1,9 +1,10 @@
 # Installation
+
 ---
 
 ## Docker installation
 
-Before anything else, make sure to...
+After cloning the repository, make sure to...
 
 ```
 git submodule init
