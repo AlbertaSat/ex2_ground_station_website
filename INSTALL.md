@@ -1,7 +1,5 @@
 # Installation
 
----
-
 ## Docker installation
 
 After cloning the repository, make sure to...
@@ -35,8 +33,6 @@ To exit the container, type `exit`
 
 The Dockerfile tells docker to start the container with a bash shell, which means that all of the commands will be the same as when you're not running the app in a docker container. [Skip down to the Usage section to read more](#usage)
 
----
-
 ## Manual installation
 
 **1. Clone the repository**
@@ -47,7 +43,7 @@ git clone https://github.com/AlbertaSat/ex2_ground_station_website.git && cd ex2
 
 **2. Install OS dependencies.** These are dependencies for PostgreSQL, libCSP, and scheduling tasks.
 
-**Ubuntu**
+On Ubuntu:
 ```
 sudo apt install at build-essential wget curl libpq-dev python3-dev gcc-multilib g++-multilib libsocketcan-dev
 ```
@@ -67,7 +63,7 @@ git submodule update
 source venv/bin/activate
 ```
 
-**5. Set the environment variables.** These environment variables tell Flask which configuration settings to use.
+**5. Set the environment variables.** These environment variables tell Flask which configuration settings to use. Do this in every terminal window or you'll get errors.
 
 ```
 source ./env.sh
@@ -85,15 +81,11 @@ source ./update.sh
 flask run
 ```
 
-This command works because we set the environment variables earlier to enter the app at `groundstation/__init__.py`. Read on to the Usage section to see what else you can do.
-
----
+Read on to the Usage section to see what else you can do.
 
 ## Usage
 
-This should be the same regardless of which method of installation you're using.
-
-* `source ./env.sh` - Set the Flask environment variables (tells the app which config settings to use and where the entrypoint is).
+These commands should be the same regardless of which method of installation you're using.
 
 * `python3 manage.py recreate_db` - erase the database.
 
@@ -109,9 +101,7 @@ This should be the same regardless of which method of installation you're using.
 
 * `python3 manage.py test` - run the unit tests.
 
-* `python3 manage.py test frontend_test` - run the GUI frontend tests with Selenium. NOTE: you will need the `geckodriver` in order to do this. Get it [here](https://github.com/mozilla/geckodriver/releases).
-
----
+* `python3 manage.py test frontend_test` - run the GUI frontend tests with Selenium. NOTE: you will need the geckodriver in order to do this. Get it [here](https://github.com/mozilla/geckodriver/releases).
 
 # Extending The Comm Module
 
