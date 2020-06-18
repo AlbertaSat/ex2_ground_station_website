@@ -43,18 +43,9 @@ RUN apt-get install -y nodejs
 WORKDIR /home/ex2_ground_station_website
 COPY . .
 RUN pip3 install -r requirements.txt
-# set Flask environment variables
-ARG FLASK_APP
-ARG FLASK_ENV
-ARG APP_SETTINGS
-ARG SECRET_KEY
-ENV FLASK_APP=$FLASK_APP
-ENV FLASK_ENV=$FLASK_ENV
-ENV APP_SETTINGS=$APP_SETTINGS
-ENV SECRET_KEY=$SECRET_KEY
 # create and seed the database
-# RUN python3 manage.py recreate_db
-# RUN python3 manage.py seed_db
+#RUN python3 manage.py recreate_db
+#RUN python3 manage.py seed_db
 # build the React frontend
 WORKDIR /home/ex2_ground_station_website/groundstation/static
 RUN npm install

@@ -15,18 +15,20 @@ git submodule update
 To install the app using [Docker](https://docs.docker.com/get-docker/), `cd` into the project (where the Dockerfile is) and run this to build the docker image:
 
 ```
-docker build --tag ground_website:latest . --build-arg FLASK_APP=groundstation/__init__.py --build-arg FLASK_ENV=development --build-arg APP_SETTINGS=groundstation.config.DevelopmentConfig --build-arg SECRET_KEY="\xffY\x8dG\xfbu\x96S\x86\xdfu\x98\xe8S\x9f\x0e\xc6\xde\xb6$\xab:\x9d\x8b"
+docker build --tag ground_website:latest .
 ```
 
 *NOTE: depending on your installation, you may need to use* `sudo` *on Docker commands.*
 
-It may take several minutes. The --build-args are for setting the app's configuration settings; the above arguments configure the app for developing. Read the Dockerfile to see the build steps.
+It may take several minutes. Read the Dockerfile to see the build steps. Read the Dockerfile to see the build steps.
 
 To run the docker container:
 
 ```
-docker run --rm -it --network=host ground_website:latest
+docker run --rm -it --network=host -e FLASK_APP=groundstation/__init__.py -e FLASK_ENV=development -e APP_SETTINGS=groundstation.config.DevelopmentConfig -e SECRET_KEY="\xffY\x8dG\xfbu\x96S\x86\xdfu\x98\xe8S\x9f\x0e\xc6\xde\xb6$\xab:\x9d\x8b" ground_website:latest
 ```
+
+The `-e`'s are for setting the app's configuration settings; the above arguments configure the app for developing. This means you don't have to run `env.sh`.
 
 To exit the container, type `exit`
 
