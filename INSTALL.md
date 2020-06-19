@@ -93,7 +93,7 @@ These commands should be the same regardless of which method of installation you
 
 * `cd groundstation/static && npm run build` - rebuild the React JS frontend.
 
-* `source ./run_comm.sh` - start the comm module. This will enable the app to send data to whatever socket is specified in `comm.py`, probably [ex2_command_handling_demo repo](https://github.com/AlbertaSat/ex2_command_handling_demo), in which case, run that at the same time as well.
+* `source ./run_comm.sh` - start the comm module. This will enable the app to send data to whatever socket is specified in `comm.py`, probably [the ex2 SatelliteSim and services](https://github.com/AlbertaSat/ex2_services), in which case, run that at the same time too.
 
 * `source ./automate.sh` - run the automation module. It will execute whatever commands are inside `automation.txt`. (Note: the command first has to be specified in `manage.py`, which the app refers to as "telecommands").
 
