@@ -1,6 +1,8 @@
 import requests
 import json
 
+address = "http://127.0.0.1"
+port = "5000"
 
 def print_hk():
     url = "http://127.0.0.1:5000/api/housekeepinglog"
@@ -37,13 +39,18 @@ if __name__=='__main__':
     print()
 
     while (True):
-        print("Enter `i` to login\nEnter `hk` to get housekeeping\nEnter `fs` to get flight schedules [AUTH]\nEnter `o` to logout")
+        print("Enter a character to continue:")
+        print("[i] Login")
+        print("[hk] Get Housekeeping")
+        print("[fs] Get Flight Schedules (login required)")
+        print("[lc] Send live command (login required)")
+        print("[o] Logout")
+        print("[q] Quit")
         print(": ", end='')
         choice = input()
 
         if choice=="i":
-            url = "http://127.0.0.1:5000/api/auth/login"
-
+            url = address + ":" + port + "/api/auth/login"
             payload = "{\n\t\"username\":\"user1\", \n\t\"password\":\"user1\"\n}"
             headers = {
               'Content-Type': 'application/json'
@@ -59,9 +66,7 @@ if __name__=='__main__':
             if not token:
                 print("You need to log in to do that.")
                 continue
-
-            url = "http://127.0.0.1:5000/api/auth/logout"
-
+            url = address + ":" + port + "/api/auth/logout"
             payload = {}
             headers = {
               'Authorization': 'Bearer '+token,
@@ -73,8 +78,7 @@ if __name__=='__main__':
             print(response.text)
 
         elif choice=="hk":
-            url = "http://127.0.0.1:5000/api/housekeepinglog/1"
-
+            url = address + ":" + port + "/api/housekeepinglog/1"
             payload = {}
             headers= {}
 
@@ -86,22 +90,37 @@ if __name__=='__main__':
             if not token:
                 print("You need to log in to do that.")
                 continue
-
-            url = "http://127.0.0.1:5000/api/flightschedules"
-
+            url = address + ":" + port + "/api/flightschedules"
             payload = {}
             headers = {
               'Authorization': 'Bearer '+token,
               'Content-Type': 'application/json'
             }
-
             response = requests.request("GET", url, headers=headers, data=payload)
 
             print(response.text.encode('utf8'))
-
-            #print(response.text.encode('utf8'))
             print(response.text)
             print(response.headers)
 
-        else:
+        elif choice=="lc":
+            if not token:
+                print("You need to log in to do that.")
+            url = address + ":" + port + "api/communications"
+
+            print("Enter the command to be sent:\n")
+            command = input() # TODO sanitize input (import telecommands)
+
+            payload = "{\n\t\"message\": \"get-hk\",\n\t\"timestamp\": \"2019-10-10T17:18:52\",\n\t\"sender\": \"user\",\n\t\"receiver\": \"comm\"\n}"
+            headers = {
+            'Content-Type': 'application/json'
+            }
+
+            response = requests.request("POST", url, headers=headers, data = payload)
+            print(response.text.encode('utf8'))
+
+        elif choice=="q":
             break
+        
+        else:
+            print("Choice not recognized. Please try again.")
+            continue
