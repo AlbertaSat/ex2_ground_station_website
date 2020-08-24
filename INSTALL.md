@@ -19,7 +19,7 @@ docker build --tag ground_website:latest .
 
 *NOTE: depending on your installation, you may need to use* `sudo` *on Docker commands.*
 
-It may take several minutes. Read the Dockerfile to see the build steps. Read the Dockerfile to see the build steps.
+It may take several minutes. Read the Dockerfile to see the build steps.
 
 To run the docker container:
 

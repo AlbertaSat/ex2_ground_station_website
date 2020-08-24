@@ -29,29 +29,28 @@ RUN ./configure
 RUN make && make install
 RUN apt-get install libzmq5 -y
 
+# Copy our repo to the image
+WORKDIR /home/ex2_ground_station_website
+COPY . .
+RUN git submodule init
+RUN git submodule update
+RUN pip3 install -r requirements.txt
+
 # install libcsp
-WORKDIR /home/
-RUN git clone https://github.com/libcsp/libcsp.git
-WORKDIR /home/libcsp/
+WORKDIR /home/ex2_ground_station_website/libcsp
 RUN python3 waf configure --with-os=posix --enable-can-socketcan --enable-rdp --enable-hmac --enable-xtea --with-loglevel=debug --enable-debug-timestamp --enable-python3-bindings --with-driver-usart=linux --enable-if-zmqhub --enable-examples
 RUN python3 waf build
 
 # install node.js & npm
+WORKDIR /home
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
 RUN apt-get install -y nodejs
 
-WORKDIR /home/ex2_ground_station_website
-COPY . .
-RUN pip3 install -r requirements.txt
-# create and seed the database
-#RUN python3 manage.py recreate_db
-#RUN python3 manage.py seed_db
-# build the React frontend
-WORKDIR /home/ex2_ground_station_website/groundstation/static
-RUN npm install
-RUN npm run build
+# WORKDIR /home/ex2_ground_station_website/groundstation/static
+# RUN npm install
+# RUN npm run build
 
+# Starts with a bash shell in the container
 WORKDIR /home/ex2_ground_station_website
 EXPOSE 5000
-# Starts with a bash shell in the container
 CMD /bin/bash
