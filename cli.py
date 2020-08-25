@@ -1,6 +1,7 @@
 import requests
 import json
 import datetime
+from getpass import getpass
 
 address = "http://127.0.0.1"
 port = "5000"
@@ -24,7 +25,8 @@ def print_hk():
 
 
 if __name__=='__main__':
-    token = None
+    username = None
+    token = None # auth token
 
     logo = (r'''
     _______  __      ___    __  _________       ___
@@ -52,13 +54,18 @@ if __name__=='__main__':
 
         if choice=="i":
             url = address + ":" + port + "/api/auth/login"
-            # TODO: Let the user enter their username & password
-            payload = "{\n\t\"username\":\"user1\", \n\t\"password\":\"user1\"\n}"
+            print("username: ", end='')
+            username = input()
+            pswd = getpass("password: ")
+            payload = {
+                "username": username,
+                "password": pswd
+            }
+            data = json.dumps(payload)
             headers = {
               'Content-Type': 'application/json'
             }
-
-            response = requests.request("POST", url, headers=headers, data=payload)
+            response = requests.request("POST", url, headers=headers, data=data)
             response_json = json.loads(response.text)
             if response_json["status"]=="success":
                 print("Logged in.")
@@ -116,7 +123,7 @@ if __name__=='__main__':
             payload = {
                 'message': command,
                 'timestamp': timestamp,
-                'sender': 'user', 
+                'sender': username, 
                 'receiver': 'comm'
             }
             headers = {
