@@ -112,26 +112,20 @@ if __name__=='__main__':
 
             print("Enter the command to be sent:")
             command = input() # TODO sanitize input (import telecommands and check against them)
-            command += "\"
-            #st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
             timestamp = datetime.datetime.now().isoformat() # now() returns local time
-            timestamp += "\"
-            #timestamp = "2019-10-10T17:18:52"
-
-            #payload = "{\n\t\"message\": \"get-hk\",\n\t\"timestamp\": \"2019-10-10T17:18:52\",\n\t\"sender\": \"user\",\n\t\"receiver\": \"comm\"\n}"
-            payload = "{\n\t\"message\": \{0},\n\t\"timestamp\": \{1},\n\t\"sender\": \"user\",\n\t\"receiver\": \"comm\"\n}".format(command, timestamp)
-            # payload = {
-            #     'message': command,
-            #     'timestamp': timestamp,
-            #     'sender': 'user', 
-            #     'receiver': 'comm'
-            # }
+            payload = {
+                'message': command,
+                'timestamp': timestamp,
+                'sender': 'user', 
+                'receiver': 'comm'
+            }
             headers = {
                 'Authorization': 'Bearer '+token,
                 'Content-Type': 'application/json'
             }
+            data = json.dumps(payload)
 
-            response = requests.request("POST", url, headers=headers, data=payload)
+            response = requests.post(url, headers=headers, data=data)
             print(response.text.encode('utf8'))
 
         elif choice=="q":
