@@ -1,5 +1,6 @@
 import requests
 import json
+import datetime
 
 address = "http://127.0.0.1"
 port = "5000"
@@ -51,6 +52,7 @@ if __name__=='__main__':
 
         if choice=="i":
             url = address + ":" + port + "/api/auth/login"
+            # TODO: Let the user enter their username & password
             payload = "{\n\t\"username\":\"user1\", \n\t\"password\":\"user1\"\n}"
             headers = {
               'Content-Type': 'application/json'
@@ -93,8 +95,8 @@ if __name__=='__main__':
             url = address + ":" + port + "/api/flightschedules"
             payload = {}
             headers = {
-              'Authorization': 'Bearer '+token,
-              'Content-Type': 'application/json'
+                'Authorization': 'Bearer '+token,
+                'Content-Type': 'application/json'
             }
             response = requests.request("GET", url, headers=headers, data=payload)
 
@@ -105,17 +107,31 @@ if __name__=='__main__':
         elif choice=="lc":
             if not token:
                 print("You need to log in to do that.")
-            url = address + ":" + port + "api/communications"
+                continue
+            url = address + ":" + port + "/api/communications"
 
-            print("Enter the command to be sent:\n")
-            command = input() # TODO sanitize input (import telecommands)
+            print("Enter the command to be sent:")
+            command = input() # TODO sanitize input (import telecommands and check against them)
+            command += "\"
+            #st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+            timestamp = datetime.datetime.now().isoformat() # now() returns local time
+            timestamp += "\"
+            #timestamp = "2019-10-10T17:18:52"
 
-            payload = "{\n\t\"message\": \"get-hk\",\n\t\"timestamp\": \"2019-10-10T17:18:52\",\n\t\"sender\": \"user\",\n\t\"receiver\": \"comm\"\n}"
+            #payload = "{\n\t\"message\": \"get-hk\",\n\t\"timestamp\": \"2019-10-10T17:18:52\",\n\t\"sender\": \"user\",\n\t\"receiver\": \"comm\"\n}"
+            payload = "{\n\t\"message\": \{0},\n\t\"timestamp\": \{1},\n\t\"sender\": \"user\",\n\t\"receiver\": \"comm\"\n}".format(command, timestamp)
+            # payload = {
+            #     'message': command,
+            #     'timestamp': timestamp,
+            #     'sender': 'user', 
+            #     'receiver': 'comm'
+            # }
             headers = {
-            'Content-Type': 'application/json'
+                'Authorization': 'Bearer '+token,
+                'Content-Type': 'application/json'
             }
 
-            response = requests.request("POST", url, headers=headers, data = payload)
+            response = requests.request("POST", url, headers=headers, data=payload)
             print(response.text.encode('utf8'))
 
         elif choice=="q":

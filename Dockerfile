@@ -4,6 +4,8 @@ WORKDIR /
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update
 RUN apt-get install build-essential -y
+# apt complains if I remove this, don't ask me why
+RUN apt-get update
 RUN apt-get install wget curl -y
 RUN apt-get install git -y
 # Flask PostgreSQL pip dependencies:
