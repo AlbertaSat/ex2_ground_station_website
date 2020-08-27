@@ -6,8 +6,6 @@ To use the included simulator python module instead of gs_software:
 """
 import ex2_ground_station_software.src.groundstation as gs_software
 import libcsp.build.libcsp_py3 as libcsp
-# from ex2_ground_station_software.src.groundstation import libcsp
-# import ex2_ground_station_software.src.groundstation.libcsp as libcsp ?
 from groundstation.backend_api.communications import CommunicationList
 from gs_commands import GsCommands
 import time
@@ -106,9 +104,21 @@ def communication_loop(csp, sock, flag):
                     try:
                         toSend, server, port = csp.getInput(inVal=outMsg)
                         csp.send(server, port, toSend)
-                        csp.receive(sock, flag)
+                        received = csp.receive(sock, flag)
+                        print("Received", received)
                     except Exception as e:
                         print(e)
+                    if isinstance(received, list):
+                        for item in received:
+                            print(item)
+                            # Save the satellite response as a comm log
+                            message = {
+                                'message': str(item),
+                                'sender': 'socket',
+                                'receiver': 'logs'
+                            }
+                            message = json.dumps(message)
+                            communication_list.post(local_data=message)
             request_data['last_id'] = messages['data']['messages'][-1]['message_id']
         time.sleep(1)
 

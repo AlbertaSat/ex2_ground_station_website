@@ -44,8 +44,9 @@ if __name__=='__main__':
     while (True):
         print("Enter a character to continue:")
         print("[i] Login")
-        print("[hk] Get Housekeeping")
-        print("[fs] Get Flight Schedules (login required)")
+        print("[gc] Get all communication logs")
+        print("[hk] Get housekeeping")
+        print("[fs] Get flight schedules (login required)")
         print("[lc] Send live command (login required)")
         print("[o] Logout")
         print("[q] Quit")
@@ -71,6 +72,13 @@ if __name__=='__main__':
                 print("Logged in.")
             token = response_json["auth_token"]
 
+        elif choice=="gc": # Get all communication logs
+            url = address + ":" + port + "/api/communications"
+            payload = {}
+            headers= {}
+            response = requests.request("GET", url, headers=headers, data = payload)
+            print(response.text.encode('utf8'))
+            
         elif choice=="o":
             if not token:
                 print("You need to log in to do that.")
