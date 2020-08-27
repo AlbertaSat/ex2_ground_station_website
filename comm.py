@@ -63,7 +63,7 @@ def handle_message(message):
         return message
 
 
-def communication_loop(csp, sock, flag):
+def communication_loop(csp, sock):
     """
     Main communication loop which polls for messages addressed to comm 
     (i.e. messages it needs to send to satellite)
@@ -104,7 +104,7 @@ def communication_loop(csp, sock, flag):
                     try:
                         toSend, server, port = csp.getInput(inVal=outMsg)
                         csp.send(server, port, toSend)
-                        received = csp.receive(sock, flag)
+                        received = csp.receive(sock)
                         print("Received", received)
                     except Exception as e:
                         print(e)
@@ -132,11 +132,10 @@ def main():
     # TODO: Messy! Put this in a function in gs_software instead?
     opts = gs_software.getOptions()
     csp = gs_software.Csp(opts)
-    flag = gs_software.GracefulExiter()
     sock = libcsp.socket()
     libcsp.bind(sock, libcsp.CSP_ANY)
 
-    communication_loop(csp, sock, flag)
+    communication_loop(csp, sock)
 
 
 if __name__=='__main__':
