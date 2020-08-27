@@ -74,10 +74,11 @@ if __name__=='__main__':
 
         elif choice=="gc": # Get all communication logs
             url = address + ":" + port + "/api/communications"
-            payload = {}
-            headers= {}
-            response = requests.request("GET", url, headers=headers, data = payload)
-            print(response.text.encode('utf8'))
+            response = requests.request("GET", url, headers={}, data={})
+            response_json = json.loads(response.text)
+            for message in response_json["data"]["messages"]:
+                print(message)
+            print()
             
         elif choice=="o":
             if not token:
