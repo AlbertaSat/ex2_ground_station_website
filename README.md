@@ -10,9 +10,9 @@ In this repository we are attempting to make a functional and extendable grounds
 
 **[How to install, run, and develop the project](INSTALL.md)** - Details installation, usage, and notes on important modules.
 
-**[Generated source code documentation](https://ualberta-cmput401.github.io/AlbertaSat/)** - This is automatically generated documentation from the Python code. It lives in `/docs`. When you make changes to the Python code, update this documentation to match it using `source ./update_docs.sh`. If you would like to view the docs locally, serve it with `python3 -m http.server` and go to http://0.0.0.0:8000/ in your browser.
+**[REST API documentation](https://documenter.getpostman.com/view/9298924/SW11YKEd)** - This is documentation for the REST API (`groundstation/backend_api`) of this Flask app. Within are examples of requests that you can make and what responses to expect.
 
-**[REST API backend documentation](https://documenter.getpostman.com/view/9298924/SW11YKEd)** - This is documentation for the REST backend API (`groundstation/backend_api`) of this Flask app. There are examples of requests that you can make to the backend and what responses to expect.
+**[Python source code documentation](https://ualberta-cmput401.github.io/AlbertaSat/)** - These docs are automatically generated from the comments in the Python source code. It lives in `/docs`. When you make changes to backend_api, update this documentation to match it using `update_docs.sh`. You can look at them in your browser if you serve them locally. (i.e. `python3 -m http.server`)
 
 **[Glossary](https://github.com/UAlberta-CMPUT401/AlbertaSat/wiki/Glossary)** - Go here if you're confused about a word or phrase that we keep using.
 

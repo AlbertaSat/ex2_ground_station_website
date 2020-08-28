@@ -1,4 +1,4 @@
-import helpers
+from . import helpers
 import random
 import json
 import time
