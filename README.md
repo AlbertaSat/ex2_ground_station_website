@@ -1,12 +1,12 @@
 # ex2_ground_station_website
 
-In this repository we are attempting to make a functional and extendable groundstation for the operators of the [Ex-Alta 2 satellite](https://albertasat.ca/ex-alta-2/). It is a Flask web app that uses a REST API for the back end (Python), paired with a React MaterialUI interface on the front end (JavaScript). Also included in this repository is a "satellite simulator" python module used to simulate the interaction between our app and a real cubesat. A "comm" (communications) module intermediates this exchange. Finally, a collection of scripts are used to achieve the goal of automating some aspects of the groundstation app. Follow the links below to see the documentation.
+In this repository we are attempting to make a functional and extendable groundstation control panel for the operators of the [Ex-Alta 2 satellite](https://albertasat.ca/ex-alta-2/). It is a Flask web app. It uses a REST API for the back-end application logic (Python), paired with a React MaterialUI interface on the front-end (JavaScript). Also included in this repository is a "satellite simulator" python module used to simulate the interaction between our app and a real cubesat. A communications module, `comm.py`, intermediates this exchange. Finally, the automation module, `automation.py`, and some scripts automate the sending of commands to the satellite. 
 
 [![Build Status](https://travis-ci.com/UAlberta-CMPUT401/AlbertaSat.svg?token=TRHuLXSMdv9x8426GEpU&branch=dev)](https://travis-ci.com/UAlberta-CMPUT401/AlbertaSat)
 
 ---
 
-### Links
+### Documentation
 
 **[How to install, run, and develop the project](INSTALL.md)** - Details installation, usage, and notes on important modules.
 

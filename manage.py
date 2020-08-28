@@ -31,14 +31,8 @@ add_flight_schedule, add_command_to_flightschedule, add_user, \
 add_arg_to_flightschedulecommand, add_message_to_communications, \
 add_passover
 
-# TODO: import groundStation commands (apps, services) instead of hardcoding
-
 app = create_app()
 cli = FlaskGroup(create_app=create_app)
-
-# vals = SystemValues()
-# apps = vals.APP_DICT
-# services = vals.SERVICES
 
 @cli.command('recreate_db')
 def recreate_db():
@@ -86,8 +80,9 @@ def seed_db():
             db.session.add(housekeeping)
     db.session.commit()
 
+    # TODO: import groundStation commands (apps, services) instead of hardcoding
     commands = {
-        'ping': (0,False),
+        'ping': (0,False), # (number of args, is_dangerous)
         'get-hk':(0,False),
         'turn-on':(1,True),
         'turn-off':(1,True),
@@ -95,7 +90,8 @@ def seed_db():
         'adjust-attitude': (1,True),
         'magnetometer': (0,False),
         'imaging': (0,False),
-        'DEMO.TIME_MANAGEMENT.SET_TIME': (1, False)
+        'demo.time_management.set_time': (1, False)
+        'demo.time_management.get_time': (0, False)
     }
 
 
