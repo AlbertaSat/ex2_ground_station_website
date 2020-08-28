@@ -90,7 +90,7 @@ def seed_db():
         'adjust-attitude': (1,True),
         'magnetometer': (0,False),
         'imaging': (0,False),
-        'demo.time_management.set_time': (1, False)
+        'demo.time_management.set_time': (1, False),
         'demo.time_management.get_time': (0, False)
     }
 
