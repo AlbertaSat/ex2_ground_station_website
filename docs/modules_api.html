@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Module API reference &#8212; AlbertaSat 0.0.1 documentation</title>
+    <title>Module API reference &#8212; AlbertaSat 1.1.0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -33,52 +33,8 @@
             
   <div class="section" id="module-api-reference">
 <h1>Module API reference<a class="headerlink" href="#module-api-reference" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-comm">
-<span id="comm"></span><h2>comm<a class="headerlink" href="#module-comm" title="Permalink to this headline">¶</a></h2>
-<p>The Communications Module is responsible for sending and retrieving data with the satellite (or the simulator).</p>
-<dl class="function">
-<dt id="comm.communication_loop">
-<code class="sig-prename descclassname">comm.</code><code class="sig-name descname">communication_loop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#comm.communication_loop" title="Permalink to this definition">¶</a></dt>
-<dd><p>Main communication loop which polls for messages addressed to comm (i.e. messages it needs to send to satellite)</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="comm.handle_message">
-<code class="sig-prename descclassname">comm.</code><code class="sig-name descname">handle_message</code><span class="sig-paren">(</span><em class="sig-param">message</em><span class="sig-paren">)</span><a class="headerlink" href="#comm.handle_message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Messages sent to comm will pass through this function, essentially acting as a decorator. Refer to gs_commands module</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>message</strong> (<em>str</em>) – The incoming message to comm</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Return is dependent on the handler function triggered</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Optional</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="comm.send">
-<code class="sig-prename descclassname">comm.</code><code class="sig-name descname">send</code><span class="sig-paren">(</span><em class="sig-param">socket</em>, <em class="sig-param">data</em><span class="sig-paren">)</span><a class="headerlink" href="#comm.send" title="Permalink to this definition">¶</a></dt>
-<dd><p>Pipes the incoming data (probably a Command tuple) to the socket (probably the Simulator)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>socket</strong> (<em>int</em>) – The socket for sending data into</p></li>
-<li><p><strong>data</strong> (<em>str</em>) – the data to send</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>response from the socket</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
+<div class="section" id="comm">
+<h2>comm<a class="headerlink" href="#comm" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-gs_commands">
 <span id="gs-commands"></span><h2>gs_commands<a class="headerlink" href="#module-gs_commands" title="Permalink to this headline">¶</a></h2>
@@ -124,19 +80,20 @@ be automatically run again during the next pass.</p>
 </div>
 <div class="section" id="module-manage">
 <span id="manage"></span><h2>manage<a class="headerlink" href="#module-manage" title="Permalink to this headline">¶</a></h2>
-<p>The Manage Module is how you can run the flask application through the command line,
-it also allows you to define your own command line functions that can be called as:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="o">&lt;</span><span class="n">command_line_command</span><span class="o">&gt;</span>
-</pre></div>
-</div>
+<p>The Manage Module is how you can run the flask application through the command 
+line. It also allows you to define your own command line functions 
+that can be called as:</p>
+<blockquote>
+<div><p>python3 manage.py &lt;command_line_command&gt;</p>
+</div></blockquote>
 <p>As is you can also run tests by specifying the module path like so:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">test</span> <span class="n">test_api</span><span class="o">.</span><span class="n">TestHousekeepingService</span>
-</pre></div>
-</div>
+<blockquote>
+<div><p>python3 manage.py test test_api.TestHousekeepingService</p>
+</div></blockquote>
 <p>or:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">test</span> <span class="n">test_api</span><span class="o">.</span><span class="n">TestHousekeepingService</span><span class="o">.</span><span class="n">test_get_housekeeping</span>
-</pre></div>
-</div>
+<blockquote>
+<div><p>python3 manage.py test test_api.TestHousekeepingService.test_get_housekeeping</p>
+</div></blockquote>
 </div>
 </div>
 
@@ -161,7 +118,7 @@ it also allows you to define your own command line functions that can be called 
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="groundstation.html">groundstation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Module API reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#module-comm">comm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#comm">comm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-gs_commands">gs_commands</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-automation">automation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-manage">manage</a></li>
