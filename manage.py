@@ -1,15 +1,18 @@
-""" The Manage Module is how you can run the flask application through the command line,
-it also allows you to define your own command line functions that can be called as::
+""" 
+The Manage Module is how you can run the flask application through the command 
+line. It also allows you to define your own command line functions 
+that can be called as:
 
     python3 manage.py <command_line_command>
 
-As is you can also run tests by specifying the module path like so::
+As is you can also run tests by specifying the module path like so:
 
     python3 manage.py test test_api.TestHousekeepingService
 
-or::
+or:
 
     python3 manage.py test test_api.TestHousekeepingService.test_get_housekeeping
+
 """
 import sys
 import unittest
@@ -38,6 +41,7 @@ def recreate_db():
     db.drop_all()
     db.create_all()
     db.session.commit()
+    print("Database has been dropped and recreated.")
 
 @cli.command()
 @click.argument('path', required=False)
@@ -76,16 +80,20 @@ def seed_db():
             db.session.add(housekeeping)
     db.session.commit()
 
+    # TODO: import groundStation commands (apps, services) instead of hardcoding
     commands = {
-        'ping': (0,False),
+        'ping': (0,False), # (number of args, is_dangerous)
         'get-hk':(0,False),
         'turn-on':(1,True),
         'turn-off':(1,True),
         'upload-fs': (0, False),
         'adjust-attitude': (1,True),
         'magnetometer': (0,False),
-        'imaging': (0,False)
+        'imaging': (0,False),
+        'demo.time_management.set_time': (1, False),
+        'demo.time_management.get_time': (0, False)
     }
+
 
     for name, (num_args, is_danger) in commands.items():
         c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
@@ -125,10 +133,10 @@ def seed_db():
                 )
 
     now = datetime.utcnow()
-    add_passover(timestamp=now - timedelta(seconds=10))
+    add_passover(timestamp=now - timedelta(seconds=20))
     for i in range(1, 20):
         p = add_passover(timestamp=now + timedelta(minutes=i*5))
-
+    print("Database has been seeded.")
 
 
 @cli.command('demo_db')

@@ -1,4 +1,5 @@
 from satellite_simulator.sat_sim import Satellite, Environment, Simulator, SatelliteComponent
+#from sat_sim import Satellite, Environment, Simulator, SatelliteComponent
 import json
 import time
 
