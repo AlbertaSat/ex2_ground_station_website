@@ -18,8 +18,8 @@ sys.path.insert(0, os.path.abspath('../../'))
 # -- Project information -----------------------------------------------------
 
 project = 'AlbertaSat'
-copyright = '2019, Cmput 401 AlbertaSat Team'
-author = 'Cmput 401 AlbertaSat Team'
+copyright = '2020, AlbertaSat'
+author = 'CMPUT 401 Fa19 AlbertaSat Team'
 
 # The full version, including alpha/beta/rc tags
 release = '1.1.0'
