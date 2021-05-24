@@ -2,6 +2,7 @@ from groundstation.backend_api.flightschedule import FlightScheduleList, Flights
 from groundstation.backend_api.communications import CommunicationList
 import json
 
+
 class GsCommands:
     """
     This file is mainly for decorating additional functionality on top of commands
@@ -16,7 +17,6 @@ class GsCommands:
 
     def __init__(self):
         self.communication_list = CommunicationList()
-
 
     def upload_fs(self):
         local_args = {'limit': 1, 'queued': True}
@@ -36,9 +36,10 @@ class GsCommands:
         else:
             fs_id = fs[0]['data']['flightschedules'][0]['flightschedule_id']
             fs_ex = fs[0]['data']['flightschedules'][0]['execution_time']
-            local_data = {'status': 3, 'execution_time':fs_ex, 'commands': []}
+            local_data = {'status': 3, 'execution_time': fs_ex, 'commands': []}
 
-            flightschedule_patch.patch(fs_id, local_data=json.dumps(local_data))
+            flightschedule_patch.patch(
+                fs_id, local_data=json.dumps(local_data))
 
             return 'upload-fs'
 

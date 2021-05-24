@@ -7,6 +7,7 @@ import json
 import subprocess
 import time
 
+
 def automate_communication():
     """Reads from a pre-defined script file called 'automation.txt' which contains messages
     separated by newlines. The Automation module will open this file and send each message to the comm module,
@@ -28,6 +29,7 @@ def automate_communication():
             message = json.dumps(message)
             sender.post(local_data=message)
 
+
 def automate_passovers():
     """Before Automation terminates, this function is run to set a 'wake up' timer for the next passover, so that it will
     be automatically run again during the next pass.
@@ -35,17 +37,20 @@ def automate_passovers():
     passover = PassoverList()
 
     # the automation will also handle queuing passover times
-    passovers = passover.get(local_args={'limit': 1, 'next' : 'true'})
+    passovers = passover.get(local_args={'limit': 1, 'next': 'true'})
 
     if passovers[1] == 200:
         passover_data = passovers[0]['data']['next_passovers']
         for passover in passover_data:
-            time_obj = datetime.strptime(passover['timestamp'], '%Y-%m-%d %H:%M:%S.%f')
-            time_obj = time_obj.replace(tzinfo=timezone.utc).astimezone(tz=None)
+            time_obj = datetime.strptime(
+                passover['timestamp'], '%Y-%m-%d %H:%M:%S.%f')
+            time_obj = time_obj.replace(
+                tzinfo=timezone.utc).astimezone(tz=None)
             f_time_min = time_obj.strftime('%H:%M')
             f_time_date = time_obj.strftime('%m/%d/%Y')
 
-            subprocess.run(['at', f_time_min, f_time_date, '-f', 'automate.sh'])
+            subprocess.run(
+                ['at', f_time_min, f_time_date, '-f', 'automate.sh'])
             print("Scheduled to automate at the next passover.")
     else:
         print("AUTOMATION: no more passovers found.")

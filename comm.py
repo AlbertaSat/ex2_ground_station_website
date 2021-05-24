@@ -74,7 +74,7 @@ def communication_loop(csp, sock):
     # get the id of the last entry in the communication list
     # so we dont send anything before that
     # for our request arguments include max to get the entry with the max id
-    comm_last_id = communication_list.get(local_data={'max' : True})[0]
+    comm_last_id = communication_list.get(local_data={'max': True})[0]
     if len(comm_last_id['data']['messages']) > 0:
         request_data['last_id'] = comm_last_id['data']['messages'][0]['message_id']
     else:
@@ -92,7 +92,7 @@ def communication_loop(csp, sock):
         if len(messages['data']['messages']) > 0:
             for message in messages['data']['messages']:
                 if message['message']:
-                    # handle_message() checks against 
+                    # handle_message() checks against
                     # data = handle_message(message['message'])
 
                     # if data:
@@ -138,5 +138,5 @@ def main():
     communication_loop(csp, sock)
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     main()

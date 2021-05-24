@@ -27,12 +27,13 @@ from groundstation.backend_api.models import User, Housekeeping, Telecommands, P
 from groundstation.tests.utils import fakeHousekeepingAsDict, fake_power_channel_as_dict
 from groundstation.backend_api.housekeeping import HousekeepingLogList
 from groundstation.backend_api.utils import add_telecommand, \
-add_flight_schedule, add_command_to_flightschedule, add_user, \
-add_arg_to_flightschedulecommand, add_message_to_communications, \
-add_passover
+    add_flight_schedule, add_command_to_flightschedule, add_user, \
+    add_arg_to_flightschedulecommand, add_message_to_communications, \
+    add_passover
 
 app = create_app()
 cli = FlaskGroup(create_app=create_app)
+
 
 @cli.command('recreate_db')
 def recreate_db():
@@ -43,19 +44,23 @@ def recreate_db():
     db.session.commit()
     print("Database has been dropped and recreated.")
 
+
 @cli.command()
 @click.argument('path', required=False)
 def test(path=None):
     """Runs all tests in tests folder
     """
     if path is None:
-        tests = unittest.TestLoader().discover('groundstation/tests', pattern='test*.py')
+        tests = unittest.TestLoader().discover(
+            'groundstation/tests', pattern='test*.py')
     else:
-        tests = unittest.TestLoader().loadTestsFromName(f'groundstation.tests.{path}')
+        tests = unittest.TestLoader().loadTestsFromName(
+            f'groundstation.tests.{path}')
     result = unittest.TextTestRunner(verbosity=2).run(tests)
     if result.wasSuccessful():
         return 0
     sys.exit(result)
+
 
 @cli.command('seed_db')
 def seed_db():
@@ -65,8 +70,9 @@ def seed_db():
     for x in range(20):
         # 20 days
         for y in range(3):
-        # 3 entries per day
-            housekeepingData = fakeHousekeepingAsDict(timestamp + timedelta(days=x, minutes=y*15))
+            # 3 entries per day
+            housekeepingData = fakeHousekeepingAsDict(
+                timestamp + timedelta(days=x, minutes=y*15))
             if (x+y) % 10 == 0:
                 housekeepingData['satellite_mode'] = 'Danger'
 
@@ -82,29 +88,30 @@ def seed_db():
 
     # TODO: import groundStation commands (apps, services) instead of hardcoding
     commands = {
-        'ping': (0,False), # (number of args, is_dangerous)
-        'get-hk':(0,False),
-        'turn-on':(1,True),
-        'turn-off':(1,True),
+        'ping': (0, False),  # (number of args, is_dangerous)
+        'get-hk': (0, False),
+        'turn-on': (1, True),
+        'turn-off': (1, True),
         'upload-fs': (0, False),
-        'adjust-attitude': (1,True),
-        'magnetometer': (0,False),
-        'imaging': (0,False),
+        'adjust-attitude': (1, True),
+        'magnetometer': (0, False),
+        'imaging': (0, False),
         'demo.time_management.set_time': (1, False),
         'demo.time_management.get_time': (0, False)
     }
 
-
     for name, (num_args, is_danger) in commands.items():
-        c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
+        c = add_telecommand(command_name=name,
+                            num_arguments=num_args, is_dangerous=is_danger)
 
     command = Telecommands.query.filter_by(command_name='ping').first()
-    flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp, status=2, execution_time=timestamp)
+    flightschedule = add_flight_schedule(
+        creation_date=timestamp, upload_date=timestamp, status=2, execution_time=timestamp)
     flightschedule_commands = add_command_to_flightschedule(
-                                timestamp=timestamp,
-                                flightschedule_id=flightschedule.id,
-                                command_id=command.id
-                            )
+        timestamp=timestamp,
+        flightschedule_id=flightschedule.id,
+        command_id=command.id
+    )
 
     add_user(username='Admin_user', password='Admin_user', is_admin=True)
     add_user(username='user1', password='user1', is_admin=False)
@@ -114,23 +121,23 @@ def seed_db():
 
     command = Telecommands.query.filter_by(command_name='turn-on').first()
     flightschedule_commands = add_command_to_flightschedule(
-                                timestamp=timestamp,
-                                flightschedule_id=flightschedule.id,
-                                command_id=command.id
-                            )
+        timestamp=timestamp,
+        flightschedule_id=flightschedule.id,
+        command_id=command.id
+    )
 
     flightschedulecommand_arg = add_arg_to_flightschedulecommand(
-                                index=0,
-                                argument='5',
-                                flightschedule_command_id=flightschedule_commands.id
-                            )
+        index=0,
+        argument='5',
+        flightschedule_command_id=flightschedule_commands.id
+    )
 
     message = add_message_to_communications(
-                    timestamp=timestamp,
-                    message='ping',
-                    sender='user',
-                    receiver='comm'
-                )
+        timestamp=timestamp,
+        message='ping',
+        sender='user',
+        receiver='comm'
+    )
 
     now = datetime.utcnow()
     add_passover(timestamp=now - timedelta(seconds=20))
@@ -158,8 +165,8 @@ def demo_db():
 
     db.session.add(housekeeping)
     db.session.add(hk2)
-    #db.session.add(hk3)
-    #db.session.add(hk4)
+    # db.session.add(hk3)
+    # db.session.add(hk4)
 
     db.session.commit()
 
@@ -172,72 +179,73 @@ def demo_db():
     add_user(username='HJDewit', password='simplify0923', is_admin=False)
 
     commands = {
-        'ping': (0,False),
-        'get-hk':(0,False),
-        'turn-on':(1,True),
-        'turn-off':(1,True),
-        'set-fs':(1,True),
+        'ping': (0, False),
+        'get-hk': (0, False),
+        'turn-on': (1, True),
+        'turn-off': (1, True),
+        'set-fs': (1, True),
         'upload-fs': (0, False)
     }
 
     for name, (num_args, is_danger) in commands.items():
-        c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
+        c = add_telecommand(command_name=name,
+                            num_arguments=num_args, is_dangerous=is_danger)
 
     command = Telecommands.query.filter_by(command_name='ping').first()
-    flightschedule = add_flight_schedule(creation_date=timestamp, upload_date=timestamp, status=2)
+    flightschedule = add_flight_schedule(
+        creation_date=timestamp, upload_date=timestamp, status=2)
     flightschedule_commands = add_command_to_flightschedule(
-                                timestamp=timestamp,
-                                flightschedule_id=flightschedule.id,
-                                command_id=command.id
-                            )
+        timestamp=timestamp,
+        flightschedule_id=flightschedule.id,
+        command_id=command.id
+    )
 
     command = Telecommands.query.filter_by(command_name='turn-on').first()
     flightschedule_commands = add_command_to_flightschedule(
-                                timestamp=timestamp,
-                                flightschedule_id=flightschedule.id,
-                                command_id=command.id
-                            )
+        timestamp=timestamp,
+        flightschedule_id=flightschedule.id,
+        command_id=command.id
+    )
 
     flightschedulecommand_arg = add_arg_to_flightschedulecommand(
-                                index=0,
-                                argument='5',
-                                flightschedule_command_id=flightschedule_commands.id
-                            )
+        index=0,
+        argument='5',
+        flightschedule_command_id=flightschedule_commands.id
+    )
 
     message = add_message_to_communications(
-                    timestamp=timestamp,
-                    message='ping',
-                    sender='user',
-                    receiver='comm'
-                )
+        timestamp=timestamp,
+        message='ping',
+        sender='user',
+        receiver='comm'
+    )
 
     command = Telecommands.query.filter_by(command_name='ping').first()
-    flightschedule = add_flight_schedule(creation_date=time2, upload_date=time2, status=2)
+    flightschedule = add_flight_schedule(
+        creation_date=time2, upload_date=time2, status=2)
     flightschedule_commands = add_command_to_flightschedule(
-                                timestamp=time2,
-                                flightschedule_id=flightschedule.id,
-                                command_id=command.id
-                            )
+        timestamp=time2,
+        flightschedule_id=flightschedule.id,
+        command_id=command.id
+    )
 
     flightschedulecommand_arg = add_arg_to_flightschedulecommand(
-                                index=1,
-                                argument='5',
-                                flightschedule_command_id=flightschedule_commands.id
-                            )
+        index=1,
+        argument='5',
+        flightschedule_command_id=flightschedule_commands.id
+    )
 
     message = add_message_to_communications(
-                    timestamp=time2,
-                    message='ping',
-                    sender='user',
-                    receiver='comm'
-                )
+        timestamp=time2,
+        message='ping',
+        sender='user',
+        receiver='comm'
+    )
 
     now = datetime.utcnow()
     add_passover(timestamp=now - timedelta(seconds=10))
     for i in range(5):
         add_passover(timestamp=now + timedelta(minutes=i*10))
-
-
 
 
 if __name__ == '__main__':

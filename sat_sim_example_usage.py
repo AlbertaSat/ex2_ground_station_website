@@ -3,10 +3,11 @@ from satellite_simulator.sat_sim import Satellite, Environment, Simulator, Satel
 import json
 import time
 
+
 def minimal_example():
 
     environment = Environment(connection_strength=10, connection_stability=10,
-        packet_drop_probability=0.05)
+                              packet_drop_probability=0.05)
     satellite = Satellite(components=[])
 
     simulator = Simulator(environment, satellite)
@@ -20,19 +21,24 @@ def minimal_example():
 def example_usage():
 
     environment = Environment(connection_strength=10, connection_stability=10,
-        packet_drop_probability=0)
+                              packet_drop_probability=0)
 
-    volt_effect = lambda old_value, time_delta : old_value - (0.01 * time_delta)
-    temp_effect = lambda old_value, time_delta : [el + (0.01 * time_delta) for el in old_value]
-    wdog_effect = lambda old_value, time_delta : [el - time_delta for el in old_value]
+    def volt_effect(old_value, time_delta): return old_value - \
+        (0.01 * time_delta)
+
+    def temp_effect(old_value, time_delta): return [
+        el + (0.01 * time_delta) for el in old_value]
+    def wdog_effect(old_value, time_delta): return [
+        el - time_delta for el in old_value]
 
     satellite_components = [
         SatelliteComponent('GPS', 0,
-            effects_when_on=[('battery_voltage', volt_effect), ('temps', temp_effect)],
-            effects_when_off=[]),
+                           effects_when_on=[
+                               ('battery_voltage', volt_effect), ('temps', temp_effect)],
+                           effects_when_off=[]),
         SatelliteComponent('WATCHDOG_TIMERS', 1,
-            effects_when_on=[('watchdogs', wdog_effect)],
-            effects_when_off=[])
+                           effects_when_on=[('watchdogs', wdog_effect)],
+                           effects_when_off=[])
     ]
     satellite = Satellite(satellite_components)
     satellite._turn_on_channel(1)
@@ -80,5 +86,5 @@ def main():
     example_usage()
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     main()
