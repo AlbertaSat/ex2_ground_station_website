@@ -46,7 +46,11 @@ git submodule update --init --recursive --remote --merge
 
 To run the app's frontend (i.e. in your web browser), you will need node & npm -- at least version 8. I recommend using the [Node Version Manager](https://github.com/nvm-sh/nvm).
 
-Make sure you have a [Python virtual environment](https://docs.python.org/3/tutorial/venv.html) installed and active!
+Make sure you have a [Python virtual environment](https://docs.python.org/3/tutorial/venv.html) installed and active! To do this navigate to the root project directory and run the following commands:
+```
+python3 -m venv env
+source env/bin/activate
+```
 
 Set the environment variables. These environment variables tell Flask which configuration settings to use. Do this in every terminal window or you'll get database errors.
 
