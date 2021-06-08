@@ -159,3 +159,6 @@ nohup.out
 .jekyll-cache
 docs/_site
 _site
+
+# MacOS Dev
+*.icloud
