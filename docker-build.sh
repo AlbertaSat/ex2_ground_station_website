@@ -1,2 +1,2 @@
 #!/bin/bash
-docker build --tag ground_website:latest .
+docker build -f gsw.Dockerfile --tag ground_website:latest .
