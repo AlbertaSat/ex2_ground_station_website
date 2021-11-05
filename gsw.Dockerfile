@@ -33,7 +33,14 @@ RUN apt-get update && apt-get install -y \
   nodejs \
   npm
 
-# Starts with a bash shell in the container
+# set up environment
 WORKDIR /home/ex2_ground_station_website
-EXPOSE 5000
-CMD /bin/bash
+ENV FLASK_APP=groundstation/__init__.py
+ENV FLASK_ENV=development
+ENV APP_SETTINGS=groundstation.config.DevelopmentConfig
+ENV SECRET_KEY="\xffY\x8dG\xfbu\x96S\x86\xdfu\x98\xe8S\x9f\x0e\xc6\xde\xb6$\xab:\x9d\x8b"
+SHELL ["/bin/bash", "-c"]
+RUN source ./update.sh
+
+ENTRYPOINT [ "flask", "run", "--host=0.0.0.0", "--port=8000" ]
+# CMD /bin/bash
