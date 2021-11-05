@@ -43,4 +43,3 @@ SHELL ["/bin/bash", "-c"]
 RUN source ./update.sh
 
 ENTRYPOINT [ "flask", "run", "--host=0.0.0.0", "--port=8000" ]
-# CMD /bin/bash
