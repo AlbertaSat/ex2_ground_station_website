@@ -1,50 +1,33 @@
 # Installation
 
-These instructions are for installing and running the application in development mode on a development machine.
-
-## Docker installation
-
-After cloning the repository, make sure to update the submodules. These are for libCSP and the ground station network software.
+These instructions are for installing and running the application in development mode on a development machine. Before choosing an installation method please be sure to clone the repository and update the submodules. To update the submodules, use the command below:
 
 ```
-git submodule init
-git submodule update
+git submodule update --init --recursive
 ```
 
-The Docker image is still going to need the git modules. Read the Dockerfile to see what exactly is happening.
-
-To build the docker image:
-
-```
-sudo docker build --tag ground_website:latest .
-```
-
-To run the docker container:
+## Docker installation - website and satellite simulator
+This docker installation method will install a docker image that can be run as a container and used to host the ground station web app. While the container is running you will be able connect to the web app from your host at http://localhost:8000 and use it as normal. Simply run the three commands below to get it up and running (note that it may take a couple minutes to build the docker image on the first run):
 
 ```
-docker run --rm -it --network=host -e FLASK_APP=groundstation/__init__.py -e FLASK_ENV=development -e APP_SETTINGS=groundstation.config.DevelopmentConfig -e SECRET_KEY="\xffY\x8dG\xfbu\x96S\x86\xdfu\x98\xe8S\x9f\x0e\xc6\xde\xb6$\xab:\x9d\x8b" ground_website:latest
+cd <project-directory>
+./docker-build.sh
+docker run --rm -it -p 8000:8000 ground_website:latest
 ```
-
-Using `-e` lets us pass environment variables to the docker container.
-
-To exit the container, type `exit`
-
-The Dockerfile tells docker to start the container in a bash shell, which means that all of the commands in [Usage](#usage) will be the same.
 
 ## Manual installation
 
 Ubuntu dependencies for PostgreSQL, libCSP, and scheduling tasks:
-
 ```
 sudo apt-get install at build-essential wget curl libpq-dev python3-dev gcc-multilib g++-multilib libsocketcan-dev
 ```
 
 Don't forget to get the latest version of the git submodules:
 ```
-git submodule update --init --recursive --remote --merge
+git submodule update --init --recursive
 ```
 
-To run the app's frontend (i.e. in your web browser), you will need node & npm -- at least version 8. I recommend using the [Node Version Manager](https://github.com/nvm-sh/nvm).
+To run the app's frontend (i.e. in your web browser), you will need node & npm -- at least version 8. I recommend using the [Node Version Manager](https://github.com/nvm-sh/nvm). 
 
 Make sure you have a [Python virtual environment](https://docs.python.org/3/tutorial/venv.html) installed and active! To do this navigate to the root project directory and run the following commands:
 ```
@@ -53,19 +36,16 @@ source env/bin/activate
 ```
 
 Set the environment variables. These environment variables tell Flask which configuration settings to use. Do this in every terminal window or you'll get database errors.
-
 ```
 source ./env.sh
 ```
 
 Install pip and npm libraries by running `update.sh`:
-
 ```
 source ./update.sh
 ```  
 
-**Then, to run the app:**
-
+Then, to run the app:
 ```
 flask run
 ```
