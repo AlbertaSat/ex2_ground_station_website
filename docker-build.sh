@@ -1,2 +1,2 @@
 #!/bin/bash
-docker build -f gsw.Dockerfile --tag ground_website:latest .
+docker build -f dev.Dockerfile --tag albertasat/ground-station-website:latest .
