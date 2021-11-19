@@ -1,32 +1,46 @@
 # Installation
+These instructions are for installing and running the application in development mode on a development machine. There are two installation methods below, one uses [docker](https://www.docker.com/) and the other is manual. The docker installation is the recommended method as it is faster and easier to get up and running.
 
-These instructions are for installing and running the application in development mode on a development machine. Before choosing an installation method please be sure to clone the repository and update the submodules. To update the submodules, use the command below:
+## Docker installation - website and satellite simulator (recommended)
+This installation method will work on any operating system that is supported by [docker](https://www.docker.com/).
+
+Prior to starting this installation method, please first [install docker](https://www.docker.com/get-started) for your operating system. This installation method will install a docker image that will be run as a container and used to host the ground station web app. While the container is running you will be able connect to the web app from your host at http://localhost:8000 and use it as normal. 
+
+Open a terminal instance on your operating system and enter the following commands:
 
 ```
-git submodule update --init --recursive
+docker pull albertasat/ground-station-website:latest
+docker run --rm -it -p 8000:8000 albertasat/ground-station-website:latest
 ```
 
-## Docker installation - website and satellite simulator
-This docker installation method will install a docker image that can be run as a container and used to host the ground station web app. While the container is running you will be able connect to the web app from your host at http://localhost:8000 and use it as normal. Simply run the three commands below to get it up and running (note that it may take a couple minutes to build the docker image on the first run):
+### Developer notes
+If you have cloned the repository and are actively developing it is likely that you will want to occasionally rebuild the image so that it includes your changes. To do this, run the following commands (please not that there is a known issue with this script on Windows 11):
 
 ```
-cd <project-directory>
+cd <cloned-repo-location>
 ./docker-build.sh
-docker run --rm -it -p 8000:8000 ground_website:latest
+```
+
+You can then run a container off the updated image using:
+
+```
+docker run --rm -it -p 8000:8000 albertasat/ground-station-website:latest
 ```
 
 ## Manual installation
+This installation method will work on an Ubuntu operating system.
+
+First please clone the repository and then update the submodules using the following commands:
+
+```
+cd <cloned-repo-location>
+git submodule update --init --recursive
+```
 
 Ubuntu dependencies for PostgreSQL, libCSP, and scheduling tasks:
 
 ```
 sudo apt-get install at build-essential wget curl libpq-dev python3-dev gcc-multilib g++-multilib libsocketcan-dev
-```
-
-Don't forget to get the latest version of the git submodules:
-
-```
-git submodule update --init --recursive
 ```
 
 To run the app's frontend (i.e. in your web browser), you will need node & npm -- at least version 8. I recommend using the [Node Version Manager](https://github.com/nvm-sh/nvm). 
@@ -50,13 +64,13 @@ Install pip and npm libraries by running `update.sh`:
 source ./update.sh
 ```  
 
-Then, to run the app:
+Finally, run the app:
 
 ```
 flask run
 ```
 
-## Usage
+## Useful commands
 
 These commands should be the same regardless of which method of installation you're using.
 
@@ -78,22 +92,22 @@ These commands should be the same regardless of which method of installation you
 
 * `python3 manage.py test frontend_test` - run the GUI frontend tests with Selenium. NOTE: you will need the geckodriver in order to do this. Get it [here](https://github.com/mozilla/geckodriver/releases).
 
-# The Comm Module - comm.py
+# The Comm Module - [comm.py](./comm.py)
 
 The comm module is the main point of interaction between this application and the satellite. It acts a client to both, and interprets commands sent from the operator to the satellite, and also interprets telemetry sent from the satellite. To extend the comm module, there are 4 files of interest in the root directory of the project:
 
-**comm.py**
+**[comm.py](./comm.py)**
 Acts a loop for constantly checking commands sent by an operator in the communications table, and sending them to a socket.  
 If no function is defined for that command, the command string will be sent by default.
 
-**gs_commands.py**
-Additional functionality for commands can be implemented here. The return value is what is to be sent, or None if nothing is to be sent. Defined functions must be added to the gs_commands dictionary, with the command string as the key, and the function as the value, in order for comm.py to interpret commands properly.
+**[gs_commands.py](./gs_commands.py)**
+Additional functionality for commands can be implemented here. The return value is what is to be sent, or None if nothing is to be sent. Defined functions must be added to the gs_commands dictionary, with the command string as the key, and the function as the value, in order for [comm.py](./comm.py) to interpret commands properly.
 Handling satellite responses is also implemented here, through the function handle_response(). By default the satellite response is posted to the communication table.
 
-**automation.py**
-Automation.py is the script ran at the time of the passover. It first reads from **automation.txt**, a file with commands seperated by newlines. The commands in automation.txt will be posted to the communications table, and sent to the satellite automatically.
+**[automation.py](./automation.py)**
+This is the script ran at the time of the passover. It first reads from **[automation.txt](./automation.txt)**, a file with commands seperated by newlines. The commands in [automation.txt](./automation.txt) will be posted to the communications table, and sent to the satellite automatically.
 
 The script then loads the next passover time, and utlizes the linux `at` program to schedule the next time automation will run. You will need to install `at`, which can be done with `sudo apt-get install at` on Ubuntu.
 
-**seed_passovers.sh**
-Run this script to schedule automation.py to run at the next passover time. Only necessary to run if no automation is scheduled (ie. passovers have ran out, or for initially setting up automation).
+**[seed_passover.sh](./seed_passover.sh)**
+Run this script to schedule [automation.py](./automation.py) to run at the next passover time. Only necessary to run if no automation is scheduled (ie. passovers have ran out, or for initially setting up automation).
