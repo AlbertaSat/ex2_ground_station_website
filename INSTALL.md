@@ -19,7 +19,7 @@ docker run --rm -it -p 8000:8000 albertasat/ground-station-website:user-latest
 Now, open Google Chrome and navigate to [http://localhost:8000](http://localhost:8000).
 
 ### Developer Installation
-This installation method it will allow you to immediately see any modifications you have made to the source code on your host machine in the docker container. As a result, you will not have to rebuild the docker image every time you make a change to the source code on your host machine. 
+This installation method it will allow you to immediately see any modifications you have made to the source code on your host machine in the docker container (and vice versa). As a result, you will not have to rebuild the docker image every time you make a change to the source code on your host machine. 
 
 Start by cloning this repository and pulling the albertasat/ground-station-website:dev-latest docker image using the commands below.
 
