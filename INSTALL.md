@@ -1,23 +1,25 @@
 # Installation
-These instructions are for installing and running the application in development mode on a development machine. There are two installation methods below, one uses [docker](https://www.docker.com/) and the other is manual. The docker installation is the recommended method as it is faster and easier to get up and running.
+These instructions are for installing and running the application in development mode on a development machine. There are two installation methods below, one uses [docker](https://www.docker.com/) and the other is manual. The docker installation is the recommended method.
 
 ## Docker installation - website and satellite simulator (recommended)
+The docker installation methods below are compatible with any operating system that is supported by [docker](https://www.docker.com/). If you are just looking to use the web app and don't plan on making any changes to the source code, then choose the `User Installation` method below. Otherwise, choose the `Developer Installation` method below. 
+
+Prior to starting, please [install docker](https://www.docker.com/get-started) for your operating system if you have not already.
+
 ### User Installation
-This installation method will work on any operating system that is supported by [docker](https://www.docker.com/).
+This installation method will install a docker image that will be run as a container and used to host the ground station web app.
 
-Prior to starting this installation method, please first [install docker](https://www.docker.com/get-started) for your operating system. This installation method will install a docker image that will be run as a container and used to host the ground station web app. While the container is running you will be able connect to the web app from your host at [http://localhost:8000](http://localhost:8000) and use it as normal. 
-
-Open a terminal instance on your operating system and enter the following commands:
+All you need to do is open a terminal instance on your operating system and enter the following commands:
 
 ```bash
 docker pull albertasat/ground-station-website:user-latest
 docker run --rm -it -p 8000:8000 albertasat/ground-station-website:user-latest
 ```
 
-Next, open Google Chrome and navigate to [http://localhost:8000](http://localhost:8000).
+Now, open Google Chrome and navigate to [http://localhost:8000](http://localhost:8000).
 
 ### Developer Installation
-If you have cloned the repository and are actively developing the web app, this insallation method is best for you. By using this method it will allow you to immediately see any modifications you have made to the source code on your host machine in the docker container. As a result, you will not have to rebuild the docker image every time you make a change to the source code on your host machine. 
+This installation method it will allow you to immediately see any modifications you have made to the source code on your host machine in the docker container. As a result, you will not have to rebuild the docker image every time you make a change to the source code on your host machine. 
 
 Start by cloning this repository and pulling the albertasat/ground-station-website:dev-latest docker image using the commands below.
 
