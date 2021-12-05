@@ -1,45 +1,62 @@
 # Installation
-These instructions are for installing and running the application in development mode on a development machine. There are two installation methods below, one uses [docker](https://www.docker.com/) and the other is manual. The docker installation is the recommended method as it is faster and easier to get up and running.
+These instructions are for installing and running the application in development mode on a development machine. There are two installation methods below, one uses [docker](https://www.docker.com/) and the other is manual. The docker installation is the recommended method.
 
 ## Docker installation - website and satellite simulator (recommended)
-This installation method will work on any operating system that is supported by [docker](https://www.docker.com/).
+The docker installation methods below are compatible with any operating system that is supported by [docker](https://www.docker.com/). If you are just looking to use the web app and don't plan on making any changes to the source code, then choose the `User Installation` method below. Otherwise, choose the `Developer Installation` method below. 
 
-Prior to starting this installation method, please first [install docker](https://www.docker.com/get-started) for your operating system. This installation method will install a docker image that will be run as a container and used to host the ground station web app. While the container is running you will be able connect to the web app from your host at http://localhost:8000 and use it as normal. 
+Prior to starting, please [install docker](https://www.docker.com/get-started) for your operating system if you have not already.
 
-Open a terminal instance on your operating system and enter the following commands:
+### User Installation
+This installation method will install a docker image that will be run as a container and used to host the ground station web app.
 
+All you need to do is open a terminal instance on your operating system and enter the following commands:
+
+```bash
+docker pull albertasat/ground-station-website:user-latest
+docker run --rm -it -p 8000:8000 albertasat/ground-station-website:user-latest
 ```
-docker pull albertasat/ground-station-website:latest
-docker run --rm -it -p 8000:8000 albertasat/ground-station-website:latest
-```
 
-### Developer notes
-If you have cloned the repository and are actively developing it is likely that you will want to occasionally rebuild the image so that it includes your changes. To do this, run the following commands (please not that there is a known issue with this script on Windows 11):
+Now, open Google Chrome and navigate to [http://localhost:8000](http://localhost:8000).
 
-```
+### Developer Installation
+This installation method it will allow you to immediately see any modifications you have made to the source code on your host machine in the docker container (and vice versa). As a result, you will not have to rebuild the docker image every time you make a change to the source code on your host machine. 
+
+Start by cloning this repository and pulling the albertasat/ground-station-website:dev-latest docker image using the commands below.
+
+```bash
 cd <cloned-repo-location>
-./docker-build.sh
+docker pull albertasat/ground-station-website:dev-latest
 ```
 
 You can then run a container off the updated image using:
 
+```bash
+export GS_HOMEDIR=$(pwd)
+docker run --rm -it -v $GS_HOMEDIR:/home/ex2_ground_station_website -p 8000:8000 albertasat/ground-station-website:dev-latest
 ```
-docker run --rm -it -p 8000:8000 albertasat/ground-station-website:latest
+
+This will open a bash terminal within the docker container. To get the web app up and running, run the two commands below.
+
+```bash
+source ./update.sh
+flask run --host=0.0.0.0 --port=8000
 ```
+
+Next, open Google Chrome and navigate to [http://localhost:8000](http://localhost:8000).
 
 ## Manual installation
 This installation method will work on an Ubuntu operating system.
 
 First please clone the repository and then update the submodules using the following commands:
 
-```
+```bash
 cd <cloned-repo-location>
 git submodule update --init --recursive
 ```
 
 Ubuntu dependencies for PostgreSQL, libCSP, and scheduling tasks:
 
-```
+```bash
 sudo apt-get install at build-essential wget curl libpq-dev python3-dev gcc-multilib g++-multilib libsocketcan-dev
 ```
 
@@ -47,26 +64,26 @@ To run the app's frontend (i.e. in your web browser), you will need node & npm -
 
 Make sure you have a [Python virtual environment](https://docs.python.org/3/tutorial/venv.html) installed and active! To do this navigate to the root project directory and run the following commands:
 
-```
+```bash
 python3 -m venv env
 source env/bin/activate
 ```
 
 Set the environment variables. These environment variables tell Flask which configuration settings to use. Do this in every terminal window or you'll get database errors.
 
-```
+```bash
 source ./env.sh
 ```
 
 Install pip and npm libraries by running `update.sh`:
 
-```
+```bash
 source ./update.sh
 ```  
 
 Finally, run the app:
 
-```
+```bash
 flask run
 ```
 
