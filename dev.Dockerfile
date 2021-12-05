@@ -24,8 +24,9 @@ RUN ln -s /usr/bin/python3 python \
 
 # copy our repo to the image
 WORKDIR /home/ex2_ground_station_website
-COPY . .
+COPY requirements.txt . 
 RUN pip3 install -r requirements.txt
+RUN rm requirements.txt
 
 # install node.js & npm
 WORKDIR /home
@@ -40,6 +41,8 @@ ENV FLASK_ENV=development
 ENV APP_SETTINGS=groundstation.config.DevelopmentConfig
 ENV SECRET_KEY="\xffY\x8dG\xfbu\x96S\x86\xdfu\x98\xe8S\x9f\x0e\xc6\xde\xb6$\xab:\x9d\x8b"
 SHELL ["/bin/bash", "-c"]
+COPY update.sh . 
 RUN source ./update.sh
+RUN rm update.sh
 
-ENTRYPOINT [ "flask", "run", "--host=0.0.0.0", "--port=8000" ]
+CMD [ "/bin/bash" ]
