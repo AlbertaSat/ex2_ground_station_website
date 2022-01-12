@@ -1,76 +1,95 @@
 # Installation
+These instructions are for installing and running the application in development mode on a development machine. There are two installation methods below, one uses [docker](https://www.docker.com/) and the other is manual. The docker installation is the recommended method.
 
-These instructions are for installing and running the application in development mode on a development machine.
+## Docker installation - website and satellite simulator (recommended)
+The docker installation methods below are compatible with any operating system that is supported by [docker](https://www.docker.com/). If you are just looking to use the web app and don't plan on making any changes to the source code, then choose the `User Installation` method below. Otherwise, choose the `Developer Installation` method below. 
 
-## Docker installation
+Prior to starting, please [install docker](https://www.docker.com/get-started) for your operating system if you have not already.
 
-After cloning the repository, make sure to update the submodules. These are for libCSP and the ground station network software.
+### User Installation
+This installation method will install a docker image that will be run as a container and used to host the ground station web app.
 
-```
-git submodule init
-git submodule update
-```
+All you need to do is open a terminal instance on your operating system and enter the following commands:
 
-The Docker image is still going to need the git modules. Read the Dockerfile to see what exactly is happening.
-
-To build the docker image:
-
-```
-sudo docker build --tag ground_website:latest .
+```bash
+docker pull albertasat/ground-station-website:user-latest
+docker run --rm -it -p 8000:8000 albertasat/ground-station-website:user-latest
 ```
 
-To run the docker container:
+Now, open Google Chrome and navigate to [http://localhost:8000](http://localhost:8000).
 
+### Developer Installation
+This installation method it will allow you to immediately see any modifications you have made to the source code on your host machine in the docker container (and vice versa). As a result, you will not have to rebuild the docker image every time you make a change to the source code on your host machine. 
+
+Please note that this installation method is supported on macOS and Ubuntu operating systems. Windows users will need to substitute commands such as `export` and `source` with the Windows equivalents.
+
+Start by cloning this repository and pulling the albertasat/ground-station-website:dev-latest docker image using the commands below.
+
+```bash
+cd <cloned-repo-location>
+docker pull albertasat/ground-station-website:dev-latest
 ```
-docker run --rm -it --network=host -e FLASK_APP=groundstation/__init__.py -e FLASK_ENV=development -e APP_SETTINGS=groundstation.config.DevelopmentConfig -e SECRET_KEY="\xffY\x8dG\xfbu\x96S\x86\xdfu\x98\xe8S\x9f\x0e\xc6\xde\xb6$\xab:\x9d\x8b" ground_website:latest
+
+You can then run a container off the updated image using:
+
+```bash
+export GS_HOMEDIR=$(pwd)
+docker run --rm -it -v $GS_HOMEDIR:/home/ex2_ground_station_website -p 8000:8000 albertasat/ground-station-website:dev-latest
 ```
 
-Using `-e` lets us pass environment variables to the docker container.
+This will open a bash terminal within the docker container. To get the web app up and running, run the two commands below.
 
-To exit the container, type `exit`
+```bash
+source ./update.sh
+flask run --host=0.0.0.0 --port=8000
+```
 
-The Dockerfile tells docker to start the container in a bash shell, which means that all of the commands in [Usage](#usage) will be the same.
+Next, open Google Chrome and navigate to [http://localhost:8000](http://localhost:8000).
 
 ## Manual installation
+This installation method will work on an Ubuntu operating system.
+
+First please clone the repository and then update the submodules using the following commands:
+
+```bash
+cd <cloned-repo-location>
+git submodule update --init --recursive
+```
 
 Ubuntu dependencies for PostgreSQL, libCSP, and scheduling tasks:
 
-```
+```bash
 sudo apt-get install at build-essential wget curl libpq-dev python3-dev gcc-multilib g++-multilib libsocketcan-dev
 ```
 
-Don't forget to get the latest version of the git submodules:
-```
-git submodule update --init --recursive --remote --merge
-```
-
-To run the app's frontend (i.e. in your web browser), you will need node & npm -- at least version 8. I recommend using the [Node Version Manager](https://github.com/nvm-sh/nvm).
+To run the app's frontend (i.e. in your web browser), you will need node & npm -- at least version 8. I recommend using the [Node Version Manager](https://github.com/nvm-sh/nvm). 
 
 Make sure you have a [Python virtual environment](https://docs.python.org/3/tutorial/venv.html) installed and active! To do this navigate to the root project directory and run the following commands:
-```
+
+```bash
 python3 -m venv env
 source env/bin/activate
 ```
 
 Set the environment variables. These environment variables tell Flask which configuration settings to use. Do this in every terminal window or you'll get database errors.
 
-```
+```bash
 source ./env.sh
 ```
 
 Install pip and npm libraries by running `update.sh`:
 
-```
+```bash
 source ./update.sh
 ```  
 
-**Then, to run the app:**
+Finally, run the app:
 
-```
+```bash
 flask run
 ```
 
-## Usage
+## Useful commands
 
 These commands should be the same regardless of which method of installation you're using.
 
@@ -92,22 +111,22 @@ These commands should be the same regardless of which method of installation you
 
 * `python3 manage.py test frontend_test` - run the GUI frontend tests with Selenium. NOTE: you will need the geckodriver in order to do this. Get it [here](https://github.com/mozilla/geckodriver/releases).
 
-# The Comm Module - comm.py
+# The Comm Module - [comm.py](./comm.py)
 
 The comm module is the main point of interaction between this application and the satellite. It acts a client to both, and interprets commands sent from the operator to the satellite, and also interprets telemetry sent from the satellite. To extend the comm module, there are 4 files of interest in the root directory of the project:
 
-**comm.py**
+**[comm.py](./comm.py)**
 Acts a loop for constantly checking commands sent by an operator in the communications table, and sending them to a socket.  
 If no function is defined for that command, the command string will be sent by default.
 
-**gs_commands.py**
-Additional functionality for commands can be implemented here. The return value is what is to be sent, or None if nothing is to be sent. Defined functions must be added to the gs_commands dictionary, with the command string as the key, and the function as the value, in order for comm.py to interpret commands properly.
+**[gs_commands.py](./gs_commands.py)**
+Additional functionality for commands can be implemented here. The return value is what is to be sent, or None if nothing is to be sent. Defined functions must be added to the gs_commands dictionary, with the command string as the key, and the function as the value, in order for [comm.py](./comm.py) to interpret commands properly.
 Handling satellite responses is also implemented here, through the function handle_response(). By default the satellite response is posted to the communication table.
 
-**automation.py**
-Automation.py is the script ran at the time of the passover. It first reads from **automation.txt**, a file with commands seperated by newlines. The commands in automation.txt will be posted to the communications table, and sent to the satellite automatically.
+**[automation.py](./automation.py)**
+This is the script ran at the time of the passover. It first reads from **[automation.txt](./automation.txt)**, a file with commands seperated by newlines. The commands in [automation.txt](./automation.txt) will be posted to the communications table, and sent to the satellite automatically.
 
 The script then loads the next passover time, and utlizes the linux `at` program to schedule the next time automation will run. You will need to install `at`, which can be done with `sudo apt-get install at` on Ubuntu.
 
-**seed_passovers.sh**
-Run this script to schedule automation.py to run at the next passover time. Only necessary to run if no automation is scheduled (ie. passovers have ran out, or for initially setting up automation).
+**[seed_passover.sh](./seed_passover.sh)**
+Run this script to schedule [automation.py](./automation.py) to run at the next passover time. Only necessary to run if no automation is scheduled (ie. passovers have ran out, or for initially setting up automation).
