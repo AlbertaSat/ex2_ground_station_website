@@ -77,7 +77,7 @@ sed -i 's/\r//g' update.sh
 sed -i 's/\r//g' env.sh
 ```
 
-Install pip and npm libraries by running `update.sh`.
+Install pip and npm libraries by running `update.sh` (while in the bash terminal).
 
 ```bash
 source ./update.sh
