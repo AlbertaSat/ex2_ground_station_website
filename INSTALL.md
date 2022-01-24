@@ -1,7 +1,7 @@
 # Installation
 These instructions are for installing and running the application in development mode on a development machine. There are two installation methods below, one uses [docker](https://www.docker.com/) and the other is manual. The docker installation is the recommended method.
 
-## Docker installation - website and satellite simulator (recommended)
+## Docker Installation - website and satellite simulator (recommended)
 The docker installation methods below are compatible with any operating system that is supported by [docker](https://www.docker.com/). If you are just looking to use the web app and don't plan on making any changes to the source code, then choose the `User Installation` method below. Otherwise, choose the `Developer Installation` method below. 
 
 Prior to starting, please [install docker](https://www.docker.com/get-started) for your operating system if you have not already.
@@ -21,7 +21,7 @@ Now, open Google Chrome and navigate to [http://localhost:8000](http://localhost
 ### Developer Installation
 This installation method it will allow you to immediately see any modifications you have made to the source code on your host machine in the docker container (and vice versa). As a result, you will not have to rebuild the docker image every time you make a change to the source code on your host machine. 
 
-Please note that this installation method is supported on macOS and Ubuntu operating systems. Windows users will need to substitute commands such as `export` and `source` with the Windows equivalents.
+#### MacOS and Ubuntu
 
 Start by cloning this repository and pulling the albertasat/ground-station-website:dev-latest docker image using the commands below.
 
@@ -37,14 +37,60 @@ export GS_HOMEDIR=$(pwd)
 docker run --rm -it -v $GS_HOMEDIR:/home/ex2_ground_station_website -p 8000:8000 albertasat/ground-station-website:dev-latest
 ```
 
-This will open a bash terminal within the docker container. To get the web app up and running, run the two commands below.
+This will open a bash terminal within the docker container.
+
+Install pip and npm libraries by running `update.sh`.
 
 ```bash
 source ./update.sh
+```
+
+Then, run the app.
+
+```bash
 flask run --host=0.0.0.0 --port=8000
 ```
 
-Next, open Google Chrome and navigate to [http://localhost:8000](http://localhost:8000).
+Finally, open Google Chrome and navigate to [http://localhost:8000](http://localhost:8000).
+
+### Windows
+
+Start by cloning this repository and pulling the albertasat/ground-station-website:dev-latest docker image using the commands below.
+
+```bash
+cd <cloned-repo-location>
+docker pull albertasat/ground-station-website:dev-latest
+```
+
+You can then run a container off the updated image using:
+
+```bash
+docker run --rm -it -v %cd%:/home/ex2_ground_station_website -p 8000:8000 albertasat/ground-station-website:dev-latest
+```
+
+This will open a bash terminal within the docker container.
+
+The `update.sh` and `env.sh` files will need to be converted to use LF line endings. This can be done in [VSCode](https://qvault.io/clean-code/line-breaks-vs-code-lf-vs-crlf/) or [Notepad++](http://www.sql313.com/index.php/43-main-blogs/maincat-dba/62-using-notepad-to-change-end-of-line-characters), or by running the following commands from the `ex2_ground_station_website` directory (while in the bash terminal).
+
+```bash
+sed -i 's/\r//g' update.sh
+sed -i 's/\r//g' env.sh
+```
+
+Install pip and npm libraries by running `update.sh` (while in the bash terminal).
+
+```bash
+source ./update.sh
+```
+
+Then, run the app.
+
+```bash
+flask run --host=0.0.0.0 --port=8000
+```
+
+Finally, open Google Chrome and navigate to [http://localhost:8000](http://localhost:8000).
+
 
 ## Manual installation
 This installation method will work on an Ubuntu operating system.
@@ -77,19 +123,19 @@ Set the environment variables. These environment variables tell Flask which conf
 source ./env.sh
 ```
 
-Install pip and npm libraries by running `update.sh`:
+Install pip and npm libraries by running `update.sh`.
 
 ```bash
 source ./update.sh
 ```  
 
-Finally, run the app:
+Finally, run the app.
 
 ```bash
 flask run
 ```
 
-## Useful commands
+# Useful commands
 
 These commands should be the same regardless of which method of installation you're using.
 
