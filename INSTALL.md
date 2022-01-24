@@ -1,12 +1,12 @@
 # Installation
 These instructions are for installing and running the application in development mode on a development machine. There are two installation methods below, one uses [docker](https://www.docker.com/) and the other is manual. The docker installation is the recommended method.
 
-## Docker Installation - website and satellite simulator (recommended)
+## Docker Installation - Website and Satellite Simulator (Recommended)
 The docker installation methods below are compatible with any operating system that is supported by [docker](https://www.docker.com/). If you are just looking to use the web app and don't plan on making any changes to the source code, then choose the `User Installation` method below. Otherwise, choose the `Developer Installation` method below. 
 
 Prior to starting, please [install docker](https://www.docker.com/get-started) for your operating system if you have not already.
 
-### User Installation
+## User Installation
 This installation method will install a docker image that will be run as a container and used to host the ground station web app.
 
 All you need to do is open a terminal instance on your operating system and enter the following commands:
@@ -18,10 +18,10 @@ docker run --rm -it -p 8000:8000 albertasat/ground-station-website:user-latest
 
 Now, open Google Chrome and navigate to [http://localhost:8000](http://localhost:8000).
 
-### Developer Installation
+## Developer Installation
 This installation method it will allow you to immediately see any modifications you have made to the source code on your host machine in the docker container (and vice versa). As a result, you will not have to rebuild the docker image every time you make a change to the source code on your host machine. 
 
-#### MacOS and Ubuntu
+### MacOS and Ubuntu
 
 Start by cloning this repository and pulling the albertasat/ground-station-website:dev-latest docker image using the commands below.
 
@@ -92,7 +92,7 @@ flask run --host=0.0.0.0 --port=8000
 Finally, open Google Chrome and navigate to [http://localhost:8000](http://localhost:8000).
 
 
-## Manual installation
+## Manual Installation
 This installation method will work on an Ubuntu operating system.
 
 First please clone the repository and then update the submodules using the following commands:
@@ -135,7 +135,7 @@ Finally, run the app.
 flask run
 ```
 
-# Useful commands
+# Useful Commands
 
 These commands should be the same regardless of which method of installation you're using.
 
