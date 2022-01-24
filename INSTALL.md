@@ -6,7 +6,7 @@ The docker installation methods below are compatible with any operating system t
 
 Prior to starting, please [install docker](https://www.docker.com/get-started) for your operating system if you have not already.
 
-## User Installation
+### User Installation
 This installation method will install a docker image that will be run as a container and used to host the ground station web app.
 
 All you need to do is open a terminal instance on your operating system and enter the following commands:
