@@ -53,7 +53,7 @@ flask run --host=0.0.0.0 --port=8000
 
 Finally, open Google Chrome and navigate to [http://localhost:8000](http://localhost:8000).
 
-### Developer Installation on Windows
+### Windows
 
 Start by cloning this repository and pulling the albertasat/ground-station-website:dev-latest docker image using the commands below.
 
