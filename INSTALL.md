@@ -21,7 +21,7 @@ Now, open Google Chrome and navigate to [http://localhost:8000](http://localhost
 ### Developer Installation
 This installation method it will allow you to immediately see any modifications you have made to the source code on your host machine in the docker container (and vice versa). As a result, you will not have to rebuild the docker image every time you make a change to the source code on your host machine. 
 
-### Developer Installation on MacOS and Ubuntu
+#### MacOS and Ubuntu
 
 Start by cloning this repository and pulling the albertasat/ground-station-website:dev-latest docker image using the commands below.
 
