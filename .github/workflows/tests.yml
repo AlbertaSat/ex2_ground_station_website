@@ -15,12 +15,11 @@ jobs:
       
       - uses: actions/setup-python@v2
         with:
-          python-version: '3.x'
+          python-version: '3.8.10'
           architecture: 'x64'
-          cache: 'pip'
       
       - name: install pip dependencies
-        run: pip install -r requirements.txt
+        run: python -m pip install -r requirements.txt
 
       - name: run unit tests
         run: python manage.py test
