@@ -155,7 +155,7 @@ These commands should be the same regardless of which method of installation you
 
 * `python3 manage.py test` - run the unit tests.
 
-* `python3 manage.py test frontend_test` - run the GUI frontend tests with Selenium. NOTE: you will need the geckodriver in order to do this. Get it [here](https://github.com/mozilla/geckodriver/releases).
+* `python3 manage.py test frontend_test` - run the GUI frontend tests with Selenium. Please note that you will need to install the appropriate driver [here](https://selenium-python.readthedocs.io/installation.html#drivers).
 
 # The Comm Module - [comm.py](./comm.py)
 
