@@ -1,9 +1,11 @@
 name: Run tests
 on:
+  pull_request:
+    branches:
+      - master
   push:
     branches:
       - master
-      - develop
 
 jobs:
   build:
@@ -11,20 +13,18 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       
-      - name: Set up Python
-        uses: actions/setup-python@v2
+      - uses: actions/setup-python@v2
         with:
-          python-version: '3.x'
-
+          python-version: '3.8.10'
+          architecture: 'x64'
+      
       - name: Install pip dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+        run: python -m pip install -r requirements.txt
 
       - name: Run unit tests
-        run: python3 manage.py test
+        run: python manage.py test
         env: # !!! WARNING: EXPOSED SECRETS !!!
           FLASK_APP: groundstation/__init__.py
           FLASK_ENV: development
-          APP_SETTINGS: groundstation.config.DevelopmentConfig
+          APP_SETTINGS: groundstation.config.TestingConfig
           SECRET_KEY: "\xffY\x8dG\xfbu\x96S\x86\xdfu\x98\xe8S\x9f\x0e\xc6\xde\xb6$\xab:\x9d\x8b"
