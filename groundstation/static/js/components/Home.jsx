@@ -1,11 +1,20 @@
 import React, { Component } from 'react';
 import Grid from '@material-ui/core/Grid';
+import Fab from '@material-ui/core/Fab';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import HousekeepingList from './HousekeepingListFull';
 import Passovers from './Passovers';
+import Switch from "@material-ui/core/Switch";
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import DialogActions from '@material-ui/core/DialogActions';
 
 const styles = {
   root: {
@@ -36,7 +45,9 @@ class Home extends Component {
         noMCUResets: null
       }],
       ticker:0,
-      passovers: []
+      passovers: [],
+      checked: false,
+      popup: false
     };
     this.updatePassoverProgressBars = this.updatePassoverProgressBars.bind(this);
   }
@@ -72,6 +83,19 @@ class Home extends Component {
     });
   }
 
+  handleToggleNotifications(event) {
+    //const notifications = localStorage.getItem('notifications');
+    //let updated_notifs = (notifications == 'true') ? 'false' : 'true';
+    //localStorage.setItem('notifications', updated_notifs);
+
+    this.setState({checked: event.target.checked });
+    if (event.target.checked) this.setState({popup: true});
+  }
+
+  handleClose() {
+    this.setState({popup: false});
+  }
+
   render() {
     const { classes } = this.props;
     return (
@@ -80,10 +104,37 @@ class Home extends Component {
           <Grid item sm={12}>
             <div className={classes.pageHeading}>
               <Typography variant="h4" displayInline style={{color: '#28324C'}}>
-                OVERVIEW
+                TEST 15
               </Typography>
             </div>
           </Grid>
+          <Grid style={{ justifyContent: 'flex-end'}}>
+            <Switch checked={this.state.checked} onChange={(event) => this.handleToggleNotifications(event)}/>
+          </Grid>
+          
+          <Dialog open={this.state.popup} onClose={() => this.handleClose()}>
+            <DialogTitle>Notifications</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                To subscribe to notifications, enter your slack username.
+              </DialogContentText>
+              <TextField
+                autoFocus
+                margin='dense'
+                id='slack-username'
+                label='Slack Username'
+                type='email'
+                fullWidth
+                variant='standard'
+                />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => this.handleClose()}>Cancel</Button>
+              <Button onClick={() => this.handleClose()}>Subscribe</Button>
+            </DialogActions>
+          </Dialog>
+
+
         </Grid>
         <Grid container spacing={2} alignItems='flex-start'>
           <Grid item sm={8}>
