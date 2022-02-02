@@ -255,7 +255,10 @@ class Communications(db.Model):
     timestamp = db.Column(db.DateTime, nullable=False)      # Time at which the command was appended to the table
     sender = db.Column(db.String, nullable=False)           # who sent the command (comm/react/command) as a note, the comm can send commands as responses from the satellite
     receiver = db.Column(db.String, nullable=False)         # who the intended recipient of the command is (comm/react web page/command line)
-    #response = db.Column(db.Integer, db.ForeignKey('communications.id')) # one possible value for connecting satellite responses to sent telecommands
+    is_queued = db.Column(db.Boolean, default=False, nullable=False) # whether the command is queued to be sent to the satellite or not
+
+    # TODO: connecting satellite responses to sent telecommands 
+    #response = db.Column(db.Integer, db.ForeignKey('communications.id'))
 
     def to_json(self):
         """Returns a dictionary of some selected model attributes
@@ -265,5 +268,6 @@ class Communications(db.Model):
             'message': self.message,
             'timestamp': self.timestamp.isoformat(),
             'sender': self.sender,
-            'receiver': self.receiver
+            'receiver': self.receiver,
+            'is_queued': self.is_queued
         }
