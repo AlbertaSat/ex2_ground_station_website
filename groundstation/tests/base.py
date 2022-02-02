@@ -96,7 +96,8 @@ class BaseTestCaseFrontEnd(LiveServerTestCase):
                         timestamp=timestamp,
                         message='ping',
                         sender='user',
-                        receiver='comm'
+                        receiver='comm',
+                        is_queued=False
                     )
 
         now = datetime.utcnow()

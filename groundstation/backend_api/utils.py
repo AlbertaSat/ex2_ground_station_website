@@ -139,14 +139,15 @@ def add_arg_to_flightschedulecommand(index, argument, flightschedule_command_id)
     db.session.commit()
     return flightschedule_command_arg
 
-def add_message_to_communications(timestamp, message, receiver, sender):
+def add_message_to_communications(timestamp, message, receiver, sender, is_queued):
     """Add a new message to the communications table
     """
     message = Communications(
                         timestamp=timestamp,
                         message=message,
                         receiver=receiver,
-                        sender=sender)
+                        sender=sender,
+                        is_queued=is_queued)
 
     db.session.add(message)
     db.session.commit()
@@ -176,10 +177,12 @@ def dynamic_filters_communications(filters):
             filter_ops.append(operator.gt(Communications.id, value))
         elif arg == 'receiver':
             filter_ops.append(operator.eq(Communications.receiver, value))
-        elif arg =='sender':
+        elif arg == 'sender':
             filter_ops.append(operator.eq(Communications.sender, value))
-        elif arg =='ignore_sender':
+        elif arg == 'ignore_sender':
             filter_ops.append(operator.ne(Communications.sender, value))
+        elif arg == 'is_queued':
+            filter_ops.append(operator.eq(Communications.is_queued, value))
         elif arg == 'max':
             max_comm = Communications.query.order_by(Communications.id.desc()).limit(1).first()
             max_id = -1 if max_comm is None else max_comm.id
