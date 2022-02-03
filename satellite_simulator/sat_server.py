@@ -45,9 +45,10 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     while True:
         conn, addr = s.accept()
         with conn:
-            print('Connected by', addr)
+            print('Connected with', addr)
             while True:
                 data = conn.recv(1024)
+                print('Received:', data)
                 if not data:
                     break
                 data = data.decode('utf-8').split()
@@ -56,4 +57,5 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                     resp = simulator.send_to_sat(data)
                 except Exception as e:
                     resp = f'EXCEPTION RAISED IN sat_server.py: {repr(e)}'
+                print('Response:', resp)
                 conn.sendall(bytes(resp, 'utf-8'))

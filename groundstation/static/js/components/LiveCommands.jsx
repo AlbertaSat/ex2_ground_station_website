@@ -67,10 +67,9 @@ class LiveCommands extends Component {
                 splashJobsLeft: prevState.splashJobsLeft - 1
             }));
         } else {
-            // NOTE: should do something here maybe
-            console.log("Error loading telecommands!");
+            console.error(`Error loading telecommands!\n${data}`);
         }
-     });
+        });
         fetch('/api/communications?max=true',{headers: {'Authorization':'Bearer '+ localStorage.getItem('auth_token')}})
         .then(results => {
             return results.json();
@@ -88,8 +87,7 @@ class LiveCommands extends Component {
                     splashJobsLeft: prevState.splashJobsLeft - 1
                 }));
             } else {
-                // NOTE: should do something here maybe
-                console.log('error')
+                console.error(`Unexpected error occured ${data}`)
             }
         });
         this.poll_timer = setInterval(
@@ -145,7 +143,13 @@ class LiveCommands extends Component {
         if (event.key === 'Enter') {
             const text = event.target.value;
             if (this.telecommandIsValid(text)) {
-                const post_data = {timestamp:new Date(Date.now()).toISOString(), message:text, sender:localStorage.getItem('username'), receiver:'comm', is_queued:true};
+                const post_data = {
+                    timestamp: new Date(Date.now()).toISOString(),
+                    message: text,
+                    sender: localStorage.getItem('username'),
+                    receiver: 'comm',
+                    is_queued: true
+                };
 
                 fetch('/api/communications', {
                     method: 'POST',
@@ -164,8 +168,7 @@ class LiveCommands extends Component {
                           textBoxValue:''
                       }));
                     } else {
-                        // NOTE: should do something here maybe
-                        console.log('error')
+                        console.error(`Unexpected error occured ${data}`)
                     }
                 });
             } else{

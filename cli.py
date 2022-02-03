@@ -144,10 +144,11 @@ if __name__ == '__main__':
                 'message': command,
                 'timestamp': timestamp,
                 'sender': username,
-                'receiver': 'comm'
+                'receiver': 'comm',
+                'is_queued': True
             }
             headers = {
-                'Authorization': 'Bearer '+token,
+                'Authorization': 'Bearer ' + token,
                 'Content-Type': 'application/json'
             }
             data = json.dumps(payload)
