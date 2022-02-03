@@ -12,8 +12,8 @@ This installation method will install a docker image that will be run as a conta
 All you need to do is open a terminal instance on your operating system and enter the following commands:
 
 ```bash
-docker pull albertasat/ground-station-website:user-latest
-docker run --rm -it -p 8000:8000 albertasat/ground-station-website:user-latest
+docker pull albertasatdocker/ground-station-website:user-latest
+docker run --rm -it -p 8000:8000 albertasatdocker/ground-station-website:user-latest
 ```
 
 Now, open Google Chrome and navigate to [http://localhost:8000](http://localhost:8000).
@@ -23,18 +23,18 @@ This installation method it will allow you to immediately see any modifications 
 
 ### MacOS and Ubuntu
 
-Start by cloning this repository and pulling the albertasat/ground-station-website:dev-latest docker image using the commands below.
+Start by cloning this repository and pulling the albertasatdocker/ground-station-website:dev-latest docker image using the commands below.
 
 ```bash
 cd <cloned-repo-location>
-docker pull albertasat/ground-station-website:dev-latest
+docker pull albertasatdocker/ground-station-website:dev-latest
 ```
 
 You can then run a container off the updated image using:
 
 ```bash
 export GS_HOMEDIR=$(pwd)
-docker run --rm -it -v $GS_HOMEDIR:/home/ex2_ground_station_website -p 8000:8000 albertasat/ground-station-website:dev-latest
+docker run --rm -it -v $GS_HOMEDIR:/home/ex2_ground_station_website -p 8000:8000 albertasatdocker/ground-station-website:dev-latest
 ```
 
 This will open a bash terminal within the docker container.
@@ -55,17 +55,17 @@ Finally, open Google Chrome and navigate to [http://localhost:8000](http://local
 
 ### Windows
 
-Start by cloning this repository and pulling the albertasat/ground-station-website:dev-latest docker image using the commands below.
+Start by cloning this repository and pulling the albertasatdocker/ground-station-website:dev-latest docker image using the commands below.
 
 ```bash
 cd <cloned-repo-location>
-docker pull albertasat/ground-station-website:dev-latest
+docker pull albertasatdocker/ground-station-website:dev-latest
 ```
 
 You can then run a container off the updated image using:
 
 ```bash
-docker run --rm -it -v %cd%:/home/ex2_ground_station_website -p 8000:8000 albertasat/ground-station-website:dev-latest
+docker run --rm -it -v %cd%:/home/ex2_ground_station_website -p 8000:8000 albertasatdocker/ground-station-website:dev-latest
 ```
 
 This will open a bash terminal within the docker container.
