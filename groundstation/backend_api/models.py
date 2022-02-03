@@ -251,8 +251,8 @@ class Communications(db.Model):
     __tablename__ = 'communications'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    message = db.Column(db.String, nullable=False)          # Every command is going to be formatted as a string for simplicity
-    timestamp = db.Column(db.DateTime, nullable=False)      # Time at which the command was appended to the table
+    message = db.Column(db.String, nullable=False)          # every command is going to be formatted as a string for simplicity
+    timestamp = db.Column(db.DateTime, nullable=False)      # time at which the command was appended to the table
     sender = db.Column(db.String, nullable=False)           # who sent the command (comm/react/command) as a note, the comm can send commands as responses from the satellite
     receiver = db.Column(db.String, nullable=False)         # who the intended recipient of the command is (comm/react web page/command line)
     is_queued = db.Column(db.Boolean, default=False, nullable=False) # whether the command is queued to be sent to the satellite or not
