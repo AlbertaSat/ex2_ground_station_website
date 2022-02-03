@@ -21,6 +21,7 @@ import json
 import click
 
 from flask.cli import FlaskGroup
+from sqlalchemy import false
 
 from groundstation import create_app, db
 from groundstation.backend_api.models import User, Housekeeping, Telecommands, PowerChannels
@@ -136,7 +137,8 @@ def seed_db():
         timestamp=timestamp,
         message='ping',
         sender='user',
-        receiver='comm'
+        receiver='comm',
+        is_queued=False
     )
 
     now = datetime.utcnow()
@@ -217,7 +219,8 @@ def demo_db():
         timestamp=timestamp,
         message='ping',
         sender='user',
-        receiver='comm'
+        receiver='comm',
+        is_queued=False
     )
 
     command = Telecommands.query.filter_by(command_name='ping').first()
@@ -239,7 +242,8 @@ def demo_db():
         timestamp=time2,
         message='ping',
         sender='user',
-        receiver='comm'
+        receiver='comm',
+        is_queued=False
     )
 
     now = datetime.utcnow()

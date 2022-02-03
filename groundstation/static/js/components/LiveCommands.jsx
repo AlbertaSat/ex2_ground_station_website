@@ -145,7 +145,7 @@ class LiveCommands extends Component {
         if (event.key === 'Enter') {
             const text = event.target.value;
             if (this.telecommandIsValid(text)) {
-                const post_data = {timestamp:new Date(Date.now()).toISOString(), message:text, sender:localStorage.getItem('username'), receiver:'comm'};
+                const post_data = {timestamp:new Date(Date.now()).toISOString(), message:text, sender:localStorage.getItem('username'), receiver:'comm', is_queued:true};
 
                 fetch('/api/communications', {
                     method: 'POST',
