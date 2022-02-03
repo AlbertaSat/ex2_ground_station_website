@@ -41,7 +41,7 @@ const CommunicationEntry = (props) => {
                 <p style={infoStringStyle}>{infoStringPrefix} <strong>{sender}</strong> on: </p><p>{infoStringTimestamp}</p>
             </div>
             <p style={contentStyle}>Message: {props.entry.message}</p>
-            <p style={contentStyle}>Is Queued: {props.entry.is_queued}</p>
+            <p style={contentStyle}>Is Queued: {props.entry.is_queued ? 'true' : 'false'}</p>
         </div>
     );
 }
