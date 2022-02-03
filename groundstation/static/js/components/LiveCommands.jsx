@@ -6,9 +6,6 @@ import TextField from '@material-ui/core/TextField';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Typography from '@material-ui/core/Typography';
 
-// TODO posting messages should refer to current logged in user
-// TODO: figue out how to scroll paper automatically as responses are added dynamically
-
 const useStyles = makeStyles(theme => ({
   container: {
     display: 'flex',

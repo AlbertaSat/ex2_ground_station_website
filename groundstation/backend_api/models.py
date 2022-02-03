@@ -246,7 +246,6 @@ class Passover(db.Model):
 # This will be the table of telecommands being sent to the satellite as well as the responses
 # the table will allow us to send and receive all commands transactionally allowing us to log
 # them as well as their responses
-# TODO: discuss with team the design/structure for the communications table
 class Communications(db.Model):
     __tablename__ = 'communications'
 
