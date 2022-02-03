@@ -86,7 +86,7 @@ def communication_loop(sock, csp=None):
     if mode == Connection.SATELLITE and csp is None:
         raise Exception('Csp instance must be specified if sending to satellite')
 
-    request_data = {'is_queued': True, 'receiver': 'comm'}
+    request_data = {'is_queued': True, 'receiver': 'comm', 'newest-first': 'true'}
 
     # Continuously check communication table every minute
     while True:
