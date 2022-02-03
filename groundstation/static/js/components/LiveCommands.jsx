@@ -207,7 +207,7 @@ class LiveCommands extends Component {
                       label='Enter Telecommand'
                       margin='normal'
                       variant='outlined'
-                      style={{width:'100%','background-color':'white'}}
+                      style={{width:'100%','backgroundColor':'white'}}
                       value={this.state.textBoxValue}
                       onChange={(event) => this.handleChange(event)}
                       onKeyDown={(event) => this.handleKeyPress(event) }
