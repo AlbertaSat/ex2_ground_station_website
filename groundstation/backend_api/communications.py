@@ -138,7 +138,7 @@ class CommunicationList(Resource):
             'message': 'no available messages'
         }
 
-        if newest_first == "true":
+        if newest_first in ("true", True):
             ordering = desc(Communications.id)
         else:
             ordering = Communications.id
