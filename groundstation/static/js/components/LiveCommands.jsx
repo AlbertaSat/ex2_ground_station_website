@@ -56,7 +56,7 @@ class LiveCommands extends Component {
     }
 
     componentDidMount() {
-        fetch('/api/telecommands',{headers: {'Authorization':'Bearer '+ localStorage.getItem('auth_token')}})
+        fetch('/api/telecommands',{headers: {'Authorization': 'Bearer ' + localStorage.getItem('auth_token')}})
         .then(results => {
             return results.json();
         }).then(data => {
@@ -67,7 +67,8 @@ class LiveCommands extends Component {
                 splashJobsLeft: prevState.splashJobsLeft - 1
             }));
         } else {
-            console.error(`Error loading telecommands!\n${data}`);
+            console.error('Error loading telecommands!');
+            console.error(data);
         }
         });
         fetch('/api/communications?max=true',{headers: {'Authorization':'Bearer '+ localStorage.getItem('auth_token')}})
@@ -87,7 +88,8 @@ class LiveCommands extends Component {
                     splashJobsLeft: prevState.splashJobsLeft - 1
                 }));
             } else {
-                console.error(`Unexpected error occured ${data}`)
+                console.error('Unexpected error occured:');
+                console.error(data);
             }
         });
         this.poll_timer = setInterval(
@@ -168,7 +170,8 @@ class LiveCommands extends Component {
                           textBoxValue:''
                       }));
                     } else {
-                        console.error(`Unexpected error occured ${data}`)
+                        console.error('Unexpected error occured:');
+                        console.error(data);
                     }
                 });
             } else{
@@ -193,18 +196,18 @@ class LiveCommands extends Component {
         return (
             <div>
                 <div>
-                    <Paper style={{height:"70%", overflow: 'auto'}}>
-                        <Typography className="header-title" variant="h5" displayInline style={{padding: '10px', margin: '20px'}}>Live Commands</Typography>
+                    <Paper style={{height:'70%', overflow: 'auto'}}>
+                        <Typography className='header-title' variant='h5' style={{padding: '10px', margin: '20px'}}>Live Commands</Typography>
                         <CommunicationsList autoScroll={true} displayLog={this.state.displayLog} isEmpty={this.state.isEmpty}/>
                     </Paper>
                 </div>
                 <div>
                     <TextField
-                      id="user-input-textbox"
-                      label="Enter Telecommand"
-                      margin="normal"
-                      variant="outlined"
-                      style={{width:"100%","background-color":"white"}}
+                      id='user-input-textbox'
+                      label='Enter Telecommand'
+                      margin='normal'
+                      variant='outlined'
+                      style={{width:'100%','backgroundColor':'white'}}
                       value={this.state.textBoxValue}
                       onChange={(event) => this.handleChange(event)}
                       onKeyDown={(event) => this.handleKeyPress(event) }

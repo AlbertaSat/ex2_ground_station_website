@@ -3,17 +3,13 @@ The Communications Module is responsible for sending and retrieving data
 with the satellite (or the simulator).
 """
 
-from multiprocessing import connection
 import time
 import json
 import signal
 from enum import Enum
-from groundstation.backend_api import communications
 
-
-from groundstation.backend_api.communications import CommunicationList
-from groundstation.backend_api.communications import Communication
-from gs_commands import GsCommands
+from groundstation.backend_api.flightschedule import FlightScheduleList, Flightschedule
+from groundstation.backend_api.communications import CommunicationList, Communication
 
 
 class Connection(Enum):
@@ -21,42 +17,70 @@ class Connection(Enum):
     SATELLITE = 2
 
 
-# some global variables
+# Global variables
 mode = None
 communication_list = CommunicationList()
 communication_patch = Communication()
-gs_commands_obj = GsCommands()
-gs_commands_dict = gs_commands_obj.get_gs_commands_dict()
+flightschedule_list = FlightScheduleList()
+flightschedule_patch = Flightschedule()
 
 
-def simulator_use_example():
-    telecommands = ['ping', 'get-hk', 'turn-on 0', 'ping', 'get-hk']
-    for telecommand in telecommands:
-        print(send_to_simulator(telecommand))
-
-
-# handle the sig alarm
+# Handle the sig alarm
 def handler(signum, frame):
     exit()
 
 
-# handle message in communication table
 def handle_message(message):
     """
     Messages sent to comm will pass through this function, essentially acting 
-    as a decorator. Refer to gs_commands module
+    as a decorator.
+
+    TODO: this needs to be implmented to support flight schedule functionality.
 
     :param str message: The incoming message to comm
 
     :returns: Return is dependent on the handler function triggered
     :rtype: Optional
     """
-    # TODO this needs to be implmented to support flight schedule functionality
-    handle = gs_commands_dict.get(message)
+    # Groundstation functions with additional capabilities rather than just sending a string
+    gs_commands = {
+        'upload-fs': upload_fs
+    }
+
+    handle = gs_commands.get(message)
+    
     if handle:
         return handle()
     else:
         return message
+
+
+def upload_fs():
+    """
+    If there is no queued flightschedule log it, otherwise, set its status 
+    to uploaded and send something to the flight schedule (this may be handled
+    differently right now we are blindly trusting that a sent flightschedule 
+    is uploaded) and no data of the flight schedule is actually sent at the 
+    moment.
+
+    TODO: this needs to be implemented properly.
+    """
+    local_args = {'limit': 1, 'queued': True}
+    fs = flightschedule_list.get(local_args=local_args)
+
+
+    if len(fs[0]['data']['flightschedules']) < 1:
+        save_response('A queued flight schedule does not exist.')
+        return None
+    else:
+        fs_id = fs[0]['data']['flightschedules'][0]['flightschedule_id']
+        fs_ex = fs[0]['data']['flightschedules'][0]['execution_time']
+        local_data = {'status': 3, 'execution_time': fs_ex, 'commands': []}
+
+        flightschedule_patch.patch(
+            fs_id, local_data=json.dumps(local_data))
+
+        return 'upload-fs'
 
 
 def send_to_simulator(msg):
@@ -144,7 +168,7 @@ def main():
     if mode == Connection.SIMULATOR:
         communication_loop()
     elif mode == Connection.SATELLITE:
-        # TODO clean up by putting in a function in gs_software
+        # TODO maybe clean up by putting in a function in gs_software
         opts = gs_software.getOptions()
         csp = gs_software.Csp(opts)
         sock = libcsp.socket()

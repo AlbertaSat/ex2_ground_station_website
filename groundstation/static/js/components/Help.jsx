@@ -47,7 +47,7 @@ class Help extends Component {
                     Help Page
                 </Typography>
                 <Paper className="Flight Schedule" style={{marginTop: '20px', marginBottom: '20px'}}>
-                    <Typography variant="h5" displayInline style={{ padding: '10px' }}>
+                    <Typography variant="h5" style={{ padding: '10px' }}>
                         Flight Schedule
                     </Typography>
                     <Typography variant="body1" style={{paddingLeft: '20px' }}>
@@ -119,7 +119,7 @@ class Help extends Component {
                     </Typography> 
                 </Paper>
                 <Paper className="Housekeeping" style={{marginBottom: '20px'}}>
-                    <Typography variant="h5" displayInline style={{ padding: '10px' }}>
+                    <Typography variant="h5" style={{ padding: '10px' }}>
                         Housekeeping
                     </Typography>
                     <Typography variant="body1" style={{paddingLeft: '20px' }}>
@@ -143,7 +143,7 @@ class Help extends Component {
                     </Typography>
                 </Paper>
                 <Paper className="Live Commands" style={{marginBottom: '20px'}}>
-                    <Typography variant="h5" displayInline style={{ padding: '10px' }}>
+                    <Typography variant="h5" style={{ padding: '10px' }}>
                         Live Commands
                     </Typography>
                     <Typography variant="body1" style={{paddingLeft: '20px' }}>
@@ -172,18 +172,19 @@ class Help extends Component {
                     </Typography>
                 </Paper> 
                 <Paper className="Logs" style={{marginBottom: '20px' }}>
-                    <Typography variant="h5" displayInline style={{ padding: '10px' }}>
+                    <Typography variant="h5" style={{ padding: '10px' }}>
                         Logs
                     </Typography>
                     <Typography variant="body1" style={{paddingLeft: '20px' }}>
                         The logs page displays all of the communications to and from the satellite.
                         To update the page, press the refresh button. All messages will be denoted
                         as from one of a username (ie a human operator), the satellite (comm), or 
-                        sent as part of an automated script (automation).
+                        sent as part of an automated script (automation). If a message is queued it
+                        will be sent to the satellite during its next passover.
                     </Typography>
                 </Paper>
                 <Paper className="Timer">
-                    <Typography variant="h5" displayInline style={{ padding: '10px' }}>
+                    <Typography variant="h5" style={{ padding: '10px' }}>
                         Passover Timer
                     </Typography>
                     <Typography variant="body1" style={{paddingLeft: '20px' }}>

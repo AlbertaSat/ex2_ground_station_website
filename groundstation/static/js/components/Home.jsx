@@ -79,7 +79,7 @@ class Home extends Component {
         <Grid container spacing={2} alignItems='flex-end'>
           <Grid item sm={12}>
             <div className={classes.pageHeading}>
-              <Typography variant="h4" displayInline style={{color: '#28324C'}}>
+              <Typography variant="h4" style={{color: '#28324C'}}>
                 OVERVIEW
               </Typography>
             </div>
@@ -88,13 +88,13 @@ class Home extends Component {
         <Grid container spacing={2} alignItems='flex-start'>
           <Grid item sm={8}>
             <Paper className="grid-containers">
-              <Typography className="header-title" variant="h5" displayInline>Recent Housekeeping Data</Typography>
+              <Typography className="header-title" variant="h5">Recent Housekeeping Data</Typography>
               <HousekeepingList isLoading={this.state.isLoading} housekeeping={this.state.housekeeping} empty={this.state.emptyhk} />
             </Paper>
           </Grid>
           <Grid item sm={4}>
             <Paper className="grid-containers">
-              <Typography variant="h5" displayInline>Upcoming Passovers</Typography>
+              <Typography variant="h5">Upcoming Passovers</Typography>
               <Passovers isLoading={this.state.isLoading} passovers={this.state.passovers} empty={this.state.emptypassover} mostRecentPass={this.state.mostRecentPass}/>
             </Paper>
           </Grid>
