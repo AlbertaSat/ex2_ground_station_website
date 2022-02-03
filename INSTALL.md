@@ -156,23 +156,3 @@ These commands should be the same regardless of which method of installation you
 * `python3 manage.py test` - run the unit tests.
 
 * `python3 manage.py test frontend_test` - run the GUI frontend tests with Selenium. Please note that you will need to install the appropriate driver [here](https://selenium-python.readthedocs.io/installation.html#drivers).
-
-# The Comm Module - [comm.py](./comm.py)
-
-The comm module is the main point of interaction between this application and the satellite. It acts a client to both, and interprets commands sent from the operator to the satellite, and also interprets telemetry sent from the satellite. To extend the comm module, there are 4 files of interest in the root directory of the project:
-
-**[comm.py](./comm.py)**
-Acts a loop for constantly checking commands sent by an operator in the communications table, and sending them to a socket.  
-If no function is defined for that command, the command string will be sent by default.
-
-**[gs_commands.py](./gs_commands.py)**
-Additional functionality for commands can be implemented here. The return value is what is to be sent, or None if nothing is to be sent. Defined functions must be added to the gs_commands dictionary, with the command string as the key, and the function as the value, in order for [comm.py](./comm.py) to interpret commands properly.
-Handling satellite responses is also implemented here, through the function handle_response(). By default the satellite response is posted to the communication table.
-
-**[automation.py](./automation.py)**
-This is the script ran at the time of the passover. It first reads from **[automation.txt](./automation.txt)**, a file with commands seperated by newlines. The commands in [automation.txt](./automation.txt) will be posted to the communications table, and sent to the satellite automatically.
-
-The script then loads the next passover time, and utlizes the linux `at` program to schedule the next time automation will run. You will need to install `at`, which can be done with `sudo apt-get install at` on Ubuntu.
-
-**[seed_passover.sh](./seed_passover.sh)**
-Run this script to schedule [automation.py](./automation.py) to run at the next passover time. Only necessary to run if no automation is scheduled (ie. passovers have ran out, or for initially setting up automation).

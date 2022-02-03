@@ -12,4 +12,6 @@ In this repository we are attempting to make a functional and extendable grounds
 
 **[Python source code documentation](https://albertasat.github.io/ex2_ground_station_website/)** - These docs are automatically generated from the comments in the Python source code. It lives in `/docs`. When you make changes to backend_api, update this documentation to match it using `update_docs.sh`. You can look at them in your browser if you serve them locally. (i.e. `python3 -m http.server`)  
 
+**[The project wiki](https://github.com/AlbertaSat/ex2_ground_station_website/wiki)** - Running instructions for the satellite simulator and documentation for topics such as the comm.py module.
+
 The documentation above is not guaranteed to be up-to-date or complete so it's recommended that you read the code.
