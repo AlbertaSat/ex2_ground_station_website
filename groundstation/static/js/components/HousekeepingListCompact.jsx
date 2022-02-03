@@ -72,7 +72,7 @@ const HousekeepingLogListCompact = (props) => {
 		<div className={classes.root}>
 			{
 				<Paper className="grid-containers">
-					<Typography className="header-title" variant="h5" displayInline>Recent Housekeeping Data</Typography>
+					<Typography className="header-title" variant="h5">Recent Housekeeping Data</Typography>
 
 					{props.housekeeping.map((housekeeping, idx) => (
 						<ExpansionPanel
