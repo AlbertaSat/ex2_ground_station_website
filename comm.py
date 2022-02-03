@@ -133,7 +133,7 @@ def communication_loop(sock=None, csp=None):
                             message['message_id'], 
                             local_data=json.dumps({'is_queued': False}))
         
-        time.sleep(60)
+        time.sleep(5)
 
 
 def main():
