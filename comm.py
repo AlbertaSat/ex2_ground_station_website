@@ -75,7 +75,20 @@ def send_to_satellite(sock, csp, msg):
         print('Unexpected error occured:', e)
 
 
-def communication_loop(sock, csp=None):
+# Save the satellite response as a comm log
+def save_response(message):
+    print('Received:', message)
+    message = {
+        'message': str(message),
+        'sender': 'comm',
+        'receiver': 'logs',
+        'is_queued': False
+    }
+    message = json.dumps(message)
+    communication_list.post(local_data=message)
+
+
+def communication_loop(sock=None, csp=None):
     """
     Main communication loop which polls for messages that are queued and addressed to comm 
     (i.e. messages it needs to send to satellite). This should be run when a passover is
@@ -83,12 +96,12 @@ def communication_loop(sock, csp=None):
 
     :param Csp csp: The Csp instance. See groundStation.py
     """
-    if mode == Connection.SATELLITE and csp is None:
+    if mode == Connection.SATELLITE and (sock is None or csp is None):
         raise Exception('Csp instance must be specified if sending to satellite')
 
-    request_data = {'is_queued': True, 'receiver': 'comm', 'newest-first': 'true'}
+    request_data = {'is_queued': True, 'receiver': 'comm', 'newest-first': False}
 
-    # Continuously check communication table every minute
+    # Check communication table every minute
     while True:
         # Get queued communications
         messages = communication_list.get(local_data=request_data)[0]
@@ -110,18 +123,12 @@ def communication_loop(sock, csp=None):
 
                     if response:
                         if isinstance(response, list):
-                            print('Received:', response)
                             for item in response:
-                                # Save the satellite response as a comm log
-                                message = {
-                                    'message': str(item),
-                                    'sender': 'comm',
-                                    'receiver': 'logs',
-                                    'is_queued': False
-                                }
-                                message = json.dumps(message)
-                                communication_list.post(local_data=message)
+                                save_response(item)
+                        else:
+                            save_response(response)
                         
+                        # Denote that the message has been executed if successful
                         communication_patch.patch(
                             message['message_id'], 
                             local_data=json.dumps({'is_queued': False}))
@@ -135,11 +142,8 @@ def main():
     signal.alarm(10 * 60)
 
     if mode == Connection.SIMULATOR:
-        import satellite_simulator.antenna as antenna
         communication_loop()
     elif mode == Connection.SATELLITE:
-        import ex2_ground_station_software.src.groundstation as gs_software
-        import libcsp.build.libcsp_py3 as libcsp
         # TODO clean up by putting in a function in gs_software
         opts = gs_software.getOptions()
         csp = gs_software.Csp(opts)
@@ -152,7 +156,10 @@ if __name__ == '__main__':
     if input('Would like to communicate with the satellite simulator (if not, the program ' 
         'will attempt to communicate with the satellite) [Y/n]: ').strip() in ('Y', 'y'):
         mode = Connection.SIMULATOR
+        import satellite_simulator.antenna as antenna
     else:
         mode = Connection.SATELLITE
+        import ex2_ground_station_software.src.groundstation as gs_software
+        import libcsp.build.libcsp_py3 as libcsp
 
     main()
