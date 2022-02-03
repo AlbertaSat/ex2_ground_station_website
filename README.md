@@ -11,8 +11,5 @@ In this repository we are attempting to make a functional and extendable grounds
 **[REST API documentation](https://documenter.getpostman.com/view/9298924/SW11YKEd)** - This is documentation for the REST API (`groundstation/backend_api`) of this Flask app. Within are examples of requests that you can make and what responses to expect.
 
 **[Python source code documentation](https://albertasat.github.io/ex2_ground_station_website/)** - These docs are automatically generated from the comments in the Python source code. It lives in `/docs`. When you make changes to backend_api, update this documentation to match it using `update_docs.sh`. You can look at them in your browser if you serve them locally. (i.e. `python3 -m http.server`)  
-This can often be incomplete, so it's recommended that you read the code.
 
-**[Glossary](https://github.com/UAlberta-CMPUT401/AlbertaSat/wiki/Glossary)** - Go here if you're confused about a word or phrase that we keep using.
-
-**[Wiki](https://github.com/UAlberta-CMPUT401/AlbertaSat/wiki)** - See more information about the project's design and development.
+The documentation above is not guaranteed to be up-to-date or complete so it's recommended that you read the code.
