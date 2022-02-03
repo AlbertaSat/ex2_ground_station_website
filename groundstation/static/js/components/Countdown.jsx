@@ -18,7 +18,6 @@ function fetchPassovers(next, most_recent) {
             return results.json();
         }).then(data => {
             if(data.status == 'success'){
-                // TODO: check for null
                 let nextPassover;
                 let mostRecentPassover;
 
@@ -120,7 +119,6 @@ class Countdown extends Component{
 		utcToday = new Date(today.getTime() + (today.getTimezoneOffset() * 60000));
         var breakout = true;
 
-        // TODO: Check that this.state.nextPassover is not null, same with last passover
         var mostRecentPassover = this.state.mostRecentPassover;
         var nextPassover = this.state.nextPassover;
         if (this.state.mostRecentPassover === null || this.state.nextPassover === null) {
