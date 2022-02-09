@@ -170,7 +170,7 @@ def main():
     elif mode == Connection.SATELLITE:
         # TODO maybe clean up by putting in a function in gs_software
         opts = gs_software.groundStation.options()
-        csp = gs_software.groundStation.groundStation(opts)
+        csp = gs_software.groundStation.groundStation(opts.getOptions())
         sock = libcsp.socket()
         libcsp.bind(sock, libcsp.CSP_ANY)
         communication_loop(sock, csp)
