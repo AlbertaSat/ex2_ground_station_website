@@ -92,9 +92,8 @@ def send_to_simulator(msg):
 
 def send_to_satellite(sock, csp, msg):
     try:
-        to_send, server, port = csp.getInput(inVal=msg)
-        csp.send(server, port, to_send)
-        return csp.receive(sock)
+        server, port, toSend = csp.getInput(inVal=msg)
+        return csp.transaction(server, port, toSend)
     except Exception as e:
         print('Unexpected error occured:', e)
 
