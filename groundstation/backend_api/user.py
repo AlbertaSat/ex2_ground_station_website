@@ -7,13 +7,16 @@ import json
 
 from groundstation import db
 from groundstation.backend_api.models import User
-from groundstation.backend_api.validators import UserValidator
+from groundstation.backend_api.validators import UserValidator, UserPatchValidator
 from groundstation.backend_api.utils import create_context, login_required
 
 user_blueprint = Blueprint('user', __name__)
 api = Api(user_blueprint)
 
 class UserEntity(Resource):
+    def __init__(self):
+        self.validator = UserPatchValidator()
+        super(UserEntity, self).__init__()    
 
     @create_context
     def get(self, user_id, local_args=None):
@@ -40,6 +43,52 @@ class UserEntity(Resource):
         response_object['status'] = 'success'
         response_object['message'] = 'User was successfully found.'
         response_object['data'] = user.to_json()
+        return response_object, 200
+
+    @create_context
+    @login_required
+    def patch(self, user_id, local_data=None):
+        """ Endpoint for patching a specific user
+
+        :param int user_id: The id of the user to patch
+        :param json_string local_data: This should be used in place of the POST body that would be used through HTTP, used for local calls.
+
+        :returns: response_object, status_code
+        :rtype: tuple (dict, int)
+        """
+        if not local_data:
+            post_data = request.get_json()
+        else:
+            post_data = json.loads(local_data)
+
+        user = User.query.filter_by(id=user_id).first()
+
+        if user is None:
+            response_object = {'status': 'fail', 'message': 'User does not exist'}
+            return response_object, 404
+        
+        try:
+            validated_data = self.validator.load(post_data) # update validator for user
+        except ValidationError as err:
+            response_object = {
+                'status': 'fail',
+                'message': 'The posted data is not valid!',
+                'errors': err.messages
+            }
+            return response_object, 400
+
+        for attribute in validated_data:
+            setattr(user, attribute, validated_data[attribute])
+          
+        db.session.commit()
+
+        response_object = {
+            'status': 'success',
+            'data': user.to_json()
+        }
+
+        print(user.slack_id)
+
         return response_object, 200
 
 

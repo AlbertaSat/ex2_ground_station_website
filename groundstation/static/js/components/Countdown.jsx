@@ -155,6 +155,16 @@ class Countdown extends Component{
                     nextPassover: data.nextPassover
                 });
             });
+
+            // temporary place to send slack messages for passover
+      
+            fetch('/api/passovers', {
+              method: 'HEAD',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer '+ localStorage.getItem('auth_token')
+              }
+            });
         }
 	}
 

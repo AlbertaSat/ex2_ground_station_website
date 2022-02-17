@@ -46,8 +46,9 @@ class Home extends Component {
       }],
       ticker:0,
       passovers: [],
-      checked: false,
-      popup: false
+      checked: (localStorage.getItem('subscribed_to_slack') == 'true') ? true : false,
+      popup: false,
+      slack_id: ''
     };
     this.updatePassoverProgressBars = this.updatePassoverProgressBars.bind(this);
   }
@@ -83,17 +84,81 @@ class Home extends Component {
     });
   }
 
-  handleToggleNotifications(event) {
-    //const notifications = localStorage.getItem('notifications');
-    //let updated_notifs = (notifications == 'true') ? 'false' : 'true';
-    //localStorage.setItem('notifications', updated_notifs);
-
-    this.setState({checked: event.target.checked });
-    if (event.target.checked) this.setState({popup: true});
+  isAuthenticated(){
+    return !!localStorage.getItem('auth_token');
   }
 
-  handleClose() {
-    this.setState({popup: false});
+  handleToggleNotifications(event) {
+    this.setState({checked: event.target.checked });
+    if (event.target.checked) {
+      this.setState({popup: true});
+
+      let user_id = localStorage.getItem('user_id');
+      let url = '/api/users/' + user_id;
+
+      fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer '+ localStorage.getItem('auth_token')
+        }
+      }).then(results => {
+        return results.json();
+      }).then(data => {
+        if (data.status == 'success') {
+          if (data.data.slack_id != null) {
+            this.setState({slack_id: data.data.slack_id});
+          }
+        }
+      });
+    }
+    else {
+      this.setSlack(false);
+    }
+  }
+
+  handleClose(pressedCancel = false) {
+    if (pressedCancel) {
+      this.setState({popup: false});
+      this.setState({checked: false});
+      this.setSlack(false);
+    }
+    else {
+      if (this.state.slack_id == '') {
+        return;
+      }
+
+      this.setState({popup: false});
+      this.setSlack(true);
+    }
+  }
+
+  setSlack(is_subscribed) {
+    let user_id = localStorage.getItem('user_id');
+    let url = '/api/users/' + user_id;
+    let data = {slack_id: this.state.slack_id, subscribed_to_slack: is_subscribed};
+
+    localStorage.setItem('subscribed_to_slack', is_subscribed);
+
+    if (!data.subscribed_to_slack) delete data.slack_id; // do not need to set slack id if unsubscribed
+
+    fetch(url, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('auth_token')
+      },
+      body: JSON.stringify(data)
+    }).then(results => {
+      console.log(results);
+      return results.json();
+    }).then(data => {
+      console.log(data);
+    });
+  }
+
+  handleChange(event) {
+    this.setState({slack_id: event.target.value});
   }
 
   render() {
@@ -101,22 +166,23 @@ class Home extends Component {
     return (
       <div className={classes.root}>
         <Grid container spacing={2} alignItems='flex-end'>
-          <Grid item sm={12}>
+          <Grid item sm={10}>
             <div className={classes.pageHeading}>
               <Typography variant="h4" displayInline style={{color: '#28324C'}}>
-                TEST 15
+                TEST 11
               </Typography>
             </div>
           </Grid>
-          <Grid style={{ justifyContent: 'flex-end'}}>
-            <Switch checked={this.state.checked} onChange={(event) => this.handleToggleNotifications(event)}/>
+          <Grid item sm={2} style={{ textAlign: 'right'}}>
+            {this.isAuthenticated() &&
+              <Switch id='notification-switch' checked={this.state.checked} onChange={(event) => this.handleToggleNotifications(event)}/>
+            }
           </Grid>
-          
-          <Dialog open={this.state.popup} onClose={() => this.handleClose()}>
+          <Dialog open={this.state.popup} onClose={() => this.handleClose(true)}>
             <DialogTitle>Notifications</DialogTitle>
             <DialogContent>
               <DialogContentText>
-                To subscribe to notifications, enter your slack username.
+                To subscribe to slack notifications, enter your slack id (not username!).
               </DialogContentText>
               <TextField
                 autoFocus
@@ -126,15 +192,16 @@ class Home extends Component {
                 type='email'
                 fullWidth
                 variant='standard'
+                value={this.state.slack_id}
+                onChange={(event) => this.handleChange(event)}
+                error={this.state.slack_id == ''}
                 />
             </DialogContent>
             <DialogActions>
-              <Button onClick={() => this.handleClose()}>Cancel</Button>
+              <Button onClick={() => this.handleClose(true)}>Cancel</Button>
               <Button onClick={() => this.handleClose()}>Subscribe</Button>
             </DialogActions>
           </Dialog>
-
-
         </Grid>
         <Grid container spacing={2} alignItems='flex-start'>
           <Grid item sm={8}>

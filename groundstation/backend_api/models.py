@@ -10,12 +10,16 @@ class User(db.Model):
     username = db.Column(db.String(128), unique=True)
     password_hash = db.Column(db.String(128))
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
+    slack_id = db.Column(db.String(128), nullable=True, unique=True)
+    subscribed_to_slack = db.Column(db.Boolean, default=False)
 
-    def __init__(self, username, password, is_admin=False):
+    def __init__(self, username, password, is_admin=False, slack_id=None, subscribed_to_slack=False):
         self.username = username
         num_rounds = current_app.config.get('BCRYPT_LOG_ROUNDS')
         self.password_hash = bcrypt.generate_password_hash(password, num_rounds).decode()
         self.is_admin = is_admin
+        self.slack_id = slack_id
+        self.subscribed_to_slack = subscribed_to_slack
 
     def verify_password(self, password):
         """Returns True if passes password is valid, else False
@@ -63,7 +67,8 @@ class User(db.Model):
         """
         return {
             'id' : self.id,
-            'username': self.username
+            'username': self.username,
+            'slack_id': self.slack_id
         }
 
 class Housekeeping(db.Model):
