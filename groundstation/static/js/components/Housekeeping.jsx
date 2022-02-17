@@ -113,7 +113,7 @@ class HouseKeeping extends Component {
           <div>
             <Grid container spacing={2} alignItems='flex-end'>
               <Grid item sm={2}>
-                <Typography variant="h5" displayInline style={{ padding: '10px' }}>Housekeeping</Typography>
+                <Typography variant="h5" style={{ padding: '10px' }}>Housekeeping</Typography>
               </Grid>
               <Grid item sm={6}>
                 <Grid container spacing={1} alignItems='flex-end'>

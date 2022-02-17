@@ -44,7 +44,7 @@ class Home extends Component {
         lastBeaconTime: null,
         noMCUResets: null
       }],
-      ticker:0,
+      ticker: 0,
       passovers: [],
       checked: (localStorage.getItem('subscribed_to_slack') == 'true') ? true : false,
       popup: false,
@@ -55,43 +55,43 @@ class Home extends Component {
 
   updatePassoverProgressBars() {
     // this is just to trigger the state change and re render lol, probably a better way to do it
-    this.setState(prevState => ({ticker: prevState.ticker + 1}));
+    this.setState(prevState => ({ ticker: prevState.ticker + 1 }));
   }
 
   componentDidMount() {
     Promise.all([
       fetch('/api/housekeepinglog?newest-first=true&limit=5'),
       fetch('/api/passovers?next=true&most-recent=true&limit=5',
-      {headers: {'Authorization':'Bearer '+ localStorage.getItem('auth_token')}}
-    )]).then(([res1, res2]) => {
-      return Promise.all([res1.json(), res2.json()])
-    }).then(([res1, res2]) => {
-      if(res1.status == 'success'){
-        this.setState({ housekeeping: res1.data.logs, 'isLoading': false});
-        if (res1.data.logs.length > 0) {
-          this.setState({emptyhk: false})
+        { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('auth_token') } }
+      )]).then(([res1, res2]) => {
+        return Promise.all([res1.json(), res2.json()])
+      }).then(([res1, res2]) => {
+        if (res1.status == 'success') {
+          this.setState({ housekeeping: res1.data.logs, 'isLoading': false });
+          if (res1.data.logs.length > 0) {
+            this.setState({ emptyhk: false })
+          }
+        } if (res2.status == 'success') {
+          this.setState({ passovers: res2.data.next_passovers, 'isLoading': false, mostRecentPass: res2.data.most_recent_passover })
+          if (res2.data.next_passovers.length > 0 && res2.data.most_recent_passover !== null) {
+            this.setState({ emptypassover: false })
+            this.timer = setInterval(
+              () => this.updatePassoverProgressBars(),
+              10000
+            );
+          }
         }
-      }if(res2.status == 'success'){
-        this.setState({passovers: res2.data.next_passovers, 'isLoading': false, mostRecentPass: res2.data.most_recent_passover})
-        if (res2.data.next_passovers.length > 0 && res2.data.most_recent_passover !== null) {
-          this.setState({emptypassover: false})
-          this.timer = setInterval(
-            () => this.updatePassoverProgressBars(),
-            10000
-          );
-        }
-      }
-    });
+      });
   }
 
-  isAuthenticated(){
+  isAuthenticated() {
     return !!localStorage.getItem('auth_token');
   }
 
   handleToggleNotifications(event) {
-    this.setState({checked: event.target.checked });
+    this.setState({ checked: event.target.checked });
     if (event.target.checked) {
-      this.setState({popup: true});
+      this.setState({ popup: true });
 
       let user_id = localStorage.getItem('user_id');
       let url = '/api/users/' + user_id;
@@ -100,14 +100,14 @@ class Home extends Component {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer '+ localStorage.getItem('auth_token')
+          'Authorization': 'Bearer ' + localStorage.getItem('auth_token')
         }
       }).then(results => {
         return results.json();
       }).then(data => {
         if (data.status == 'success') {
           if (data.data.slack_id != null) {
-            this.setState({slack_id: data.data.slack_id});
+            this.setState({ slack_id: data.data.slack_id });
           }
         }
       });
@@ -119,8 +119,8 @@ class Home extends Component {
 
   handleClose(pressedCancel = false) {
     if (pressedCancel) {
-      this.setState({popup: false});
-      this.setState({checked: false});
+      this.setState({ popup: false });
+      this.setState({ checked: false });
       this.setSlack(false);
     }
     else {
@@ -128,7 +128,7 @@ class Home extends Component {
         return;
       }
 
-      this.setState({popup: false});
+      this.setState({ popup: false });
       this.setSlack(true);
     }
   }
@@ -136,7 +136,7 @@ class Home extends Component {
   setSlack(is_subscribed) {
     let user_id = localStorage.getItem('user_id');
     let url = '/api/users/' + user_id;
-    let data = {slack_id: this.state.slack_id, subscribed_to_slack: is_subscribed};
+    let data = { slack_id: this.state.slack_id, subscribed_to_slack: is_subscribed };
 
     localStorage.setItem('subscribed_to_slack', is_subscribed);
 
@@ -158,7 +158,7 @@ class Home extends Component {
   }
 
   handleChange(event) {
-    this.setState({slack_id: event.target.value});
+    this.setState({ slack_id: event.target.value });
   }
 
   render() {
@@ -168,14 +168,14 @@ class Home extends Component {
         <Grid container spacing={2} alignItems='flex-end'>
           <Grid item sm={10}>
             <div className={classes.pageHeading}>
-              <Typography variant="h4" displayInline style={{color: '#28324C'}}>
-                TEST 11
+              <Typography variant="h4" style={{ color: '#28324C' }}>
+                OVERVIEW
               </Typography>
             </div>
           </Grid>
-          <Grid item sm={2} style={{ textAlign: 'right'}}>
+          <Grid item sm={2} style={{ textAlign: 'right' }}>
             {this.isAuthenticated() &&
-              <Switch id='notification-switch' checked={this.state.checked} onChange={(event) => this.handleToggleNotifications(event)}/>
+              <Switch id='notification-switch' checked={this.state.checked} onChange={(event) => this.handleToggleNotifications(event)} />
             }
           </Grid>
           <Dialog open={this.state.popup} onClose={() => this.handleClose(true)}>
@@ -195,7 +195,7 @@ class Home extends Component {
                 value={this.state.slack_id}
                 onChange={(event) => this.handleChange(event)}
                 error={this.state.slack_id == ''}
-                />
+              />
             </DialogContent>
             <DialogActions>
               <Button onClick={() => this.handleClose(true)}>Cancel</Button>
@@ -206,19 +206,19 @@ class Home extends Component {
         <Grid container spacing={2} alignItems='flex-start'>
           <Grid item sm={8}>
             <Paper className="grid-containers">
-              <Typography className="header-title" variant="h5" displayInline>Recent Housekeeping Data</Typography>
+              <Typography className="header-title" variant="h5">Recent Housekeeping Data</Typography>
               <HousekeepingList isLoading={this.state.isLoading} housekeeping={this.state.housekeeping} empty={this.state.emptyhk} />
             </Paper>
           </Grid>
           <Grid item sm={4}>
             <Paper className="grid-containers">
-              <Typography variant="h5" displayInline>Upcoming Passovers</Typography>
-              <Passovers isLoading={this.state.isLoading} passovers={this.state.passovers} empty={this.state.emptypassover} mostRecentPass={this.state.mostRecentPass}/>
+              <Typography variant="h5">Upcoming Passovers</Typography>
+              <Passovers isLoading={this.state.isLoading} passovers={this.state.passovers} empty={this.state.emptypassover} mostRecentPass={this.state.mostRecentPass} />
             </Paper>
           </Grid>
         </Grid>
 
-        </div>
+      </div>
     )
   }
 }

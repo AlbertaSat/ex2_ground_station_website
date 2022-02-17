@@ -1,142 +1,189 @@
 """
 The Communications Module is responsible for sending and retrieving data 
 with the satellite (or the simulator).
-To use the included simulator python module instead of gs_software:
-    import satellite_simulator.antenna as antenna
 """
-import ex2_ground_station_software.src.groundstation as gs_software
-import libcsp.build.libcsp_py3 as libcsp
-from groundstation.backend_api.communications import CommunicationList
-from gs_commands import GsCommands
+
 import time
 import json
 import signal
+from enum import Enum
 
-# some global variables
+from groundstation.backend_api.flightschedule import FlightScheduleList, Flightschedule
+from groundstation.backend_api.communications import CommunicationList, Communication
+
+
+class Connection(Enum):
+    SIMULATOR = 1
+    SATELLITE = 2
+
+
+# Global variables
+mode = None
 communication_list = CommunicationList()
-gs_commands_obj = GsCommands()
-gs_commands_dict = gs_commands_obj.get_gs_commands_dict()
+communication_patch = Communication()
+flightschedule_list = FlightScheduleList()
+flightschedule_patch = Flightschedule()
 
 
-def send(socket, data):
-    """
-    Pipes the incoming data (probably a Command tuple) to the socket 
-    (probably the Simulator)
-
-    :param int socket: The socket for sending data into
-    :param str data: the data to send
-
-    :returns: response from the socket
-    :rtype: str
-    """
-    print("SENDING ", data)
-    return socket.send(data)
-
-
-def example():
-    telecommands = ['ping', 'get-hk', 'turn-on 0', 'ping', 'get-hk']
-    for telecommand in telecommands:
-        resp = send(gs_software, telecommand)
-        print(resp)
-
-
-# handle the sig alarm
+# Handle the sig alarm
 def handler(signum, frame):
     exit()
 
 
-# handle message in communication table
 def handle_message(message):
     """
     Messages sent to comm will pass through this function, essentially acting 
-    as a decorator. Refer to gs_commands module
+    as a decorator.
+
+    TODO: this needs to be implmented to support flight schedule functionality.
 
     :param str message: The incoming message to comm
 
     :returns: Return is dependent on the handler function triggered
     :rtype: Optional
     """
-    handle = gs_commands_dict.get(message)
+    # Groundstation functions with additional capabilities rather than just sending a string
+    gs_commands = {
+        'upload-fs': upload_fs
+    }
+
+    handle = gs_commands.get(message)
+    
     if handle:
         return handle()
     else:
         return message
 
 
-def communication_loop(csp, sock):
+def upload_fs():
     """
-    Main communication loop which polls for messages addressed to comm 
-    (i.e. messages it needs to send to satellite)
+    If there is no queued flightschedule log it, otherwise, set its status 
+    to uploaded and send something to the flight schedule (this may be handled
+    differently right now we are blindly trusting that a sent flightschedule 
+    is uploaded) and no data of the flight schedule is actually sent at the 
+    moment.
+
+    TODO: this needs to be implemented properly.
+    """
+    local_args = {'limit': 1, 'queued': True}
+    fs = flightschedule_list.get(local_args=local_args)
+
+
+    if len(fs[0]['data']['flightschedules']) < 1:
+        save_response('A queued flight schedule does not exist.')
+        return None
+    else:
+        fs_id = fs[0]['data']['flightschedules'][0]['flightschedule_id']
+        fs_ex = fs[0]['data']['flightschedules'][0]['execution_time']
+        local_data = {'status': 3, 'execution_time': fs_ex, 'commands': []}
+
+        flightschedule_patch.patch(
+            fs_id, local_data=json.dumps(local_data))
+
+        return 'upload-fs'
+
+
+def send_to_simulator(msg):
+    try:
+        return antenna.send(msg)
+    except Exception as e:
+        print('Unexpected error occured:', e)
+
+
+def send_to_satellite(sock, csp, msg):
+    try:
+        to_send, server, port = csp.getInput(inVal=msg)
+        csp.send(server, port, to_send)
+        return csp.receive(sock)
+    except Exception as e:
+        print('Unexpected error occured:', e)
+
+
+# Save the satellite response as a comm log
+def save_response(message):
+    print('Received:', message)
+    message = {
+        'message': str(message),
+        'sender': 'comm',
+        'receiver': 'logs',
+        'is_queued': False
+    }
+    message = json.dumps(message)
+    communication_list.post(local_data=message)
+
+
+def communication_loop(sock=None, csp=None):
+    """
+    Main communication loop which polls for messages that are queued and addressed to comm 
+    (i.e. messages it needs to send to satellite). This should be run when a passover is
+    expected to occur.
 
     :param Csp csp: The Csp instance. See groundStation.py
     """
-    request_data = {'last_id': 0, 'receiver': 'comm'}
-    # get the id of the last entry in the communication list
-    # so we dont send anything before that
-    # for our request arguments include max to get the entry with the max id
-    comm_last_id = communication_list.get(local_data={'max': True})[0]
-    if len(comm_last_id['data']['messages']) > 0:
-        request_data['last_id'] = comm_last_id['data']['messages'][0]['message_id']
-    else:
-        print("NOTE: there are no communications recorded.\n")
+    if mode == Connection.SATELLITE and (sock is None or csp is None):
+        raise Exception('Csp instance must be specified if sending to satellite')
 
-    # loop to continuously check communication table
-    # if we have messages address to comm greater than the last id
-    # send them to the satellite
-    # possibly change polling to select on a named pipe, probably the easiest
-    # for the server to notify the comm module on new data
-    # or polling might be just fine
+    request_data = {'is_queued': True, 'receiver': 'comm', 'newest-first': False}
+
+    # Check communication table every minute
     while True:
+        # Get queued communications
         messages = communication_list.get(local_data=request_data)[0]
 
+        # If we have queued messages addressed to comm send them to the satellite
         if len(messages['data']['messages']) > 0:
             for message in messages['data']['messages']:
                 if message['message']:
-                    # handle_message() checks against
-                    # data = handle_message(message['message'])
+                    # TODO may need to handle flight schedule stuff here using handle_message
 
-                    # if data:
-                    #     response = send(gs_software, data)
-                    #     gs_commands_obj.handle_response(resp)
-                    outMsg = message['message'].replace(" ", ".")
-                    print(outMsg)
-                    # Send the message to the socket (i.e. the satellite)
-                    try:
-                        toSend, server, port = csp.getInput(inVal=outMsg)
-                        csp.send(server, port, toSend)
-                        received = csp.receive(sock)
-                        print("Received", received)
-                    except Exception as e:
-                        print(e)
-                    if isinstance(received, list):
-                        for item in received:
-                            print(item)
-                            # Save the satellite response as a comm log
-                            message = {
-                                'message': str(item),
-                                'sender': 'socket',
-                                'receiver': 'logs'
-                            }
-                            message = json.dumps(message)
-                            communication_list.post(local_data=message)
-            request_data['last_id'] = messages['data']['messages'][-1]['message_id']
-        time.sleep(1)
+                    # Send the message to the satellite
+                    response = None
+                    msg = message['message'].replace(" ", ".")
+                    print('Sent:', msg)
+                    if mode == Connection.SIMULATOR:
+                        response = send_to_simulator(msg)
+                    elif mode == Connection.SATELLITE:
+                        response = send_to_satellite(sock, csp, msg)
+
+                    if response:
+                        if isinstance(response, list):
+                            for item in response:
+                                save_response(item)
+                        else:
+                            save_response(response)
+                        
+                        # Denote that the message has been executed if successful
+                        communication_patch.patch(
+                            message['message_id'], 
+                            local_data=json.dumps({'is_queued': False}))
+        
+        time.sleep(5)
 
 
 def main():
-    # set a sigalarm so the comm module will close after a specified amount of time
+    # Terminate after 10 minutes
     signal.signal(signal.SIGALRM, handler)
-    signal.alarm(120)
+    signal.alarm(10 * 60)
 
-    # init the ground station CSP instance
-    # TODO: Messy! Put this in a function in gs_software instead?
-    opts = gs_software.getOptions()
-    csp = gs_software.Csp(opts)
-    sock = libcsp.socket()
-    libcsp.bind(sock, libcsp.CSP_ANY)
-
-    communication_loop(csp, sock)
+    if mode == Connection.SIMULATOR:
+        communication_loop()
+    elif mode == Connection.SATELLITE:
+        # TODO maybe clean up by putting in a function in gs_software
+        opts = gs_software.getOptions()
+        csp = gs_software.Csp(opts)
+        sock = libcsp.socket()
+        libcsp.bind(sock, libcsp.CSP_ANY)
+        communication_loop(sock, csp)
 
 
 if __name__ == '__main__':
+    if input('Would like to communicate with the satellite simulator (if not, the program ' 
+        'will attempt to communicate with the satellite) [Y/n]: ').strip() in ('Y', 'y'):
+        mode = Connection.SIMULATOR
+        import satellite_simulator.antenna as antenna
+    else:
+        mode = Connection.SATELLITE
+        import ex2_ground_station_software.src.groundstation as gs_software
+        import libcsp.build.libcsp_py3 as libcsp
+
     main()

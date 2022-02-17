@@ -246,10 +246,8 @@ class FlightScheduleList(Resource):
                 }
                 return response_object, 400
 
-        # TODO validate commands
         flightschedule_commands = validated_data.pop('commands')
         flightschedule = FlightSchedules(**validated_data)
-        #db.session.add(flightschedule)
 
         for command_data in flightschedule_commands:
             command_id = command_data['command']['command_id']

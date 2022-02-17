@@ -251,16 +251,18 @@ class Passover(db.Model):
 # This will be the table of telecommands being sent to the satellite as well as the responses
 # the table will allow us to send and receive all commands transactionally allowing us to log
 # them as well as their responses
-# TODO: discuss with team the design/structure for the communications table
 class Communications(db.Model):
     __tablename__ = 'communications'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    message = db.Column(db.String, nullable=False)          # Every command is going to be formatted as a string for simplicity
-    timestamp = db.Column(db.DateTime, nullable=False)      # Time at which the command was appended to the table
+    message = db.Column(db.String, nullable=False)          # every command is going to be formatted as a string for simplicity
+    timestamp = db.Column(db.DateTime, nullable=False)      # time at which the command was appended to the table
     sender = db.Column(db.String, nullable=False)           # who sent the command (comm/react/command) as a note, the comm can send commands as responses from the satellite
     receiver = db.Column(db.String, nullable=False)         # who the intended recipient of the command is (comm/react web page/command line)
-    #response = db.Column(db.Integer, db.ForeignKey('communications.id')) # one possible value for connecting satellite responses to sent telecommands
+    is_queued = db.Column(db.Boolean, default=False, nullable=False) # whether the command is queued to be sent to the satellite or not
+
+    # TODO: connecting satellite responses to sent telecommands 
+    #response = db.Column(db.Integer, db.ForeignKey('communications.id'))
 
     def to_json(self):
         """Returns a dictionary of some selected model attributes
@@ -270,5 +272,6 @@ class Communications(db.Model):
             'message': self.message,
             'timestamp': self.timestamp.isoformat(),
             'sender': self.sender,
-            'receiver': self.receiver
+            'receiver': self.receiver,
+            'is_queued': self.is_queued
         }

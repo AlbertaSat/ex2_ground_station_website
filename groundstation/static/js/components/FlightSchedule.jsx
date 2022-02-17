@@ -319,7 +319,7 @@ class FlightSchedule extends Component{
 			<Paper className="grid-containers">
 			<Grid container style={{paddingBottom: '12px'}}>
 				<Grid item xs={11}>
-					<Typography variant="h5" displayInline style={{padding: '10px'}}>Flight Schedules</Typography>
+					<Typography variant="h5" style={{padding: '10px'}}>Flight Schedules</Typography>
 				</Grid>
 				<Grid item xs={1} style={{textAlign: 'right'}}>
 					<Fab style={{position: 'inherit'}}onClick={ (event) => this.handleAddFlightOpenClick(event) }>

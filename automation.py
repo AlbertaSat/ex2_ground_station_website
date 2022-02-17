@@ -23,7 +23,8 @@ def automate_communication():
             message = {
                 'message': line,
                 'sender': 'automation',
-                'receiver': 'comm'
+                'receiver': 'comm',
+                'is_queued': True
             }
 
             message = json.dumps(message)

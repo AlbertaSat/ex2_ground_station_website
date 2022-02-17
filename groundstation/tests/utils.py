@@ -63,7 +63,8 @@ def fake_message_as_dict(message='test', sender='tester', receiver='tester2'):
         'message': message,
         'sender': sender,
         'receiver': receiver,
-        'timestamp':datetime.datetime.now(datetime.timezone.utc)
+        'timestamp': datetime.datetime.now(datetime.timezone.utc),
+        'is_queued': False
     }
 
     return fake_message

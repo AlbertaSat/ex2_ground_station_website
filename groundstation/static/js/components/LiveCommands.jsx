@@ -6,9 +6,6 @@ import TextField from '@material-ui/core/TextField';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Typography from '@material-ui/core/Typography';
 
-// TODO posting messages should refer to current logged in user
-// TODO: figue out how to scroll paper automatically as responses are added dynamically
-
 const useStyles = makeStyles(theme => ({
   container: {
     display: 'flex',
@@ -56,7 +53,7 @@ class LiveCommands extends Component {
     }
 
     componentDidMount() {
-        fetch('/api/telecommands',{headers: {'Authorization':'Bearer '+ localStorage.getItem('auth_token')}})
+        fetch('/api/telecommands',{headers: {'Authorization': 'Bearer ' + localStorage.getItem('auth_token')}})
         .then(results => {
             return results.json();
         }).then(data => {
@@ -67,10 +64,10 @@ class LiveCommands extends Component {
                 splashJobsLeft: prevState.splashJobsLeft - 1
             }));
         } else {
-            // NOTE: should do something here maybe
-            console.log("Error loading telecommands!");
+            console.error('Error loading telecommands!');
+            console.error(data);
         }
-     });
+        });
         fetch('/api/communications?max=true',{headers: {'Authorization':'Bearer '+ localStorage.getItem('auth_token')}})
         .then(results => {
             return results.json();
@@ -88,8 +85,8 @@ class LiveCommands extends Component {
                     splashJobsLeft: prevState.splashJobsLeft - 1
                 }));
             } else {
-                // NOTE: should do something here maybe
-                console.log('error')
+                console.error('Unexpected error occured:');
+                console.error(data);
             }
         });
         this.poll_timer = setInterval(
@@ -145,7 +142,13 @@ class LiveCommands extends Component {
         if (event.key === 'Enter') {
             const text = event.target.value;
             if (this.telecommandIsValid(text)) {
-                const post_data = {timestamp:new Date(Date.now()).toISOString(), message:text, sender:localStorage.getItem('username'), receiver:'comm'};
+                const post_data = {
+                    timestamp: new Date(Date.now()).toISOString(),
+                    message: text,
+                    sender: localStorage.getItem('username'),
+                    receiver: 'comm',
+                    is_queued: true
+                };
 
                 fetch('/api/communications', {
                     method: 'POST',
@@ -164,8 +167,8 @@ class LiveCommands extends Component {
                           textBoxValue:''
                       }));
                     } else {
-                        // NOTE: should do something here maybe
-                        console.log('error')
+                        console.error('Unexpected error occured:');
+                        console.error(data);
                     }
                 });
             } else{
@@ -190,18 +193,18 @@ class LiveCommands extends Component {
         return (
             <div>
                 <div>
-                    <Paper style={{height:"70%", overflow: 'auto'}}>
-                        <Typography className="header-title" variant="h5" displayInline style={{padding: '10px', margin: '20px'}}>Live Commands</Typography>
+                    <Paper style={{height:'70%', overflow: 'auto'}}>
+                        <Typography className='header-title' variant='h5' style={{padding: '10px', margin: '20px'}}>Live Commands</Typography>
                         <CommunicationsList autoScroll={true} displayLog={this.state.displayLog} isEmpty={this.state.isEmpty}/>
                     </Paper>
                 </div>
                 <div>
                     <TextField
-                      id="user-input-textbox"
-                      label="Enter Telecommand"
-                      margin="normal"
-                      variant="outlined"
-                      style={{width:"100%","background-color":"white"}}
+                      id='user-input-textbox'
+                      label='Enter Telecommand'
+                      margin='normal'
+                      variant='outlined'
+                      style={{width:'100%','backgroundColor':'white'}}
                       value={this.state.textBoxValue}
                       onChange={(event) => this.handleChange(event)}
                       onKeyDown={(event) => this.handleKeyPress(event) }

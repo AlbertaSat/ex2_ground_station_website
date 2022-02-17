@@ -117,7 +117,7 @@ class HousekeepingLogList(Resource):
             }
             return response_object, 400
 
-        if newest_first == "true":
+        if newest_first in ("true", True):
             ordering = desc(Housekeeping.last_beacon_time)
         else:
             ordering = Housekeeping.last_beacon_time
