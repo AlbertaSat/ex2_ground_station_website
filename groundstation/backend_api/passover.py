@@ -111,7 +111,7 @@ class PassoverList(Resource):
         current_time = datetime.datetime.now(datetime.timezone.utc)
         passover = Passover.query.filter(Passover.timestamp < current_time).order_by(Passover.timestamp.desc()).limit(1).first()
 
-        message = 'There is a passover happening right now! The timestap for this passover is ' + str(passover.timestamp)
+        message = 'An Ex-Alta 2 passover is beginning now! The timestamp for this passover is {0}'.format(passover.timestamp)
         users = User.query.all()
 
         client = slack.WebClient(token='xoxb-58810056594-3097149250131-dUmjnw0fX3j5mgDE62ZkYJyn')
