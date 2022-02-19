@@ -65,6 +65,7 @@ class Login extends Component {
 
                     localStorage.setItem('username', this.state.username);
                     localStorage.setItem('auth_token', this.state.auth_token);
+                    localStorage.setItem('user_id', response['user_id']);
 
                      this.setState({redirect:true});
                 }

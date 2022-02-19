@@ -66,6 +66,15 @@ class UserValidator(Schema):
     username = fields.String(required=True)
     password = fields.String(required=True)
 
+class UserPatchValidator(Schema):
+    """Validator for patching existing users
+    """
+    username = fields.String(required=False)
+    password = fields.String(required=False)
+    is_admin = fields.Boolean(required=False)
+    slack_id = fields.String(required=False)
+    subscribed_to_slack = fields.Boolean(required=False)
+
 class AuthLoginValidator(Schema):
     """Validator for checking login information is present
     """
