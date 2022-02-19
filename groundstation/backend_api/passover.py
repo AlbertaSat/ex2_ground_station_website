@@ -98,36 +98,5 @@ class PassoverList(Resource):
         }
         return response_object, 201
 
-    @create_context
-    def head(self, local_args=None):
-        """Temporary endpoint to just send slack message
-        
-        :param dict local_args: This should be used in place of the QUERY PARAMS that would be used through HTTP, used for local calls.
-
-        :returns: response_object, status_code
-        :rtype: tuple (dict, int)
-        """
-
-        current_time = datetime.datetime.now(datetime.timezone.utc)
-        passover = Passover.query.filter(Passover.timestamp < current_time).order_by(Passover.timestamp.desc()).limit(1).first()
-
-        message = 'An Ex-Alta 2 passover is beginning now! The timestamp for this passover is {0}'.format(passover.timestamp)
-        users = User.query.all()
-
-        client = slack.WebClient(token='xoxb-58810056594-3097149250131-dUmjnw0fX3j5mgDE62ZkYJyn')
-        for user in users:
-            if user.subscribed_to_slack and user.slack_id is not None:
-                try:
-                    client.chat_postMessage(channel=user.slack_id, text=message)
-                except:
-                    print('Error: slack id "{0}" is invalid'.format(user.slack_id))
-
-        response_object = {
-            'status':'success',
-            'data':{}
-        }
-
-        return response_object, 200
-
 
 api.add_resource(PassoverList, '/api/passovers')
