@@ -86,9 +86,6 @@ class UserEntity(Resource):
             'status': 'success',
             'data': user.to_json()
         }
-
-        print(user.slack_id)
-
         return response_object, 200
 
 
