@@ -4,7 +4,6 @@ from flask_restful import Resource, Api
 from marshmallow import ValidationError
 import datetime
 import json
-import slack
 
 from groundstation import db
 from groundstation.backend_api.models import Passover, User
