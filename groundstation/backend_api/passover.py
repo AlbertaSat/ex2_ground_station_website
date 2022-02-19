@@ -120,7 +120,7 @@ class PassoverList(Resource):
                 try:
                     client.chat_postMessage(channel=user.slack_id, text=message)
                 except:
-                    print('Error: Slack id is invalid')
+                    print('Error: slack id "{0}" is invalid'.format(user.slack_id))
 
         response_object = {
             'status':'success',
