@@ -68,7 +68,7 @@ class UserEntity(Resource):
             return response_object, 404
         
         try:
-            validated_data = self.validator.load(post_data) # update validator for user
+            validated_data = self.validator.load(post_data)
         except ValidationError as err:
             response_object = {
                 'status': 'fail',
