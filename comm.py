@@ -170,8 +170,11 @@ def main():
         # TODO maybe clean up by putting in a function in gs_software
         opts = gs_software.groundStation.options()
         csp = gs_software.groundStation.groundStation(opts.getOptions())
+
+        # Not sure if this socket is needed here as gs_software already manages it.
         sock = libcsp.socket()
         libcsp.bind(sock, libcsp.CSP_ANY)
+
         communication_loop(sock, csp)
 
 
@@ -183,6 +186,8 @@ if __name__ == '__main__':
     else:
         mode = Connection.SATELLITE
         import ex2_ground_station_software.src.groundStation as gs_software
+
+        # Not sure if this is still needed as gs_software already imports it
         import libcsp.build.libcsp_py3 as libcsp
 
     main()
