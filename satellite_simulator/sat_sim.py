@@ -105,6 +105,8 @@ class Satellite:
         self._apply_component_effects_on_satellite_state(current_time)
 
         # TODO: Maybe re-implement executing fs commands but not priority
+        if self.flight_schedule is not None:
+            self._execute_flightschedule(current_time)
 
         if self.time_till_next_beacon <= 0:
             self._broadcast_beacon(current_time)
@@ -170,11 +172,27 @@ class Satellite:
         with open(self.BEACON_BROADCAST_FILE, 'w') as fptr:
             json.dump(beacons_list, fptr, indent=4)
 
+    def _execute_flightschedule(self, current_time):
+        commands = self.flight_schedule['commands']
 
-    # TODO: Needs updating if we want this feature
-    # def _get_fs_command_for_current_time(self):
-    #     pass
+        # Execute all the scheduled commands
+        executed_commands = []
+        for command in commands:
+            exec_time = (datetime.datetime
+                        .strptime(command["timestamp"], '%Y-%m-%d %H:%M:%S.%f')
+                        .replace(tzinfo=datetime.timezone.utc))
+            if current_time >= exec_time:
+                print('EXECUTING FS COMMAND:', command["command"]["command_name"])
+                self._execute_telecommand(command["command"]["command_name"], command["args"])
+                executed_commands.append(command)
 
+        # Remove executed commands from stored fs
+        for executed in executed_commands:
+            self.flight_schedule['commands'].remove(executed)
+
+        # Delete fs once all scheduled commands are executed
+        if len(self.flight_schedule['commands']) <= 0:
+            self.flight_schedule = None
 
     def _execute_telecommand(self, telecommand_name, args):
         telecommand_name = telecommand_name.upper()
@@ -220,6 +238,14 @@ class Satellite:
             time.sleep(response_latency)
         return response
 
+    def receive_fs(self, fs, environment):
+        # Simulate packet loss
+        if random.random() <= environment.packet_drop_probability:
+            return 'NO-RESPONSE'
+
+        self.flight_schedule = fs
+        return 'Loaded Flight Schedule ID: ' + fs['flightschedule_id']
+
 
 class Simulator:
 
@@ -232,6 +258,13 @@ class Simulator:
         self._step()
         self._add_to_log('groundstation', 'satellite', data)
         sat_resp = self.satellite.send(data, self.environment)
+        self._add_to_log('satellite', 'groundstation', sat_resp)
+        return sat_resp
+
+    def upload_fs_to_sat(self, fs):
+        self._step()
+        self._add_to_log('groundstation', 'satellite', fs)
+        sat_resp = self.satellite.receive_fs(fs, self.environment)
         self._add_to_log('satellite', 'groundstation', sat_resp)
         return sat_resp
 

@@ -64,28 +64,25 @@ def upload_fs():
     moment.
 
     TODO: this needs to be implemented properly.
+
+    :returns: A dict representing the flight schedule object
     """
     local_args = {'limit': 1, 'queued': True}
     fs = flightschedule_list.get(local_args=local_args)
 
 
-    if len(fs[0]['data']['flightschedules']) < 1:
-        save_response('A queued flight schedule does not exist.')
-        return None
-    else:
+    if len(fs[0]['data']['flightschedules']) >= 1:
         fs_id = fs[0]['data']['flightschedules'][0]['flightschedule_id']
         fs_ex = fs[0]['data']['flightschedules'][0]['execution_time']
         local_data = {'status': 3, 'execution_time': fs_ex, 'commands': []}
 
-        flightschedule_patch.patch(
-            fs_id, local_data=json.dumps(local_data))
-
-        return 'upload-fs'
+        return flightschedule_patch.patch(
+            fs_id, local_data=json.dumps(local_data))[0]['data']
 
 
 def send_to_simulator(msg):
     try:
-        return antenna.send(msg)
+        return antenna.send(json.dumps(msg))
     except Exception as e:
         print('Unexpected error occured:', e)
 
@@ -126,6 +123,12 @@ def communication_loop(sock=None, csp=None):
 
     # Check communication table every minute
     while True:
+        # Upload any queued flight schedules
+        fs_response = upload_fs()
+        if fs_response != None:
+            resp = send_to_simulator(fs_response)
+            save_response(resp)
+
         # Get queued communications
         messages = communication_list.get(local_data=request_data)[0]
 
@@ -162,7 +165,7 @@ def communication_loop(sock=None, csp=None):
 def main():
     # Terminate after 10 minutes
     signal.signal(signal.SIGALRM, handler)
-    signal.alarm(10 * 60)
+    signal.alarm(60 * 60)
 
     if mode == Connection.SIMULATOR:
         communication_loop()
