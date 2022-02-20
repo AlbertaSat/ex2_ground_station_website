@@ -27,3 +27,4 @@ wheel==0.36.2
 Werkzeug==0.16.0
 selenium
 gunicorn==19.9.0
+slackclient==2.9.3
