@@ -1,0 +1,39 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug comm.py",
+            "type": "python",
+            "request": "launch",
+            "env": {
+                "FLASK_APP": "groundstation/__init__.py",
+                "FLASK_ENV": "development",
+                "APP_SETTINGS": "groundstation.config.DevelopmentConfig",
+                "SECRET_KEY": "\xffY\x8dG\xfbu\x96S\x86\xdfu\x98\xe8S\x9f\x0e\xc6\xde\xb6$\xab:\x9d\x8b",
+                "LD_LIBRARY_PATH": "libcsp/build",
+                "PYTHONPATH": ".",
+            },
+            "program": "${workspaceFolder}/comm.py",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Debug Satellite Simulator",
+            "type": "python",
+            "request": "launch",
+            "env": {
+                "FLASK_APP": "groundstation/__init__.py",
+                "FLASK_ENV": "development",
+                "APP_SETTINGS": "groundstation.config.DevelopmentConfig",
+                "SECRET_KEY": "\xffY\x8dG\xfbu\x96S\x86\xdfu\x98\xe8S\x9f\x0e\xc6\xde\xb6$\xab:\x9d\x8b",
+                "LD_LIBRARY_PATH": "libcsp/build",
+                "PYTHONPATH": ".",
+            },
+            "program": "${workspaceFolder}/satellite_simulator/sat_server.py",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        }
+    ]
+}
