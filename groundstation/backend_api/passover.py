@@ -6,7 +6,7 @@ import datetime
 import json
 
 from groundstation import db
-from groundstation.backend_api.models import Passover
+from groundstation.backend_api.models import Passover, User
 from groundstation.backend_api.validators import PassoverListValidator
 from groundstation.backend_api.utils import create_context, login_required
 
@@ -96,5 +96,6 @@ class PassoverList(Resource):
             'message':'Passovers were successfully created'
         }
         return response_object, 201
+
 
 api.add_resource(PassoverList, '/api/passovers')

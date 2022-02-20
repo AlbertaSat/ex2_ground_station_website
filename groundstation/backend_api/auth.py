@@ -53,7 +53,9 @@ class AuthLogin(Resource):
                 response_object = {
                     'status':'success',
                     'message':'User successfully logged in.',
-                    'auth_token':auth_token.decode()
+                    'auth_token':auth_token.decode(),
+                    'user_id': user.id,
+                    'subscribed_to_slack': user.subscribed_to_slack
                 }
                 return response_object, 200
             else:
