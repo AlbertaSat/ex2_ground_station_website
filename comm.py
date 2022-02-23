@@ -55,7 +55,7 @@ def handle_message(message):
         return message
 
 
-def upload_fs():
+def get_queued_fs():
     """
     If there is no queued flightschedule log it, otherwise, set its status
     to uploaded and send something to the flight schedule (this may be handled
@@ -124,9 +124,9 @@ def communication_loop(sock=None, csp=None):
     # Check communication table every minute
     while True:
         # Upload any queued flight schedules
-        fs_response = upload_fs()
-        if fs_response != None:
-            resp = send_to_simulator(fs_response)
+        queued_fs = get_queued_fs()
+        if queued_fs != None:
+            resp = send_to_simulator(queued_fs)
             save_response(resp)
 
         # Get queued communications
