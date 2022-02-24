@@ -79,6 +79,8 @@ def get_queued_fs():
         return flightschedule_patch.patch(
             fs_id, local_data=json.dumps(local_data))[0]['data']
 
+    return None
+
 
 def send_to_simulator(msg):
     try:
@@ -125,7 +127,7 @@ def communication_loop(sock=None, csp=None):
     while True:
         # Upload any queued flight schedules
         queued_fs = get_queued_fs()
-        if queued_fs != None:
+        if queued_fs is not None:
             resp = send_to_simulator(queued_fs)
             save_response(resp)
 
@@ -158,6 +160,17 @@ def communication_loop(sock=None, csp=None):
                         communication_patch.patch(
                             message['message_id'],
                             local_data=json.dumps({'is_queued': False}))
+
+        # Fetch any flight schedule command responses
+        # TODO: How would fs work with gs_software/obc?
+        # TODO: Find an efficient way to continually listen for any kind of message from sat
+        #       since right now, comm.py is a client and must continuously request from sat_server
+        if mode == Connection.SIMULATOR:
+            resp = send_to_simulator('fetch-fs')
+            if resp != 'null':
+                resp = json.loads(resp)
+                for item in resp:
+                    save_response(item)
 
         time.sleep(5)
 

@@ -1,3 +1,4 @@
+from multiprocessing.sharedctypes import Value
 from . import helpers
 import random
 import json
@@ -84,7 +85,10 @@ class Satellite:
 
         self.last_step_time = None
         self.time_till_next_beacon = beacon_interval
+
         self.flight_schedule = None
+        self.flight_schedule_responses = []
+
         # convert list of components to dict for easier searching
         self.components = defaultdict(list)
         for c in components:
@@ -178,12 +182,19 @@ class Satellite:
         # Execute all the scheduled commands
         executed_commands = []
         for command in commands:
-            exec_time = (datetime.datetime
-                        .strptime(command["timestamp"], '%Y-%m-%d %H:%M:%S.%f')
-                        .replace(tzinfo=datetime.timezone.utc))
+            try:
+                exec_time = (datetime.datetime
+                            .strptime(command["timestamp"], '%Y-%m-%d %H:%M:%S.%f')
+                            .replace(tzinfo=datetime.timezone.utc))
+            except ValueError: # Sometimes the date format is off for some reason
+                exec_time = (datetime.datetime
+                            .strptime(command["timestamp"], '%Y-%m-%d %H:%M:%S')
+                            .replace(tzinfo=datetime.timezone.utc))
             if current_time >= exec_time:
-                print('EXECUTING FS COMMAND:', command["command"]["command_name"])
-                self._execute_telecommand(command["command"]["command_name"], command["args"])
+                print('EXECUTING FS COMMAND:', command["command"]["command_name"], "at", current_time)
+                args = [arg["argument"] for arg in command["args"]]
+                resp = self._execute_telecommand(command["command"]["command_name"], args)
+                self.flight_schedule_responses.append(resp)
                 executed_commands.append(command)
 
         # Remove executed commands from stored fs
@@ -212,6 +223,12 @@ class Satellite:
             response = '200 OK'
         elif telecommand_name == 'UPLOAD-FS':
             response = '200 OK'
+        elif telecommand_name == 'FETCH-FS':
+            if self.flight_schedule_responses:
+                response = self.flight_schedule_responses
+                self.flight_schedule_responses = []
+            else:
+                response = None
         else:
             response = 'UNRECOGNIZED-COMMAND'
 
@@ -244,7 +261,7 @@ class Satellite:
             return 'NO-RESPONSE'
 
         self.flight_schedule = fs
-        return 'Loaded Flight Schedule ID: ' + fs['flightschedule_id']
+        return 'Loaded Flight Schedule ID: ' + str(fs['flightschedule_id'])
 
 
 class Simulator:
@@ -256,10 +273,12 @@ class Simulator:
 
     def send_to_sat(self, data):
         self._step()
-        self._add_to_log('groundstation', 'satellite', data)
         sat_resp = self.satellite.send(data, self.environment)
-        self._add_to_log('satellite', 'groundstation', sat_resp)
-        return sat_resp
+        if sat_resp is not None:
+            self._add_to_log('groundstation', 'satellite', data)
+            self._add_to_log('satellite', 'groundstation', sat_resp)
+            return sat_resp
+        return None
 
     def upload_fs_to_sat(self, fs):
         self._step()
