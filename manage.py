@@ -35,6 +35,7 @@ from groundstation.backend_api.utils import add_telecommand, \
 app = create_app()
 cli = FlaskGroup(create_app=create_app)
 
+import re
 
 @cli.command('recreate_db')
 def recreate_db():
@@ -88,19 +89,8 @@ def seed_db():
     db.session.commit()
 
     # TODO: import groundStation commands (apps, services) instead of hardcoding
-    commands = {
-        'ping': (0, False),  # (number of args, is_dangerous)
-        'get-hk': (0, False),
-        'turn-on': (1, True),
-        'turn-off': (1, True),
-        'upload-fs': (0, False),
-        'adjust-attitude': (1, True),
-        'magnetometer': (0, False),
-        'imaging': (0, False),
-        'demo.time_management.set_time': (1, False),
-        'demo.time_management.get_time': (0, False)
-    }
-
+    commands = import_commands()
+    
     for name, (num_args, is_danger) in commands.items():
         c = add_telecommand(command_name=name,
                             num_arguments=num_args, is_dangerous=is_danger)
@@ -251,6 +241,36 @@ def demo_db():
     for i in range(5):
         add_passover(timestamp=now + timedelta(minutes=i*10))
 
+def import_commands():
+    """Imports commands from the CommandDocs.txt file in ex2_ground_station_software.
+    """
+
+    with open("ex2_ground_station_software/CommandDocs.txt", 'r') as f:
+        if not f:
+            print("Couldn't find list of commands at ex2_ground_station_software/CommandDocs.txt.\
+                 Seeding database with hardcoded example commands.")
+            return {
+                'ping': (0, False),
+                'get-hk': (0, False),
+                'turn-on': (1, True),
+                'turn-off': (1, True),
+                'set-fs': (1, True),
+                'upload-fs': (0, False)
+            }
+        text = f.read()
+
+    commands = {}
+    blocks = re.findall("\.([A-Z_]*)[^\[]*\[([^\]]*)\]", text)
+
+    for (name, arguments) in blocks:
+        if arguments == "None":
+            # figure out how to find if command is dangerous?
+            commands[name.lower()] = (0, False)
+        else:
+            num_arguments = len(re.findall(',', arguments)) + 1
+            commands[name.lower()] = (num_arguments, False)
+
+    return commands
 
 if __name__ == '__main__':
     cli()
