@@ -94,7 +94,7 @@ def seed_db():
             db.session.add(housekeeping)
     db.session.commit()
 
-    commands = import_commands()
+    commands = import_commands() # empty dictionary if import fails
     for name, (num_args, is_danger) in commands.items():
         c = add_telecommand(command_name=name,
                             num_arguments=num_args, is_dangerous=is_danger)
@@ -103,30 +103,31 @@ def seed_db():
         creation_date=timestamp, upload_date=timestamp, status=2, execution_time=timestamp)
 
     # pick commands from those added to add to flightschedule
-    command = Telecommands.query.get(1)
-    flightschedule_commands = add_command_to_flightschedule(
-        timestamp=timestamp,
-        flightschedule_id=flightschedule.id,
-        command_id=command.id
-    )
-    command = Telecommands.query.get(2)
-    flightschedule_commands = add_command_to_flightschedule(
-        timestamp=timestamp,
-        flightschedule_id=flightschedule.id,
-        command_id=command.id
-    )
+    if len(commands) >= 1:
+        command = Telecommands.query.get(1)
+        flightschedule_commands = add_command_to_flightschedule(
+            timestamp=timestamp,
+            flightschedule_id=flightschedule.id,
+            command_id=command.id
+        )
+        flightschedulecommand_arg = add_arg_to_flightschedulecommand(
+        index=0,
+        argument='5',
+        flightschedule_command_id=flightschedule_commands.id
+        )
+    if len(commands) >= 2:
+        command = Telecommands.query.get(2)
+        flightschedule_commands = add_command_to_flightschedule(
+            timestamp=timestamp,
+            flightschedule_id=flightschedule.id,
+            command_id=command.id
+        )
 
     add_user(username='Admin_user', password='Admin_user', is_admin=True)
     add_user(username='user1', password='user1', is_admin=False)
     add_user(username='user2', password='user2', is_admin=False)
     add_user(username='albert', password='albert', is_admin=False)
     add_user(username='berta', password='berta', is_admin=True)
-
-    flightschedulecommand_arg = add_arg_to_flightschedulecommand(
-        index=0,
-        argument='5',
-        flightschedule_command_id=flightschedule_commands.id
-    )
 
     message = add_message_to_communications(
         timestamp=timestamp,
@@ -180,11 +181,11 @@ def demo_db():
 
     commands = {
         'ping': (0, False),
-        'get-hk': (0, False),
-        'turn-on': (1, True),
-        'turn-off': (1, True),
-        'set-fs': (1, True),
-        'upload-fs': (0, False)
+        'get_hk': (0, False),
+        'turn_on': (1, True),
+        'turn_off': (1, True),
+        'set_fs': (1, True),
+        'upload_fs': (0, False)
     }
 
     for name, (num_args, is_danger) in commands.items():
@@ -200,7 +201,7 @@ def demo_db():
         command_id=command.id
     )
 
-    command = Telecommands.query.filter_by(command_name='turn-on').first()
+    command = Telecommands.query.filter_by(command_name='turn_on').first()
     flightschedule_commands = add_command_to_flightschedule(
         timestamp=timestamp,
         flightschedule_id=flightschedule.id,
@@ -255,25 +256,18 @@ def demo_db():
 def import_commands():
     """Imports commands from the CommandDocs.txt file in ex2_ground_station_software.
     """
-    with open("ex2_ground_station_software/CommandDocs.txt", 'r') as f:
-        if not f:
-            print("Couldn't find list of commands at ex2_ground_station_software/CommandDocs.txt.\
-                 Seeding database with hardcoded example commands.")
-            return {
-                'ping': (0, False),
-                'get-hk': (0, False),
-                'turn-on': (1, True),
-                'turn-off': (1, True),
-                'set-fs': (1, True),
-                'upload-fs': (0, False)
-            }
-        text = f.read()
+    try:
+        with open("ex2_ground_station_software/CommandDocs.txt", 'r') as f:
+            text = f.read()
+    except FileNotFoundError:
+        print("Couldn't find list of commands at ex2_ground_station_software/CommandDocs.txt. Seeding database with no commands.")
+        return {}
 
     commands = {}
-    blocks = re.findall("\.([A-Z_]*)[^\[]*\[([^\]]*)\]", text)
+    blocks = re.findall("[\.\n]([A-Z0-9_]*):[^\[]*\[([^\]]*)\]", text)
 
     for (name, arguments) in blocks:
-        # TODO: figure out how to find if command is dangerous, for is_dangerous boolean value
+        # Set is_dangerous to False for now, as it isn't specified in ground_station_software documentation
         if arguments == "None":
             commands[name.lower()] = (0, False) # (num_arguments, is_dangerous)
         else:
