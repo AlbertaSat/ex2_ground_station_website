@@ -2,7 +2,7 @@
 # For Ubuntu
 
 # Fetch submodules
-git submodules update --init --recursive
+git submodule update --init --recursive
 
 # Fetch libcsp dependencies
 # NOTE: Python is required but not installed here as to not interfere
