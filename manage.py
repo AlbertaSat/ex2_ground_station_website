@@ -257,18 +257,18 @@ def import_commands():
     """Imports commands from the CommandDocs.txt file in ex2_ground_station_software.
     """
     try:
-        with open("ex2_ground_station_software/CommandDocs.txt", 'r') as f:
+        with open('ex2_ground_station_software/CommandDocs.txt', 'r') as f:
             text = f.read()
     except FileNotFoundError:
-        print("Couldn't find list of commands at ex2_ground_station_software/CommandDocs.txt. Seeding database with no commands.")
+        print('Couldn't find list of commands at ex2_ground_station_software/CommandDocs.txt. Seeding database with no commands.')
         return {}
 
     commands = {}
-    blocks = re.findall("[\.\n]([A-Z0-9_]*):[^\[]*\[([^\]]*)\]", text)
+    blocks = re.findall('[\.\n]([A-Z0-9_]*):[^\[]*\[([^\]]*)\]', text)
 
     for (name, arguments) in blocks:
         # Set is_dangerous to False for now, as it isn't specified in ground_station_software documentation
-        if arguments == "None":
+        if arguments == 'None':
             commands[name.lower()] = (0, False) # (num_arguments, is_dangerous)
         else:
             num_arguments = len(re.findall(',', arguments)) + 1
