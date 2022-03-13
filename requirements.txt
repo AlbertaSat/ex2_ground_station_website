@@ -17,6 +17,7 @@ marshmallow==3.2.1
 numpy==1.22.2
 psycopg2-binary==2.8.6
 pycparser==2.20
+pyserial==3.5
 python-dateutil==2.8.0
 python-editor==1.0.4
 pytz==2019.3
