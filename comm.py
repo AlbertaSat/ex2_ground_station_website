@@ -110,8 +110,7 @@ def convert_command_syntax(cmd: str):
 
 def send_to_satellite(sock, csp, msg):
     try:
-        command = convert_command_syntax(msg)
-        server, port, toSend = csp.getInput(inVal=command)
+        server, port, toSend = csp.getInput(inVal=msg)
         return csp.transaction(server, port, toSend)
     except Exception as e:
         print('Unexpected error occured:', e)
@@ -156,11 +155,13 @@ def communication_loop(sock=None, csp=None):
 
                     # Send the message to the satellite
                     response = None
-                    msg = message['message'].replace(" ", ".")
+                    msg = message['message']
                     print('Sent:', msg)
                     if mode == Connection.SIMULATOR:
+                        msg = message['message'].replace(" ", ".")
                         response = send_to_simulator(msg)
                     elif mode == Connection.SATELLITE:
+                        msg = convert_command_syntax(msg)
                         response = send_to_satellite(sock, csp, msg)
 
                     if response:
