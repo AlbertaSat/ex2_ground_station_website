@@ -89,10 +89,29 @@ def send_to_simulator(msg):
     except Exception as e:
         print('Unexpected error occured:', e)
 
+def convert_command_syntax(cmd: str):
+    """
+    Converts website command syntax to ground station software's syntax.
+
+    Currently, the website's command syntax is:
+        `command.name arg1 arg2 ...`
+    but ground station software's command syntax is:
+        `command.name(arg1 arg2 ...)`
+
+    TODO: Eventually, change the "Live Commands" syntax on the website
+          to match ground station software's for consistency.
+
+    :param str cmd: A command entered from the website.
+    :returns: The same command but in ground station software's syntax.
+    :rtype: str
+    """
+    tokens = cmd.split()
+    return tokens[0] + '(' + ' '.join(tokens[1:]) + ')'
 
 def send_to_satellite(sock, csp, msg):
     try:
-        server, port, toSend = csp.getInput(inVal=msg)
+        command = convert_command_syntax(msg)
+        server, port, toSend = csp.getInput(inVal=command)
         return csp.transaction(server, port, toSend)
     except Exception as e:
         print('Unexpected error occured:', e)
