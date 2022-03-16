@@ -35,6 +35,10 @@ def automate_communication():
             message = json.dumps(message)
             sender.post(local_data=message)
 
+    timestamp = str(datetime.utcnow())
+    message = 'An Ex-Alta 2 passover is beginning now! The timestamp for this passover is {0}'.format(timestamp)
+    send_slack_notifs(message)
+
 
 def automate_passovers():
     """Before Automation terminates, this function is run to set a 'wake up' timer for the next passover, so that it will
@@ -45,10 +49,6 @@ def automate_passovers():
 
     # the automation will also handle queuing passover times
     passovers = passover.get(local_args={'limit': 1, 'next': 'true'})
-    last_pass = passover.get(local_args={'most-recent': 'true'})[0]['data']['most_recent_passover']
-
-    message = 'An Ex-Alta 2 passover is beginning now! The timestamp for this passover is {0}'.format(last_pass['timestamp'])
-    send_slack_notifs(message)
 
     if passovers[1] == 200:
         passover_data = passovers[0]['data']['next_passovers']
