@@ -96,6 +96,31 @@ class UserList(Resource):
         super(UserList, self).__init__()
 
     @create_context
+    def get(self, local_args=None):
+        """Endpoint for getting a list of users
+
+        :param dict local_args: This should be used in place of the QUERY PARAMS 
+            that would be used through HTTP, used for local calls.
+
+        :returns: response_object, status_code
+        :rtype: tuple (dict, int)
+        """
+        response_object = {
+            'status':'success',
+            'data':{}
+        }
+        if not local_args:
+            query_limit = request.args.get('limit')
+        else:
+            query_limit = local_args.get('limit')
+
+        users = User.query.order_by(User.id).limit(query_limit).all()
+
+        response_object['data'] = users
+
+        return response_object, 200
+
+    @create_context
     @login_required
     def post(self, local_data=None):
         """Endpoint for creating a new user. WARNING: This currently should not

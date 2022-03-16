@@ -104,6 +104,7 @@ class HousekeepingValidator(Schema):
     current_out = fields.Float(required=False)
     no_MCU_resets = fields.Integer(required=False)
     last_beacon_time = fields.DateTime(format='iso', required=True)
+    tle = fields.String(required=False)
     watchdog_1 = fields.Integer(required=False) # 3 watchdogs
     watchdog_2 = fields.Integer(required=False)
     watchdog_3 = fields.Integer(required=False)
