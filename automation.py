@@ -83,6 +83,8 @@ def automate_passovers():
 
 def send_slack_notifs(message):
     """Sends out a Slack message to all subscribed users.
+
+    :param str message: Message to be sent to users on Slack.
     """
     # api call to get all users
     user_list = UserList()
