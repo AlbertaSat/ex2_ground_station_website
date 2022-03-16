@@ -7,6 +7,7 @@ from groundstation.backend_api.utils import add_passover
 from groundstation.backend_api.user import UserList
 from datetime import datetime, timezone
 from pyorbital.orbital import Orbital
+import os
 import slack
 import json
 import subprocess
@@ -88,13 +89,17 @@ def send_slack_notifs(message):
 
     users = user_list.get(local_args={'limit': 1000})[0]['data']
 
-    client = slack.WebClient(token='xoxb-58810056594-3097149250131-xK3JH7caXxC5oQ9aQ0etzAsM')
-    for user in users:
-        if user.subscribed_to_slack and user.slack_id is not None:
-            try:
-                client.chat_postMessage(channel=user.slack_id, text=message)
-            except:
-                print('Error: slack id "{0}" is invalid.'.format(user.slack_id))
+    token = os.getenv('SLACK_TOKEN')
+    if token is not None:
+        client = slack.WebClient(token='xoxb-58810056594-3097149250131-xK3JH7caXxC5oQ9aQ0etzAsM')
+        for user in users:
+            if user.subscribed_to_slack and user.slack_id is not None:
+                try:
+                    client.chat_postMessage(channel=user.slack_id, text=message)
+                except:
+                    print('Error: slack id "{0}" is invalid.'.format(user.slack_id))
+    else:
+        print('Error: SLACK_TOKEN environemnt variable not set!')
 
 
 
