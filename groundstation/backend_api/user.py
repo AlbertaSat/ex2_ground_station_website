@@ -99,7 +99,8 @@ class UserList(Resource):
     def get(self, local_args=None):
         """Endpoint for getting a list of users
 
-        :param dict local_args: This should be used in place of the QUERY PARAMS that would be used through HTTP, used for local calls.
+        :param dict local_args: This should be used in place of the QUERY PARAMS 
+            that would be used through HTTP, used for local calls.
 
         :returns: response_object, status_code
         :rtype: tuple (dict, int)
