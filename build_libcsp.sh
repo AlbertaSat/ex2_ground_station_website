@@ -5,8 +5,6 @@
 git submodule update --init --recursive
 
 # Fetch libcsp dependencies
-# NOTE: Python is required but not installed here as to not interfere
-# with the setup-python Github Action
 sudo apt update
 sudo apt install at \
     build-essential \
@@ -17,7 +15,9 @@ sudo apt install at \
     libsocketcan-dev \
     pkg-config \
     gcc-multilib \
-    g++-multilib -y
+    g++-multilib \
+    python3-dev \
+    python3-pip -y
 
 # Configure libcsp
 # (Configuration flags taken from ex2_ground_station_software)
