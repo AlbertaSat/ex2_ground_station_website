@@ -4,9 +4,14 @@ from comm import convert_command_syntax
 from groundstation.tests.base import BaseTestCase
 import ex2_ground_station_software.src.groundStation as gs_software
 
+"""These tests must be run manually by
+	`python3 manage.py test groundstation_test`
+after running `source ./update.sh` and building libcsp in this repo.
+"""
+
 # List of commands to test ground_station_software's DUMMY responses
 # FORMAT:
-# (command (website format), expected server, expected port, expected buffer as bytestring)
+# (command (website format), expected server, expected port, expected buffer)
 commands = [
 	("obc.time_management.get_time", 1, 8, b'\n'),
 	("obc.time_management.set_time 1234567890", 1, 8, b'\x0bI\x96\x02\xd2'),
@@ -18,6 +23,8 @@ commands = [
 ]
 
 class Options():
+	"""Dummy container to store ground station options.
+	"""
 	pass
 
 class TestGroundstation(BaseTestCase):
@@ -28,7 +35,7 @@ class TestGroundstation(BaseTestCase):
 		opts.timeout = 10000
 		cls.gs = gs_software.groundStation.groundStation(opts)
 
-	def test_syntax_converter(self):
+	def test_command_converter(self):
 		with self.subTest(c="obc.time_management.get_time"):
 			web_command = "obc.time_management.get_time"
 			self.assertEqual("obc.time_management.get_time()", convert_command_syntax(web_command))
