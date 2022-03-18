@@ -108,7 +108,7 @@ def convert_command_syntax(cmd: str):
     tokens = cmd.split()
     return tokens[0] + '(' + ' '.join(tokens[1:]) + ')'
 
-def send_to_satellite(sock, csp, msg):
+def send_to_satellite(csp, msg):
     try:
         server, port, toSend = csp.getInput(inVal=msg)
         return csp.transaction(server, port, toSend)
@@ -129,7 +129,7 @@ def save_response(message):
     communication_list.post(local_data=message)
 
 
-def communication_loop(sock=None, csp=None):
+def communication_loop(csp=None):
     """
     Main communication loop which polls for messages that are queued and addressed to comm
     (i.e. messages it needs to send to satellite). This should be run when a passover is
@@ -137,7 +137,7 @@ def communication_loop(sock=None, csp=None):
 
     :param Csp csp: The Csp instance. See groundStation.py
     """
-    if mode == Connection.SATELLITE and (sock is None or csp is None):
+    if mode == Connection.SATELLITE and csp is None:
         raise Exception('Csp instance must be specified if sending to satellite')
 
     request_data = {'is_queued': True, 'receiver': 'comm', 'newest-first': False}
@@ -162,7 +162,7 @@ def communication_loop(sock=None, csp=None):
                         response = send_to_simulator(msg)
                     elif mode == Connection.SATELLITE:
                         msg = convert_command_syntax(msg)
-                        response = send_to_satellite(sock, csp, msg)
+                        response = send_to_satellite(csp, msg)
 
                     if response:
                         if isinstance(response, list):
@@ -191,11 +191,7 @@ def main():
         opts = gs_software.groundStation.options()
         csp = gs_software.groundStation.groundStation(opts.getOptions())
 
-        # Not sure if this socket is needed here as gs_software already manages it.
-        sock = libcsp.socket()
-        libcsp.bind(sock, libcsp.CSP_ANY)
-
-        communication_loop(sock, csp)
+        communication_loop(csp)
 
 
 if __name__ == '__main__':
@@ -206,8 +202,5 @@ if __name__ == '__main__':
     else:
         mode = Connection.SATELLITE
         import ex2_ground_station_software.src.groundStation as gs_software
-
-        # Not sure if this is still needed as gs_software already imports it
-        import libcsp.build.libcsp_py3 as libcsp
 
     main()
