@@ -110,7 +110,10 @@ def convert_command_syntax(cmd: str):
 
 def send_to_satellite(csp, msg):
     try:
-        server, port, toSend = csp.getInput(inVal=msg)
+        command = csp.getInput(inVal=msg)
+        if command is None:
+            return "INVALID COMMAND"
+        server, port, toSend = command
         return csp.transaction(server, port, toSend)
     except Exception as e:
         print('Unexpected error occured:', e)
