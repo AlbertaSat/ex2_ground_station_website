@@ -11,7 +11,12 @@ RUN apt-get update && apt-get install -y \
   curl \
   git \
   libpq-dev \
-  libffi-dev
+  libffi-dev \
+  libzmq3-dev \
+  libsocketcan-dev \
+  pkg-config \
+  gcc-multilib \
+  g++-multilib
 
 # install python
 RUN apt-get update && apt-get install -y \
@@ -22,9 +27,9 @@ WORKDIR /usr/local/bin
 RUN ln -s /usr/bin/python3 python \
   && pip3 install --upgrade pip
 
-# copy our repo to the image
+# install python dependencies
 WORKDIR /home/ex2_ground_station_website
-COPY requirements.txt . 
+COPY requirements.txt .
 RUN pip3 install -r requirements.txt
 RUN rm requirements.txt
 
@@ -40,8 +45,10 @@ ENV FLASK_APP=groundstation/__init__.py
 ENV FLASK_ENV=development
 ENV APP_SETTINGS=groundstation.config.DevelopmentConfig
 ENV SECRET_KEY="\xffY\x8dG\xfbu\x96S\x86\xdfu\x98\xe8S\x9f\x0e\xc6\xde\xb6$\xab:\x9d\x8b"
+ENV PYTHONPATH=.
+ENV LD_LIBRARY_PATH=libcsp/build
 SHELL ["/bin/bash", "-c"]
-COPY update.sh . 
+COPY update.sh .
 RUN source ./update.sh
 RUN rm update.sh
 

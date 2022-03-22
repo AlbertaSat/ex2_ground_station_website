@@ -88,10 +88,31 @@ def send_to_simulator(msg):
     except Exception as e:
         print('Unexpected error occured:', e)
 
+def convert_command_syntax(cmd: str):
+    """
+    Converts website command syntax to ground station software's syntax.
 
-def send_to_satellite(sock, csp, msg):
+    Currently, the website's command syntax is:
+        `command.name arg1 arg2 ...`
+    but ground station software's command syntax is:
+        `command.name(arg1 arg2 ...)`
+
+    TODO: Eventually, change the "Live Commands" syntax on the website
+          to match ground station software's for consistency.
+
+    :param str cmd: A command entered from the website.
+    :returns: The same command but in ground station software's syntax.
+    :rtype: str
+    """
+    tokens = cmd.split()
+    return tokens[0] + '(' + ' '.join(tokens[1:]) + ')'
+
+def send_to_satellite(csp, msg):
     try:
-        server, port, toSend = csp.getInput(inVal=msg)
+        command = csp.getInput(inVal=msg)
+        if command is None:
+            return "INVALID COMMAND"
+        server, port, toSend = command
         return csp.transaction(server, port, toSend)
     except Exception as e:
         print('Unexpected error occured:', e)
@@ -110,7 +131,7 @@ def save_response(message):
     communication_list.post(local_data=message)
 
 
-def communication_loop(sock=None, csp=None):
+def communication_loop(csp=None):
     """
     Main communication loop which polls for messages that are queued and addressed to comm
     (i.e. messages it needs to send to satellite). This should be run when a passover is
@@ -118,7 +139,7 @@ def communication_loop(sock=None, csp=None):
 
     :param Csp csp: The Csp instance. See groundStation.py
     """
-    if mode == Connection.SATELLITE and (sock is None or csp is None):
+    if mode == Connection.SATELLITE and csp is None:
         raise Exception('Csp instance must be specified if sending to satellite')
 
     request_data = {'is_queued': True, 'receiver': 'comm', 'newest-first': False}
@@ -142,12 +163,14 @@ def communication_loop(sock=None, csp=None):
 
                     # Send the message to the satellite
                     response = None
-                    msg = message['message'].replace(" ", ".")
+                    msg = message['message']
                     print('Sent:', msg)
                     if mode == Connection.SIMULATOR:
+                        msg = message['message'].replace(" ", ".")
                         response = send_to_simulator(msg)
                     elif mode == Connection.SATELLITE:
-                        response = send_to_satellite(sock, csp, msg)
+                        msg = convert_command_syntax(msg)
+                        response = send_to_satellite(csp, msg)
 
                     if response:
                         if isinstance(response, list):
@@ -187,11 +210,7 @@ def main():
         opts = gs_software.groundStation.options()
         csp = gs_software.groundStation.groundStation(opts.getOptions())
 
-        # Not sure if this socket is needed here as gs_software already manages it.
-        sock = libcsp.socket()
-        libcsp.bind(sock, libcsp.CSP_ANY)
-
-        communication_loop(sock, csp)
+        communication_loop(csp)
 
 
 if __name__ == '__main__':
@@ -202,8 +221,5 @@ if __name__ == '__main__':
     else:
         mode = Connection.SATELLITE
         import ex2_ground_station_software.src.groundStation as gs_software
-
-        # Not sure if this is still needed as gs_software already imports it
-        import libcsp.build.libcsp_py3 as libcsp
 
     main()

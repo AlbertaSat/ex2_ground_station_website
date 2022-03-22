@@ -81,6 +81,7 @@ class Housekeeping(db.Model):
     current_out = db.Column(db.Float)
     no_MCU_resets = db.Column(db.Integer)
     last_beacon_time = db.Column(db.DateTime, nullable=False)
+    tle = db.Column(db.String(256))
 
     watchdog_1 = db.Column(db.Integer) # 3 watchdogs
     watchdog_2 = db.Column(db.Integer)
@@ -111,6 +112,7 @@ class Housekeeping(db.Model):
             'current_out': self.current_out,
             'no_MCU_resets': self.no_MCU_resets,
             'last_beacon_time': str(self.last_beacon_time),
+            'tle': self.tle,
 
             'watchdog_1': self.watchdog_1,
             'watchdog_2': self.watchdog_2,
