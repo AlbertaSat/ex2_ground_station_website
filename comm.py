@@ -217,8 +217,6 @@ def communication_loop(csp=None):
                 # and handle acknowledgement
                 resp = fs_file_path
 
-            print('LAST UPLOADED =', last_uploaded_fs)
-
             if resp is not None:
                 # TODO: Change old uploaded fs to draft
                 if last_uploaded_fs is not None:
