@@ -3,9 +3,12 @@ The Communications Module is responsible for sending and retrieving data
 with the satellite (or the simulator).
 """
 
+import queue
+from threading import local
 import time
 import json
 import signal
+import datetime
 from enum import Enum
 
 from groundstation.backend_api.flightschedule import FlightScheduleList, Flightschedule
@@ -67,7 +70,7 @@ def get_queued_fs():
 
     :returns: A dict representing the flight schedule object
     """
-    local_args = {'limit': 1, 'queued': True}
+    local_args = {'limit': 1, 'queued': 1}
     fs = flightschedule_list.get(local_args=local_args)
 
 
@@ -82,11 +85,66 @@ def get_queued_fs():
     return None
 
 
+def format_date_time(dt_str: str):
+    """Generates a datetime object from a string.
+
+    :param str dt_str: A date-time string to convert
+
+    :returns: A datetime object representing the time passed in from string.
+    :rtype: datetime
+    """
+    try:
+        exec_time = (datetime.datetime
+                     .strptime(dt_str, '%Y-%m-%d %H:%M:%S.%f')
+                     .replace(tzinfo=datetime.timezone.utc))
+    except ValueError: # Sometimes the date format is off for some reason
+        exec_time = (datetime.datetime
+                     .strptime(dt_str, '%Y-%m-%d %H:%M:%S')
+                     .replace(tzinfo=datetime.timezone.utc))
+    return exec_time
+
+
+def generate_fs_file(fs):
+    """Generates a flight schdeule file for upload.
+
+    :param dict fs: A flight schedule object fetched from db.
+    :return: Path to the flight schedule file.
+    :rtype: str
+    """
+    file_name = 'flightschedules/fs_{}.txt'.format(fs['flightschedule_id'])
+    with open(file_name, "w+") as file:
+        for command in fs['commands']:
+            # Format the command string from fs
+            # TODO: Handle server as part of command
+            command_name = command['command']['command_name']
+            args = [arg["argument"] for arg in command["args"]]
+            command_string = command_name + '({})'.format(' '.join(args))
+
+            # Format the date/time from fs
+            exec_time = format_date_time(command["timestamp"])
+            time = ("{second} {minute} {hour} {dayOfWeek} {day} {month} {year}"
+                    .format(
+                        second=exec_time.second,
+                        minute=exec_time.minute,
+                        hour=exec_time.hour,
+                        # Sunday = 1
+                        dayOfWeek=((exec_time.weekday() + 1) % 7) + 1,
+                        day=exec_time.day,
+                        month=exec_time.month,
+                        year=exec_time.year
+                    ))
+
+            # Write fs commands to file
+            print(time, command_string, file=file)
+    return file_name
+
+
 def send_to_simulator(msg):
     try:
         return antenna.send(json.dumps(msg))
     except Exception as e:
         print('Unexpected error occured:', e)
+
 
 def convert_command_syntax(cmd: str):
     """
@@ -106,6 +164,7 @@ def convert_command_syntax(cmd: str):
     """
     tokens = cmd.split()
     return tokens[0] + '(' + ' '.join(tokens[1:]) + ')'
+
 
 def send_to_satellite(csp, msg):
     try:
@@ -143,14 +202,37 @@ def communication_loop(csp=None):
         raise Exception('Csp instance must be specified if sending to satellite')
 
     request_data = {'is_queued': True, 'receiver': 'comm', 'newest-first': False}
+    last_uploaded_fs = None
 
     # Check communication table every minute
     while True:
         # Upload any queued flight schedules
         queued_fs = get_queued_fs()
         if queued_fs is not None:
-            resp = send_to_simulator(queued_fs)
-            save_response(resp)
+            if mode == Connection.SIMULATOR:
+                resp = send_to_simulator(queued_fs)
+            elif mode == Connection.SATELLITE:
+                fs_file_path = generate_fs_file(queued_fs)
+                # TODO: Upload fs file to satellite via ground station
+                # and handle acknowledgement
+                resp = fs_file_path
+
+            print('LAST UPLOADED =', last_uploaded_fs)
+
+            if resp is not None:
+                # TODO: Change old uploaded fs to draft
+                if last_uploaded_fs is not None:
+                    patch_data = {
+                        'status': 2,
+                        'execution_time': last_uploaded_fs['execution_time'],
+                        'commands': []
+                    }
+                    flightschedule_patch.patch(
+                        last_uploaded_fs['flightschedule_id'],
+                        local_data=json.dumps(patch_data)
+                    )
+                save_response("Generated: " + resp)
+                last_uploaded_fs = queued_fs
 
         # Get queued communications
         messages = communication_list.get(local_data=request_data)[0]

@@ -194,7 +194,7 @@ class FlightScheduleList(Resource):
             queued = local_args.get('queued')
 
         if queued:
-            flightschedules = FlightSchedules.query.filter(FlightSchedules.status == 1).limit(query_limit).all()
+            flightschedules = FlightSchedules.query.filter(FlightSchedules.status == queued).limit(query_limit).all()
         else:
             flightschedules = FlightSchedules.query.order_by(
                             FlightSchedules.status,
