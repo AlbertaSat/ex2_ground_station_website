@@ -91,7 +91,8 @@ def send_to_simulator(msg):
 
 def convert_command_syntax(cmd):
     """
-    Converts website command syntax to ground station software's syntax.
+    Takes in a website command and converts it to ground station software's
+    syntax.
 
     Currently, the website's command syntax is:
         `command.name arg1 arg2 ...`
