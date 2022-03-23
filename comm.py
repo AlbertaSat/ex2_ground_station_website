@@ -99,8 +99,8 @@ def convert_command_syntax(cmd):
     but ground station software's command syntax is:
         `command.name(arg1 arg2 ...)`
 
-    TODO: Eventually, change the "Live Commands" syntax on the website
-          to match ground station software's for consistency.
+    TODO: Change the "Live Commands" syntax on the website
+          to match ground station software's for consistency (Issue #64).
 
     :param str cmd: A command entered from the website.
     :returns: The same command but in ground station software's syntax.
