@@ -89,7 +89,7 @@ def send_to_simulator(msg):
     except Exception as e:
         print('Unexpected error occured:', e)
 
-def convert_command_syntax(cmd: str):
+def convert_command_syntax(cmd):
     """
     Converts website command syntax to ground station software's syntax.
 
