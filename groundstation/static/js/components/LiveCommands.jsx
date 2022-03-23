@@ -121,7 +121,8 @@ class LiveCommands extends Component {
     telecommandIsValid(telecommand_string) {
         const split_string = telecommand_string.trim().split(' ');
         const matching_command = this.state.validTelecommands.find((element) => {
-            if (element.command_name === split_string[0]) {
+            if (element.command_name === split_string[0]
+                || element.command_name === split_string[0].substring(4)) {
                 return element
             }
         });

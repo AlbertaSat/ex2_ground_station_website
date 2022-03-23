@@ -11,7 +11,12 @@ RUN apt-get update && apt-get install -y \
   curl \
   git \
   libpq-dev \
-  libffi-dev
+  libffi-dev \
+  libzmq3-dev \
+  libsocketcan-dev \
+  pkg-config \
+  gcc-multilib \
+  g++-multilib
 
 # install python
 RUN apt-get update && apt-get install -y \
@@ -27,6 +32,10 @@ WORKDIR /home/ex2_ground_station_website
 COPY . .
 RUN pip3 install -r requirements.txt
 
+# build libcsp
+WORKDIR /home/ex2_ground_station_website
+RUN ./build_libcsp.sh
+
 # install node.js & npm
 WORKDIR /home
 RUN apt-get update && apt-get install -y \
@@ -39,6 +48,8 @@ ENV FLASK_APP=groundstation/__init__.py
 ENV FLASK_ENV=development
 ENV APP_SETTINGS=groundstation.config.DevelopmentConfig
 ENV SECRET_KEY="\xffY\x8dG\xfbu\x96S\x86\xdfu\x98\xe8S\x9f\x0e\xc6\xde\xb6$\xab:\x9d\x8b"
+ENV LD_LIBRARY_PATH=libcsp/build
+ENV PYTHONPATH=.
 SHELL ["/bin/bash", "-c"]
 RUN source ./update.sh
 
