@@ -19,6 +19,9 @@ import unittest
 from datetime import datetime, timedelta
 import json
 import click
+import re
+import subprocess
+import os
 
 from flask.cli import FlaskGroup
 from sqlalchemy import false
@@ -31,8 +34,6 @@ from groundstation.backend_api.utils import add_telecommand, \
     add_flight_schedule, add_command_to_flightschedule, add_user, \
     add_arg_to_flightschedulecommand, add_message_to_communications, \
     add_passover
-
-import re
 
 app = create_app()
 cli = FlaskGroup(create_app=create_app)
@@ -67,13 +68,27 @@ def test(path=None):
 
 @cli.command('seed_db')
 def seed_db():
-    """Seed the database with a set of users and flight schedules. Imports
-    commands. Adds upcoming passovers.
+    """Imports commands and adds admin and non-admin user.
     """
     # clear database before adding new data
     db.drop_all()
     db.create_all()
 
+    commands_added = import_commands() # no telecommands added if import fails
+
+    add_user(username='Admin_user', password='Admin_user', is_admin=True)
+    add_user(username='albert', password='albert', is_admin=False)
+
+
+@cli.command('seed_db_example')
+def seed_db_example():
+    """Imports commands, adds users and example data.
+    """
+    # clear database before adding new data
+    db.drop_all()
+    db.create_all()
+
+    # generate timestamps for flightschedule commands
     timestamp = datetime.fromtimestamp(1570749472)
     for x in range(20):
         # 20 days
@@ -94,29 +109,16 @@ def seed_db():
             db.session.add(housekeeping)
     db.session.commit()
 
-    commands = import_commands() # empty dictionary if import fails
-    for name, (num_args, is_danger) in commands.items():
-        c = add_telecommand(command_name=name,
-                            num_arguments=num_args, is_dangerous=is_danger)
+    commands_added = import_commands() # no telecommands added if import fails
 
     flightschedule = add_flight_schedule(
         creation_date=timestamp, upload_date=timestamp, status=2, execution_time=timestamp)
 
-    # pick commands from those added to add to flightschedule
-    if len(commands) >= 1:
-        command = Telecommands.query.get(1)
-        flightschedule_commands = add_command_to_flightschedule(
-            timestamp=timestamp,
-            flightschedule_id=flightschedule.id,
-            command_id=command.id
-        )
-        flightschedulecommand_arg = add_arg_to_flightschedulecommand(
-        index=0,
-        argument='5',
-        flightschedule_command_id=flightschedule_commands.id
-        )
-    if len(commands) >= 2:
-        command = Telecommands.query.get(2)
+    # add a few commands to flightschedule
+    commands = Telecommands.query().all()
+
+    for i in range(0, min(len(commands), 2)):
+        command = commands[i]
         flightschedule_commands = add_command_to_flightschedule(
             timestamp=timestamp,
             flightschedule_id=flightschedule.id,
@@ -124,10 +126,7 @@ def seed_db():
         )
 
     add_user(username='Admin_user', password='Admin_user', is_admin=True)
-    add_user(username='user1', password='user1', is_admin=False)
-    add_user(username='user2', password='user2', is_admin=False)
     add_user(username='albert', password='albert', is_admin=False)
-    add_user(username='berta', password='berta', is_admin=True)
 
     message = add_message_to_communications(
         timestamp=timestamp,
@@ -253,28 +252,44 @@ def demo_db():
     print("Database has been seeded with demo data.")
 
 
+@cli.command('import_commands')
 def import_commands():
-    """Imports commands from the CommandDocs.txt file in ex2_ground_station_software.
+    """Imports commands from the CommandDocs.txt file in ex2_ground_station_software,
+    and adds them to the database.
     """
-    try:
-        with open('ex2_ground_station_software/CommandDocs.txt', 'r') as f:
-            text = f.read()
-    except FileNotFoundError:
-        print('Couldn't find list of commands at ex2_ground_station_software/CommandDocs.txt. Seeding database with no commands.')
-        return {}
 
-    commands = {}
+    filepath = 'ex2_ground_station_software/CommandDocs.txt'
+
+    if not os.path.exists(filepath):
+        print(f'Couldn\'t find list of commands at {filepath}. Seeding database with no commands.')
+        return False
+
+    # first regenerate CommandDocs.txt
+    print('Regenerating commands.')
+    subprocess.run(['./regenerate_commands.sh'])
+
+    with open('./ex2_ground_station_software/CommandDocs.txt', 'r') as f:
+        text = f.read()
+
+    # regex command based on current formatting of CommandDocs.txt; might need to be changed later
     blocks = re.findall('[\.\n]([A-Z0-9_]*):[^\[]*\[([^\]]*)\]', text)
 
-    for (name, arguments) in blocks:
-        # Set is_dangerous to False for now, as it isn't specified in ground_station_software documentation
+    for (command_name, arguments) in blocks: 
+        
+        # currently false; need to figure out which commands should be considered dangerous
+        is_dangerous = False
+
         if arguments == 'None':
-            commands[name.lower()] = (0, False) # (num_arguments, is_dangerous)
+            num_arguments = 0
         else:
             num_arguments = len(re.findall(',', arguments)) + 1
-            commands[name.lower()] = (num_arguments, False)
 
-    return commands
+        c = add_telecommand(command_name=command_name.lower(), num_arguments=num_arguments,
+                            is_dangerous=is_dangerous)
+        
+    print("Added new telecommands.")
+
+    return True
 
 
 if __name__ == '__main__':
