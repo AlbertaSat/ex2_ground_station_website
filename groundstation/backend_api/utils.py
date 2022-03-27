@@ -33,10 +33,13 @@ def create_context(function):
 def add_telecommand(command_name, num_arguments, is_dangerous):
     """Add a new telecommand to the database
     """
-    command = Telecommands(command_name=command_name, num_arguments=num_arguments, is_dangerous=is_dangerous)
+    # only add command if it isn't already in the database
+    command = Telecommands.query.filter(Telecommands.command_name == command_name).first()
+    if not command:
+        command = Telecommands(command_name=command_name, num_arguments=num_arguments, is_dangerous=is_dangerous)
 
-    db.session.add(command)
-    db.session.commit()
+        db.session.add(command)
+        db.session.commit()
     return command
 
 def add_flight_schedule(creation_date, upload_date, status, execution_time):
