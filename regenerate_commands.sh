@@ -1,2 +1,4 @@
 #!/bin/sh
-python3 ex2_ground_station_software/src/docGen.py
+cd ex2_ground_station_software
+python3 src/docGen.py
+cd ..
