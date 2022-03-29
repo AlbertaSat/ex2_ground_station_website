@@ -92,7 +92,7 @@ def send_slack_notifs(message):
     users = user_list.get(local_args={'limit': 1000})[0]['data']
 
     slack_token = os.getenv('SLACK_TOKEN')
-    if token is not None:
+    if slack_token is not None:
         client = slack.WebClient(token=slack_token)
         for user in users:
             if user.subscribed_to_slack and user.slack_id is not None:
