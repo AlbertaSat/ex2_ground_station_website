@@ -202,6 +202,13 @@ class FlightScheduleCommands(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     command_id = db.Column(db.Integer, db.ForeignKey('telecommands.id'), nullable=False)
     timestamp = db.Column(db.DateTime)
+    repeat_sec = db.Column(db.Boolean, default=False, nullable=False)
+    repeat_min = db.Column(db.Boolean, default=False, nullable=False)
+    repeat_hr = db.Column(db.Boolean, default=False, nullable=False)
+    repeat_wkday = db.Column(db.Boolean, default=False, nullable=False)
+    repeat_day = db.Column(db.Boolean, default=False, nullable=False)
+    repeat_month = db.Column(db.Boolean, default=False, nullable=False)
+    repeat_year = db.Column(db.Boolean, default=False, nullable=False)
     flightschedule_id = db.Column(db.Integer, db.ForeignKey('flightschedules.id'), nullable=False)
     arguments = db.relationship('FlightScheduleCommandsArgs',
                                 backref='flightschedulecommand',
@@ -216,7 +223,7 @@ class FlightScheduleCommands(db.Model):
             'flightschedule_command_id': self.id,
             'timestamp': str(self.timestamp),
             'command': self.command.to_json(),
-            'args': [arg.to_json() for arg in self.arguments]
+            'args': [arg.to_json() for arg in self.arguments],
         }
 
 class FlightScheduleCommandsArgs(db.Model):
@@ -263,7 +270,7 @@ class Communications(db.Model):
     receiver = db.Column(db.String, nullable=False)         # who the intended recipient of the command is (comm/react web page/command line)
     is_queued = db.Column(db.Boolean, default=False, nullable=False) # whether the command is queued to be sent to the satellite or not
 
-    # TODO: connecting satellite responses to sent telecommands 
+    # TODO: connecting satellite responses to sent telecommands
     #response = db.Column(db.Integer, db.ForeignKey('communications.id'))
 
     def to_json(self):

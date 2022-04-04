@@ -25,6 +25,13 @@ class FlightScheduleCommandValidator(Schema):
     timestamp = fields.DateTime(format='iso', required=True)
     command = fields.Nested(CommandValidator, required=True)
     args = fields.Nested(ArgumentValidator, required=True, many=True)
+    repeat_sec = fields.Boolean(required=True)
+    repeat_min = fields.Boolean(required=True)
+    repeat_hr = fields.Boolean(required=True)
+    repeat_wkday = fields.Boolean(required=True)
+    repeat_day = fields.Boolean(required=True)
+    repeat_month = fields.Boolean(required=True)
+    repeat_year = fields.Boolean(required=True)
     #flightschedule_id = fields.Integer(required=True)
 
 class FlightScheduleValidator(Schema):
@@ -42,6 +49,13 @@ class FlightSchedulePatchCommandValidator(Schema):
     command = fields.Nested(CommandValidator, required=True)
     flightschedule_command_id = fields.Integer(required=False)
     args = fields.Nested(ArgumentValidator, required=True, many=True)
+    repeat_sec = fields.Boolean(required=True)
+    repeat_min = fields.Boolean(required=True)
+    repeat_hr = fields.Boolean(required=True)
+    repeat_wkday = fields.Boolean(required=True)
+    repeat_day = fields.Boolean(required=True)
+    repeat_month = fields.Boolean(required=True)
+    repeat_year = fields.Boolean(required=True)
 
 class FlightSchedulePatchValidator(Schema):
     """Validator for patching (editing) a flightschedule

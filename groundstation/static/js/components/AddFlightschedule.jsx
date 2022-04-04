@@ -22,9 +22,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
 import Select from 'react-select';
 import Grid from '@material-ui/core/Grid';
-	
-const AddFlightschedule = (props) =>{
-  	const selects = props.availCommands.map((command) => (
+
+const AddFlightschedule = (props) => {
+  const selects = props.availCommands.map((command) => (
 		{label: command.command_name, value: command.command_id, args: command.num_arguments}
 	))
 
@@ -54,23 +54,23 @@ const AddFlightschedule = (props) =>{
 
 	return (
 		<div>
-		  <Dialog 
-		    open={props.open} 
-		    onclose={ (event) => props.handleAddFlightOpenClick(event) } 
+		  <Dialog
+		    open={props.open}
+		    onclose={ (event) => props.handleAddFlightOpenClick(event) }
 		    aria-labelledby='add-a-flight-schedule'>
 		    <DialogTitle id="form-add-a-flightschedule-title">
 		    	Add/Edit Flightschedule
 		    </DialogTitle>
 		    <DialogContent>
 		      <DialogContentText>
-		        To add commands to this flight schedule, enter the command name followed by the timestamp, 
+		        To add commands to this flight schedule, enter the command name followed by the timestamp,
 		        and the arguments if applicable.
 		      </DialogContentText>
 		      <Grid container spacing={2} style={{marginTop: '2em'}}>
 		      	<Grid item xs={5}>
 	              <form>
 					  <MuiPickersUtilsProvider moment={moment} utils={MomentUtils}>
-              <DateTimePicker 
+              <DateTimePicker
                   label="Execution Time"
                   inputVariant="outlined"
                   value={props.executionTime}
@@ -99,11 +99,11 @@ const AddFlightschedule = (props) =>{
                           style={{minWidth: '18em'}}
                     >
                       <form>
-                      <Select 
+                      <Select
                         className="basic-single"
                     classNamePrefix="select"
                     name="color"
-                    options={selects} 
+                    options={selects}
                         isClearable
                     placeholder="Command"
                     styles={{
@@ -113,7 +113,7 @@ const AddFlightschedule = (props) =>{
                       }),
                     }}
                         onChange={(event) => props.handleAddEvent(event, 'command', idx)}
-                        value={{'label': flighschedule.command.command_name, 
+                        value={{'label': flighschedule.command.command_name,
                                 'value': flighschedule.command.command_id}}
                       />
                       </form>
@@ -134,7 +134,7 @@ const AddFlightschedule = (props) =>{
                       <Button
                         onClick={(event) => props.handleDeleteCommandClick(event, idx)}
                       >
-                        <DeleteIcon 
+                        <DeleteIcon
                                   style={{ color: '#4bacb8'}}
                                 />
                             </Button>
@@ -164,8 +164,8 @@ const AddFlightschedule = (props) =>{
                 	<Button
                 		onClick={(event) => props.handleAddCommandClick(event)}
                 	>
-			          <AddIcon 
-	                    style={{ color: '#4bacb8'}} 
+			          <AddIcon
+	                    style={{ color: '#4bacb8'}}
 	                  />
 	                </Button>
 		      </DialogContentText>

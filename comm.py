@@ -131,7 +131,7 @@ def generate_fs_file(fs):
                         dayOfWeek=((exec_time.weekday() + 1) % 7) + 1,
                         day=exec_time.day,
                         month=exec_time.month,
-                        year=exec_time.year
+                        year=exec_time.year - 1970 # Offset from 1970
                     ))
 
             # Write fs commands to file
