@@ -12,7 +12,7 @@ import MomentUtils from "@date-io/moment";
 import { DateTimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import AddIcon from "@material-ui/icons/Add";
 import Grid from "@material-ui/core/Grid";
-import DialogActions from '@material-ui/core/DialogActions';
+import DialogActions from "@material-ui/core/DialogActions";
 
 import FlightscheduleCommand from "./FlightscheduleCommand";
 
@@ -24,7 +24,7 @@ const AddFlightschedule = (props) => {
         open={props.open}
         onclose={(event) => props.handleAddFlightOpenClick(event)}
         aria-labelledby="add-a-flight-schedule"
-        maxWidth='md'
+        maxWidth="md"
         fullWidth
       >
         <DialogTitle id="form-add-a-flightschedule-title">
@@ -67,6 +67,7 @@ const AddFlightschedule = (props) => {
                     idx={idx}
                     key={idx}
                     availCommands={props.availCommands}
+                    handleChangeRepeat={props.handleChangeRepeat}
                     handleAddEvent={props.handleAddEvent}
                     handleDeleteCommandClick={props.handleDeleteCommandClick}
                     handleChangeArgument={props.handleChangeArgument}

@@ -19,19 +19,25 @@ class CommandValidator(Schema):
     is_dangerous = fields.Boolean(required=False)
     command_name = fields.String(required=False)
 
+class FlightScheduleCommandRepeatValidator(Schema):
+    """Validator for the repeat settings for a single flight schedule command
+    """
+    repeat_sec = fields.Boolean(required=True)
+    repeat_min = fields.Boolean(required=True)
+    repeat_hr = fields.Boolean(required=True)
+    repeat_wkday = fields.Boolean(required=True)
+    repeat_day = fields.Boolean(required=True)
+    repeat_month = fields.Boolean(required=True)
+    repeat_year = fields.Boolean(required=True)
+
 class FlightScheduleCommandValidator(Schema):
     """Validator for flighschedule commands
     """
     timestamp = fields.DateTime(format='iso', required=True)
     command = fields.Nested(CommandValidator, required=True)
     args = fields.Nested(ArgumentValidator, required=True, many=True)
-    repeat_sec = fields.Boolean(required=False)
-    repeat_min = fields.Boolean(required=False)
-    repeat_hr = fields.Boolean(required=False)
-    repeat_wkday = fields.Boolean(required=False)
-    repeat_day = fields.Boolean(required=False)
-    repeat_month = fields.Boolean(required=False)
-    repeat_year = fields.Boolean(required=False)
+    repeats = fields.Nested(FlightScheduleCommandRepeatValidator, required=True)
+
     #flightschedule_id = fields.Integer(required=True)
 
 class FlightScheduleValidator(Schema):
@@ -49,13 +55,7 @@ class FlightSchedulePatchCommandValidator(Schema):
     command = fields.Nested(CommandValidator, required=True)
     flightschedule_command_id = fields.Integer(required=False)
     args = fields.Nested(ArgumentValidator, required=True, many=True)
-    repeat_sec = fields.Boolean(required=False)
-    repeat_min = fields.Boolean(required=False)
-    repeat_hr = fields.Boolean(required=False)
-    repeat_wkday = fields.Boolean(required=False)
-    repeat_day = fields.Boolean(required=False)
-    repeat_month = fields.Boolean(required=False)
-    repeat_year = fields.Boolean(required=False)
+    repeats = fields.Nested(FlightScheduleCommandRepeatValidator, required=True)
 
 class FlightSchedulePatchValidator(Schema):
     """Validator for patching (editing) a flightschedule

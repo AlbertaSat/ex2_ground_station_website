@@ -97,7 +97,14 @@ class Flightschedule(Resource):
             if command['op'] == 'add':
                 new_command = FlightScheduleCommands(
                         command_id=command['command']['command_id'],
-                        timestamp=command['timestamp']
+                        timestamp=command['timestamp'],
+                        repeat_sec=command['repeats']['repeat_sec'],
+                        repeat_min=command['repeats']['repeat_min'],
+                        repeat_hr=command['repeats']['repeat_hr'],
+                        repeat_wkday=command['repeats']['repeat_wkday'],
+                        repeat_day=command['repeats']['repeat_day'],
+                        repeat_month=command['repeats']['repeat_month'],
+                        repeat_year=command['repeats']['repeat_year'],
                     )
 
                 # iterate through args and add them to our flightschedule in the db
@@ -116,6 +123,15 @@ class Flightschedule(Resource):
 
                 this_command.arguments.clear()
                 arguments = command.pop('args')
+
+                # change repeating settings
+                this_command.repeat_sec=command['repeats']['repeat_sec']
+                this_command.repeat_min=command['repeats']['repeat_min']
+                this_command.repeat_hr=command['repeats']['repeat_hr']
+                this_command.repeat_wkday=command['repeats']['repeat_wkday']
+                this_command.repeat_day=command['repeats']['repeat_day']
+                this_command.repeat_month=command['repeats']['repeat_month']
+                this_command.repeat_year=command['repeats']['repeat_year']
 
                 # iterate through args and add them to the db
                 for arg_data in arguments:
@@ -252,7 +268,17 @@ class FlightScheduleList(Resource):
         for command_data in flightschedule_commands:
             command_id = command_data['command']['command_id']
             timestamp = command_data['timestamp']
-            command = FlightScheduleCommands(command_id=command_id, timestamp=timestamp)
+            command = FlightScheduleCommands(
+                command_id=command_id,
+                timestamp=timestamp,
+                repeat_sec=command_data['repeats']['repeat_sec'],
+                repeat_min=command_data['repeats']['repeat_min'],
+                repeat_hr=command_data['repeats']['repeat_hr'],
+                repeat_wkday=command_data['repeats']['repeat_wkday'],
+                repeat_day=command_data['repeats']['repeat_day'],
+                repeat_month=command_data['repeats']['repeat_month'],
+                repeat_year=command_data['repeats']['repeat_year'],
+            )
             flightschedule.commands.append(command)
 
             arguments = command_data.pop('args')

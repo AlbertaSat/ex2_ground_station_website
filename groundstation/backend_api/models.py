@@ -222,6 +222,15 @@ class FlightScheduleCommands(db.Model):
         return {
             'flightschedule_command_id': self.id,
             'timestamp': str(self.timestamp),
+            'repeats': {
+                'repeat_sec': self.repeat_sec,
+                'repeat_min': self.repeat_min,
+                'repeat_hr': self.repeat_hr,
+                'repeat_wkday': self.repeat_wkday,
+                'repeat_day': self.repeat_day,
+                'repeat_month': self.repeat_month,
+                'repeat_year': self.repeat_year,
+            },
             'command': self.command.to_json(),
             'args': [arg.to_json() for arg in self.arguments],
         }

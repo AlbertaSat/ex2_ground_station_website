@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
@@ -24,15 +24,11 @@ const RepeatLabels = {
 
 const FlightscheduleCommand = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [repeats, setRepeats] = useState({
-    repeat_sec: false,
-    repeat_min: false,
-    repeat_hr: false,
-    repeat_wkday: false,
-    repeat_day: false,
-    repeat_month: false,
-    repeat_year: false,
-  });
+  const [repeats, setRepeats] = useState(props.flightschedule.repeats);
+
+  useEffect(() => {
+    setRepeats(props.flightschedule.repeats);
+  }, [props.flightschedule.repeats]);
 
   const handleOpenRepeat = (e) => {
     setAnchorEl(e.currentTarget);
@@ -42,9 +38,11 @@ const FlightscheduleCommand = (props) => {
     setAnchorEl(null);
   };
 
-  const updateRepeat = (field, value) => {
+  const updateRepeat = (event, field, value, idx) => {
     setRepeats((old) => {
-      return { ...old, [field]: value };
+      const newRepeat = { ...old, [field]: value };
+      props.handleChangeRepeat(event, idx, newRepeat);
+      return newRepeat;
     });
   };
 
@@ -153,20 +151,26 @@ const FlightscheduleCommand = (props) => {
               }}
             >
               <FormGroup>
-                {Object.keys(repeats).map((field, idx) => (
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={repeats[field]}
-                        onChange={(e) => {
-                          updateRepeat(field, e.target.checked);
-                        }}
-                      />
-                    }
-                    label={RepeatLabels[field]}
-                    key={idx}
-                  />
-                ))}
+                {repeats &&
+                  Object.keys(repeats).map((field, idx) => (
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={repeats[field]}
+                          onChange={(event) => {
+                            updateRepeat(
+                              event,
+                              field,
+                              event.target.checked,
+                              props.idx
+                            );
+                          }}
+                        />
+                      }
+                      label={RepeatLabels[field]}
+                      key={idx}
+                    />
+                  ))}
               </FormGroup>
             </Popover>
           </form>

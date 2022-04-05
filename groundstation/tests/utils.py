@@ -80,26 +80,30 @@ def fake_patch_update_as_dict(timestamp):
                     'timestamp': str(timestamp),
                     'args' : [],
                     'command': {'command_id': 2},
-                    'repeat_sec': False,
-                    'repeat_min': False,
-                    'repeat_hr': False,
-                    'repeat_wkday': False,
-                    'repeat_day': False,
-                    'repeat_month': False,
-                    'repeat_year': False
+                    'repeats': {
+                        'repeat_sec': False,
+                        'repeat_min': False,
+                        'repeat_hr': False,
+                        'repeat_wkday': False,
+                        'repeat_day': False,
+                        'repeat_month': False,
+                        'repeat_year': False
+                    }
                 },
                 {
                     'op': 'add',
                     'timestamp': str(timestamp),
                     'args' : [],
                     'command': {'command_id': 1},
-                    'repeat_sec': False,
-                    'repeat_min': False,
-                    'repeat_hr': False,
-                    'repeat_wkday': False,
-                    'repeat_day': False,
-                    'repeat_month': False,
-                    'repeat_year': False
+                    'repeats': {
+                        'repeat_sec': False,
+                        'repeat_min': False,
+                        'repeat_hr': False,
+                        'repeat_wkday': False,
+                        'repeat_day': False,
+                        'repeat_month': False,
+                        'repeat_year': False
+                    }
                 }
             ]
         }

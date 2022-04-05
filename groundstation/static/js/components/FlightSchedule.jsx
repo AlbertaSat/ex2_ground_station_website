@@ -16,6 +16,21 @@ function isMinified(minify, elemt) {
   }
 }
 
+const DefaultCommand = {
+  command: { command_id: "" },
+  timestamp: null,
+  repeats: {
+    repeat_sec: false,
+    repeat_min: false,
+    repeat_hr: false,
+    repeat_wkday: false,
+    repeat_day: false,
+    repeat_month: false,
+    repeat_year: false,
+  },
+  args: [],
+};
+
 class FlightSchedule extends Component {
   constructor() {
     super();
@@ -26,9 +41,7 @@ class FlightSchedule extends Component {
       deleteFlightOpen: false,
       editFlight: false,
       allflightschedules: [],
-      thisFlightscheduleCommands: [
-        { command: { command_id: "" }, timestamp: null, args: [] },
-      ],
+      thisFlightscheduleCommands: [structuredClone(DefaultCommand)],
       thisFlightscheduleId: null,
       thisIndex: null,
       availCommands: [],
@@ -46,6 +59,7 @@ class FlightSchedule extends Component {
     this.deleteFlightschedule = this.deleteFlightschedule.bind(this);
     this.handleDeleteFlightClose = this.handleDeleteFlightClose.bind(this);
     this.handleDeleteCommandClick = this.handleDeleteCommandClick.bind(this);
+    this.handleChangeRepeat = this.handleChangeRepeat.bind(this);
     this.handleChangeArgument = this.handleChangeArgument.bind(this);
     this.handleQueueClick = this.handleQueueClick.bind(this);
     this.handleExecutionTimeChange = this.handleExecutionTimeChange.bind(this);
@@ -93,9 +107,7 @@ class FlightSchedule extends Component {
       editFlight: false,
       thisFlightscheduleId: null,
       thisIndex: null,
-      thisFlightscheduleCommands: [
-        { command: { command_id: "" }, timestamp: null, args: [] },
-      ],
+      thisFlightscheduleCommands: [structuredClone(DefaultCommand)],
       thisFlightScheduleStatus: 2,
       thisExecutionTime: null,
     });
@@ -189,9 +201,7 @@ class FlightSchedule extends Component {
           }
           this.setState({
             addFlightOpen: !this.state.addFlightOpen,
-            thisFlightscheduleCommands: [
-              { command: { command_id: "" }, timestamp: "", args: [] },
-            ],
+            thisFlightscheduleCommands: [structuredClone(DefaultCommand)],
             allflightschedules: obj,
             editFlight: false,
             thisIndex: null,
@@ -282,6 +292,17 @@ class FlightSchedule extends Component {
     });
   }
 
+  // handle changing repeating settings
+  handleChangeRepeat(event, fs_idx, repeats) {
+    const obj = this.state.thisFlightscheduleCommands.slice();
+    obj[fs_idx].repeats = structuredClone(repeats);
+    if (this.state.editFlight && obj[fs_idx].op != "add") {
+      obj[fs_idx].op = "replace";
+    }
+
+    this.setState({ thisFlightscheduleCommands: obj });
+  }
+
   // handle changing/adding arguments
   handleChangeArgument(event, fs_idx, arg_idx) {
     const obj = this.state.thisFlightscheduleCommands.slice();
@@ -296,7 +317,7 @@ class FlightSchedule extends Component {
   // handle when the add command button is clicked
   handleAddCommandClick(event) {
     const obj = this.state.thisFlightscheduleCommands.slice();
-    let comm = { command: { command_id: "" }, timestamp: null, args: [] };
+    let comm = structuredClone(DefaultCommand);
     // if we are editing add a condition for adding
     if (this.state.editFlight) {
       comm.op = "add";
@@ -388,6 +409,7 @@ class FlightSchedule extends Component {
             addFlightschedule={this.addFlightschedule}
             handleAddCommandClick={this.handleAddCommandClick}
             handleDeleteCommandClick={this.handleDeleteCommandClick}
+            handleChangeRepeat={this.handleChangeRepeat}
             handleChangeArgument={this.handleChangeArgument}
             status={this.state.thisFlightScheduleStatus}
             executionTime={this.state.thisExecutionTime}
