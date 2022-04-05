@@ -117,25 +117,32 @@ def generate_fs_file(fs):
             # Format the command string from fs
             # TODO: Handle server as part of command
             command_name = command['command']['command_name']
-            args = [arg["argument"] for arg in command["args"]]
+            args = [arg['argument'] for arg in command['args']]
             command_string = command_name + '({})'.format(' '.join(args))
 
             # Format the date/time from fs
-            exec_time = format_date_time(command["timestamp"])
-            time = ("{second} {minute} {hour} {dayOfWeek} {day} {month} {year}"
-                    .format(
-                        second=exec_time.second,
-                        minute=exec_time.minute,
-                        hour=exec_time.hour,
-                        # Sunday = 1
-                        dayOfWeek=((exec_time.weekday() + 1) % 7) + 1,
-                        day=exec_time.day,
-                        month=exec_time.month,
-                        year=exec_time.year - 1970 # Offset from 1970
-                    ))
+            exec_time = format_date_time(command['timestamp'])
+            time_fields = {
+                'second': '*' if command['repeats']['repeat_sec']
+                    else exec_time.second,
+                'minute': '*' if command['repeats']['repeat_min']
+                    else exec_time.minute,
+                'hour': '*' if command['repeats']['repeat_hr']
+                    else exec_time.hour,
+                'dayOfWeek': '*' if command['repeats']['repeat_wkday']
+                    else ((exec_time.weekday() + 1) % 7) + 1, # Sunday = 1
+                'day': '*' if command['repeats']['repeat_day']
+                    else exec_time.day,
+                'month': '*' if command['repeats']['repeat_month']
+                    else exec_time.month,
+                'year': '*' if command['repeats']['repeat_year']
+                    else exec_time.year - 1970 # Offset from 1970
+            }
+            time_str = ("{second} {minute} {hour} {dayOfWeek} {day} {month} {year}"
+                    .format(**time_fields))
 
             # Write fs commands to file
-            print(time, command_string, file=file)
+            print(time_str, command_string, file=file)
     return file_name
 
 
