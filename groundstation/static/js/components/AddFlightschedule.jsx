@@ -66,6 +66,7 @@ const AddFlightschedule = (props) => {
                     flightschedule={flightschedule}
                     idx={idx}
                     key={idx}
+                    executionTime={props.executionTime}
                     availCommands={props.availCommands}
                     handleChangeRepeat={props.handleChangeRepeat}
                     handleAddEvent={props.handleAddEvent}
