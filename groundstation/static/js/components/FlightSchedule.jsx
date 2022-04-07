@@ -50,6 +50,7 @@ class FlightSchedule extends Component {
       thisExecutionTime: null,
     };
     this.handleAddFlightOpenClick = this.handleAddFlightOpenClick.bind(this);
+    this.fetchFlightschedules = this.fetchFlightschedules.bind(this);
     this.handleDeleteFlightOpenClick =
       this.handleDeleteFlightOpenClick.bind(this);
     this.handleAddEvent = this.handleAddEvent.bind(this);
@@ -65,7 +66,7 @@ class FlightSchedule extends Component {
     this.handleExecutionTimeChange = this.handleExecutionTimeChange.bind(this);
   }
 
-  componentDidMount() {
+  fetchFlightschedules() {
     Promise.all([
       fetch("/api/flightschedules?limit=5", {
         headers: {
@@ -89,12 +90,26 @@ class FlightSchedule extends Component {
           });
           if (res1.data.flightschedules.length > 0) {
             this.setState({ empty: false });
+            // If a fs is queued, continually refresh so that its status
+            // can be updated
+            let existsQueued = false;
+            let numUploaded = 0;
+            res1.data.flightschedules.forEach((fs) => {
+              if (fs.status === 1) existsQueued = true;
+              else if (fs.status === 3) numUploaded++;
+            });
+            if (existsQueued || numUploaded >= 2)
+              setTimeout(this.fetchFlightschedules, 1000);
           }
         }
         if (res2.status == "success") {
           this.setState({ availCommands: res2.data.telecommands });
         }
       });
+  }
+
+  componentDidMount() {
+    this.fetchFlightschedules();
   }
 
   // handle add flight screen open
@@ -209,6 +224,7 @@ class FlightSchedule extends Component {
             thisFlightScheduleStatus: 2,
             thisExecutionTime: null,
           });
+          setTimeout(this.fetchFlightschedules, 1000);
         } else {
           if (data.message == "A Queued flight schedule already exists!") {
             alert(
