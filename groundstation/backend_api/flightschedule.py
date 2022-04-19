@@ -97,6 +97,7 @@ class Flightschedule(Resource):
             if command['op'] == 'add':
                 new_command = FlightScheduleCommands(
                         command_id=command['command']['command_id'],
+                        server=command['server'],
                         timestamp=command['timestamp'],
                         repeat_sec=command['repeats']['repeat_sec'],
                         repeat_min=command['repeats']['repeat_min'],
@@ -120,6 +121,7 @@ class Flightschedule(Resource):
                 this_command = FlightScheduleCommands.query.filter_by(id=command['flightschedule_command_id']).first()
                 this_command.timestamp = command['timestamp']
                 this_command.command_id = command['command']['command_id']
+                this_command.server = command['server']
 
                 this_command.arguments.clear()
                 arguments = command.pop('args')
@@ -271,6 +273,7 @@ class FlightScheduleList(Resource):
             command = FlightScheduleCommands(
                 command_id=command_id,
                 timestamp=timestamp,
+                server=command_data['server'],
                 repeat_sec=command_data['repeats']['repeat_sec'],
                 repeat_min=command_data['repeats']['repeat_min'],
                 repeat_hr=command_data['repeats']['repeat_hr'],

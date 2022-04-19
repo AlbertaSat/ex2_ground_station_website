@@ -46,11 +46,21 @@ const FlightscheduleCommand = (props) => {
     });
   };
 
-  const selects = props.availCommands.map((command) => ({
-    label: command.command_name,
-    value: command.command_id,
-    args: command.num_arguments,
-  }));
+  const selects = props.availCommands.reduce((prev, command) => {
+    // Since there is no easy way to tell which command goes to OBC or EPS,
+    // add both versions and let operator decide.
+    prev.push({
+      label: "obc." + command.command_name,
+      value: command.command_id,
+      args: command.num_arguments,
+    });
+    prev.push({
+      label: "eps." + command.command_name,
+      value: command.command_id,
+      args: command.num_arguments,
+    });
+    return prev;
+  }, []);
 
   const useStyles = makeStyles({
     cell: {
@@ -103,7 +113,11 @@ const FlightscheduleCommand = (props) => {
                 props.handleAddEvent(event, "command", props.idx)
               }
               value={{
-                label: props.flightschedule.command.command_name,
+                label: props.flightschedule.server
+                  ? props.flightschedule.server +
+                    "." +
+                    props.flightschedule.command.command_name
+                  : "",
                 value: props.flightschedule.command.command_id,
               }}
             />
@@ -191,7 +205,7 @@ const FlightscheduleCommand = (props) => {
       </TableRow>
       <TableRow className={classes.cell}>
         {props.flightschedule.args.map((arg, index) => (
-          <TableCell className={classes.cell}>
+          <TableCell className={classes.cell} key={index}>
             <form>
               <TextField
                 label={"Argument #" + (index + 1)}

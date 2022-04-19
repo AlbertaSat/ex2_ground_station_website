@@ -58,7 +58,8 @@ def add_command_to_flightschedule(timestamp, flightschedule_id, command_id):
     flightschedule_commands = FlightScheduleCommands(
                                 timestamp=timestamp,
                                 flightschedule_id=flightschedule_id,
-                                command_id=command_id
+                                command_id=command_id,
+                                server='obc'
                             )
     db.session.add(flightschedule_commands)
     db.session.commit()

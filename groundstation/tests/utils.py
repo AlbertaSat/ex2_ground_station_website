@@ -80,6 +80,7 @@ def fake_patch_update_as_dict(timestamp):
                     'timestamp': str(timestamp),
                     'args' : [],
                     'command': {'command_id': 2},
+                    'server': 'obc',
                     'repeats': {
                         'repeat_sec': False,
                         'repeat_min': False,
@@ -95,6 +96,7 @@ def fake_patch_update_as_dict(timestamp):
                     'timestamp': str(timestamp),
                     'args' : [],
                     'command': {'command_id': 1},
+                    'server': 'eps',
                     'repeats': {
                         'repeat_sec': False,
                         'repeat_min': False,

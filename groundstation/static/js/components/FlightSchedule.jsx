@@ -254,7 +254,8 @@ class FlightSchedule extends Component {
       obj[idx].timestamp = thisTime.toISOString();
     } else {
       obj[idx].command.command_id = event.value;
-      obj[idx].command.command_name = event.label;
+      obj[idx].command.command_name = event.label.substring(4);
+      obj[idx].server = event.label.substring(0, 3);
       obj[idx].args = [];
       for (let i = 0; i < event.args; i++) {
         obj[idx].args.push({ index: i, argument: "" });

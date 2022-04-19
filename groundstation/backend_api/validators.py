@@ -35,6 +35,7 @@ class FlightScheduleCommandValidator(Schema):
     """
     timestamp = fields.DateTime(format='iso', required=True)
     command = fields.Nested(CommandValidator, required=True)
+    server = fields.String(required=True, validate=validate.OneOf(['obc', 'eps']))
     args = fields.Nested(ArgumentValidator, required=True, many=True)
     repeats = fields.Nested(FlightScheduleCommandRepeatValidator, required=True)
 
@@ -55,6 +56,7 @@ class FlightSchedulePatchCommandValidator(Schema):
     command = fields.Nested(CommandValidator, required=True)
     flightschedule_command_id = fields.Integer(required=False)
     args = fields.Nested(ArgumentValidator, required=True, many=True)
+    server = fields.String(required=True, validate=validate.OneOf(['obc', 'eps']))
     repeats = fields.Nested(FlightScheduleCommandRepeatValidator, required=True)
 
 class FlightSchedulePatchValidator(Schema):

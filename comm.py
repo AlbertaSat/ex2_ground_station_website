@@ -73,7 +73,6 @@ def get_queued_fs():
     local_args = {'limit': 1, 'queued': 1}
     fs = flightschedule_list.get(local_args=local_args)
 
-
     if len(fs[0]['data']['flightschedules']) >= 1:
         fs_id = fs[0]['data']['flightschedules'][0]['flightschedule_id']
         fs_ex = fs[0]['data']['flightschedules'][0]['execution_time']
@@ -97,7 +96,7 @@ def format_date_time(dt_str: str):
         exec_time = (datetime.datetime
                      .strptime(dt_str, '%Y-%m-%d %H:%M:%S.%f')
                      .replace(tzinfo=datetime.timezone.utc))
-    except ValueError: # Sometimes the date format is off for some reason
+    except ValueError:  # Sometimes the date format is off for some reason
         exec_time = (datetime.datetime
                      .strptime(dt_str, '%Y-%m-%d %H:%M:%S')
                      .replace(tzinfo=datetime.timezone.utc))
@@ -117,8 +116,10 @@ def generate_fs_file(fs):
             # Format the command string from fs
             # TODO: Handle server as part of command
             command_name = command['command']['command_name']
+            server = command['server']
             args = [arg['argument'] for arg in command['args']]
-            command_string = command_name + '({})'.format(' '.join(args))
+            command_string = ('{}.{}({})'
+                              .format(server, command_name, ' '.join(args)))
 
             # Format the date/time from fs
             exec_time = format_date_time(command['timestamp'])
@@ -130,16 +131,16 @@ def generate_fs_file(fs):
                 'hour': '*' if command['repeats']['repeat_hr']
                     else exec_time.hour,
                 'dayOfWeek': '*' if command['repeats']['repeat_wkday']
-                    else ((exec_time.weekday() + 1) % 7) + 1, # Sunday = 1
+                    else ((exec_time.weekday() + 1) % 7) + 1,  # Sunday = 1
                 'day': '*' if command['repeats']['repeat_day']
                     else exec_time.day,
                 'month': '*' if command['repeats']['repeat_month']
                     else exec_time.month,
                 'year': '*' if command['repeats']['repeat_year']
-                    else exec_time.year - 1970 # Offset from 1970
+                    else exec_time.year - 1970  # Offset from 1970
             }
-            time_str = ("{second} {minute} {hour} {dayOfWeek} {day} {month} {year}"
-                    .format(**time_fields))
+            time_str = ('{second} {minute} {hour} {dayOfWeek} {day} {month} {year}'
+                        .format(**time_fields))
 
             # Write fs commands to file
             print(time_str, command_string, file=file)
@@ -151,6 +152,7 @@ def send_to_simulator(msg):
         return antenna.send(json.dumps(msg))
     except Exception as e:
         print('Unexpected error occured:', e)
+
 
 def convert_command_syntax(cmd):
     """
@@ -206,9 +208,11 @@ def communication_loop(csp=None):
     :param Csp csp: The Csp instance. See groundStation.py
     """
     if mode == Connection.SATELLITE and csp is None:
-        raise Exception('Csp instance must be specified if sending to satellite')
+        raise Exception(
+            'Csp instance must be specified if sending to satellite')
 
-    request_data = {'is_queued': True, 'receiver': 'comm', 'newest-first': False}
+    request_data = {'is_queued': True,
+                    'receiver': 'comm', 'newest-first': False}
     last_uploaded_fs = None
 
     # Check communication table every minute
@@ -302,7 +306,7 @@ def main():
 
 if __name__ == '__main__':
     if input('Would like to communicate with the satellite simulator (if not, the program '
-        'will attempt to communicate with the satellite) [Y/n]: ').strip() in ('Y', 'y'):
+             'will attempt to communicate with the satellite) [Y/n]: ').strip() in ('Y', 'y'):
         mode = Connection.SIMULATOR
         import satellite_simulator.antenna as antenna
     else:
