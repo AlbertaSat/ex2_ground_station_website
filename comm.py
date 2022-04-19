@@ -8,6 +8,7 @@ from threading import local
 import time
 import json
 import signal
+import sys
 import datetime
 from enum import Enum
 
@@ -305,12 +306,18 @@ def main():
 
 
 if __name__ == '__main__':
-    if input('Would like to communicate with the satellite simulator (if not, the program '
-             'will attempt to communicate with the satellite) [Y/n]: ').strip() in ('Y', 'y'):
-        mode = Connection.SIMULATOR
-        import satellite_simulator.antenna as antenna
-    else:
+    if len(sys.argv) > 1:
+        print('Detected CLI arguments for Ground Station Software!')
+        print('Automatically setting mode to satellite...')
         mode = Connection.SATELLITE
         import ex2_ground_station_software.src.groundStation as gs_software
+    else:
+        if input('Would like to communicate with the satellite simulator (if not, the program '
+                'will attempt to communicate with the satellite) [Y/n]: ').strip() in ('Y', 'y'):
+            mode = Connection.SIMULATOR
+            import satellite_simulator.antenna as antenna
+        else:
+            mode = Connection.SATELLITE
+            import ex2_ground_station_software.src.groundStation as gs_software
 
     main()
