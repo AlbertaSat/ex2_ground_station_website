@@ -3,8 +3,6 @@ The Communications Module is responsible for sending and retrieving data
 with the satellite (or the simulator).
 """
 
-import queue
-from threading import local
 import time
 import json
 import signal
@@ -85,7 +83,31 @@ def get_queued_fs():
     return None
 
 
-def format_date_time(dt_str: str):
+def reset_fs_status_except_uploaded(uploadedID):
+    """
+    Resets all previously uploaded flightschedules to 'draft' status when
+    a new flightschedule is uploaded.
+
+    :param uploadedID: The ID of the most recently uploaded flightschedule.
+    :type uploadedID: int
+    """
+    local_args = {'limit': 5, 'queued': 3}
+    prev_uploaded = flightschedule_list.get(local_args=local_args)
+
+    for prev_fs in prev_uploaded[0]['data']['flightschedules']:
+        if prev_fs['flightschedule_id'] != uploadedID:
+            patch_data = {
+                'status': 2,
+                'execution_time': prev_fs['execution_time'],
+                'commands': []
+            }
+            flightschedule_patch.patch(
+                prev_fs['flightschedule_id'],
+                local_data=json.dumps(patch_data)
+            )
+
+
+def format_date_time(dt_str):
     """Generates a datetime object from a string.
 
     :param str dt_str: A date-time string to convert
@@ -115,7 +137,6 @@ def generate_fs_file(fs):
     with open(file_name, "w+") as file:
         for command in fs['commands']:
             # Format the command string from fs
-            # TODO: Handle server as part of command
             command_name = command['command']['command_name']
             server = command['server']
             args = [arg['argument'] for arg in command['args']]
@@ -145,6 +166,7 @@ def generate_fs_file(fs):
 
             # Write fs commands to file
             print(time_str, command_string, file=file)
+
     return file_name
 
 
@@ -214,7 +236,6 @@ def communication_loop(csp=None):
 
     request_data = {'is_queued': True,
                     'receiver': 'comm', 'newest-first': False}
-    last_uploaded_fs = None
 
     # Check communication table every minute
     while True:
@@ -228,21 +249,8 @@ def communication_loop(csp=None):
                 # TODO: Upload fs file to satellite via ground station
                 # and handle acknowledgement
                 resp = fs_file_path
-
-            if resp is not None:
-                # TODO: Change old uploaded fs to draft
-                if last_uploaded_fs is not None:
-                    patch_data = {
-                        'status': 2,
-                        'execution_time': last_uploaded_fs['execution_time'],
-                        'commands': []
-                    }
-                    flightschedule_patch.patch(
-                        last_uploaded_fs['flightschedule_id'],
-                        local_data=json.dumps(patch_data)
-                    )
                 save_response("Generated: " + resp)
-                last_uploaded_fs = queued_fs
+                reset_fs_status_except_uploaded(queued_fs['flightschedule_id'])
 
         # Get queued communications
         messages = communication_list.get(local_data=request_data)[0]
@@ -313,7 +321,7 @@ if __name__ == '__main__':
         import ex2_ground_station_software.src.groundStation as gs_software
     else:
         if input('Would like to communicate with the satellite simulator (if not, the program '
-                'will attempt to communicate with the satellite) [Y/n]: ').strip() in ('Y', 'y'):
+                 'will attempt to communicate with the satellite) [Y/n]: ').strip() in ('Y', 'y'):
             mode = Connection.SIMULATOR
             import satellite_simulator.antenna as antenna
         else:
