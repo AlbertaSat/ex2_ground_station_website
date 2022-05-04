@@ -50,9 +50,9 @@ def automate_passovers():
 
     # the automation will also handle queuing passover times
     passovers = passover.get(local_args={'limit': 1, 'next': 'true'})
+    passover_data = passovers[0]['data']['next_passovers']
 
-    if passovers[1] == 200:
-        passover_data = passovers[0]['data']['next_passovers']
+    if passovers[1] == 200 and len(passover_data) > 0:
         for ps in passover_data:
             time_obj = datetime.strptime(
                 ps['timestamp'], '%Y-%m-%d %H:%M:%S.%f')
@@ -72,14 +72,14 @@ def automate_passovers():
 
         tle = hk[0]['data']['logs'][0]['tle']
         lines = tle.split('\n')
-    
+
         orb = Orbital('ex-alta 2', line1=lines[0], line2=lines[1])
         dtobj = datetime.utcnow()
         passes = orb.get_next_passes(dtobj, 24, -113.4938, 53.5461, 0.645) # edmonton coordinates and elevation
         ps_data = {'passovers': [{'timestamp': str(ps[0])} for ps in passes]}
 
         passover.post(local_data=json.dumps(ps_data))
-        
+
 
 def send_slack_notifs(message):
     """Sends out a Slack message to all subscribed users.
@@ -92,7 +92,7 @@ def send_slack_notifs(message):
     users = user_list.get(local_args={'limit': 1000})[0]['data']
 
     slack_token = os.getenv('SLACK_TOKEN')
-    if token is not None:
+    if slack_token is not None:
         client = slack.WebClient(token=slack_token)
         for user in users:
             if user.subscribed_to_slack and user.slack_id is not None:

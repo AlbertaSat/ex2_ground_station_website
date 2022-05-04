@@ -1,1 +1,1 @@
-GET-HK
+demo.time_management.get_time()

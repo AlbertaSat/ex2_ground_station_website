@@ -67,20 +67,22 @@ def test(path=None):
 
 
 @cli.command('seed_db')
-def seed_db():
+@click.pass_context
+def seed_db(ctx):
     """Imports commands and adds admin and non-admin user.
     """
     # clear database before adding new data
     db.drop_all()
     db.create_all()
 
-    commands_added = import_commands() # no telecommands added if import fails
+    ctx.invoke(import_commands) # no telecommands added if import fails
 
     add_user(username='Admin_user', password='Admin_user', is_admin=True)
     add_user(username='albert', password='albert', is_admin=False)
 
 
 @cli.command('seed_db_example')
+@click.pass_context
 def seed_db_example():
     """Imports commands, adds users and example data.
     """
@@ -109,7 +111,7 @@ def seed_db_example():
             db.session.add(housekeeping)
     db.session.commit()
 
-    commands_added = import_commands() # no telecommands added if import fails
+    ctx.invoke(import_commands()) # no telecommands added if import fails
 
     flightschedule = add_flight_schedule(
         creation_date=timestamp, upload_date=timestamp, status=2, execution_time=timestamp)
@@ -272,10 +274,11 @@ def import_commands():
         text = f.read()
 
     # regex command based on current formatting of CommandDocs.txt; might need to be changed later
-    blocks = re.findall('[\.\n]([A-Z0-9_]*):[^\[]*\[([^\]]*)\]', text)
+    blocks = re.findall('[\.\n]([A-Z0-9_.]*):[^\[]*\[([^\]]*)\]', text)
+    print(blocks)
 
-    for (command_name, arguments) in blocks: 
-        
+    for (command_name, arguments) in blocks:
+
         # currently false; need to figure out which commands should be considered dangerous
         is_dangerous = False
 
@@ -286,7 +289,7 @@ def import_commands():
 
         c = add_telecommand(command_name=command_name.lower(), num_arguments=num_arguments,
                             is_dangerous=is_dangerous)
-        
+
     print("Added new telecommands.")
 
     return True
