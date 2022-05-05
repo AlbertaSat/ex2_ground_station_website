@@ -103,7 +103,22 @@ class FlightSchedule extends Component {
           }
         }
         if (res2.status == "success") {
-          this.setState({ availCommands: res2.data.telecommands });
+          // Create two copies of each command prefixed with 'obc.' or 'eps.'
+          this.setState({
+            availCommands: res2.data.telecommands.reduce((prev, command) => {
+              prev.push({
+                label: "obc." + command.command_name,
+                value: command.command_id,
+                args: command.num_arguments,
+              });
+              prev.push({
+                label: "eps." + command.command_name,
+                value: command.command_id,
+                args: command.num_arguments,
+              });
+              return prev;
+            }, []),
+          });
         }
       });
   }

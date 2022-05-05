@@ -46,22 +46,6 @@ const FlightscheduleCommand = (props) => {
     });
   };
 
-  const selects = props.availCommands.reduce((prev, command) => {
-    // Since there is no easy way to tell which command goes to OBC or EPS,
-    // add both versions and let operator decide.
-    prev.push({
-      label: "obc." + command.command_name,
-      value: command.command_id,
-      args: command.num_arguments,
-    });
-    prev.push({
-      label: "eps." + command.command_name,
-      value: command.command_id,
-      args: command.num_arguments,
-    });
-    return prev;
-  }, []);
-
   const useStyles = makeStyles({
     cell: {
       borderBottom: "1px solid rgba(224, 224, 224, 1)",
@@ -100,7 +84,7 @@ const FlightscheduleCommand = (props) => {
               className="basic-single"
               classNamePrefix="select"
               name="color"
-              options={selects}
+              options={props.availCommands}
               isClearable
               placeholder="Command"
               styles={{
