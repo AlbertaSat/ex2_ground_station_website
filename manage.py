@@ -275,7 +275,6 @@ def import_commands():
 
     # regex command based on current formatting of CommandDocs.txt; might need to be changed later
     blocks = re.findall('[\.\n]([A-Z0-9_.]*):[^\[]*\[([^\]]*)\]', text)
-    print(blocks)
 
     for (command_name, arguments) in blocks:
 
