@@ -163,5 +163,8 @@ _site
 # MacOS Dev
 *.icloud
 
-# Flightschedule files
+# Flighschedule Files
 flightschedules/fs_*
+
+# Secret Keys
+/keys.sh
