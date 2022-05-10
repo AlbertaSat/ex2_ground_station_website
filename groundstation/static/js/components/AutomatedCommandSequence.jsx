@@ -70,7 +70,7 @@ class AutomatedCommandSequence extends Component {
                     <Typography variant="h5" style={{padding: '10px'}}>Automated Command Sequence</Typography>
                 </Grid>
 				<Grid item xs={1} style={{textAlign: 'right'}}>
-					<Fab style={{position: 'inherit'}} onClick={ (event) => this.handleAddFlightOpenClick(event) }>
+					<Fab style={{position: 'inherit'}} onClick={ (event) => this.handleAddCommandOpenClick(event) }>
 						<AddIcon 
 								style={{ color: '#4bacb8', fontSize: '2rem'}} 
 						/>
@@ -91,6 +91,7 @@ class AutomatedCommandSequence extends Component {
                 </Grid>
             </Paper>                
             </Grid>
+
             </div>
         )
     }
