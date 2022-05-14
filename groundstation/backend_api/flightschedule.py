@@ -99,10 +99,10 @@ class Flightschedule(Resource):
                         command_id=command['command']['command_id'],
                         server=command['server'],
                         timestamp=command['timestamp'],
+                        repeat_ms=command['repeats']['repeat_ms'],
                         repeat_sec=command['repeats']['repeat_sec'],
                         repeat_min=command['repeats']['repeat_min'],
                         repeat_hr=command['repeats']['repeat_hr'],
-                        repeat_wkday=command['repeats']['repeat_wkday'],
                         repeat_day=command['repeats']['repeat_day'],
                         repeat_month=command['repeats']['repeat_month'],
                         repeat_year=command['repeats']['repeat_year'],
@@ -127,10 +127,10 @@ class Flightschedule(Resource):
                 arguments = command.pop('args')
 
                 # change repeating settings
+                this_command.repeat_ms=command['repeats']['repeat_ms']
                 this_command.repeat_sec=command['repeats']['repeat_sec']
                 this_command.repeat_min=command['repeats']['repeat_min']
                 this_command.repeat_hr=command['repeats']['repeat_hr']
-                this_command.repeat_wkday=command['repeats']['repeat_wkday']
                 this_command.repeat_day=command['repeats']['repeat_day']
                 this_command.repeat_month=command['repeats']['repeat_month']
                 this_command.repeat_year=command['repeats']['repeat_year']
@@ -274,10 +274,10 @@ class FlightScheduleList(Resource):
                 command_id=command_id,
                 timestamp=timestamp,
                 server=command_data['server'],
+                repeat_ms=command_data['repeats']['repeat_ms'],
                 repeat_sec=command_data['repeats']['repeat_sec'],
                 repeat_min=command_data['repeats']['repeat_min'],
                 repeat_hr=command_data['repeats']['repeat_hr'],
-                repeat_wkday=command_data['repeats']['repeat_wkday'],
                 repeat_day=command_data['repeats']['repeat_day'],
                 repeat_month=command_data['repeats']['repeat_month'],
                 repeat_year=command_data['repeats']['repeat_year'],

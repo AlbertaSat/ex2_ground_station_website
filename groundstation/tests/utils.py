@@ -82,10 +82,10 @@ def fake_patch_update_as_dict(timestamp):
                     'command': {'command_id': 2},
                     'server': 'obc',
                     'repeats': {
+                        'repeat_ms': False,
                         'repeat_sec': False,
                         'repeat_min': False,
                         'repeat_hr': False,
-                        'repeat_wkday': False,
                         'repeat_day': False,
                         'repeat_month': False,
                         'repeat_year': False
@@ -98,10 +98,10 @@ def fake_patch_update_as_dict(timestamp):
                     'command': {'command_id': 1},
                     'server': 'eps',
                     'repeats': {
+                        'repeat_ms': False,
                         'repeat_sec': False,
                         'repeat_min': False,
                         'repeat_hr': False,
-                        'repeat_wkday': False,
                         'repeat_day': False,
                         'repeat_month': False,
                         'repeat_year': False

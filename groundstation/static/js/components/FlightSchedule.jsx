@@ -20,10 +20,10 @@ const DefaultCommand = {
   command: { command_id: "" },
   timestamp: null,
   repeats: {
+    repeat_ms: false,
     repeat_sec: false,
     repeat_min: false,
     repeat_hr: false,
-    repeat_wkday: false,
     repeat_day: false,
     repeat_month: false,
     repeat_year: false,
@@ -68,7 +68,7 @@ class FlightSchedule extends Component {
 
   fetchFlightschedules() {
     Promise.all([
-      fetch("/api/flightschedules?limit=5", {
+      fetch("/api/flightschedules", {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("auth_token"),
         },
@@ -208,7 +208,7 @@ class FlightSchedule extends Component {
       : "/api/flightschedules";
     let method = this.state.editFlight ? "PATCH" : "POST";
     this.setState({ empty: false });
-    console.log("posted data", data);
+    // console.log("posted data", data);
     fetch(url, {
       method: method,
       headers: {
@@ -258,12 +258,12 @@ class FlightSchedule extends Component {
       // to the execution time for the command timestamp
       let thisTimeObj = this.state.thisExecutionTime;
       if (this.state.editFlight && !thisTimeObj.endsWith("Z")) {
-        console.log(this.state.thisExecutionTime);
-        thisTimeObj.slice(-3);
+        // console.log(this.state.thisExecutionTime);
+        // console.log(typeof this.state.thisExecutionTime);
         thisTimeObj = thisTimeObj.replace(" ", "T").concat("Z");
       }
       let thisTime = Date.parse(thisTimeObj);
-      let offsetSeconds = parseInt(event.target.value) * 1000;
+      let offsetSeconds = parseInt(event.target.value);
       thisTime = new Date(thisTime + offsetSeconds);
 
       obj[idx].timestamp = thisTime.toISOString();
@@ -289,6 +289,8 @@ class FlightSchedule extends Component {
 
   handleExecutionTimeChange(event) {
     let thisExecutionTime = event._d;
+    thisExecutionTime.setMilliseconds(0);
+    thisExecutionTime.setSeconds(0);
     const obj = this.state.thisFlightscheduleCommands.slice();
     // handle changing all flight schedule command timestamps if the execution
     // time is changed, that is all flightschedule timestamps should reflect
@@ -303,7 +305,7 @@ class FlightSchedule extends Component {
             command.timestamp = command.timestamp.replace("Z", "");
             command.timestamp = command.timestamp.concat("000");
           }
-          console.log(command.timestamp, command.op);
+          // console.log(command.timestamp, command.op);
           let oldTime = Date.parse(command.timestamp);
           let oldExecTime = Date.parse(this.state.thisExecutionTime);
           let origOffset = oldTime - oldExecTime;
@@ -366,10 +368,10 @@ class FlightSchedule extends Component {
       obj[idx].op = "remove";
     } else {
       obj.splice(idx, 1);
-      console.log("obj", obj);
+      // console.log("obj", obj);
     }
     this.setState({ thisFlightscheduleCommands: obj });
-    console.log(this.state.thisFlightscheduleCommands);
+    // console.log(this.state.thisFlightscheduleCommands);
   }
 
   // handle opening the editing dialog
@@ -384,7 +386,7 @@ class FlightSchedule extends Component {
       ...command,
       op: "none",
     }));
-    console.log(obj);
+    // console.log(obj);
 
     this.setState({
       addFlightOpen: !this.state.addFlightOpen,

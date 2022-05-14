@@ -22,10 +22,10 @@ class CommandValidator(Schema):
 class FlightScheduleCommandRepeatValidator(Schema):
     """Validator for the repeat settings for a single flight schedule command
     """
+    repeat_ms = fields.Boolean(required=True)
     repeat_sec = fields.Boolean(required=True)
     repeat_min = fields.Boolean(required=True)
     repeat_hr = fields.Boolean(required=True)
-    repeat_wkday = fields.Boolean(required=True)
     repeat_day = fields.Boolean(required=True)
     repeat_month = fields.Boolean(required=True)
     repeat_year = fields.Boolean(required=True)

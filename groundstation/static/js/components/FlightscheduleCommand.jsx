@@ -13,10 +13,10 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 
 const RepeatLabels = {
+  repeat_ms: "...Millisecond",
   repeat_sec: "...Second",
   repeat_min: "...Minute",
   repeat_hr: "...Hour",
-  repeat_wkday: "...Weekday",
   repeat_day: "...Day",
   repeat_month: "...Month",
   repeat_year: "...Year",
@@ -64,7 +64,7 @@ const FlightscheduleCommand = (props) => {
       return null;
     } else {
       //console.log(Date.parse(timestamp) - executionTime.getTime());
-      return (Date.parse(timestamp) - Date.parse(executionTime)) / 1000;
+      return Date.parse(timestamp) - Date.parse(executionTime);
     }
   }
 
@@ -115,7 +115,7 @@ const FlightscheduleCommand = (props) => {
           <form>
             <TextField
               id="outlined-basic"
-              label="Delta Time"
+              label="Millisecond Offset"
               variant="outlined"
               type="number"
               defaultValue={convertTimestamp(

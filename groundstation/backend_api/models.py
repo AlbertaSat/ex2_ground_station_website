@@ -203,10 +203,10 @@ class FlightScheduleCommands(db.Model):
     command_id = db.Column(db.Integer, db.ForeignKey('telecommands.id'), nullable=False)
     timestamp = db.Column(db.DateTime)
     server = db.Column(db.String(3), default='obc', nullable=False)
+    repeat_ms = db.Column(db.Boolean, default=False, nullable=False)
     repeat_sec = db.Column(db.Boolean, default=False, nullable=False)
     repeat_min = db.Column(db.Boolean, default=False, nullable=False)
     repeat_hr = db.Column(db.Boolean, default=False, nullable=False)
-    repeat_wkday = db.Column(db.Boolean, default=False, nullable=False)
     repeat_day = db.Column(db.Boolean, default=False, nullable=False)
     repeat_month = db.Column(db.Boolean, default=False, nullable=False)
     repeat_year = db.Column(db.Boolean, default=False, nullable=False)
@@ -224,10 +224,10 @@ class FlightScheduleCommands(db.Model):
             'flightschedule_command_id': self.id,
             'timestamp': str(self.timestamp),
             'repeats': {
+                'repeat_ms': self.repeat_ms,
                 'repeat_sec': self.repeat_sec,
                 'repeat_min': self.repeat_min,
                 'repeat_hr': self.repeat_hr,
-                'repeat_wkday': self.repeat_wkday,
                 'repeat_day': self.repeat_day,
                 'repeat_month': self.repeat_month,
                 'repeat_year': self.repeat_year,
