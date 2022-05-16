@@ -171,6 +171,18 @@ class Help extends Component {
                         operator), the satellite (comm), or sent as part of an automated script (automation). 
                     </Typography>
                 </Paper> 
+                <Paper className="AutomatedCommandSequence" style={{marginBottom: '20px'}}>
+                    <Typography variant="h5" style={{padding: '10px'}}>
+                        Automated Command Sequence
+                    </Typography>
+                    <Typography variant="body1" style={{paddingLeft: '20px'}}>
+                        The automated command sequence page displays a table of the current automated
+                        command sequence: a list of commands that will automatically be sent to the satellite
+                        upon the start of a passover. Only admin users have the ability to update the sequence.
+                        Commands can be added, removed, and their order in the sequence updated using the navigation
+                        tools. 
+                    </Typography>
+                </Paper>
                 <Paper className="Logs" style={{marginBottom: '20px' }}>
                     <Typography variant="h5" style={{ padding: '10px' }}>
                         Logs
