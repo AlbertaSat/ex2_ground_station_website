@@ -106,7 +106,6 @@ class AutomatedCommandList(Resource):
         super(AutomatedCommandList, self).__init__()
 
     @create_context
-    @login_required
     def get(self, local_args=None):
         """Endpoint for getting a list of the Automated Command Sequence
 
