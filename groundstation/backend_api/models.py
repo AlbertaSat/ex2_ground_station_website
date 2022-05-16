@@ -161,6 +161,7 @@ class Telecommands(db.Model):
     command_name = db.Column(db.String(64))
     num_arguments = db.Column(db.Integer)
     flightschedulecommands = db.relationship('FlightScheduleCommands', backref='command', lazy=True)
+    automatedcommands = db.relationship('AutomatedCommands', backref='command', lazy=True)
     is_dangerous = db.Column(db.Boolean)
 
     def to_json(self):
@@ -276,4 +277,37 @@ class Communications(db.Model):
             'sender': self.sender,
             'receiver': self.receiver,
             'is_queued': self.is_queued
+        }
+
+class AutomatedCommands(db.Model):
+    __tablename__ = 'automatedcommands'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    command_id = db.Column(db.Integer, db.ForeignKey('telecommands.id'), nullable=False)
+    priority = db.Column(db.Integer)
+    arguments = db.relationship('AutomatedCommandsArgs', backref='automatedcommand', lazy=True, cascade='all, delete-orphan')
+
+    def to_json(self):
+        """Returns a dictionary of some selected model attributes
+        """
+        return {
+            'automatedcommand_id': self.id, 
+            'command': self.command.to_json(),
+            'args': [arg.to_json() for arg in self.arguments]
+        }
+
+class AutomatedCommandsArgs(db.Model):
+    __tablename__ = 'automatedcommandsargs'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    index = db.Column(db.Integer)
+    argument = db.Column(db.String(8))
+    automatedcommand_id = db.Column(db.Integer, db.ForeignKey('automatedcommands.id'), nullable=False)
+
+    def to_json(self):
+        """Returns a dictionary of some selected model attributes
+        """
+        return {
+            'index': self.index,
+            'argument': self.argument
         }

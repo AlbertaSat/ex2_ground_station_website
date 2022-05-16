@@ -19,6 +19,20 @@ class CommandValidator(Schema):
     is_dangerous = fields.Boolean(required=False)
     command_name = fields.String(required=False)
 
+class AutomatedCommandValidator(Schema):
+    """Validator for automated commands
+    """
+    priority = fields.Integer(required=True)
+    command = fields.Nested(CommandValidator, required=True)
+    args = fields.Nested(ArgumentValidator, required=True, many=True)
+
+class AutomatedCommandPatchValidator(Schema):
+    """Validator for automated commands
+    """
+    priority = fields.Integer(required=False)
+    command = fields.Nested(CommandValidator, required=False)
+    args = fields.Nested(ArgumentValidator, required=False, many=True)
+
 class FlightScheduleCommandValidator(Schema):
     """Validator for flighschedule commands
     """
