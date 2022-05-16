@@ -26,6 +26,12 @@ const AutomatedCommandSequenceList = (props) => {
             </div>
         )
     }
+    
+    const getArgString = (args) => {
+        let allArgs = [];
+        args.forEach((arg) => allArgs.push(arg.argument));
+        return allArgs.join(", ");
+    }
 
     return (
         <div>
@@ -33,6 +39,7 @@ const AutomatedCommandSequenceList = (props) => {
                 <TableHead>
                     <TableRow>
                         <TableCell style={{fontWeight: "bold"}}>Command Name</TableCell>
+                        <TableCell style={{fontWeight: "bold"}}>Arguments</TableCell>
                         <TableCell style={{fontWeight: "bold"}} align="right">Navigation</TableCell>
                     </TableRow>
                 </TableHead>
@@ -41,6 +48,9 @@ const AutomatedCommandSequenceList = (props) => {
                         <TableRow key={idx}>
                             <TableCell component="th" scope="row">
                                 {command.command.command_name}
+                            </TableCell>
+                            <TableCell>
+                                {getArgString(command.args)}
                             </TableCell>
                             <TableCell align="right">
                                 <IconButton onClick={(event) => props.handleRearrangeClick(event, idx, true)}>

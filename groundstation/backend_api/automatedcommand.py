@@ -82,6 +82,7 @@ class AutomatedCommand(Resource):
             response_object = {'status': 'fail', 'message': 'Automated command id does not exist'}
             return response_object, 404
 
+        # since a command in the sequence has been deleted, all commands with a lower priority need to be updated
         for command in all_commands:
             if command.priority > automatedcommand.priority:
                 command.priority -= 1
