@@ -148,10 +148,10 @@ class Help extends Component {
                     </Typography>
                     <Typography variant="body1" style={{paddingLeft: '20px' }}>
                         Send telecommands to the satellite via the live commands page.
-                        Commands are formatted as "command_name arg1 arg2 ... "
+                        Commands are formatted as "command_name(arg1 arg2 ...) "
                         where the number and content of arguments will differ based
-                        on the command being sent.
-                        The list of valid telecommands is:
+                        on the command being sent. For commands with no arguments, the format
+                        is "command_name()". The list of valid telecommands is:
                         <Paper style={{marginBottom: '20px'}}>
                             <Typography variant="h6">
                                 Telecommands
