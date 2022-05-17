@@ -6,6 +6,9 @@ import {formatDateToUTCString} from '../helpers.js'
 const CommunicationEntry = (props) => {
     const [isQueued, setIsQueued] = useState(props.entry.is_queued);
 
+    const showQueueButton = props.showQueueButton;
+    //console.log(showQueueButton);
+
     function queueHandler() {
         const patch_queue = {
             is_queued: !props.entry.is_queued
@@ -74,7 +77,7 @@ const CommunicationEntry = (props) => {
             <p style={contentStyle}>Message: {props.entry.message}</p>
             {(sender === 'comm') ? null: <p style={contentStyle}>Is Queued: {props.entry.is_queued ? 'true' : 'false'}</p>}
             <div>
-            {((props.is_admin || (sender === username)) && (sender !== 'comm')) ? <Button 
+            {((props.is_admin || (sender === username)) && (sender !== 'comm') && (showQueueButton)) ? <Button 
                 style={{marginBottom:"1%"}} 
                 color = "primary" 
                 onClick={queueHandler}
@@ -87,7 +90,13 @@ const CommunicationEntry = (props) => {
 
 const CommunicationsList = (props) => {
     const [isAdmin, setIsAdmin] = useState(false);
+    //const[showQueueButton, setQueueButton] = useState(false);
     const divStyle = {margin:'2%'}
+
+    // if (props.showQueueButton === true) {
+    //     setQueueButton(props.showQueueButton);
+    // }
+    console.log(props.showQueueButton);
 
     const messagesEndRef = createRef();
     if (props.autoScroll === true) {
@@ -114,18 +123,17 @@ const CommunicationsList = (props) => {
         if (data.status === 'success') {
             is_admin = data.data.is_admin;
             setIsAdmin(is_admin);
-            console.log(is_admin);
         } else {
             console.error('Unexpected error occured:');
         }
     });
-    console.log(is_admin);
+    //console.log(is_admin);
 
 
 	return (
         <div style={divStyle}>
             {props.displayLog.map(logEntry => (
-                <CommunicationEntry entry={logEntry} is_admin={isAdmin}/>
+                <CommunicationEntry entry={logEntry} is_admin={isAdmin} showQueueButton={props.showQueueButton}/>
             ))}
             <div ref={messagesEndRef} />
         </div>

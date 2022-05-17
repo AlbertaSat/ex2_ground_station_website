@@ -71,7 +71,7 @@ class Logs extends Component {
                 </div>
                 <div>
                     <Paper style={{paddingTop:"1%", paddingBottom:"2%"}}>
-                        <CommunicationsList autoScroll={false} displayLog={this.state.messages} isEmpty={this.state.is_empty}/>
+                        <CommunicationsList autoScroll={false} showQueueButton={true} displayLog={this.state.messages} isEmpty={this.state.is_empty}/>
                     </Paper>
                 </div>
             </div>
