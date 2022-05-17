@@ -4,6 +4,7 @@ from flask_restful import Resource, Api
 import datetime
 import json
 from sqlalchemy import desc
+import sys
 
 from groundstation.backend_api.models import Communications
 from groundstation import db
@@ -56,7 +57,7 @@ class Communication(Resource):
             post_data = request.get_json()
         else:
             post_data = json.loads(local_data)
-
+            
         message = Communications.query.filter_by(id=message_id).first()
 
         if not message:

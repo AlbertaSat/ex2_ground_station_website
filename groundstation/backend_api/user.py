@@ -28,12 +28,21 @@ class UserEntity(Resource):
         :returns: response_object, status_code
         :rtype: tuple (dict, int)
         """
-        user = User.query.filter_by(id=user_id).first()
+        user = User.query.filter_by(id=User.decode_auth_token(user_id)).first()
+        #userID = User.decode_auth_token(local_args['auth_token'])
+
         response_object = {
             'status':None,
             'message':None,
             'data':None
         }
+
+        # if user_id != userID:
+        #     response_object['status'] = 'fail'
+        #     response_object['message'] = 'User ID does not match auth token.'
+        #     response_object['data'] = None
+        #     return response_object, 404
+
         if user is None:
             response_object['status'] = 'fail'
             response_object['message'] = 'User does not exist.'

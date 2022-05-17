@@ -68,7 +68,8 @@ class User(db.Model):
         return {
             'id' : self.id,
             'username': self.username,
-            'slack_id': self.slack_id
+            'slack_id': self.slack_id,
+            'is_admin': self.is_admin
         }
 
 class Housekeeping(db.Model):
