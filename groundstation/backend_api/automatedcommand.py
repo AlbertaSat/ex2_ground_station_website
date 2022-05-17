@@ -7,7 +7,6 @@ from groundstation import db
 from groundstation.backend_api.models import AutomatedCommands, AutomatedCommandsArgs
 from groundstation.backend_api.utils import create_context, login_required
 from groundstation.backend_api.validators import AutomatedCommandValidator, AutomatedCommandPatchValidator
-from datetime import datetime
 
 automatedcommand_blueprint = Blueprint('automatedcommand', __name__)
 api = Api(automatedcommand_blueprint)
