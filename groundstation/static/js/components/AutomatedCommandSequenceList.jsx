@@ -53,13 +53,13 @@ const AutomatedCommandSequenceList = (props) => {
                                 {getArgString(command.args)}
                             </TableCell>
                             <TableCell align="right">
-                                <IconButton onClick={(event) => props.handleRearrangeClick(event, idx, true)}>
+                                <IconButton disabled={!props.is_admin} onClick={(event) => props.handleRearrangeClick(event, idx, true)}>
                                     <ArrowDropUpIcon style={{color: '#4bacb8'}} />
                                 </IconButton>
-                                <IconButton onClick={(event) => props.handleRearrangeClick(event, idx, false)}>
+                                <IconButton disabled={!props.is_admin} onClick={(event) => props.handleRearrangeClick(event, idx, false)}>
                                     <ArrowDropDownIcon style={{color: '#4bacb8'}} />
                                 </IconButton>
-                                <IconButton onClick={(event) => props.handleDeleteCommandOpenClick(event, idx)}>
+                                <IconButton disabled={!props.is_admin} onClick={(event) => props.handleDeleteCommandOpenClick(event, idx)}>
                                     <DeleteIcon style={{color: '#4bacb8'}} />
                                 </IconButton>
                             </TableCell>

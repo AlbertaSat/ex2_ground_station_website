@@ -20,6 +20,7 @@ class AutomatedCommandSequence extends Component {
         this.state = {
             isLoading: true,
             empty: true,
+            is_admin: false,
             addCommandOpen: false,
             deleteCommandOpen: false,
             thisCommand: {"command": {"command_id": ""}, "priority": null, "args": []},
@@ -37,12 +38,14 @@ class AutomatedCommandSequence extends Component {
     }
 
     componentDidMount() {
+        const auth_token = localStorage.getItem('auth_token');
         Promise.all([
-            fetch('/api/automatedcommands', {headers: {'Authorization':'Bearer '+ localStorage.getItem('auth_token')}}),
-            fetch('/api/telecommands', {headers: {'Authorization':'Bearer '+ localStorage.getItem('auth_token')}})
-        ]).then(([res1, res2]) => {
-            return Promise.all([res1.json(), res2.json()]);
-        }).then(([res1, res2]) => {
+            fetch('/api/automatedcommands', {headers: {'Authorization':'Bearer '+ auth_token}}),
+            fetch('/api/telecommands', {headers: {'Authorization':'Bearer '+ auth_token}}),
+            fetch('/api/users/' + auth_token, {headers: {'Authorization':'Bearer ' + auth_token}})
+        ]).then(([res1, res2, res3]) => {
+            return Promise.all([res1.json(), res2.json(), res3.json()]);
+        }).then(([res1, res2, res3]) => {
             if (res1.status == 'success') {
                 this.setState({automatedcommands: res1.data.automatedcommands, isLoading: false});
                 if (res1.data.automatedcommands.length > 0) {
@@ -51,6 +54,9 @@ class AutomatedCommandSequence extends Component {
             }
             if (res2.status == 'success') {
                 this.setState({availCommands: res2.data.telecommands});
+            }
+            if (res3.status == 'success') {
+                this.setState({is_admin: res3.data.is_admin});
             }
         });
     }
@@ -210,7 +216,10 @@ class AutomatedCommandSequence extends Component {
                     <Typography variant="h5" style={{padding: '10px'}}>Automated Command Sequence</Typography>
                 </Grid>
 				<Grid item xs={1} style={{textAlign: 'right'}}>
-					<Fab style={{position: 'inherit'}} onClick={ (event) => this.handleAddCommandOpenClick(event) }>
+					<Fab 
+                    disabled={!this.state.is_admin} 
+                    style={{position: 'inherit'}} 
+                    onClick={ (event) => this.handleAddCommandOpenClick(event) }>
 						<AddIcon 
 								style={{ color: '#4bacb8', fontSize: '2rem'}} 
 						/>
@@ -228,6 +237,7 @@ class AutomatedCommandSequence extends Component {
                     handleRearrangeClick={this.handleRearrangeClick}
                     handleDeleteCommandOpenClick={this.handleDeleteCommandOpenClick}
                     empty={this.state.empty}
+                    is_admin={this.state.is_admin}
                     />
                 </Grid>
             </Paper>                

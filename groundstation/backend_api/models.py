@@ -68,6 +68,7 @@ class User(db.Model):
         return {
             'id' : self.id,
             'username': self.username,
+            'is_admin': self.is_admin,
             'slack_id': self.slack_id
         }
 
