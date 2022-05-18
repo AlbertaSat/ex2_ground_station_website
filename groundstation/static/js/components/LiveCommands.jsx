@@ -126,7 +126,7 @@ class LiveCommands extends Component {
         }
         const command_name = str.substring(0, openIndex);
         const matching_command = this.state.validTelecommands.find((element) => {
-            if (element.command_name === command_name) {
+            if (element.command_name === command_name || element.command_name === command_name.substring(4)) {
                 return element
             }
         });
