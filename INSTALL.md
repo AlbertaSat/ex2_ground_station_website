@@ -21,9 +21,11 @@ Now, open Google Chrome and navigate to [http://localhost:8000](http://localhost
 ## Developer Installation
 This installation method it will allow you to immediately see any modifications you have made to the source code on your host machine in the docker container (and vice versa). As a result, you will not have to rebuild the docker image every time you make a change to the source code on your host machine.
 
+First, clone this repository and create a `keys.sh` file in the root folder that follows the same conventions outlined in the `keys-example.sh` file. You will need to create a Flask sessions `SECRET_KEY` and optionally, a Slack token. Information on using the Slack API can be found [here](https://api.slack.com/).
+
 ### MacOS and Ubuntu
 
-Start by cloning this repository and pulling the albertasatdocker/ground-station-website:dev-latest docker image using the commands below.
+After cloning this repository, pull the albertasatdocker/ground-station-website:dev-latest docker image using the commands below.
 
 ```bash
 cd <cloned-repo-location>
@@ -55,7 +57,7 @@ Finally, open Google Chrome and navigate to [http://localhost:8000](http://local
 
 ### Windows
 
-Start by cloning this repository and pulling the albertasatdocker/ground-station-website:dev-latest docker image using the commands below.
+After cloning this repository, pull the albertasatdocker/ground-station-website:dev-latest docker image using the commands below.
 
 ```bash
 cd <cloned-repo-location>
