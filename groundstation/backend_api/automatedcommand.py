@@ -82,6 +82,7 @@ class AutomatedCommand(Resource):
             return response_object, 404
 
         # since a command in the sequence has been deleted, all commands with a lower priority need to be updated
+        # note that a lower value corresponds to a higher priority in the command sequence (and vice versa) 
         for command in all_commands:
             if command.priority > automatedcommand.priority:
                 command.priority -= 1
