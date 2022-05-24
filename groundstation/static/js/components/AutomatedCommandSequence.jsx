@@ -24,6 +24,7 @@ class AutomatedCommandSequence extends Component {
             addCommandOpen: false,
             deleteCommandOpen: false,
             editCommand: false,
+            editIndex: null,
             thisCommand: {"command": {"command_id": ""}, "priority": null, "args": []},
             availCommands: [],
             automatedcommands: []
@@ -69,6 +70,8 @@ class AutomatedCommandSequence extends Component {
 
         this.setState({
             addCommandOpen: !this.state.addCommandOpen,
+            editCommand: false,
+            editIndex: null,
             thisCommand: {"command": {"command_id": ""}, "priority": null, "args": []}
         });
 
@@ -137,7 +140,32 @@ class AutomatedCommandSequence extends Component {
     }
 
     editAutomatedCommand() {
+        // should only be used to edit a command or its arguments, and not the priority
+        let data = this.state.thisCommand;
+        let id = this.state.thisCommand.automatedcommand_id;
 
+        fetch('/api/automatedcommands/' + id, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + localStorage.getItem("auth_token")
+            },
+            body: JSON.stringify(data),       
+        }).then(results => {
+            return results.json();
+        }).then(data => {
+            if (data.status == "success") {
+                const obj = this.state.automatedcommands.slice();
+                obj[this.state.editIndex] = data.data;
+                this.setState({
+                    addCommandOpen: !this.state.addCommandOpen,
+                    editCommand: false,
+                    editIndex: null,
+                    thisCommand: {"command": {"command_id": ""}, "priority": null, "args": []},
+                    automatedcommands: obj,
+                });
+            }
+        })
     }
 
     handleEditCommandOpenClick(event, idx) {
@@ -146,6 +174,8 @@ class AutomatedCommandSequence extends Component {
 
         this.setState({
             addCommandOpen: !this.state.addCommandOpen,
+            editCommand: true,
+            editIndex: idx,
             thisCommand: this.state.automatedcommands[idx]
         });
     }
@@ -182,7 +212,7 @@ class AutomatedCommandSequence extends Component {
                 this.setState({
                     deleteCommandOpen: false,
                     thisCommand: {"command": {"command_id": ""}, "priority": null, "args": []},
-                    automatedcommands: data.data
+                    automatedcommands: data.data.automatedcommands
                 });
                 if (data.data.length == 0) {
                     this.setState({empty: true});

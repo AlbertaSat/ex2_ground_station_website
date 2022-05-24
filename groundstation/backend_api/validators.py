@@ -32,6 +32,7 @@ class AutomatedCommandPatchValidator(Schema):
     priority = fields.Integer(required=False)
     command = fields.Nested(CommandValidator, required=False)
     args = fields.Nested(ArgumentValidator, required=False, many=True)
+    automatedcommand_id = fields.Integer(required=False)
 
 class FlightScheduleCommandValidator(Schema):
     """Validator for flighschedule commands

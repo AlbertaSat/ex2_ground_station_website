@@ -50,10 +50,23 @@ class AutomatedCommand(Resource):
             }
             return response_object, 400
         
-        # for now, only command priority could be updated
         if 'priority' in validated_data:
             automatedcommand.priority = validated_data['priority']
-        
+
+        # if we are patching the command itself
+        if 'command' in validated_data:
+            command = validated_data.pop('command')
+            automatedcommand.command_id = command['command_id']
+            automatedcommand.arguments.clear()
+
+            # loop through args and update them in the command
+            arguments = validated_data.pop('args')
+            for arg_data in arguments:
+                index = arg_data['index']
+                arg = arg_data['argument']
+                argument = AutomatedCommandsArgs(index=index, argument=arg)
+                automatedcommand.arguments.append(argument)
+
         db.session.commit()
 
         response_object = {
