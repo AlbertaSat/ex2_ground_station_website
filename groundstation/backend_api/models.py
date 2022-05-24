@@ -312,3 +312,4 @@ class AutomatedCommandsArgs(db.Model):
             'index': self.index,
             'argument': self.argument
         }
+        

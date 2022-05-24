@@ -192,6 +192,7 @@ class AutomatedCommandSequence extends Component {
         };
         let second_req = {...first_req, body: JSON.stringify({priority: idx})};
 
+        // two requests are needed here to update the priorities of both commands once rearranged
         Promise.all([
             fetch(first_url, first_req),
             fetch(second_url, second_req)
