@@ -1,5 +1,6 @@
 import React from 'react'
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
+import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from '@material-ui/icons/Delete';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -58,6 +59,9 @@ const AutomatedCommandSequenceList = (props) => {
                                 </IconButton>
                                 <IconButton disabled={!props.is_admin} onClick={(event) => props.handleRearrangeClick(event, idx, false)}>
                                     <ArrowDropDownIcon style={{color: '#4bacb8'}} />
+                                </IconButton>
+                                <IconButton onClick={(event) => props.handleEditCommandOpenClick(event, idx)}>
+                                    <EditIcon style={{color: "#4bacb8"}} />
                                 </IconButton>
                                 <IconButton disabled={!props.is_admin} onClick={(event) => props.handleDeleteCommandOpenClick(event, idx)}>
                                     <DeleteIcon style={{color: '#4bacb8'}} />

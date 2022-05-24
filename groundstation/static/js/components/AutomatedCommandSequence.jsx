@@ -23,6 +23,7 @@ class AutomatedCommandSequence extends Component {
             is_admin: false,
             addCommandOpen: false,
             deleteCommandOpen: false,
+            editCommand: false,
             thisCommand: {"command": {"command_id": ""}, "priority": null, "args": []},
             availCommands: [],
             automatedcommands: []
@@ -32,6 +33,7 @@ class AutomatedCommandSequence extends Component {
         this.handleCommandEvent = this.handleCommandEvent.bind(this);
         this.handleChangeArgument = this.handleChangeArgument.bind(this);
         this.addAutomatedCommand = this.addAutomatedCommand.bind(this);
+        this.handleEditCommandOpenClick = this.handleEditCommandOpenClick.bind(this);
         this.handleDeleteCommandOpenClick = this.handleDeleteCommandOpenClick.bind(this);
         this.handleRearrangeClick = this.handleRearrangeClick.bind(this);
 
@@ -102,6 +104,10 @@ class AutomatedCommandSequence extends Component {
 
     addAutomatedCommand(event) {
         event.preventDefault();
+        if (this.state.editCommand) {
+            this.editAutomatedCommand();
+            return;
+        }
 
         let data = this.state.thisCommand;
         data.priority = this.state.automatedcommands.length;
@@ -128,6 +134,20 @@ class AutomatedCommandSequence extends Component {
                 });
             }
         })
+    }
+
+    editAutomatedCommand() {
+
+    }
+
+    handleEditCommandOpenClick(event, idx) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        this.setState({
+            addCommandOpen: !this.state.addCommandOpen,
+            thisCommand: this.state.automatedcommands[idx]
+        });
     }
 
     handleDeleteCommandOpenClick(event, idx) {
@@ -236,6 +256,7 @@ class AutomatedCommandSequence extends Component {
                     isLoading={this.state.isLoading}
                     commands={this.state.automatedcommands}
                     handleRearrangeClick={this.handleRearrangeClick}
+                    handleEditCommandOpenClick={this.handleEditCommandOpenClick}
                     handleDeleteCommandOpenClick={this.handleDeleteCommandOpenClick}
                     empty={this.state.empty}
                     is_admin={this.state.is_admin}
