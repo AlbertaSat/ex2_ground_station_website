@@ -11,20 +11,20 @@ services:
       - "5432:5432"
   web:
     image: albertasatdocker/ground-station-website:dev-latest
-    ports:
-      - "8000:8000"
+    expose:
+      - 5000
     environment:
       - DATABASE_URL=postgres://postgres:postgres@db:5432/ex2_gs
     volumes:
       - ./:/home/ex2_ground_station_website
-    command: gunicorn -b 0.0.0.0:8000 manage:app
+    entrypoint: ./entrypoint.sh
     depends_on:
       - db
-  # nginx:
-  #   image: nginx:stable-alpine
-  #   ports:
-  #     - "8000:8000"
-  #   volumes:
-  #     - ./nginx.conf:/etc/nginx/nginx.conf
-  #   depends_on:
-  #     - web
+  nginx:
+    image: nginx:stable-alpine
+    ports:
+      - "8000:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - web
