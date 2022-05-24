@@ -146,14 +146,14 @@ def generate_fs_file(fs):
             # Format the date/time from fs
             exec_time = format_date_time(command['timestamp'])
             time_fields = {
+                'ms': '*' if command['repeats']['repeat_ms']
+                    else int(exec_time.microsecond / 1000),
                 'second': '*' if command['repeats']['repeat_sec']
                     else exec_time.second,
                 'minute': '*' if command['repeats']['repeat_min']
                     else exec_time.minute,
                 'hour': '*' if command['repeats']['repeat_hr']
                     else exec_time.hour,
-                'dayOfWeek': '*' if command['repeats']['repeat_wkday']
-                    else ((exec_time.weekday() + 1) % 7) + 1,  # Sunday = 1
                 'day': '*' if command['repeats']['repeat_day']
                     else exec_time.day,
                 'month': '*' if command['repeats']['repeat_month']
@@ -161,7 +161,7 @@ def generate_fs_file(fs):
                 'year': '*' if command['repeats']['repeat_year']
                     else exec_time.year - 1970  # Offset from 1970
             }
-            time_str = ('{second} {minute} {hour} {dayOfWeek} {day} {month} {year}'
+            time_str = ('{ms} {second} {minute} {hour} 0 {day} {month} {year}'
                         .format(**time_fields))
 
             # Write fs commands to file
