@@ -129,7 +129,7 @@ class AutomatedCommandList(Resource):
         response_object = {
             'status':'success',
             'data': {
-                'automatedcommands':[command.to_json() for command in automatedcommands]
+                'automatedcommands': [command.to_json() for command in automatedcommands]
             }
         }
 
