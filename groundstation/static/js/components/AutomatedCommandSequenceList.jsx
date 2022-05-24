@@ -1,4 +1,5 @@
 import React from 'react'
+import Typography from "@material-ui/core/Typography";
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -53,20 +54,27 @@ const AutomatedCommandSequenceList = (props) => {
                             <TableCell>
                                 {getArgString(command.args)}
                             </TableCell>
+                            {props.is_admin &&
                             <TableCell align="right">
-                                <IconButton disabled={!props.is_admin} onClick={(event) => props.handleRearrangeClick(event, idx, true)}>
+                                <IconButton onClick={(event) => props.handleRearrangeClick(event, idx, true)}>
                                     <ArrowDropUpIcon style={{color: '#4bacb8'}} />
                                 </IconButton>
-                                <IconButton disabled={!props.is_admin} onClick={(event) => props.handleRearrangeClick(event, idx, false)}>
+                                <IconButton onClick={(event) => props.handleRearrangeClick(event, idx, false)}>
                                     <ArrowDropDownIcon style={{color: '#4bacb8'}} />
                                 </IconButton>
                                 <IconButton onClick={(event) => props.handleEditCommandOpenClick(event, idx)}>
                                     <EditIcon style={{color: "#4bacb8"}} />
                                 </IconButton>
-                                <IconButton disabled={!props.is_admin} onClick={(event) => props.handleDeleteCommandOpenClick(event, idx)}>
+                                <IconButton onClick={(event) => props.handleDeleteCommandOpenClick(event, idx)}>
                                     <DeleteIcon style={{color: '#4bacb8'}} />
                                 </IconButton>
+                            </TableCell>                            
+                            }
+                            {!props.is_admin &&
+                            <TableCell align="right">
+                                <Typography variant="body1">You are not an admin!</Typography>
                             </TableCell>
+                            }
                         </TableRow>
                     ))}
                 </TableBody>

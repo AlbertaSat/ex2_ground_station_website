@@ -267,14 +267,13 @@ class AutomatedCommandSequence extends Component {
                     <Typography variant="h5" style={{padding: '10px'}}>Automated Command Sequence</Typography>
                 </Grid>
 				<Grid item xs={1} style={{textAlign: 'right'}}>
-					<Fab 
-                    disabled={!this.state.is_admin} 
-                    style={{position: 'inherit'}} 
-                    onClick={ (event) => this.handleAddCommandOpenClick(event) }>
+                    {this.state.is_admin &&
+					<Fab style={{position: 'inherit'}} onClick={ (event) => this.handleAddCommandOpenClick(event) }>
 						<AddIcon 
 								style={{ color: '#4bacb8', fontSize: '2rem'}} 
 						/>
-					</Fab>
+					</Fab>                    
+                    }
 				</Grid>                
             </Grid>    
             </Paper>
