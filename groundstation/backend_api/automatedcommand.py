@@ -93,7 +93,9 @@ class AutomatedCommand(Resource):
         response_object = {
             'status': 'success',
             'message': 'automated command successfully deleted',
-            'data': [command.to_json() for command in all_commands]
+            'data': {
+                'automatedcommands': [command.to_json() for command in all_commands]
+            }
         }
 
         return response_object, 200
