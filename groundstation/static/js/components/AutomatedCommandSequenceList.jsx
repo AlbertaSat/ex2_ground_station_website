@@ -72,7 +72,7 @@ const AutomatedCommandSequenceList = (props) => {
                             }
                             {!props.is_admin &&
                             <TableCell align="right">
-                                <Typography variant="body1">You are not an admin!</Typography>
+                                <Typography variant="body1"></Typography>
                             </TableCell>
                             }
                         </TableRow>

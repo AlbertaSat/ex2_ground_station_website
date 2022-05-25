@@ -295,8 +295,8 @@ class AutomatedCommandSequence extends Component {
             </Grid>
             
             <Dialog open={this.state.addCommandOpen} onClose={(event) => this.handleAddCommandOpenClick(event)}>
-                <DialogTitle>Add Commands</DialogTitle>
-                <DialogContent style={{textAlign: "center"}}>
+                <DialogTitle>Add/Edit Commands</DialogTitle>
+                <DialogContent style={{textAlign: "center", minHeight: "400px"}}>
                     <DialogContentText style={{textAlign: "left"}}>
                         Choose a command from the drop down below to add to the automated command sequence.
                     </DialogContentText>
