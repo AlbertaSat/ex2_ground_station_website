@@ -6,7 +6,7 @@ import datetime
 import json
 
 from groundstation import db
-from groundstation.backend_api.models import User
+from groundstation.backend_api.models import User, BlacklistedTokens
 from groundstation.backend_api.validators import AuthLoginValidator
 from groundstation.backend_api.utils import create_context, login_required
 
@@ -77,10 +77,27 @@ class AuthLogout(Resource):
     @create_context
     @login_required
     def get(self, local_args=None):
-        # TODO: implement logout logic (blacklisted tokens?), currently logging out from backend is NOT supported
+        """Endpoint for logging out
+
+        :param dict local_args: This should be used in place of the QUERY PARAMS that would be used through HTTP, used for local calls.
+
+        :returns: response_object, status_code
+        :rtype: tuple (dict, int)
+        """
+        
+        auth_header = request.headers.get('Authorization')
+        auth_token = auth_header.split(" ")[1]        
+        user_id = User.decode_auth_token(auth_token)
+        user = User.query.filter_by(id=user_id).first()
+
+        blacklisted_token = BlacklistedTokens(token=auth_token)
+        user.blacklisted_tokens.append(blacklisted_token)
+
+        db.session.commit()
+
         response_object = {
             'status':'success',
-            'message':'FAKE NEWS - Successfully logged out.'
+            'message':'Successfully logged out.'
         }
         return response_object, 200
 

@@ -76,7 +76,7 @@ class BlacklistedTokens(db.Model):
     __tablename__ = 'blacklistedtokens'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    token = db.Column(db.String(128))
+    token = db.Column(db.String(256))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
 class Housekeeping(db.Model):
