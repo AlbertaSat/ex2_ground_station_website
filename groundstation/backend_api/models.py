@@ -12,6 +12,7 @@ class User(db.Model):
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
     slack_id = db.Column(db.String(128), nullable=True, unique=True)
     subscribed_to_slack = db.Column(db.Boolean, default=False)
+    blacklisted_tokens = db.relationship('BlacklistedTokens', backref='user', lazy=True, cascade='all, delete-orphan')
 
     def __init__(self, username, password, is_admin=False, slack_id=None, subscribed_to_slack=False):
         self.username = username
@@ -70,6 +71,13 @@ class User(db.Model):
             'username': self.username,
             'slack_id': self.slack_id
         }
+
+class BlacklistedTokens(db.Model):
+    __tablename__ = 'blacklistedtokens'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    token = db.Column(db.String(128))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
 class Housekeeping(db.Model):
     __tablename__ = 'housekeeping'
