@@ -169,7 +169,7 @@ class Home extends Component {
           <Grid item sm={10}>
             <div className={classes.pageHeading}>
               <Typography variant="h4" style={{ color: '#28324C' }}>
-                OVERVIEW2
+                OVERVIEW
               </Typography>
             </div>
           </Grid>
