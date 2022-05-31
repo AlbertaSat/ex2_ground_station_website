@@ -33,14 +33,23 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function isAuthenticated(){
-  return !!localStorage.getItem('auth_token');
+  const hasSessionToken = !!sessionStorage.getItem('auth_token');
+  if (hasSessionToken) return hasSessionToken;
+
+  // if user had ticked "remember me" when logging in, auth info would be in localStorage
+  if (!!localStorage.getItem('auth_token')) {
+    sessionStorage.setItem('auth_token', localStorage.getItem('auth_token'));
+    sessionStorage.setItem('username', localStorage.getItem('username'));
+    return true;
+  }
+  return false;
 }
 
 var username = null
 
 function App() {
   if (isAuthenticated()){
-    username = localStorage.getItem('username');
+    username = sessionStorage.getItem('username');
   }
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);

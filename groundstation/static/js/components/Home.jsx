@@ -62,7 +62,7 @@ class Home extends Component {
     Promise.all([
       fetch('/api/housekeepinglog?newest-first=true&limit=5'),
       fetch('/api/passovers?next=true&most-recent=true&limit=5',
-        { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('auth_token') } }
+        { headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('auth_token') } }
       )]).then(([res1, res2]) => {
         return Promise.all([res1.json(), res2.json()])
       }).then(([res1, res2]) => {
@@ -85,7 +85,7 @@ class Home extends Component {
   }
 
   isAuthenticated() {
-    return !!localStorage.getItem('auth_token');
+    return !!sessionStorage.getItem('auth_token');
   }
 
   handleToggleNotifications(event) {
@@ -100,7 +100,7 @@ class Home extends Component {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem('auth_token')
+          'Authorization': 'Bearer ' + sessionStorage.getItem('auth_token')
         }
       }).then(results => {
         return results.json();
@@ -146,7 +146,7 @@ class Home extends Component {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem('auth_token')
+        'Authorization': 'Bearer ' + sessionStorage.getItem('auth_token')
       },
       body: JSON.stringify(data)
     }).then(results => {
@@ -169,7 +169,7 @@ class Home extends Component {
           <Grid item sm={10}>
             <div className={classes.pageHeading}>
               <Typography variant="h4" style={{ color: '#28324C' }}>
-                OVERVIEW
+                OVERVIEW2
               </Typography>
             </div>
           </Grid>
