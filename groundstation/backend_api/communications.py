@@ -4,7 +4,6 @@ from flask_restful import Resource, Api
 import datetime
 import json
 from sqlalchemy import desc
-import sys
 
 from groundstation.backend_api.models import Communications
 from groundstation import db

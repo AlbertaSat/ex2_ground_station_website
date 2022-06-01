@@ -19,7 +19,7 @@ class UserEntity(Resource):
         super(UserEntity, self).__init__()    
 
     @create_context
-    def get(self, user_id, local_args=None):
+    def get(self, auth_token, local_args=None):
         """Endpoint for getting a user
 
         :param int user_id: The id of the user to get
@@ -28,20 +28,13 @@ class UserEntity(Resource):
         :returns: response_object, status_code
         :rtype: tuple (dict, int)
         """
-        user = User.query.filter_by(id=User.decode_auth_token(user_id)).first()
-        #userID = User.decode_auth_token(local_args['auth_token'])
+        user = User.query.filter_by(id=User.decode_auth_token(auth_token)).first()
 
         response_object = {
             'status':None,
             'message':None,
             'data':None
         }
-
-        # if user_id != userID:
-        #     response_object['status'] = 'fail'
-        #     response_object['message'] = 'User ID does not match auth token.'
-        #     response_object['data'] = None
-        #     return response_object, 404
 
         if user is None:
             response_object['status'] = 'fail'
@@ -188,4 +181,4 @@ class UserList(Resource):
 
 
 api.add_resource(UserList, '/api/users')
-api.add_resource(UserEntity, '/api/users/<user_id>')
+api.add_resource(UserEntity, '/api/users/<auth_token>')

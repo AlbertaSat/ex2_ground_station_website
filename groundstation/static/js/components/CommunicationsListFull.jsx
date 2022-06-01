@@ -7,7 +7,6 @@ const CommunicationEntry = (props) => {
     const [isQueued, setIsQueued] = useState(props.entry.is_queued);
 
     const showQueueButton = props.showQueueButton;
-    //console.log(showQueueButton);
 
     function queueHandler() {
         const patch_queue = {
@@ -75,7 +74,7 @@ const CommunicationEntry = (props) => {
                 <p style={infoStringStyle}>{infoStringPrefix} <strong>{sender}</strong> on: </p><p>{infoStringTimestamp}</p>
             </div>
             <p style={contentStyle}>Message: {props.entry.message}</p>
-            {(sender === 'comm') ? null: <p style={contentStyle}>Is Queued: {props.entry.is_queued ? 'true' : 'false'}</p>}
+            {((sender === 'comm') || !showQueueButton) ? null: <p style={contentStyle}>Is Queued: {isQueued ? 'true' : 'false'}</p>}
             <div>
             {((props.is_admin || (sender === username)) && (sender !== 'comm') && (showQueueButton)) ? <Button 
                 style={{marginBottom:"1%"}} 
@@ -90,12 +89,9 @@ const CommunicationEntry = (props) => {
 
 const CommunicationsList = (props) => {
     const [isAdmin, setIsAdmin] = useState(false);
-    //const[showQueueButton, setQueueButton] = useState(false);
+    
     const divStyle = {margin:'2%'}
 
-    // if (props.showQueueButton === true) {
-    //     setQueueButton(props.showQueueButton);
-    // }
     console.log(props.showQueueButton);
 
     const messagesEndRef = createRef();
@@ -114,20 +110,17 @@ const CommunicationsList = (props) => {
       )
     }
 
-    let is_admin = true;
+    
     const auth_token = localStorage.getItem('auth_token');
-    console.log(auth_token);
     fetch(`/api/users/${auth_token}`).then(results => {
         return results.json();
     }).then(data => {
         if (data.status === 'success') {
-            is_admin = data.data.is_admin;
-            setIsAdmin(is_admin);
+            setIsAdmin(data.data.is_admin);
         } else {
             console.error('Unexpected error occured:');
         }
     });
-    //console.log(is_admin);
 
 
 	return (

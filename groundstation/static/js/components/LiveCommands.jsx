@@ -163,7 +163,7 @@ class LiveCommands extends Component {
                 }).then(data => {
                     if (data.status === 'success') {
                         this.setState(prevState => ({
-                          displayLog: [...prevState.displayLog, post_data],
+                          displayLog: [...prevState.displayLog, data.data],
                           errorMessage:'',
                           textBoxValue:''
                       }));
