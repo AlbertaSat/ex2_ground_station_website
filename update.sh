@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 pip install -r requirements.txt
 source ./env.sh
 source ./keys.sh
@@ -8,3 +8,4 @@ cd groundstation/static
 npm install
 npm run build
 cd ../..
+exec "$@"

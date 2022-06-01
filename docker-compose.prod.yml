@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:alpine
+    environment:
+      - POSTGRES_DB=ex2_gs
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data/
+  web:
+    image: albertasatdocker/ground-station-website:dev-latest
+    expose:
+      - 5000
+    environment:
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/ex2_gs
+    volumes:
+      - ./:/home/ex2_ground_station_website
+    entrypoint: ./entrypoint.prod.sh
+    depends_on:
+      - db
+  nginx:
+    image: nginx:stable-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - web

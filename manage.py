@@ -1,6 +1,6 @@
-""" 
-The Manage Module is how you can run the flask application through the command 
-line. It also allows you to define your own command line functions 
+"""
+The Manage Module is how you can run the flask application through the command
+line. It also allows you to define your own command line functions
 that can be called as:
 
     python3 manage.py <command_line_command>
@@ -21,7 +21,6 @@ import json
 import click
 
 from flask.cli import FlaskGroup
-from sqlalchemy import false
 
 from groundstation import create_app, db
 from groundstation.backend_api.models import User, Housekeeping, Telecommands, PowerChannels
