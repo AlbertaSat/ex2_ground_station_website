@@ -12,12 +12,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      
+
       - uses: actions/setup-python@v2
         with:
           python-version: '3.8.10'
           architecture: 'x64'
-      
+
       - name: Install pip dependencies
         run: python -m pip install -r requirements.txt
 
@@ -27,4 +27,4 @@ jobs:
           FLASK_APP: groundstation/__init__.py
           FLASK_ENV: development
           APP_SETTINGS: groundstation.config.TestingConfig
-          SECRET_KEY: "\xffY\x8dG\xfbu\x96S\x86\xdfu\x98\xe8S\x9f\x0e\xc6\xde\xb6$\xab:\x9d\x8b"
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
