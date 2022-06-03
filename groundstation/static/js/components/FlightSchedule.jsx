@@ -31,6 +31,10 @@ const DefaultCommand = {
   args: [],
 };
 
+// Taken from ex2_ground_station_software/src/groundStation/system.py
+// in self.APP_DICT
+const SERVER_PREFIXES = ["ex2", "yuk", "ari", "eps", "gnd", "pipe", "last"];
+
 class FlightSchedule extends Component {
   constructor() {
     super();
@@ -106,15 +110,12 @@ class FlightSchedule extends Component {
           // Create two copies of each command prefixed with 'obc.' or 'eps.'
           this.setState({
             availCommands: res2.data.telecommands.reduce((prev, command) => {
-              prev.push({
-                label: "obc." + command.command_name,
-                value: command.command_id,
-                args: command.num_arguments,
-              });
-              prev.push({
-                label: "eps." + command.command_name,
-                value: command.command_id,
-                args: command.num_arguments,
+              SERVER_PREFIXES.forEach((prefix) => {
+                prev.push({
+                  label: prefix + "." + command.command_name,
+                  value: command.command_id,
+                  args: command.num_arguments,
+                });
               });
               return prev;
             }, []),
