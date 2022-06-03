@@ -149,8 +149,10 @@ pip-selfcheck.json
 virtualenv
 # End of https://www.gitignore.io/api/venv,react,flask
 
+# Database-Related
 *.db
-pg_data/
+db_data/
+db_backups/
 
 log.txt
 beacons.json
