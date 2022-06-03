@@ -102,7 +102,7 @@ class Flightschedule(Resource):
                         repeat_ms=command['repeats']['repeat_ms'],
                         repeat_sec=command['repeats']['repeat_sec'],
                         repeat_min=command['repeats']['repeat_min'],
-                        repeat_hr=command['repeats']['repeat_hr'],
+                        repeat_hr=command['repeats']['repeat_min'] or command['repeats']['repeat_hr'],
                         repeat_day=command['repeats']['repeat_day'],
                         repeat_month=command['repeats']['repeat_month'],
                         repeat_year=command['repeats']['repeat_year'],
@@ -130,7 +130,7 @@ class Flightschedule(Resource):
                 this_command.repeat_ms=command['repeats']['repeat_ms']
                 this_command.repeat_sec=command['repeats']['repeat_sec']
                 this_command.repeat_min=command['repeats']['repeat_min']
-                this_command.repeat_hr=command['repeats']['repeat_hr']
+                this_command.repeat_hr=command['repeats']['repeat_min'] or command['repeats']['repeat_hr']
                 this_command.repeat_day=command['repeats']['repeat_day']
                 this_command.repeat_month=command['repeats']['repeat_month']
                 this_command.repeat_year=command['repeats']['repeat_year']
@@ -277,7 +277,7 @@ class FlightScheduleList(Resource):
                 repeat_ms=command_data['repeats']['repeat_ms'],
                 repeat_sec=command_data['repeats']['repeat_sec'],
                 repeat_min=command_data['repeats']['repeat_min'],
-                repeat_hr=command_data['repeats']['repeat_hr'],
+                repeat_hr=command_data['repeats']['repeat_min'] or command_data['repeats']['repeat_hr'],
                 repeat_day=command_data['repeats']['repeat_day'],
                 repeat_month=command_data['repeats']['repeat_month'],
                 repeat_year=command_data['repeats']['repeat_year'],
