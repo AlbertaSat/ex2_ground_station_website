@@ -16,7 +16,7 @@ function isMinified(minify, elemt) {
   }
 }
 
-const DefaultCommand = {
+const DEFAULT_COMMAND = {
   command: { command_id: "" },
   timestamp: null,
   repeats: {
@@ -45,7 +45,7 @@ class FlightSchedule extends Component {
       deleteFlightOpen: false,
       editFlight: false,
       allflightschedules: [],
-      thisFlightscheduleCommands: [structuredClone(DefaultCommand)],
+      thisFlightscheduleCommands: [structuredClone(DEFAULT_COMMAND)],
       thisFlightscheduleId: null,
       thisIndex: null,
       availCommands: [],
@@ -138,7 +138,7 @@ class FlightSchedule extends Component {
       editFlight: false,
       thisFlightscheduleId: null,
       thisIndex: null,
-      thisFlightscheduleCommands: [structuredClone(DefaultCommand)],
+      thisFlightscheduleCommands: [structuredClone(DEFAULT_COMMAND)],
       thisFlightScheduleStatus: 2,
       thisExecutionTime: null,
     });
@@ -232,7 +232,7 @@ class FlightSchedule extends Component {
           }
           this.setState({
             addFlightOpen: !this.state.addFlightOpen,
-            thisFlightscheduleCommands: [structuredClone(DefaultCommand)],
+            thisFlightscheduleCommands: [structuredClone(DEFAULT_COMMAND)],
             allflightschedules: obj,
             editFlight: false,
             thisIndex: null,
@@ -352,7 +352,7 @@ class FlightSchedule extends Component {
   // handle when the add command button is clicked
   handleAddCommandClick(event) {
     const obj = this.state.thisFlightscheduleCommands.slice();
-    let comm = structuredClone(DefaultCommand);
+    let comm = structuredClone(DEFAULT_COMMAND);
     // if we are editing add a condition for adding
     if (this.state.editFlight) {
       comm.op = "add";
