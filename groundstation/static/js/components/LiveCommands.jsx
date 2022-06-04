@@ -119,18 +119,31 @@ class LiveCommands extends Component {
 
 
     telecommandIsValid(telecommand_string) {
-        const split_string = telecommand_string.trim().split(' ');
+        const str = telecommand_string.trim();
+        const openIndex = str.indexOf('(');
+        if (openIndex === -1) {
+            return false;
+        }
+        const command_name = str.substring(0, openIndex);
         const matching_command = this.state.validTelecommands.find((element) => {
-            if (element.command_name === split_string[0]
-                || element.command_name === split_string[0].substring(4)) {
+            if (element.command_name === command_name || element.command_name === command_name.substring(4)) {
                 return element
             }
         });
         if (matching_command === undefined) {
             return false;
         }
-        if (!(matching_command.num_arguments === split_string.slice(1).length)) {
+        const closeIndex = str.indexOf(')');
+        if (closeIndex === -1) {
             return false;
+        }
+        const args = str.substring(openIndex + 1, closeIndex).split(' ');
+
+        if (!(matching_command.num_arguments === args.length || openIndex + 1 === closeIndex)) {
+            return false;
+        }
+        if (closeIndex !== str.length - 1) {
+            return false
         }
         return true;
     }
@@ -163,7 +176,7 @@ class LiveCommands extends Component {
                 }).then(data => {
                     if (data.status === 'success') {
                         this.setState(prevState => ({
-                          displayLog: [...prevState.displayLog, post_data],
+                          displayLog: [...prevState.displayLog, data.data],
                           errorMessage:'',
                           textBoxValue:''
                       }));
@@ -196,7 +209,7 @@ class LiveCommands extends Component {
                 <div>
                     <Paper style={{height:'70%', overflow: 'auto'}}>
                         <Typography className='header-title' variant='h5' style={{padding: '10px', margin: '20px'}}>Live Commands</Typography>
-                        <CommunicationsList autoScroll={true} displayLog={this.state.displayLog} isEmpty={this.state.isEmpty}/>
+                        <CommunicationsList autoScroll={true} displayLog={this.state.displayLog} isEmpty={this.state.isEmpty} showQueueButton={false}/>
                     </Paper>
                 </div>
                 <div>

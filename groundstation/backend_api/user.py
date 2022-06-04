@@ -19,7 +19,7 @@ class UserEntity(Resource):
         super(UserEntity, self).__init__()    
 
     @create_context
-    def get(self, user_id, local_args=None):
+    def get(self, auth_token, local_args=None):
         """Endpoint for getting a user
 
         :param int user_id: The id of the user to get
@@ -28,12 +28,14 @@ class UserEntity(Resource):
         :returns: response_object, status_code
         :rtype: tuple (dict, int)
         """
-        user = User.query.filter_by(id=user_id).first()
+        user = User.query.filter_by(id=User.decode_auth_token(auth_token)).first()
+
         response_object = {
             'status':None,
             'message':None,
             'data':None
         }
+
         if user is None:
             response_object['status'] = 'fail'
             response_object['message'] = 'User does not exist.'
@@ -179,4 +181,4 @@ class UserList(Resource):
 
 
 api.add_resource(UserList, '/api/users')
-api.add_resource(UserEntity, '/api/users/<user_id>')
+api.add_resource(UserEntity, '/api/users/<auth_token>')

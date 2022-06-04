@@ -98,6 +98,13 @@ function App() {
               <a className="indent" href="/">AlbertaSat</a>
             </Typography>
             <Typography className="menu-links" style={{display: 'inline-flex', alignItems: 'center'}}>
+            { isAuthenticated() &&
+              <a
+                className={`link-items hvr-underline-from-center ${classes.navbarLinks}` }
+                href="/automatedcommandsequence" >
+                  Automated Command Sequence
+                </a>
+              }
               { isAuthenticated() &&
               <a
                 className={`link-items hvr-underline-from-center ${classes.navbarLinks}` }
