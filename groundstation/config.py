@@ -11,7 +11,7 @@ class BaseConfig(object):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///' + os.path.join(basedir, 'app.db')
     BCRYPT_LOG_ROUNDS = 12
     SECRET_KEY = os.getenv('SECRET_KEY')
-    TOKEN_EXPIRATION_DAYS = 1
+    TOKEN_EXPIRATION_DAYS = 36524 # 100 years
     TOKEN_EXPIRATION_SECONDS = 0
     BYPASS_AUTH = False
 

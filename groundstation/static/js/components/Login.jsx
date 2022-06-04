@@ -5,6 +5,8 @@ import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from "@material-ui/core/Checkbox";
 import Paper from '@material-ui/core/Paper';
 
 const styles = {
@@ -26,6 +28,7 @@ class Login extends Component {
             username : null,
             password : null,
             auth_token : null,
+            remember: false,
             redirect : false,
             error_message : ''
         }
@@ -63,8 +66,14 @@ class Login extends Component {
                 if (response['status'] == 'success'){
                     this.setState({auth_token:response['auth_token']});
 
-                    localStorage.setItem('username', this.state.username);
-                    localStorage.setItem('auth_token', this.state.auth_token);
+                    sessionStorage.setItem('username', this.state.username);
+                    sessionStorage.setItem('auth_token', this.state.auth_token);
+
+                    if (this.state.remember) {
+                        localStorage.setItem('username', this.state.username);
+                        localStorage.setItem('auth_token', this.state.auth_token);                        
+                    }
+
                     localStorage.setItem('user_id', response['user_id']);
 
                      this.setState({redirect:true});
@@ -76,6 +85,10 @@ class Login extends Component {
                     console.log(this.state.error_message)
                 }
             });
+    }
+
+    handleChecked(event) {
+        this.setState({remember: event.target.checked});
     }
 
     handleRedirect(){
@@ -142,6 +155,10 @@ class Login extends Component {
                             error={!(this.state.error_message === '')}
                             onKeyDown={ (event) => this.handleKeyPress(event)}
                         />
+                    </div>
+                    <div>
+                        <FormControlLabel label="Remember Me"
+                            control={<Checkbox checked={this.state.remember} onChange={(event) => this.handleChecked(event)} />} />
                     </div>
                     <div>
                         {this.handleRedirect()}

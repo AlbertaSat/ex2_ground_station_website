@@ -24,7 +24,7 @@ class Help extends Component {
     }
 
     componentDidMount(){
-        fetch('./api/telecommands',{headers: {'Authorization':'Bearer '+ localStorage.getItem('auth_token')}})
+        fetch('./api/telecommands',{headers: {'Authorization':'Bearer '+ sessionStorage.getItem('auth_token')}})
         .then(results => {
             return results.json();
         }).then(data => {

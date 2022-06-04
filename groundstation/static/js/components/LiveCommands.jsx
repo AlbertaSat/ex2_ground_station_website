@@ -53,7 +53,7 @@ class LiveCommands extends Component {
     }
 
     componentDidMount() {
-        fetch('/api/telecommands',{headers: {'Authorization': 'Bearer ' + localStorage.getItem('auth_token')}})
+        fetch('/api/telecommands',{headers: {'Authorization': 'Bearer ' + sessionStorage.getItem('auth_token')}})
         .then(results => {
             return results.json();
         }).then(data => {
@@ -68,7 +68,7 @@ class LiveCommands extends Component {
             console.error(data);
         }
         });
-        fetch('/api/communications?max=true',{headers: {'Authorization':'Bearer '+ localStorage.getItem('auth_token')}})
+        fetch('/api/communications?max=true',{headers: {'Authorization':'Bearer '+ sessionStorage.getItem('auth_token')}})
         .then(results => {
             return results.json();
         }).then(data => {
@@ -104,7 +104,7 @@ class LiveCommands extends Component {
             console.log('splash jobs left!')
             return
         }
-        getNewMessages(this.state.last_id, localStorage.getItem('username'))
+        getNewMessages(this.state.last_id, sessionStorage.getItem('username'))
         .then(new_messages => {
             let last_message = new_messages[new_messages.length - 1];
             if (last_message !== undefined) {
@@ -159,7 +159,7 @@ class LiveCommands extends Component {
                 const post_data = {
                     timestamp: new Date(Date.now()).toISOString(),
                     message: text,
-                    sender: localStorage.getItem('username'),
+                    sender: sessionStorage.getItem('username'),
                     receiver: 'comm',
                     is_queued: true
                 };
@@ -168,7 +168,7 @@ class LiveCommands extends Component {
                     method: 'POST',
                     headers: {
                       'Content-Type': 'application/json',
-                      'Authorization':'Bearer '+ localStorage.getItem('auth_token')
+                      'Authorization':'Bearer '+ sessionStorage.getItem('auth_token')
                     },
                     body: JSON.stringify(post_data),
                 }).then(results => {
