@@ -156,6 +156,9 @@ function App() {
                               <MenuItem onClick={handleClose}>
                                 <a style={{color: 'rgb(40, 50, 76)'}}href="/logout">Logout</a>
                               </MenuItem>
+                              <MenuItem onClick={handleClose}>
+                                <a style={{color: 'rgb(40, 50, 76)'}}href="/adduser">Add User</a>
+                              </MenuItem>
                           </MenuList>
                         </ClickAwayListener>
                       </Paper>
