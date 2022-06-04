@@ -93,7 +93,7 @@ class Home extends Component {
     if (event.target.checked) {
       this.setState({ popup: true });
 
-      let auth_token = localStorage.getItem('auth_token');
+      let auth_token = sessionStorage.getItem('auth_token');
       let url = '/api/users/' + auth_token;
 
       fetch(url, {
@@ -134,7 +134,7 @@ class Home extends Component {
   }
 
   setSlack(is_subscribed) {
-    let auth_token = localStorage.getItem('auth_token');
+    let auth_token = sessionStorage.getItem('auth_token');
     let url = '/api/users/' + auth_token;
     let data = { slack_id: this.state.slack_id, subscribed_to_slack: is_subscribed };
 

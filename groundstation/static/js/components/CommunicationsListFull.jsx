@@ -17,7 +17,7 @@ const CommunicationEntry = (props) => {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
-                'Authorization':'Bearer '+ localStorage.getItem('auth_token')
+                'Authorization':'Bearer '+ sessionStorage.getItem('auth_token')
             } ,
             body: JSON.stringify(patch_queue),
         }).then(results => {
@@ -40,10 +40,8 @@ const CommunicationEntry = (props) => {
     const contentStyle = {};
     const infoStringStyle = {};
 
-    const username = localStorage.getItem('username');
+    const username = sessionStorage.getItem('username');
 
-    
-    
     const sender = props.entry.sender;
     console.log(props.entry)
 
@@ -67,7 +65,7 @@ const CommunicationEntry = (props) => {
     }
     infoTimestamp = new Date(infoTimestamp);
     let infoStringTimestamp = formatDateToUTCString(infoTimestamp);
-    
+
     return (
         <div style={divStyle}>
             <div>
@@ -76,9 +74,9 @@ const CommunicationEntry = (props) => {
             <p style={contentStyle}>Message: {props.entry.message}</p>
             {((sender === 'comm') || !showQueueButton) ? null: <p style={contentStyle}>Is Queued: {isQueued ? 'true' : 'false'}</p>}
             <div>
-            {((props.is_admin || (sender === username)) && (sender !== 'comm') && (showQueueButton)) ? <Button 
-                style={{marginBottom:"1%"}} 
-                color = "primary" 
+            {((props.is_admin || (sender === username)) && (sender !== 'comm') && (showQueueButton)) ? <Button
+                style={{marginBottom:"1%"}}
+                color = "primary"
                 onClick={queueHandler}
                 variant = 'outlined'>{props.entry.is_queued ? 'De-Queue': 'Queue'}</Button>: null}
             </div>
@@ -89,7 +87,7 @@ const CommunicationEntry = (props) => {
 
 const CommunicationsList = (props) => {
     const [isAdmin, setIsAdmin] = useState(false);
-    
+
     const divStyle = {margin:'2%'}
 
     console.log(props.showQueueButton);
@@ -110,8 +108,8 @@ const CommunicationsList = (props) => {
       )
     }
 
-    
-    const auth_token = localStorage.getItem('auth_token');
+
+    const auth_token = sessionStorage.getItem('auth_token');
     fetch(`/api/users/${auth_token}`).then(results => {
         return results.json();
     }).then(data => {

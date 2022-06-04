@@ -41,7 +41,7 @@ class AutomatedCommandSequence extends Component {
     }
 
     componentDidMount() {
-        const auth_token = localStorage.getItem('auth_token');
+        const auth_token = sessionStorage.getItem('auth_token');
         Promise.all([
             fetch('/api/automatedcommands', {headers: {'Authorization':'Bearer '+ auth_token}}),
             fetch('/api/telecommands', {headers: {'Authorization':'Bearer '+ auth_token}}),
@@ -121,7 +121,7 @@ class AutomatedCommandSequence extends Component {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer " + localStorage.getItem("auth_token")
+                "Authorization": "Bearer " + sessionStorage.getItem("auth_token")
             },
             body: JSON.stringify(data),
         }).then(results => {
@@ -148,9 +148,9 @@ class AutomatedCommandSequence extends Component {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer " + localStorage.getItem("auth_token")
+                "Authorization": "Bearer " + sessionStorage.getItem("auth_token")
             },
-            body: JSON.stringify(data),       
+            body: JSON.stringify(data),
         }).then(results => {
             return results.json();
         }).then(data => {
@@ -201,10 +201,10 @@ class AutomatedCommandSequence extends Component {
 
     deleteAutomatedCommand(event) {
         event.preventDefault();
-        
+
         let id = this.state.thisCommand.automatedcommand_id;
         fetch('/api/automatedcommands/' + id,
-            {method: 'DELETE', headers: {'Authorization': 'Bearer ' + localStorage.getItem("auth_token")}
+            {method: 'DELETE', headers: {'Authorization': 'Bearer ' + sessionStorage.getItem("auth_token")}
         }).then(results => {
             return results.json();
         }).then(data => {
@@ -226,8 +226,8 @@ class AutomatedCommandSequence extends Component {
         // handle trying to move the top element up or last element down
         if ((idx == 0 && up == true) || (idx == this.state.automatedcommands.length - 1 && up == false)) {
             return;
-        } 
-        
+        }
+
         let offset = (up == true) ? -1 : 1;
         let first_url = '/api/automatedcommands/' + this.state.automatedcommands[idx].automatedcommand_id;
         let second_url = '/api/automatedcommands/' + this.state.automatedcommands[idx + offset].automatedcommand_id;
@@ -236,7 +236,7 @@ class AutomatedCommandSequence extends Component {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer " + localStorage.getItem("auth_token")
+                "Authorization": "Bearer " + sessionStorage.getItem("auth_token")
             },
             body: JSON.stringify({priority: idx + offset})
         };
@@ -269,13 +269,13 @@ class AutomatedCommandSequence extends Component {
 				<Grid item xs={1} style={{textAlign: 'right'}}>
                     {this.state.is_admin &&
 					<Fab style={{position: 'inherit'}} onClick={ (event) => this.handleAddCommandOpenClick(event) }>
-						<AddIcon 
-								style={{ color: '#4bacb8', fontSize: '2rem'}} 
+						<AddIcon
+								style={{ color: '#4bacb8', fontSize: '2rem'}}
 						/>
-					</Fab>                    
+					</Fab>
                     }
-				</Grid>                
-            </Grid>    
+				</Grid>
+            </Grid>
             </Paper>
 
             <Grid container style={{paddingBottom: '12px', justifyContent: 'center'}}>
@@ -291,9 +291,9 @@ class AutomatedCommandSequence extends Component {
                     is_admin={this.state.is_admin}
                     />
                 </Grid>
-            </Paper>                
+            </Paper>
             </Grid>
-            
+
             <Dialog open={this.state.addCommandOpen} onClose={(event) => this.handleAddCommandOpenClick(event)}>
                 <DialogTitle>Add/Edit Commands</DialogTitle>
                 <DialogContent style={{textAlign: "center", minHeight: "400px"}}>
