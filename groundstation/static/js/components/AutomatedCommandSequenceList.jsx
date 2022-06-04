@@ -42,7 +42,7 @@ const AutomatedCommandSequenceList = (props) => {
                     <TableRow>
                         <TableCell style={{fontWeight: "bold"}}>Command Name</TableCell>
                         <TableCell style={{fontWeight: "bold"}}>Arguments</TableCell>
-                        <TableCell style={{fontWeight: "bold"}} align="right">Navigation</TableCell>
+                        <TableCell style={{fontWeight: "bold"}} align="right">{props.is_admin ? "Navigation" : ""}</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
