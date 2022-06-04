@@ -30,7 +30,7 @@ const AddFlightschedule = (props) => {
         <DialogTitle id="form-add-a-flightschedule-title">
           Add/Edit Flightschedule
         </DialogTitle>
-        <DialogContent>
+        <DialogContent style={{minHeight: '65vh'}}>
           <DialogContentText>
             To add commands to this flight schedule, enter the command name
             followed by the timestamp, and the arguments if applicable.
