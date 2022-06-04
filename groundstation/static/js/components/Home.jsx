@@ -62,7 +62,7 @@ class Home extends Component {
     Promise.all([
       fetch('/api/housekeepinglog?newest-first=true&limit=5'),
       fetch('/api/passovers?next=true&most-recent=true&limit=5',
-        { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('auth_token') } }
+        { headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('auth_token') } }
       )]).then(([res1, res2]) => {
         return Promise.all([res1.json(), res2.json()])
       }).then(([res1, res2]) => {
@@ -85,7 +85,7 @@ class Home extends Component {
   }
 
   isAuthenticated() {
-    return !!localStorage.getItem('auth_token');
+    return !!sessionStorage.getItem('auth_token');
   }
 
   handleToggleNotifications(event) {
@@ -93,14 +93,14 @@ class Home extends Component {
     if (event.target.checked) {
       this.setState({ popup: true });
 
-      let user_id = localStorage.getItem('user_id');
-      let url = '/api/users/' + user_id;
+      let auth_token = sessionStorage.getItem('auth_token');
+      let url = '/api/users/' + auth_token;
 
       fetch(url, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem('auth_token')
+          'Authorization': 'Bearer ' + sessionStorage.getItem('auth_token')
         }
       }).then(results => {
         return results.json();
@@ -134,8 +134,8 @@ class Home extends Component {
   }
 
   setSlack(is_subscribed) {
-    let user_id = localStorage.getItem('user_id');
-    let url = '/api/users/' + user_id;
+    let auth_token = sessionStorage.getItem('auth_token');
+    let url = '/api/users/' + auth_token;
     let data = { slack_id: this.state.slack_id, subscribed_to_slack: is_subscribed };
 
     localStorage.setItem('subscribed_to_slack', is_subscribed);
@@ -146,7 +146,7 @@ class Home extends Component {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem('auth_token')
+        'Authorization': 'Bearer ' + sessionStorage.getItem('auth_token')
       },
       body: JSON.stringify(data)
     }).then(results => {

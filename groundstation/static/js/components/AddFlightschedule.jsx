@@ -56,7 +56,7 @@ const AddFlightschedule = (props) =>{
 		<div>
 		  <Dialog 
 		    open={props.open} 
-		    onclose={ (event) => props.handleAddFlightOpenClick(event) } 
+		    onClose={ (event) => props.handleAddFlightOpenClick(event) } 
 		    aria-labelledby='add-a-flight-schedule'>
 		    <DialogTitle id="form-add-a-flightschedule-title">
 		    	Add/Edit Flightschedule
