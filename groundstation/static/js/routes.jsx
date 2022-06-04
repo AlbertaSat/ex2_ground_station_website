@@ -9,12 +9,14 @@ import Logout from './components/Logout';
 import Logs from './components/ViewLogs';
 import Help from './components/Help';
 import AddUser from './components/AddUser';
+import AutomatedCommandSequence from './components/AutomatedCommandSequence';
 
 const Routes = () => (
     <Switch>
         <Route exact path='/' component={Home} />
         <Route exact path='/flightschedule' component={FlightSchedule}/>
         <Route exact path='/livecommands' component={LiveCommands}/>
+        <Route exact path='/automatedcommandsequence' component={AutomatedCommandSequence}/>
         <Route exact path='/housekeeping' component={HouseKeeping}/>
         <Route exact path='/login' component={Login}/>
         <Route exact path='/logout' component={Logout}/>

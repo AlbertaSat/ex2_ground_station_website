@@ -24,6 +24,7 @@ def create_app(script_info=None):
     from groundstation.views import home_blueprint
     from groundstation.backend_api.housekeeping import housekeeping_blueprint
     from groundstation.backend_api.flightschedule import flightschedule_blueprint
+    from groundstation.backend_api.automatedcommand import automatedcommand_blueprint
     from groundstation.backend_api.passover import passover_blueprint
     from groundstation.backend_api.user import user_blueprint
     from groundstation.backend_api.auth import auth_blueprint
@@ -33,6 +34,7 @@ def create_app(script_info=None):
     app.register_blueprint(home_blueprint)
     app.register_blueprint(housekeeping_blueprint)
     app.register_blueprint(flightschedule_blueprint)
+    app.register_blueprint(automatedcommand_blueprint)
     app.register_blueprint(passover_blueprint)
     app.register_blueprint(user_blueprint)
     app.register_blueprint(auth_blueprint)
