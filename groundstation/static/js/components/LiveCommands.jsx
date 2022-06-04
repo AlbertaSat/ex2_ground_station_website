@@ -176,7 +176,7 @@ class LiveCommands extends Component {
                 }).then(data => {
                     if (data.status === 'success') {
                         this.setState(prevState => ({
-                          displayLog: [...prevState.displayLog, post_data],
+                          displayLog: [...prevState.displayLog, data.data],
                           errorMessage:'',
                           textBoxValue:''
                       }));
@@ -209,7 +209,7 @@ class LiveCommands extends Component {
                 <div>
                     <Paper style={{height:'70%', overflow: 'auto'}}>
                         <Typography className='header-title' variant='h5' style={{padding: '10px', margin: '20px'}}>Live Commands</Typography>
-                        <CommunicationsList autoScroll={true} displayLog={this.state.displayLog} isEmpty={this.state.isEmpty}/>
+                        <CommunicationsList autoScroll={true} displayLog={this.state.displayLog} isEmpty={this.state.isEmpty} showQueueButton={false}/>
                     </Paper>
                 </div>
                 <div>
