@@ -176,28 +176,6 @@ def send_to_simulator(msg):
     except Exception as e:
         print('Unexpected error occured:', e)
 
-
-def convert_command_syntax(cmd):
-    """
-    Takes in a website command and converts it to ground station software's
-    syntax.
-
-    Currently, the website's command syntax is:
-        `command.name arg1 arg2 ...`
-    but ground station software's command syntax is:
-        `command.name(arg1 arg2 ...)`
-
-    TODO: Change the "Live Commands" syntax on the website
-          to match ground station software's for consistency (Issue #64).
-
-    :param str cmd: A command entered from the website.
-    :returns: The same command but in ground station software's syntax.
-    :rtype: str
-    """
-    tokens = cmd.split()
-    return tokens[0] + '(' + ' '.join(tokens[1:]) + ')'
-
-
 def send_to_satellite(csp, msg):
     try:
         command = csp.getInput(inVal=msg)
@@ -269,7 +247,6 @@ def communication_loop(csp=None):
                         msg = message['message'].replace(" ", ".")
                         response = send_to_simulator(msg)
                     elif mode == Connection.SATELLITE:
-                        msg = convert_command_syntax(msg)
                         response = send_to_satellite(csp, msg)
 
                     if response:

@@ -56,7 +56,7 @@ class Communication(Resource):
             post_data = request.get_json()
         else:
             post_data = json.loads(local_data)
-
+            
         message = Communications.query.filter_by(id=message_id).first()
 
         if not message:

@@ -74,12 +74,12 @@ class FlightSchedule extends Component {
     Promise.all([
       fetch("/api/flightschedules", {
         headers: {
-          Authorization: "Bearer " + localStorage.getItem("auth_token"),
+          Authorization: "Bearer " + sessionStorage.getItem("auth_token"),
         },
       }),
       fetch("/api/telecommands", {
         headers: {
-          Authorization: "Bearer " + localStorage.getItem("auth_token"),
+          Authorization: "Bearer " + sessionStorage.getItem("auth_token"),
         },
       }),
     ])
@@ -171,7 +171,7 @@ class FlightSchedule extends Component {
     fetch("/api/flightschedules/" + this.state.thisFlightscheduleId, {
       method: "DELETE",
       headers: {
-        Authorization: "Bearer " + localStorage.getItem("auth_token"),
+        Authorization: "Bearer " + sessionStorage.getItem("auth_token"),
       },
     })
       .then((results) => {
@@ -214,7 +214,7 @@ class FlightSchedule extends Component {
       method: method,
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("auth_token"),
+        Authorization: "Bearer " + sessionStorage.getItem("auth_token"),
       },
       body: JSON.stringify(data),
     })

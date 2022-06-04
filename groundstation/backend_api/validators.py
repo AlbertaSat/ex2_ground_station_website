@@ -6,13 +6,13 @@ for examples, eg.) backend_api.housekeeping.HousekeepingLogList.post. Note: You 
 from marshmallow import Schema, fields, validate
 
 class ArgumentValidator(Schema):
-    """Validator for arguments to flight schedule commands
+    """Validator for arguments to flight schedule or automated commands
     """
     index = fields.Integer(required=True)
     argument = fields.Integer(required=True)
 
 class CommandValidator(Schema):
-    """Validator for a single flight schedule command
+    """Validator for a single flight schedule or automated command
     """
     command_id = fields.Integer(required=True)
     num_arguments = fields.Integer(required=False)
@@ -29,6 +29,21 @@ class FlightScheduleCommandRepeatValidator(Schema):
     repeat_day = fields.Boolean(required=True)
     repeat_month = fields.Boolean(required=True)
     repeat_year = fields.Boolean(required=True)
+
+class AutomatedCommandValidator(Schema):
+    """Validator for automated commands
+    """
+    priority = fields.Integer(required=True)
+    command = fields.Nested(CommandValidator, required=True)
+    args = fields.Nested(ArgumentValidator, required=True, many=True)
+
+class AutomatedCommandPatchValidator(Schema):
+    """Validator for patching (editing) an automated command
+    """
+    priority = fields.Integer(required=False)
+    command = fields.Nested(CommandValidator, required=False)
+    args = fields.Nested(ArgumentValidator, required=False, many=True)
+    automatedcommand_id = fields.Integer(required=False)
 
 class FlightScheduleCommandValidator(Schema):
     """Validator for flighschedule commands

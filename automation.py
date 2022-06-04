@@ -1,6 +1,7 @@
 """The Automation Module allows operators to execute commands automatically at the next pass.
 """
 from groundstation.backend_api.communications import CommunicationList, Communication
+from groundstation.backend_api.automatedcommand import AutomatedCommandList
 from groundstation.backend_api.housekeeping import HousekeepingLogList
 from groundstation.backend_api.passover import PassoverList
 from groundstation.backend_api.utils import add_passover
@@ -15,12 +16,14 @@ import time
 
 
 def automate_communication():
-    """Reads from a pre-defined script file called 'automation.txt' which contains messages
-    separated by newlines. The Automation module will open this file and send each message to the comm module,
-    which will then interpret and pass the message along to the satellite. The 'automation.txt' essentially mimicks a human
-    user entering commands through the 'live commands' portal.
+    """Reads from the automated commands table in the database and creates communications objects
+    to be sent to the comm module, which will then interpret and pass the command messages along to the satellite
+    This essentially mimicks a human user entering commands through the 'live commands' portal. Also supports
+    sending commands by reading from a pre-defined script called 'automation.txt', although the website should be 
+    the preferred method of setting up the automated command sequence.
     """
     sender = CommunicationList()
+    automatedcommand_list = AutomatedCommandList()
 
     with open('automation.txt', 'r') as f:
         for line in f:
@@ -35,6 +38,23 @@ def automate_communication():
 
             message = json.dumps(message)
             sender.post(local_data=message)
+
+    automatedcommands = automatedcommand_list.get(local_args={'limit': 1000})[0]['data']['automatedcommands']
+    for command in automatedcommands:
+        args = []
+        # might need to sort args by index, not sure if db keeps order from original post req
+        for arg in command['args']:
+            args.append(arg['argument'])
+        msg = command['command']['command_name'] + '(' + ' '.join(args) + ')'
+        message = {
+            'message': msg,
+            'sender': 'automation',
+            'receiver': 'comm',
+            'is_queued': True
+        }
+
+        message = json.dumps(message)
+        sender.post(local_data=message)
 
     timestamp = str(datetime.utcnow())
     message = 'An Ex-Alta 2 passover is beginning now! The timestamp for this passover is {0}'.format(timestamp)

@@ -24,7 +24,7 @@ class Help extends Component {
     }
 
     componentDidMount(){
-        fetch('./api/telecommands',{headers: {'Authorization':'Bearer '+ localStorage.getItem('auth_token')}})
+        fetch('./api/telecommands',{headers: {'Authorization':'Bearer '+ sessionStorage.getItem('auth_token')}})
         .then(results => {
             return results.json();
         }).then(data => {
@@ -148,10 +148,10 @@ class Help extends Component {
                     </Typography>
                     <Typography variant="body1" style={{paddingLeft: '20px' }}>
                         Send telecommands to the satellite via the live commands page.
-                        Commands are formatted as "command_name arg1 arg2 ... "
+                        Commands are formatted as "command_name(arg1 arg2 ...) "
                         where the number and content of arguments will differ based
-                        on the command being sent.
-                        The list of valid telecommands is:
+                        on the command being sent. For commands with no arguments, the format
+                        is "command_name()". The list of valid telecommands is:
                         <Paper style={{marginBottom: '20px'}}>
                             <Typography variant="h6">
                                 Telecommands
@@ -171,6 +171,18 @@ class Help extends Component {
                         operator), the satellite (comm), or sent as part of an automated script (automation). 
                     </Typography>
                 </Paper> 
+                <Paper className="AutomatedCommandSequence" style={{marginBottom: '20px'}}>
+                    <Typography variant="h5" style={{padding: '10px'}}>
+                        Automated Command Sequence
+                    </Typography>
+                    <Typography variant="body1" style={{paddingLeft: '20px'}}>
+                        The automated command sequence page displays a table of the current automated
+                        command sequence: a list of commands that will automatically be sent to the satellite
+                        upon the start of a passover. Only admin users have the ability to update the sequence.
+                        Commands can be added, removed, and their order in the sequence updated using the navigation
+                        tools. 
+                    </Typography>
+                </Paper>
                 <Paper className="Logs" style={{marginBottom: '20px' }}>
                     <Typography variant="h5" style={{ padding: '10px' }}>
                         Logs
