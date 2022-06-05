@@ -53,7 +53,19 @@ function App() {
   }
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
+  const [isAdmin, setIsAdmin] = React.useState(false);
   const anchorRef = React.useRef(null);
+
+  const auth_token = sessionStorage.getItem('auth_token');
+    fetch(`/api/users/${auth_token}`).then(results => {
+        return results.json();
+    }).then(data => {
+        if (data.status === 'success') {
+            setIsAdmin(data.data.is_admin);
+        } else {
+            console.error('Unexpected error occured:');
+        }
+    });
 
   const handleToggle = () => {
     setOpen(prevOpen => !prevOpen);
@@ -172,9 +184,10 @@ function App() {
                               <MenuItem onClick={handleClose}>
                                 <a style={{color: 'rgb(40, 50, 76)'}}href="/logout">Logout</a>
                               </MenuItem>
+                              {isAdmin && 
                               <MenuItem onClick={handleClose}>
                                 <a style={{color: 'rgb(40, 50, 76)'}}href="/adduser">Add User</a>
-                              </MenuItem>
+                              </MenuItem> }
                           </MenuList>
                         </ClickAwayListener>
                       </Paper>
