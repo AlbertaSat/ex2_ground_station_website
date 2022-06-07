@@ -9,4 +9,4 @@ npm install
 npm run build
 cd ../..
 flask db upgrade
-gunicorn -b 0.0.0.0:5000 manage:app
+gunicorn -b 0.0.0.0:5000 --workers=3 --threads=3 manage:app
