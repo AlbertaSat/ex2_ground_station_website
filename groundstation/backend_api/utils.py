@@ -4,7 +4,7 @@ import jwt
 import datetime
 from groundstation import create_app
 from groundstation.backend_api.models import Telecommands, FlightSchedules, \
-    FlightScheduleCommands, FlightScheduleCommandsArgs, User, Passover
+    FlightScheduleCommands, FlightScheduleCommandsArgs, User, BlacklistedTokens, Passover
 from groundstation import db
 import operator
 from groundstation.backend_api.models import Communications, Housekeeping
@@ -123,6 +123,13 @@ def login_required(f):
             response_object['message'] = 'Invalid token. Please log in again.'
             response_header_object['WWW-Authenticate'] = 'Bearer'
             return response_object, 401, response_header_object
+        blacklisted_tokens = BlacklistedTokens.query.filter(BlacklistedTokens.user.has(id=user_id)).all()
+        for tok in blacklisted_tokens:
+            if auth_token == tok.token:
+                response_object['status'] = 'fail'
+                response_object['message'] = 'Blacklisted token. Please log in again.'
+                response_header_object['WWW-Authenticate'] = 'Bearer'
+                return response_object, 401, response_header_object                
 
         g.user = user
         return f(*args, **kwargs)

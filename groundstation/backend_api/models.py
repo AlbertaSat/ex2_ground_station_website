@@ -12,6 +12,7 @@ class User(db.Model):
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
     slack_id = db.Column(db.String(128), nullable=True, unique=True)
     subscribed_to_slack = db.Column(db.Boolean, default=False)
+    blacklisted_tokens = db.relationship('BlacklistedTokens', backref='user', lazy=True, cascade='all, delete-orphan')
 
     def __init__(self, username, password, is_admin=False, slack_id=None, subscribed_to_slack=False):
         self.username = username
@@ -68,8 +69,16 @@ class User(db.Model):
         return {
             'id' : self.id,
             'username': self.username,
+            'is_admin': self.is_admin,
             'slack_id': self.slack_id
         }
+
+class BlacklistedTokens(db.Model):
+    __tablename__ = 'blacklistedtokens'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    token = db.Column(db.String(256))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
 class Housekeeping(db.Model):
     __tablename__ = 'housekeeping'
@@ -81,6 +90,7 @@ class Housekeeping(db.Model):
     current_out = db.Column(db.Float)
     no_MCU_resets = db.Column(db.Integer)
     last_beacon_time = db.Column(db.DateTime, nullable=False)
+    tle = db.Column(db.String(256))
 
     watchdog_1 = db.Column(db.Integer) # 3 watchdogs
     watchdog_2 = db.Column(db.Integer)
@@ -111,6 +121,7 @@ class Housekeeping(db.Model):
             'current_out': self.current_out,
             'no_MCU_resets': self.no_MCU_resets,
             'last_beacon_time': str(self.last_beacon_time),
+            'tle': self.tle,
 
             'watchdog_1': self.watchdog_1,
             'watchdog_2': self.watchdog_2,
@@ -159,6 +170,7 @@ class Telecommands(db.Model):
     command_name = db.Column(db.String(64))
     num_arguments = db.Column(db.Integer)
     flightschedulecommands = db.relationship('FlightScheduleCommands', backref='command', lazy=True)
+    automatedcommands = db.relationship('AutomatedCommands', backref='command', lazy=True)
     is_dangerous = db.Column(db.Boolean)
 
     def to_json(self):
@@ -275,3 +287,37 @@ class Communications(db.Model):
             'receiver': self.receiver,
             'is_queued': self.is_queued
         }
+
+class AutomatedCommands(db.Model):
+    __tablename__ = 'automatedcommands'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    command_id = db.Column(db.Integer, db.ForeignKey('telecommands.id'), nullable=False)
+    priority = db.Column(db.Integer)
+    arguments = db.relationship('AutomatedCommandsArgs', backref='automatedcommand', lazy=True, cascade='all, delete-orphan')
+
+    def to_json(self):
+        """Returns a dictionary of some selected model attributes
+        """
+        return {
+            'automatedcommand_id': self.id, 
+            'command': self.command.to_json(),
+            'args': [arg.to_json() for arg in self.arguments]
+        }
+
+class AutomatedCommandsArgs(db.Model):
+    __tablename__ = 'automatedcommandsargs'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    index = db.Column(db.Integer)
+    argument = db.Column(db.String(8))
+    automatedcommand_id = db.Column(db.Integer, db.ForeignKey('automatedcommands.id'), nullable=False)
+
+    def to_json(self):
+        """Returns a dictionary of some selected model attributes
+        """
+        return {
+            'index': self.index,
+            'argument': self.argument
+        }
+        

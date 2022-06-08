@@ -53,7 +53,7 @@ class LiveCommands extends Component {
     }
 
     componentDidMount() {
-        fetch('/api/telecommands',{headers: {'Authorization': 'Bearer ' + localStorage.getItem('auth_token')}})
+        fetch('/api/telecommands',{headers: {'Authorization': 'Bearer ' + sessionStorage.getItem('auth_token')}})
         .then(results => {
             return results.json();
         }).then(data => {
@@ -68,7 +68,7 @@ class LiveCommands extends Component {
             console.error(data);
         }
         });
-        fetch('/api/communications?max=true',{headers: {'Authorization':'Bearer '+ localStorage.getItem('auth_token')}})
+        fetch('/api/communications?max=true',{headers: {'Authorization':'Bearer '+ sessionStorage.getItem('auth_token')}})
         .then(results => {
             return results.json();
         }).then(data => {
@@ -104,7 +104,7 @@ class LiveCommands extends Component {
             console.log('splash jobs left!')
             return
         }
-        getNewMessages(this.state.last_id, localStorage.getItem('username'))
+        getNewMessages(this.state.last_id, sessionStorage.getItem('username'))
         .then(new_messages => {
             let last_message = new_messages[new_messages.length - 1];
             if (last_message !== undefined) {
@@ -119,17 +119,31 @@ class LiveCommands extends Component {
 
 
     telecommandIsValid(telecommand_string) {
-        const split_string = telecommand_string.trim().split(' ');
+        const str = telecommand_string.trim();
+        const openIndex = str.indexOf('(');
+        if (openIndex === -1) {
+            return false;
+        }
+        const command_name = str.substring(0, openIndex);
         const matching_command = this.state.validTelecommands.find((element) => {
-            if (element.command_name === split_string[0]) {
+            if (element.command_name === command_name || element.command_name === command_name.substring(4)) {
                 return element
             }
         });
         if (matching_command === undefined) {
             return false;
         }
-        if (!(matching_command.num_arguments === split_string.slice(1).length)) {
+        const closeIndex = str.indexOf(')');
+        if (closeIndex === -1) {
             return false;
+        }
+        const args = str.substring(openIndex + 1, closeIndex).split(' ');
+
+        if (!(matching_command.num_arguments === args.length || openIndex + 1 === closeIndex)) {
+            return false;
+        }
+        if (closeIndex !== str.length - 1) {
+            return false
         }
         return true;
     }
@@ -145,7 +159,7 @@ class LiveCommands extends Component {
                 const post_data = {
                     timestamp: new Date(Date.now()).toISOString(),
                     message: text,
-                    sender: localStorage.getItem('username'),
+                    sender: sessionStorage.getItem('username'),
                     receiver: 'comm',
                     is_queued: true
                 };
@@ -154,7 +168,7 @@ class LiveCommands extends Component {
                     method: 'POST',
                     headers: {
                       'Content-Type': 'application/json',
-                      'Authorization':'Bearer '+ localStorage.getItem('auth_token')
+                      'Authorization':'Bearer '+ sessionStorage.getItem('auth_token')
                     },
                     body: JSON.stringify(post_data),
                 }).then(results => {
@@ -162,7 +176,7 @@ class LiveCommands extends Component {
                 }).then(data => {
                     if (data.status === 'success') {
                         this.setState(prevState => ({
-                          displayLog: [...prevState.displayLog, post_data],
+                          displayLog: [...prevState.displayLog, data.data],
                           errorMessage:'',
                           textBoxValue:''
                       }));
@@ -195,7 +209,7 @@ class LiveCommands extends Component {
                 <div>
                     <Paper style={{height:'70%', overflow: 'auto'}}>
                         <Typography className='header-title' variant='h5' style={{padding: '10px', margin: '20px'}}>Live Commands</Typography>
-                        <CommunicationsList autoScroll={true} displayLog={this.state.displayLog} isEmpty={this.state.isEmpty}/>
+                        <CommunicationsList autoScroll={true} displayLog={this.state.displayLog} isEmpty={this.state.isEmpty} showQueueButton={false}/>
                     </Paper>
                 </div>
                 <div>

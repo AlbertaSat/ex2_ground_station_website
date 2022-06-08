@@ -8,6 +8,7 @@ def fakeHousekeepingAsDict(timestamp):
         'current_out': 1.1,
         'no_MCU_resets': 14,
         'last_beacon_time': timestamp,
+        'tle': '1 25544U 98067A   22060.78090161  .00008312  00000+0  15598-3 0  9996\n2 25544  51.6434 148.4913 0005532 202.0961 303.7626 15.49526075328521',
 
         'watchdog_1': 6000,     # Watchdog counts
         'watchdog_2': 11,

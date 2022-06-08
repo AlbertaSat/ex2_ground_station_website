@@ -2,7 +2,7 @@
 These instructions are for installing and running the application in development mode on a development machine. There are two installation methods below, one uses [docker](https://www.docker.com/) and the other is manual. The docker installation is the recommended method.
 
 ## Docker Installation - Website and Satellite Simulator (Recommended)
-The docker installation methods below are compatible with any operating system that is supported by [docker](https://www.docker.com/). If you are just looking to use the web app and don't plan on making any changes to the source code, then choose the `User Installation` method below. Otherwise, choose the `Developer Installation` method below. 
+The docker installation methods below are compatible with any operating system that is supported by [docker](https://www.docker.com/). If you are just looking to use the web app and don't plan on making any changes to the source code, then choose the `User Installation` method below. Otherwise, choose the `Developer Installation` method below.
 
 Prior to starting, please [install docker](https://www.docker.com/get-started) for your operating system if you have not already.
 
@@ -19,11 +19,13 @@ docker run --rm -it -p 8000:8000 albertasatdocker/ground-station-website:user-la
 Now, open Google Chrome and navigate to [http://localhost:8000](http://localhost:8000).
 
 ## Developer Installation
-This installation method it will allow you to immediately see any modifications you have made to the source code on your host machine in the docker container (and vice versa). As a result, you will not have to rebuild the docker image every time you make a change to the source code on your host machine. 
+This installation method it will allow you to immediately see any modifications you have made to the source code on your host machine in the docker container (and vice versa). As a result, you will not have to rebuild the docker image every time you make a change to the source code on your host machine.
+
+First, clone this repository and create a `keys.sh` file in the root folder that follows the same conventions outlined in the `keys-example.sh` file. You will need to create a Flask sessions `SECRET_KEY` and optionally, a Slack token. Information on using the Slack API can be found [here](https://api.slack.com/).
 
 ### MacOS and Ubuntu
 
-Start by cloning this repository and pulling the albertasatdocker/ground-station-website:dev-latest docker image using the commands below.
+After cloning this repository, pull the albertasatdocker/ground-station-website:dev-latest docker image using the commands below.
 
 ```bash
 cd <cloned-repo-location>
@@ -55,7 +57,7 @@ Finally, open Google Chrome and navigate to [http://localhost:8000](http://local
 
 ### Windows
 
-Start by cloning this repository and pulling the albertasatdocker/ground-station-website:dev-latest docker image using the commands below.
+After cloning this repository, pull the albertasatdocker/ground-station-website:dev-latest docker image using the commands below.
 
 ```bash
 cd <cloned-repo-location>
@@ -108,7 +110,7 @@ Ubuntu dependencies for PostgreSQL, libCSP, and scheduling tasks:
 sudo apt-get install at build-essential wget curl libpq-dev python3-dev gcc-multilib g++-multilib libsocketcan-dev
 ```
 
-To run the app's frontend (i.e. in your web browser), you will need node & npm -- at least version 8. I recommend using the [Node Version Manager](https://github.com/nvm-sh/nvm). 
+To run the app's frontend (i.e. in your web browser), you will need node & npm -- at least version 8. I recommend using the [Node Version Manager](https://github.com/nvm-sh/nvm).
 
 Make sure you have a [Python virtual environment](https://docs.python.org/3/tutorial/venv.html) installed and active! To do this navigate to the root project directory and run the following commands:
 
@@ -127,7 +129,7 @@ Install pip and npm libraries by running `update.sh`.
 
 ```bash
 source ./update.sh
-```  
+```
 
 Finally, run the app.
 
@@ -156,3 +158,5 @@ These commands should be the same regardless of which method of installation you
 * `python3 manage.py test` - run the unit tests.
 
 * `python3 manage.py test frontend_test` - run the GUI frontend tests with Selenium. Please note that you will need to install the appropriate driver [here](https://selenium-python.readthedocs.io/installation.html#drivers).
+
+* `python3 manage.py test groundstation_test` - run ground station integration testing. Please note that you will need to have built libcsp in this repo's submodule and have set the appropriate env variables with `source ./env.sh`
