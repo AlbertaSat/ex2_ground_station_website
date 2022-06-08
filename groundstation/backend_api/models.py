@@ -212,7 +212,7 @@ class FlightScheduleCommands(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     command_id = db.Column(db.Integer, db.ForeignKey('telecommands.id'), nullable=False)
     timestamp = db.Column(db.DateTime)
-    server = db.Column(db.String(3), default='obc', nullable=False)
+    server = db.Column(db.String(4), default='ex2', nullable=False)
     repeat_ms = db.Column(db.Boolean, default=False, nullable=False)
     repeat_sec = db.Column(db.Boolean, default=False, nullable=False)
     repeat_min = db.Column(db.Boolean, default=False, nullable=False)
@@ -318,7 +318,7 @@ class AutomatedCommands(db.Model):
         """Returns a dictionary of some selected model attributes
         """
         return {
-            'automatedcommand_id': self.id, 
+            'automatedcommand_id': self.id,
             'command': self.command.to_json(),
             'args': [arg.to_json() for arg in self.arguments]
         }
@@ -338,4 +338,3 @@ class AutomatedCommandsArgs(db.Model):
             'index': self.index,
             'argument': self.argument
         }
-        
