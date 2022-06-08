@@ -274,7 +274,7 @@ def import_commands():
         text = f.read()
 
     # regex command based on current formatting of CommandDocs.txt; might need to be changed later
-    blocks = re.findall('[\.\n]([A-Z0-9_]*):[^\[]*\[([^\]]*)\]', text)
+    blocks = re.findall('[\.\n]([A-Z0-9_.]*):[^\[]*\[([^\]]*)\]', text)
 
     for (command_name, arguments) in blocks:
         # currently false; need to figure out which commands should be considered dangerous
