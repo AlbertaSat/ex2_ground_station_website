@@ -107,7 +107,7 @@ class FlightSchedule extends Component {
           }
         }
         if (res2.status == "success") {
-          // Create two copies of each command prefixed with 'obc.' or 'eps.'
+          // Create a copy of each command for each server
           this.setState({
             availCommands: res2.data.telecommands.reduce((prev, command) => {
               SERVER_PREFIXES.forEach((prefix) => {
@@ -270,8 +270,8 @@ class FlightSchedule extends Component {
       obj[idx].timestamp = thisTime.toISOString();
     } else {
       obj[idx].command.command_id = event.value;
-      obj[idx].command.command_name = event.label.substring(4);
-      obj[idx].server = event.label.substring(0, 3);
+      obj[idx].command.command_name = event.label.slice(event.label.indexOf('.') + 1);
+      obj[idx].server = event.label.slice(0, event.label.indexOf('.'));
       obj[idx].args = [];
       for (let i = 0; i < event.args; i++) {
         obj[idx].args.push({ index: i, argument: "" });
