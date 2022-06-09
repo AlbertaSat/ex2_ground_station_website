@@ -12,14 +12,14 @@ import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 
-const RepeatLabels = {
-  repeat_ms: "...Millisecond",
-  repeat_sec: "...Second",
-  repeat_min: "...Minute",
-  repeat_hr: "...Hour",
-  repeat_day: "...Day",
-  repeat_month: "...Month",
-  repeat_year: "...Year",
+export const REPEAT_LABELS = {
+  repeat_ms: "Millisecond",
+  repeat_sec: "Second",
+  repeat_min: "Minute",
+  repeat_hr: "Hour",
+  repeat_day: "Day",
+  repeat_month: "Month",
+  repeat_year: "Year",
 };
 
 const FlightscheduleCommand = (props) => {
@@ -150,51 +150,36 @@ const FlightscheduleCommand = (props) => {
             >
               <FormGroup>
                 {repeats &&
-                  Object.keys(repeats).map((field, idx) => {
-                    if (field == "repeat_hr") {
-                      // This is an edge case where if "repeat_min" is selected, then
-                      // "repeat_hr" must ALSO be selected
-                      return (
-                        <FormControlLabel
-                          control={
-                            <Checkbox
-                              checked={repeats["repeat_min"] || repeats[field]}
-                              disabled={repeats["repeat_min"]}
-                              onChange={(event) => {
-                                updateRepeat(
-                                  event,
-                                  field,
-                                  event.target.checked,
-                                  props.idx
-                                );
-                              }}
-                            />
+                  Object.keys(repeats).map((field, idx) => (
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          // repeat_hr MUST be checked if
+                          // repeat_min is also checked
+                          checked={
+                            field === "repeat_hr"
+                              ? repeats["repeat_min"] || repeats[field]
+                              : repeats[field]
                           }
-                          label={RepeatLabels[field]}
-                          key={idx}
+                          disabled={
+                            field === "repeat_hr"
+                              ? repeats["repeat_min"]
+                              : false
+                          }
+                          onChange={(event) => {
+                            updateRepeat(
+                              event,
+                              field,
+                              event.target.checked,
+                              props.idx
+                            );
+                          }}
                         />
-                      );
-                    }
-                    return (
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            checked={repeats[field]}
-                            onChange={(event) => {
-                              updateRepeat(
-                                event,
-                                field,
-                                event.target.checked,
-                                props.idx
-                              );
-                            }}
-                          />
-                        }
-                        label={RepeatLabels[field]}
-                        key={idx}
-                      />
-                    );
-                  })}
+                      }
+                      label={REPEAT_LABELS[field]}
+                      key={idx}
+                    />
+                  ))}
               </FormGroup>
             </Popover>
           </form>
