@@ -41,6 +41,8 @@ const FlightscheduleCommand = (props) => {
   const updateRepeat = (event, field, value, idx) => {
     setRepeats((old) => {
       const newRepeat = { ...old, [field]: value };
+      // If 'repeat_min' is checked, then so must 'repeat_hr
+      if (field === "repeat_min" && value) newRepeat["repeat_hr"] = true;
       props.handleChangeRepeat(event, idx, newRepeat);
       return newRepeat;
     });
@@ -59,11 +61,11 @@ const FlightscheduleCommand = (props) => {
 
   const classes = useStyles();
 
+  // Sets the default value for the millisecond offset field
   function convertTimestamp(timestamp, executionTime) {
     if (timestamp == null || executionTime == null) {
       return null;
     } else {
-      //console.log(Date.parse(timestamp) - executionTime.getTime());
       return Date.parse(timestamp) - Date.parse(executionTime);
     }
   }
