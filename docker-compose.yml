@@ -9,6 +9,14 @@ services:
       - POSTGRES_PASSWORD=postgres
     ports:
       - "5432:5432"
+  webpack:
+    image: node:lts
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./:/usr/src/app
+    working_dir: /usr/src/app/groundstation/static/
+    command: bash -c "npm install && npm run watch"
   web:
     image: albertasatdocker/ground-station-website:dev-latest
     ports:
@@ -21,19 +29,4 @@ services:
     command: ["flask", "run", "--host=0.0.0.0", "--port=8000"]
     depends_on:
       - db
-  webpack:
-    image: node:lts-alpine
-    environment:
-      - NODE_ENV=development
-    volumes:
-      - ./:/usr/src/app
-    working_dir: /usr/src/app/groundstation/static/
-    command: ["npm", "run", "watch"]
-    depends_on:
-      - web
-    deploy:
-      restart_policy:
-        conidition: on-failure
-        delay: 5s
-        max_attempts: 3
-        window: 60s
+      - webpack
