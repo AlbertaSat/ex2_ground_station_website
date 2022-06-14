@@ -71,10 +71,6 @@ def test(path=None):
 def seed_db(ctx):
     """Imports commands and adds admin and non-admin user.
     """
-    # clear database before adding new data
-    db.drop_all()
-    db.create_all()
-
     ctx.invoke(import_commands) # no telecommands added if import fails
 
     add_user(username='Admin_user', password='Admin_user', is_admin=True)
@@ -86,10 +82,6 @@ def seed_db(ctx):
 def seed_db_example(ctx):
     """Imports commands, adds users and example data.
     """
-    # clear database before adding new data
-    db.drop_all()
-    db.create_all()
-
     # generate timestamps for flightschedule commands
     timestamp = datetime.fromtimestamp(1570749472)
     for x in range(20):
