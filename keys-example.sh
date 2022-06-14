@@ -5,7 +5,8 @@ export SECRET_KEY="SECRET KEY HERE"
 # which is used to notify users on passover times
 export SLACK_TOKEN="SLACK TOKEN HERE"
 
-# POSTGRES_USER and POSTGRES_PASSWORD are credentials for a **production** database
-# The development environment uses "postgres" as a default username and password
+# POSTGRES_USER and POSTGRES_PASSWORD are credentials for a production database
+# The development environment ignores these and uses "postgres" as both the
+# username and password.
 export POSTGRES_USER="postgres"
 export POSTGRES_PASSWORD="postgres"
