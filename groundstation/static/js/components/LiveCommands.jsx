@@ -120,31 +120,36 @@ class LiveCommands extends Component {
 
     telecommandIsValid(telecommand_string) {
         const str = telecommand_string.trim();
+
+        // Check for matching closing ')'
         const openIndex = str.indexOf('(');
         if (openIndex === -1) {
             return false;
         }
+        const closeIndex = str.indexOf(')');
+        if (closeIndex === -1 || closeIndex !== str.length - 1) {
+            return false;
+        }
+
+        // Check if command name is valid
         const command_name = str.substring(0, openIndex);
         const matching_command = this.state.validTelecommands.find((element) => {
-            if (element.command_name === command_name || element.command_name === command_name.substring(4)) {
+            if (element.command_name === command_name) {
                 return element
             }
         });
         if (matching_command === undefined) {
             return false;
         }
-        const closeIndex = str.indexOf(')');
-        if (closeIndex === -1) {
-            return false;
-        }
-        const args = str.substring(openIndex + 1, closeIndex).split(' ');
 
-        if (!(matching_command.num_arguments === args.length || openIndex + 1 === closeIndex)) {
+        // Check if command has the correct number of arguments
+        const args = openIndex + 1 === closeIndex
+                     ? []  // Prevents [""] which has length 1
+                     : str.substring(openIndex + 1, closeIndex).split(' ');
+        if (matching_command.num_arguments !== args.length) {
             return false;
         }
-        if (closeIndex !== str.length - 1) {
-            return false
-        }
+
         return true;
     }
 
