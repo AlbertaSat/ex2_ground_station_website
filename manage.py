@@ -35,6 +35,9 @@ from groundstation.backend_api.utils import add_telecommand, \
     add_arg_to_flightschedulecommand, add_message_to_communications, \
     add_passover
 
+from ex2_ground_station_software.src.groundStation.system import SystemValues
+server_prefixes = SystemValues().APP_DICT.keys()
+
 app = create_app()
 cli = FlaskGroup(create_app=create_app)
 
@@ -277,8 +280,10 @@ def import_commands():
         else:
             num_arguments = len(re.findall(',', arguments)) + 1
 
-        c = add_telecommand(command_name=command_name.lower(), num_arguments=num_arguments,
-                            is_dangerous=is_dangerous)
+        # make a copy of each command for each server
+        for prefix in server_prefixes:
+            c = add_telecommand(command_name=(prefix + '.' + command_name).lower(), num_arguments=num_arguments,
+                                is_dangerous=is_dangerous)
 
     print("Added new telecommands.")
 
