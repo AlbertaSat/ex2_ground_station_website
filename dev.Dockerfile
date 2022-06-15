@@ -16,7 +16,8 @@ RUN apt-get update && apt-get install -y \
   libsocketcan-dev \
   pkg-config \
   gcc-multilib \
-  g++-multilib
+  g++-multilib \
+  postgresql
 
 # install python
 RUN apt-get update && apt-get install -y \
