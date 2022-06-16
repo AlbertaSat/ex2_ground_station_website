@@ -1,6 +1,6 @@
-""" 
-The Manage Module is how you can run the flask application through the command 
-line. It also allows you to define your own command line functions 
+"""
+The Manage Module is how you can run the flask application through the command
+line. It also allows you to define your own command line functions
 that can be called as:
 
     python3 manage.py <command_line_command>
@@ -19,6 +19,9 @@ import unittest
 from datetime import datetime, timedelta
 import json
 import click
+import re
+import subprocess
+import os
 
 from flask.cli import FlaskGroup
 from sqlalchemy import false
@@ -32,13 +35,16 @@ from groundstation.backend_api.utils import add_telecommand, \
     add_arg_to_flightschedulecommand, add_message_to_communications, \
     add_passover
 
+from ex2_ground_station_software.src.groundStation.system import SystemValues
+server_prefixes = SystemValues().APP_DICT.keys()
+
 app = create_app()
 cli = FlaskGroup(create_app=create_app)
 
 
 @cli.command('recreate_db')
 def recreate_db():
-    """Recreate the database
+    """Drops and recreates the database (with no initial data)
     """
     db.drop_all()
     db.create_all()
@@ -64,9 +70,22 @@ def test(path=None):
 
 
 @cli.command('seed_db')
-def seed_db():
-    """Seed the database with a set of users and flight schedules
+@click.pass_context
+def seed_db(ctx):
+    """Imports commands and adds admin and non-admin user.
     """
+    ctx.invoke(import_commands) # no telecommands added if import fails
+
+    add_user(username='Admin_user', password='Admin_user', is_admin=True)
+    add_user(username='albert', password='albert', is_admin=False)
+
+
+@cli.command('seed_db_example')
+@click.pass_context
+def seed_db_example(ctx):
+    """Imports commands, adds users and example data.
+    """
+    # generate timestamps for flightschedule commands
     timestamp = datetime.fromtimestamp(1570749472)
     for x in range(20):
         # 20 days
@@ -87,51 +106,24 @@ def seed_db():
             db.session.add(housekeeping)
     db.session.commit()
 
-    # TODO: import groundStation commands (apps, services) instead of hardcoding
-    commands = {
-        'ping': (0, False),  # (number of args, is_dangerous)
-        'get-hk': (0, False),
-        'turn-on': (1, True),
-        'turn-off': (1, True),
-        'upload-fs': (0, False),
-        'adjust-attitude': (1, True),
-        'magnetometer': (0, False),
-        'imaging': (0, False),
-        'demo.time_management.set_time': (1, False),
-        'demo.time_management.get_time': (0, False)
-    }
+    ctx.invoke(import_commands) # no telecommands added if import fails
 
-    for name, (num_args, is_danger) in commands.items():
-        c = add_telecommand(command_name=name,
-                            num_arguments=num_args, is_dangerous=is_danger)
-
-    command = Telecommands.query.filter_by(command_name='ping').first()
     flightschedule = add_flight_schedule(
         creation_date=timestamp, upload_date=timestamp, status=2, execution_time=timestamp)
-    flightschedule_commands = add_command_to_flightschedule(
-        timestamp=timestamp,
-        flightschedule_id=flightschedule.id,
-        command_id=command.id
-    )
+
+    # add a few commands to flightschedule
+    commands = Telecommands.query().all()
+
+    for i in range(0, min(len(commands), 2)):
+        command = commands[i]
+        flightschedule_commands = add_command_to_flightschedule(
+            timestamp=timestamp,
+            flightschedule_id=flightschedule.id,
+            command_id=command.id
+        )
 
     add_user(username='Admin_user', password='Admin_user', is_admin=True)
-    add_user(username='user1', password='user1', is_admin=False)
-    add_user(username='user2', password='user2', is_admin=False)
     add_user(username='albert', password='albert', is_admin=False)
-    add_user(username='berta', password='berta', is_admin=True)
-
-    command = Telecommands.query.filter_by(command_name='turn-on').first()
-    flightschedule_commands = add_command_to_flightschedule(
-        timestamp=timestamp,
-        flightschedule_id=flightschedule.id,
-        command_id=command.id
-    )
-
-    flightschedulecommand_arg = add_arg_to_flightschedulecommand(
-        index=0,
-        argument='5',
-        flightschedule_command_id=flightschedule_commands.id
-    )
 
     message = add_message_to_communications(
         timestamp=timestamp,
@@ -150,6 +142,9 @@ def seed_db():
 
 @cli.command('demo_db')
 def demo_db():
+    db.drop_all()
+    db.create_all()
+
     timestamp = datetime.fromtimestamp(1570749472)
     time2 = datetime.fromisoformat('2019-11-04 00:05:23.283+00:00')
     #time3 = datetime.fromisoformat('2019-11-05 00:08:43.203+00:00')
@@ -182,11 +177,11 @@ def demo_db():
 
     commands = {
         'ping': (0, False),
-        'get-hk': (0, False),
-        'turn-on': (1, True),
-        'turn-off': (1, True),
-        'set-fs': (1, True),
-        'upload-fs': (0, False)
+        'get_hk': (0, False),
+        'turn_on': (1, True),
+        'turn_off': (1, True),
+        'set_fs': (1, True),
+        'upload_fs': (0, False)
     }
 
     for name, (num_args, is_danger) in commands.items():
@@ -195,14 +190,14 @@ def demo_db():
 
     command = Telecommands.query.filter_by(command_name='ping').first()
     flightschedule = add_flight_schedule(
-        creation_date=timestamp, upload_date=timestamp, status=2)
+        creation_date=timestamp, upload_date=timestamp, status=2, execution_time=timestamp)
     flightschedule_commands = add_command_to_flightschedule(
         timestamp=timestamp,
         flightschedule_id=flightschedule.id,
         command_id=command.id
     )
 
-    command = Telecommands.query.filter_by(command_name='turn-on').first()
+    command = Telecommands.query.filter_by(command_name='turn_on').first()
     flightschedule_commands = add_command_to_flightschedule(
         timestamp=timestamp,
         flightschedule_id=flightschedule.id,
@@ -225,7 +220,7 @@ def demo_db():
 
     command = Telecommands.query.filter_by(command_name='ping').first()
     flightschedule = add_flight_schedule(
-        creation_date=time2, upload_date=time2, status=2)
+        creation_date=time2, upload_date=time2, status=2, execution_time=time2)
     flightschedule_commands = add_command_to_flightschedule(
         timestamp=time2,
         flightschedule_id=flightschedule.id,
@@ -250,6 +245,49 @@ def demo_db():
     add_passover(timestamp=now - timedelta(seconds=10))
     for i in range(5):
         add_passover(timestamp=now + timedelta(minutes=i*10))
+
+    print("Database has been seeded with demo data.")
+
+
+@cli.command('import_commands')
+def import_commands():
+    """Imports commands from the CommandDocs.txt file in ex2_ground_station_software,
+    and adds them to the database.
+    """
+
+    filepath = 'ex2_ground_station_software/CommandDocs.txt'
+
+    if not os.path.exists(filepath):
+        print(f'Couldn\'t find list of commands at {filepath}. Seeding database with no commands.')
+        return False
+
+    # first regenerate CommandDocs.txt
+    print('Regenerating commands.')
+    subprocess.run(['./regenerate_commands.sh'])
+
+    with open('./ex2_ground_station_software/CommandDocs.txt', 'r') as f:
+        text = f.read()
+
+    # regex command based on current formatting of CommandDocs.txt; might need to be changed later
+    blocks = re.findall('[\.\n]([A-Z0-9_.]*):[^\[]*\[([^\]]*)\]', text)
+
+    for (command_name, arguments) in blocks:
+        # currently false; need to figure out which commands should be considered dangerous
+        is_dangerous = False
+
+        if arguments == 'None':
+            num_arguments = 0
+        else:
+            num_arguments = len(re.findall(',', arguments)) + 1
+
+        # make a copy of each command for each server
+        for prefix in server_prefixes:
+            c = add_telecommand(command_name=(prefix + '.' + command_name).lower(), num_arguments=num_arguments,
+                                is_dangerous=is_dangerous)
+
+    print("Added new telecommands.")
+
+    return True
 
 
 if __name__ == '__main__':
