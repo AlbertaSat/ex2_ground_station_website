@@ -19,7 +19,7 @@ def automate_communication():
     """Reads from the automated commands table in the database and creates communications objects
     to be sent to the comm module, which will then interpret and pass the command messages along to the satellite
     This essentially mimicks a human user entering commands through the 'live commands' portal. Also supports
-    sending commands by reading from a pre-defined script called 'automation.txt', although the website should be 
+    sending commands by reading from a pre-defined script called 'automation.txt', although the website should be
     the preferred method of setting up the automated command sequence.
     """
     sender = CommunicationList()
@@ -73,6 +73,7 @@ def automate_passovers():
     passover_data = passovers[0]['data']['next_passovers']
 
     if passovers[1] == 200 and len(passover_data) > 0:
+        passover_data = passovers[0]['data']['next_passovers']
         for ps in passover_data:
             time_obj = datetime.strptime(
                 ps['timestamp'], '%Y-%m-%d %H:%M:%S.%f')
