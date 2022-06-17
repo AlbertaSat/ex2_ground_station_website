@@ -29,8 +29,10 @@ class AddUser extends Component {
     handleAddUser() {
         event.preventDefault();
         if (this.state.password !== this.state.password2) {
-            this.setState({error_message: "Passwords do not match.",
-                    success_message: ''});
+            this.setState({
+                error_message: "Passwords do not match.",
+                success_message: ''
+            });
             return;
         }
         
@@ -53,7 +55,6 @@ class AddUser extends Component {
             return results.json();
         }).then(data => {
             if (data.status == 'success') {
-                console.log(data.data);
                 this.setState({
                     success_message: data.message,
                     username: '',
@@ -65,8 +66,10 @@ class AddUser extends Component {
             } else {
                 console.error('Unexpected error occurred.');
                 console.error(data);
-                this.setState({error_message: data.message,
-                    success_message: ''});
+                this.setState({
+                    error_message: data.message,
+                    success_message: ''
+                });
             }
         })
     }
@@ -109,8 +112,7 @@ class AddUser extends Component {
     }
 
     handleUsernameChange(event) {
-        this.setState({username: event.target.value,
-        });
+        this.setState({username: event.target.value});
     }
 
     handlePasswordChange(event) {
@@ -205,174 +207,4 @@ class AddUser extends Component {
 }
 
 
-export default AddUser; // maybe export as default and define component as function?
-
-
-// function AddUser() {
-//     const [newUserIsAdmin, setNewUserIsAdmin] = React.useState(false);
-//     const [errorMessage, setErrorMessage] = React.useState('');
-//     const [successMessage, setSuccessMessage] = React.useState('');
-
-//     const usernameRef = React.useRef();
-//     const passwordRef = React.useRef();
-//     const confirmPasswordRef = React.useRef();
-
-//     function handleAddUser(event) {
-//         //event.preventDefault();
-//         if (passwordRef.current.value !== confirmPasswordRef.current.value) {
-//             setErrorMessage("Passwords do not match.");
-//             return;
-//         }
-//         console.log(usernameRef.current.value); //undefined. child element might not be in DOM or whatever
-//         console.log(passwordRef.current.value); // undefined
-//         const post_data = {
-//             username: usernameRef.current.value,
-//             password: passwordRef.current.value,
-//             //is_admin: this.state.newUserIsAdmin
-//         }
-//         fetch('/api/users', {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//                 'Authorization':'Bearer '+ sessionStorage.getItem('auth_token')
-//               },
-//             body: JSON.stringify(post_data),
-//         }).then(results => {
-//             return results.json();
-//         }).then(data => {
-//             if (data.status == 'success') {
-//                 setSuccessMessage(data.message);
-//                 usernameRef.current.value = '';
-//                 passwordRef.current.value = '';
-//                 confirmPasswordRef.current.value = '';
-//             } else {
-//                 console.error('Unexpected error occurred.');
-//                 console.error(data);
-//                 setErrorMessage(data.message);
-//             }
-//         })
-//     }
-
-//     function handleKeyPress(event) {
-//         if (event.key === 'Enter') {
-//             handleAddUser();
-//         }
-//     }
-        
-//     function handleChecked(event) {
-//         setNewUserIsAdmin(event.target.checked);
-//     }
-        
-//     function handleError(){
-//         if (!(errorMessage === '')){
-//             console.log('error')
-//             return  (
-//                 <div>
-//                     <Typography style={{color: 'red'}}>
-//                         {errorMessage}
-//                     </Typography>
-//                 </div>
-//             );
-//         }
-//     }
-        
-//     function handleSuccess() {
-//         if (!(successMessage === '')){
-//             console.log('success')
-//             return  (
-//                 <div>
-//                     <Typography style={{color: 'green'}}>
-//                         {successMessage}
-//                     </Typography>
-//                 </div>
-//             );
-//         }
-//     }
-
-//     return (
-        
-//       <Paper className="grid-containers adduser-container">
-//         <div>
-//           <div style={{ padding: "20px", textAlign: "center" }}>
-//             <Typography variant="h4" style={{ color: "#28324C" }}>
-//               Register New User
-//             </Typography>
-//           </div>
-
-//           <div>
-//             <TextField
-//               style={{ width: "100%" }}
-//               required
-//               id="outlined-required"
-//               label="Username"
-//               name="username"
-//               margin="normal"
-//               variant="outlined"
-//               ref={usernameRef}
-//               error={!(errorMessage === "")}
-//             />
-//           </div>
-//           <div>
-//             <TextField
-//               style={{ width: "100%" }}
-//               required
-//               id="outlined-password-input"
-//               label="Password"
-//               type="password"
-//               name="password"
-//               margin="normal"
-//               variant="outlined"
-//               ref={passwordRef}
-//               error={!(errorMessage === "")}
-//             />
-//           </div>
-//           <div>
-//             <TextField
-//               style={{ width: "100%" }}
-//               required
-//               id="outlined-confirmpassword-input"
-//               label="Confirm Password"
-//               type="password"
-//               name="password"
-//               margin="normal"
-//               variant="outlined"
-//               ref={confirmPasswordRef}
-//               error={!(errorMessage === "")}
-//               onKeyDown={(event) => handleKeyPress(event)}
-//             />
-//           </div>
-//           <div>{handleError()}</div>
-//           <div>
-//             <FormControlLabel
-//               label="Admin User"
-//               control={
-//                 <Checkbox
-//                   checked={newUserIsAdmin}
-//                   onChange={(event) => handleChecked(event)}
-//                 />
-//               }
-//             />
-//           </div>
-//           <div>{handleSuccess()}</div>
-//           <div
-//             style={{
-//               display: "flex",
-//               alignItems: "center",
-//               justifyContent: "center",
-//             }}
-//           >
-//             <Button
-//               style={{ color: "#118851", marginTop: "10px" }}
-//               onClick={() => handleAddUser()}
-//               variant="contained"
-//               name="submit"
-//             >
-//               Submit
-//             </Button>
-//           </div>
-//         </div>
-//       </Paper>
-//     );
-// }
-
-// export default AddUser;
+export default AddUser;
