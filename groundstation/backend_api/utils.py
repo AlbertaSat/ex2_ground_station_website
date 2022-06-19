@@ -62,7 +62,6 @@ def add_command_to_flightschedule(timestamp, flightschedule_id, command_id):
                                 timestamp=timestamp,
                                 flightschedule_id=flightschedule_id,
                                 command_id=command_id,
-                                server='obc'
                             )
     db.session.add(flightschedule_commands)
     db.session.commit()
@@ -130,7 +129,7 @@ def login_required(f):
                 response_object['status'] = 'fail'
                 response_object['message'] = 'Blacklisted token. Please log in again.'
                 response_header_object['WWW-Authenticate'] = 'Bearer'
-                return response_object, 401, response_header_object                
+                return response_object, 401, response_header_object
 
         g.user = user
         return f(*args, **kwargs)

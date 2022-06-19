@@ -5,10 +5,6 @@ for examples, eg.) backend_api.housekeeping.HousekeepingLogList.post. Note: You 
 
 from marshmallow import Schema, fields, validate
 
-# Found in ex2_ground_station_software/src/groundStation/system.py
-# Can be hardcoded as these should not really change
-SERVER_PREFIXES = ['ex2', 'yuk', 'ari', 'eps', 'gnd', 'pipe', 'last']
-
 class ArgumentValidator(Schema):
     """Validator for arguments to flight schedule or automated commands
     """
@@ -54,7 +50,6 @@ class FlightScheduleCommandValidator(Schema):
     """
     timestamp = fields.DateTime(format='iso', required=True)
     command = fields.Nested(CommandValidator, required=True)
-    server = fields.String(required=True, validate=validate.OneOf(SERVER_PREFIXES))
     args = fields.Nested(ArgumentValidator, required=True, many=True)
     repeats = fields.Nested(FlightScheduleCommandRepeatValidator, required=True)
 
@@ -75,7 +70,6 @@ class FlightSchedulePatchCommandValidator(Schema):
     command = fields.Nested(CommandValidator, required=True)
     flightschedule_command_id = fields.Integer(required=False)
     args = fields.Nested(ArgumentValidator, required=True, many=True)
-    server = fields.String(required=True, validate=validate.OneOf(SERVER_PREFIXES))
     repeats = fields.Nested(FlightScheduleCommandRepeatValidator, required=True)
 
 class FlightSchedulePatchValidator(Schema):

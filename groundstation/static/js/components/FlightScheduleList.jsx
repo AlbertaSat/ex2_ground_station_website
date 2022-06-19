@@ -176,7 +176,7 @@ const FlightScheduleList = (props) => {
                 <TableBody>
                   <TableRow>
                     <TableCell component="th" scope="row">
-                      {commands.server + "." + commands.command.command_name}
+                      {commands.command.command_name}
                     </TableCell>
                     <TableCell align="left">
                       {commands.args.map((arg) => arg.argument).join(", ")}

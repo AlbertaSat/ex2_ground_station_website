@@ -31,10 +31,6 @@ const DEFAULT_COMMAND = {
   args: [],
 };
 
-// Taken from ex2_ground_station_software/src/groundStation/system.py
-// in self.APP_DICT
-const SERVER_PREFIXES = ["ex2", "yuk", "ari", "eps", "gnd", "pipe", "last"];
-
 class FlightSchedule extends Component {
   constructor() {
     super();
@@ -107,18 +103,12 @@ class FlightSchedule extends Component {
           }
         }
         if (res2.status == "success") {
-          // Create a copy of each command for each server
           this.setState({
-            availCommands: res2.data.telecommands.reduce((prev, command) => {
-              SERVER_PREFIXES.forEach((prefix) => {
-                prev.push({
-                  label: prefix + "." + command.command_name,
-                  value: command.command_id,
-                  args: command.num_arguments,
-                });
-              });
-              return prev;
-            }, []),
+            availCommands: res2.data.telecommands.map((command) => ({
+              label: command.command_name,
+              value: command.command_id,
+              args: command.num_arguments
+            }))
           });
         }
       });
@@ -270,8 +260,7 @@ class FlightSchedule extends Component {
       obj[idx].timestamp = thisTime.toISOString();
     } else {
       obj[idx].command.command_id = event.value;
-      obj[idx].command.command_name = event.label.slice(event.label.indexOf('.') + 1);
-      obj[idx].server = event.label.slice(0, event.label.indexOf('.'));
+      obj[idx].command.command_name = event.label;
       obj[idx].args = [];
       for (let i = 0; i < event.args; i++) {
         obj[idx].args.push({ index: i, argument: "" });

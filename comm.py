@@ -138,10 +138,8 @@ def generate_fs_file(fs):
         for command in fs['commands']:
             # Format the command string from fs
             command_name = command['command']['command_name']
-            server = command['server']
             args = [arg['argument'] for arg in command['args']]
-            command_string = ('{}.{}({})'
-                              .format(server, command_name, ' '.join(args)))
+            command_string = ('{}({})'.format(command_name, ' '.join(args)))
 
             # Format the date/time from fs
             exec_time = format_date_time(command['timestamp'])

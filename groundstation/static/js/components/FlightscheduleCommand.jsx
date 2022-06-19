@@ -99,12 +99,8 @@ const FlightscheduleCommand = (props) => {
                 props.handleAddEvent(event, "command", props.idx)
               }
               value={{
-                label: props.flightschedule.server
-                  ? props.flightschedule.server +
-                    "." +
-                    props.flightschedule.command.command_name
-                  : "",
-                value: props.flightschedule.command.command_id,
+                label: props.flightschedule.command.command_name,
+                value: props.flightschedule.command.command_id
               }}
             />
           </form>

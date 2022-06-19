@@ -212,7 +212,6 @@ class FlightScheduleCommands(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     command_id = db.Column(db.Integer, db.ForeignKey('telecommands.id'), nullable=False)
     timestamp = db.Column(db.DateTime)
-    server = db.Column(db.String(4), default='ex2', nullable=False)
     repeat_ms = db.Column(db.Boolean, default=False, nullable=False)
     repeat_sec = db.Column(db.Boolean, default=False, nullable=False)
     repeat_min = db.Column(db.Boolean, default=False, nullable=False)
@@ -243,7 +242,6 @@ class FlightScheduleCommands(db.Model):
                 'repeat_year': self.repeat_year,
             },
             'command': self.command.to_json(),
-            'server': self.server,
             'args': [arg.to_json() for arg in self.arguments],
         }
 
