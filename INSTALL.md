@@ -48,6 +48,29 @@ Username: postgres
 Password: postgres
 ```
 
+### Command Responses
+The website's [comm.py](comm.py) script communicates with the database and with [ex2_ground_station_software](https://github.com/AlbertaSat/ex2_ground_station_software) in order to communicate with the satellite. In order to recieve command responses:
+
+1. Open a seperate terminal inside the website container by running:
+    ```bash
+    docker exec -it ex2_ground_station_website_web_1 bash
+    ```
+
+2. Build libcsp by running `./build_libcsp.sh`. This only needs to be done once.
+
+3. Run `comm.py` with the appropriate command-line arguments according to [ex2_ground_station_software](https://github.com/AlbertaSat/ex2_ground_station_software/blob/cb4db3a0ff24fdd61973888c864b429ad4995261/src/groundStation/groundStation.py#L365)
+
+   If you want to test responses **without being connected to an OBC**, run:
+   ```bash
+   python3 comm.py -I dummy
+   ```
+
+4. You will then be prompted with:
+    ```
+    Would like to communicate with the satellite simulator (if not, the program will attempt to communicate with the satellite) [Y/n]:
+    ```
+    Respond with 'Y' and let the script run in the background.
+
 ---
 
 ## Production Installation
