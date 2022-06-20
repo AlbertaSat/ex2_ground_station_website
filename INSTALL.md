@@ -56,7 +56,7 @@ The website's [comm.py](comm.py) script communicates with the database and with 
     docker exec -it ex2_ground_station_website_web_1 bash
     ```
 
-2. Build libcsp by running `./build_libcsp.sh`. This only needs to be done once.
+2. Build libcsp by running `./build_libcsp.sh`. This only needs to be done whenever the [libcsp](https://github.com/AlbertaSat/libcsp) submodule or the script itself updated.
 
 3. Run `comm.py` with the appropriate command-line arguments according to [ex2_ground_station_software](https://github.com/AlbertaSat/ex2_ground_station_software/blob/cb4db3a0ff24fdd61973888c864b429ad4995261/src/groundStation/groundStation.py#L365)
 
