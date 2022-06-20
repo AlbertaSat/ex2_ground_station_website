@@ -19,7 +19,7 @@ def automate_communication():
     """Reads from the automated commands table in the database and creates communications objects
     to be sent to the comm module, which will then interpret and pass the command messages along to the satellite
     This essentially mimicks a human user entering commands through the 'live commands' portal. Also supports
-    sending commands by reading from a pre-defined script called 'automation.txt', although the website should be 
+    sending commands by reading from a pre-defined script called 'automation.txt', although the website should be
     the preferred method of setting up the automated command sequence.
     """
     sender = CommunicationList()
@@ -71,7 +71,7 @@ def automate_passovers():
     # the automation will also handle queuing passover times
     passovers = passover.get(local_args={'limit': 1, 'next': 'true'})
 
-    if passovers[1] == 200:
+    if passovers[1] == 200 and len(passovers[0]['data']['next_passovers']) > 0:
         passover_data = passovers[0]['data']['next_passovers']
         for ps in passover_data:
             time_obj = datetime.strptime(
@@ -92,14 +92,14 @@ def automate_passovers():
 
         tle = hk[0]['data']['logs'][0]['tle']
         lines = tle.split('\n')
-    
+
         orb = Orbital('ex-alta 2', line1=lines[0], line2=lines[1])
         dtobj = datetime.utcnow()
         passes = orb.get_next_passes(dtobj, 24, -113.4938, 53.5461, 0.645) # edmonton coordinates and elevation
         ps_data = {'passovers': [{'timestamp': str(ps[0])} for ps in passes]}
 
         passover.post(local_data=json.dumps(ps_data))
-        
+
 
 def send_slack_notifs(message):
     """Sends out a Slack message to all subscribed users.
