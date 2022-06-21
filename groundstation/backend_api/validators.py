@@ -68,7 +68,8 @@ class FlightSchedulePatchValidator(Schema):
 class PassoverValidator(Schema):
     """Validator for passovers
     """
-    timestamp = fields.DateTime(format='iso', required=True)
+    aos_timestamp = fields.DateTime(format='iso', required=True)
+    los_timestamp = fields.DateTime(format='iso', required=True)
 
 class PassoverListValidator(Schema):
     """Validator list of passovers

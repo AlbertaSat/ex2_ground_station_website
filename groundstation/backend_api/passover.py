@@ -45,16 +45,16 @@ class PassoverList(Resource):
 
         current_time = datetime.datetime.now(datetime.timezone.utc)
         if next == 'true':
-            passovers = Passover.query.filter(Passover.timestamp > current_time).order_by(Passover.timestamp).limit(query_limit)
+            passovers = Passover.query.filter(Passover.aos_timestamp > current_time).order_by(Passover.aos_timestamp).limit(query_limit)
             next_passovers = [p.to_json() for p in passovers]
             response_object['data']['next_passovers'] = next_passovers
         if most_recent == 'true':
-            passover = Passover.query.filter(Passover.timestamp < current_time).order_by(Passover.timestamp.desc()).limit(query_limit).first()
+            passover = Passover.query.filter(Passover.aos_timestamp < current_time).order_by(Passover.aos_timestamp.desc()).limit(query_limit).first()
             passover = passover.to_json() if passover is not None else passover
             response_object['data']['most_recent_passover'] = passover
 
         if next != 'true' and most_recent != 'true':
-            passovers = Passover.query.order_by(Passover.timestamp).limit(query_limit).all()
+            passovers = Passover.query.order_by(Passover.aos_timestamp).limit(query_limit).all()
             response_object['data']['passovers'] = [p.to_json() for p in passovers]
 
         return response_object, 200

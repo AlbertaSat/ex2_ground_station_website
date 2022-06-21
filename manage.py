@@ -134,9 +134,9 @@ def seed_db_example(ctx):
     )
 
     now = datetime.utcnow()
-    add_passover(timestamp=now - timedelta(seconds=20))
+    add_passover(aos_timestamp=now - timedelta(seconds=20), los_timestamp=now)
     for i in range(1, 20):
-        p = add_passover(timestamp=now + timedelta(minutes=i*5))
+        p = add_passover(aos_timestamp=now + timedelta(minutes=i*5), los_timestamp=now + timedelta(minutes=i*5 + 1))
     print("Database has been seeded.")
 
 
@@ -242,9 +242,9 @@ def demo_db():
     )
 
     now = datetime.utcnow()
-    add_passover(timestamp=now - timedelta(seconds=10))
+    add_passover(aos_timestamp=now - timedelta(seconds=20), los_timestamp=now)
     for i in range(5):
-        add_passover(timestamp=now + timedelta(minutes=i*10))
+        p = add_passover(aos_timestamp=now + timedelta(minutes=i*5), los_timestamp=now + timedelta(minutes=i*5 + 1))
 
     print("Database has been seeded with demo data.")
 
