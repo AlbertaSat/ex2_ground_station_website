@@ -49,7 +49,6 @@ function fetchPassovers(next, most_recent) {
 
 // inspired by https://www.cssscript.com/minimal-digital-clock-javascript-css/
 class Countdown extends Component{
-    // passoverDuration is in seconds
 	constructor(){
 		super();
 		this.state = {
@@ -57,7 +56,6 @@ class Countdown extends Component{
 			minute: '00',
 			second: '00',
             displayCountdown:false,
-            passoverDuration:2*60,
 			nextPassover: null,
 			untilPassover: null,
             operationIsAdd:false,
