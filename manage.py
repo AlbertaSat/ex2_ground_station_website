@@ -49,6 +49,9 @@ def recreate_db():
     db.drop_all()
     db.create_all()
     db.session.commit()
+
+    now = datetime.utcnow()
+    add_passover(aos_timestamp=now - timedelta(seconds=60), los_timestamp=now)
     print("Database has been dropped and recreated.")
 
 
