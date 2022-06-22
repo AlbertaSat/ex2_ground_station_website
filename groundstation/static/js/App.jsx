@@ -50,13 +50,8 @@ var username = null
 function App() {
   if (isAuthenticated()){
     username = sessionStorage.getItem('username');
-  }
-  const classes = useStyles();
-  const [open, setOpen] = React.useState(false);
-  const [isAdmin, setIsAdmin] = React.useState(false);
-  const anchorRef = React.useRef(null);
 
-  const auth_token = sessionStorage.getItem('auth_token');
+    const auth_token = sessionStorage.getItem('auth_token');
     fetch(`/api/users/${auth_token}`).then(results => {
         return results.json();
     }).then(data => {
@@ -66,6 +61,13 @@ function App() {
             console.error('Unexpected error occured:');
         }
     });
+  }
+  const classes = useStyles();
+  const [open, setOpen] = React.useState(false);
+  const [isAdmin, setIsAdmin] = React.useState(false);
+  const anchorRef = React.useRef(null);
+
+  
 
   const handleToggle = () => {
     setOpen(prevOpen => !prevOpen);
@@ -181,13 +183,13 @@ function App() {
                         <ClickAwayListener onClickAway={handleClose}>
                           <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
                             <MenuItem disabled>{username}</MenuItem>
-                              <MenuItem onClick={handleClose}>
-                                <a style={{color: 'rgb(40, 50, 76)'}}href="/logout">Logout</a>
-                              </MenuItem>
                               {isAdmin && 
                               <MenuItem onClick={handleClose}>
                                 <a style={{color: 'rgb(40, 50, 76)'}}href="/adduser">Add User</a>
                               </MenuItem> }
+                              <MenuItem onClick={handleClose}>
+                                <a style={{color: 'rgb(40, 50, 76)'}}href="/logout">Logout</a>
+                              </MenuItem>
                           </MenuList>
                         </ClickAwayListener>
                       </Paper>

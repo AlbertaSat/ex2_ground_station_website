@@ -167,7 +167,7 @@ class UserList(Resource):
             # TODO: Probably remove dev_message
             response_object = {
                 'status':'fail',
-                'message':'Invalid Payload',
+                'message':'User already exists!',
                 'dev_message':str(e.orig)
             }
             return response_object, 400

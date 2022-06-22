@@ -30,19 +30,19 @@ class AddUser extends Component {
         event.preventDefault();
         if (this.state.password !== this.state.password2) {
             this.setState({
-                error_message: "Passwords do not match.",
+                error_message: 'Passwords do not match.',
                 success_message: ''
             });
             return;
         }
         
-        const creating_admin_user = sessionStorage.getItem('username');
+        const creator = sessionStorage.getItem('username');
 
         const post_data = {
             username: this.state.username,
             password: this.state.password,
             is_admin: this.state.newUserIsAdmin,
-            creating_admin_user: creating_admin_user
+            creator: creator
         }
         fetch('/api/users', {
             method: 'POST',
