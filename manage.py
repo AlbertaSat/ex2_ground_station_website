@@ -14,6 +14,7 @@ or:
     python3 manage.py test test_api.TestHousekeepingService.test_get_housekeeping
 
 """
+from readline import set_completion_display_matches_hook
 import sys
 import unittest
 from datetime import datetime, timedelta
@@ -135,7 +136,7 @@ def seed_db_example(ctx):
     now = datetime.utcnow()
     add_passover(timestamp=now - timedelta(seconds=20))
     for i in range(1, 20):
-        p = add_passover(timestamp=now + timedelta(minutes=i*5))
+        p = add_passover(timestamp=now.replace(second=0) + timedelta(minutes=i*5))
     print("Database has been seeded.")
 
 
