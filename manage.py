@@ -111,7 +111,7 @@ def seed_db_example(ctx):
         creation_date=timestamp, upload_date=timestamp, status=2, execution_time=timestamp)
 
     # add a few commands to flightschedule
-    commands = Telecommands.query().all()
+    commands = Telecommands.query.all()
 
     for i in range(0, min(len(commands), 2)):
         command = commands[i]
