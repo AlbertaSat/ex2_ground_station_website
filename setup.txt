@@ -15,7 +15,7 @@ Group=www-data
 WorkingDirectory=/home/ubuntu/AlbertaSat
 Environment="PATH=/home/ubuntu/AlbertaSat/venv/bin"
 # We'll then specify the commanded to start the service
-ExecStart=/home/ubuntu/AlbertaSat/entrypoint.sh
+ExecStart=/home/ubuntu/AlbertaSat/entrypoint.prod.sh
 # This will tell systemd what to link this service to if we enable it to start at boot. We want this service to start when the regular multi-user system is up and running:
 [Install]
 WantedBy=multi-user.target
