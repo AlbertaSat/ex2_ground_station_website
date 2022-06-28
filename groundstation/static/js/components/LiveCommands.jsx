@@ -204,7 +204,7 @@ class LiveCommands extends Component {
   }
 
   formatToSatCliCommand(text) {
-    return `${this.state.currentSatCli.value}.cli.send_cmd(${text.length}, ${text})`;
+    return `${this.state.currentSatCli.value}.cli.send_cmd(${text.length},${text})`;
   }
 
   handleKeyPress(event) {
