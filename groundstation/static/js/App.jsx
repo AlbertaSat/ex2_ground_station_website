@@ -172,6 +172,9 @@ function App() {
                               <MenuItem onClick={handleClose}>
                                 <a style={{color: 'rgb(40, 50, 76)'}}href="/logout">Logout</a>
                               </MenuItem>
+                              <MenuItem onClick={handleClose}>
+                                <a style={{color: 'rgb(40, 50, 76)'}}href="/resetpassword">Reset Password</a>
+                              </MenuItem>
                           </MenuList>
                         </ClickAwayListener>
                       </Paper>
