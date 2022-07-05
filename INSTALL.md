@@ -1,141 +1,192 @@
 # Installation
-These instructions are for installing and running the application in development mode on a development machine. There are two installation methods below, one uses [docker](https://www.docker.com/) and the other is manual. The docker installation is the recommended method.
+These instructions are for installing and running the application in either [Development Mode](#developer-installation) or in [Production Mode](#production-installation).
 
-## Docker Installation - Website and Satellite Simulator (Recommended)
-The docker installation methods below are compatible with any operating system that is supported by [docker](https://www.docker.com/). If you are just looking to use the web app and don't plan on making any changes to the source code, then choose the `User Installation` method below. Otherwise, choose the `Developer Installation` method below.
+Prior to starting, please [install docker](https://www.docker.com/get-started) for your operating system if you have not already as both installations require the use of docker. If these methods don't work on your system, try following these [older instructions](INSTALL-OLD.md) which provide a different set instructions which may work on your machine.
 
-Prior to starting, please [install docker](https://www.docker.com/get-started) for your operating system if you have not already.
-
-## User Installation
-This installation method will install a docker image that will be run as a container and used to host the ground station web app.
-
-All you need to do is open a terminal instance on your operating system and enter the following commands:
-
-```bash
-docker pull albertasatdocker/ground-station-website:user-latest
-docker run --rm -it -p 8000:8000 albertasatdocker/ground-station-website:user-latest
-```
-
-Now, open Google Chrome and navigate to [http://localhost:8000](http://localhost:8000).
+---
 
 ## Developer Installation
-This installation method it will allow you to immediately see any modifications you have made to the source code on your host machine in the docker container (and vice versa). As a result, you will not have to rebuild the docker image every time you make a change to the source code on your host machine.
+This installation method is for developers who wish to see their website and API changes live as they develop.
 
-First, clone this repository and create a `keys.sh` file in the root folder that follows the same conventions outlined in the `keys-example.sh` file. You will need to create a Flask sessions `SECRET_KEY` and optionally, a Slack token. Information on using the Slack API can be found [here](https://api.slack.com/).
+1. Clone this repository and enter it:
+    ```bash
+    git clone git@github.com:AlbertaSat/ex2_ground_station_website.git
+    cd ex2_ground_station_website
+    ```
 
-### MacOS and Ubuntu
+2. Create a copy of `keys-example.sh` and name it `keys.sh`
+    ```bash
+    cp keys-example.sh keys.sh
+    ```
+   Feel free to change any of the values inside `keys.sh` but their default values works fine. Note that `SLACK_TOKEN` is used in `automation.py` as a way of notifying users through Slack when a satellite passover occurs. Information on using the Slack API can be found [here](https://api.slack.com/).
 
-After cloning this repository, pull the albertasatdocker/ground-station-website:dev-latest docker image using the commands below.
+3. Start the development environment by running:
+    ```bash
+    docker-compose up
+    ```
+   It may take a while for the first time but subsequent runs will be much quicker.
 
+4. Visit [http://localhost:8000](http://localhost:8000) to view the webpage
+
+   Note that on Safari and iOS, timestamps render improperly so it is recommended that you use a Chromium browser (Chrome, Edge, etc.) or Firefox.
+
+   Whenever you make a change to the website code (inside `groundstation/static/js`), you would need to hard refresh the page with `Ctrl+Shift+R` on Windows/Linux or `Command+Shift+R` on Mac to empty the cache.
+
+### Accessing the Database
+The website uses a PostgreSQL database to store its data. To view all the tables and their entries, you can either use a command line tool like [psql](https://www.postgresql.org/download/) or a GUI tool like [DBeaver](https://dbeaver.io).
+
+With **psql**, you can connect to the database by runnning the following command in a separate terminal window:
 ```bash
-cd <cloned-repo-location>
-docker pull albertasatdocker/ground-station-website:dev-latest
+psql postgres://postgres:postgres@localhost:5432/ex2_gs
 ```
 
-You can then run a container off the updated image using:
-
-```bash
-export GS_HOMEDIR=$(pwd)
-docker run --rm -it -v $GS_HOMEDIR:/home/ex2_ground_station_website -p 8000:8000 albertasatdocker/ground-station-website:dev-latest
+With **DBeaver**, [create a new PostgreSQL database connection](https://github.com/dbeaver/dbeaver/wiki/Create-Connection) and set these fields to:
+```
+Host: localhost
+Database: ex2_gs
+Username: postgres
+Password: postgres
 ```
 
-This will open a bash terminal within the docker container.
+### Command Responses
+The website's [comm.py](comm.py) script communicates with the database and with [ex2_ground_station_software](https://github.com/AlbertaSat/ex2_ground_station_software) in order to communicate with the satellite. In order to recieve command responses:
 
-Install pip and npm libraries by running `update.sh`.
+1. Open a seperate terminal inside the website container by running:
+    ```bash
+    docker exec -it ex2_ground_station_website_web_1 bash
+    ```
 
-```bash
-source ./update.sh
+2. Build libcsp by running `./build_libcsp.sh`. This only needs to be done whenever the [libcsp](https://github.com/AlbertaSat/libcsp) submodule or the script itself updated.
+
+3. Run `comm.py` with the appropriate command-line arguments according to [ex2_ground_station_software](https://github.com/AlbertaSat/ex2_ground_station_software/blob/cb4db3a0ff24fdd61973888c864b429ad4995261/src/groundStation/groundStation.py#L365)
+
+   If you want to test responses **without being connected to an OBC**, run:
+   ```bash
+   python3 comm.py -I dummy
+   ```
+
+4. You will then be prompted with:
+    ```
+    Would like to communicate with the satellite simulator (if not, the program will attempt to communicate with the satellite) [Y/n]:
+    ```
+    Respond with 'Y' and let the script run in the background.
+
+---
+
+## Production Installation
+These instructions assume that the production server is running Ubuntu 20.04 with docker and docker-compose installed. Follow these instructions if you want to deploy the website on a web server.
+
+1. Clone this repository and enter it:
+    ```bash
+    git clone git@github.com:AlbertaSat/ex2_ground_station_website.git
+    cd ex2_ground_station_website
+    ```
+
+2. Create a copy of `keys-example.sh` and name it `keys.sh`
+    ```bash
+    cp keys-example.sh keys.sh
+    ```
+   Feel free to change any of the values inside `keys.sh`, particularly `POSTGRES_USER` and `POSTGRES_PASSWORD` which act as the credentials for the database and `SECRET_KEY` which is used for authentication. These three environment variables should be kept secure.
+
+   Note that `SLACK_TOKEN` is used in `automation.py` as a way of notifying users through Slack when a satellite passover occurs. Information on using the Slack API can be found [here](https://api.slack.com/).
+
+3. Set the system's environment variables by running:
+    ```bash
+    source ./env.sh
+    source ./keys.sh
+    ```
+
+4. Inside the repo, create a folder called `db_backups` and give initialize its permissions as followed:
+    ```bash
+    mkdir db_backups
+    sudo chown -R 999:999 db_backups/
+    ```
+
+5. Create a Python virtual environment and install the website's Python dependencies by running:
+    ```bash
+    python3 -m venv .venv # Creates python virtual environment in .venv/
+    source .venv/bin/activate # Activates virtual environment
+    pip install -r requirements.txt # Installs dependencies
+    ```
+
+6. Start the production environment by running:
+    ```bash
+    sudo -E docker-compose -f docker-compose.prod.yml up -d
+    ```
+   To view the logs of the production server, run the following in a separate terminal window:
+   ```bash
+   sudo docker-compose logs -f -t
+   ```
+
+7. Ensure that port 80 is port-forwarded on the web server and you can now access the website by visiting [http://localhost](http://localhost) if using a browser on the webserver or by visiting `http://<server ip here>` on a different device
+
+### Updating Production
+When there is a new update to master, follow these instructions to update the server:
+
+1. Shutdown the server by running:
+    ```bash
+    sudo docker-compose down --remove-orphans
+    ```
+
+2. Pull the latest changes with `git pull`
+
+3. Reopen the server by running:
+    ```bash
+    source ./env.sh
+    source ./keys.sh
+    sudo -E docker-compose -f docker-compose.prod.yml up -d
+    ```
+
+4. If there were any changes to the database schema (ie. new table, column, etc.) open a bash terminal inside the website docker container with:
+    ```bash
+    sudo docker exec -it ex2_ground_station_website_web_1 bash
+    ```
+
+    Then run the following commands to update the database schema without deleting existing rows:
+    ```bash
+    flask db migrate
+    flask db upgrade
+    ```
+
+### Accessing the Database
+The website uses a PostgreSQL database to store its data. To view all the tables and their entries, you can either use a command line tool like [psql](https://www.postgresql.org/download/) or a GUI tool like [DBeaver](https://dbeaver.io).
+
+For security purposes (for now), these commands only work when ran on the server computer itself locally.
+
+With **psql**, you can connect to the database by runnning the following command in a separate terminal window:
+```
+psql -U <POSTGRES_USER> -h localhost -d ex2_gs -W
+```
+which will then prompts you for the database password.
+
+With **DBeaver**, [create a new PostgreSQL database connection](https://github.com/dbeaver/dbeaver/wiki/Create-Connection) and set these fields to:
+```
+Host: localhost
+Database: ex2_gs
+Username: <POSTGRES_USER>
+Password: <POSTGRES_PASSWORD>
 ```
 
-Then, run the app.
+### Restoring a Database Backup
+A database backup is scheduled to be created daily and backups can be found in the `db_backups/` folder.
+To restore a backup, follow these steps in the server's terminal:
 
-```bash
-flask run --host=0.0.0.0 --port=8000
-```
+1. Open a bash terminal inside the website container by running:
+    ```bash
+    sudo docker exec -it ex2_ground_station_webste_web_1 bash
+    ```
 
-Finally, open Google Chrome and navigate to [http://localhost:8000](http://localhost:8000).
+2. Run `python3 manage.py recreate_db`
 
-### Windows
+   **WARNING:** This will **_completely wipe_** the database  so that a backup can be restored. Please run it with caution!
 
-After cloning this repository, pull the albertasatdocker/ground-station-website:dev-latest docker image using the commands below.
+3. Restore the a backup by running:
+    ```bash
+    zcat db_backups/<path to backup file> | psql -U <POSTGRES_USER> -h db -d ex2_gs -W
+    ```
+   which will then prompt you for the database password.
 
-```bash
-cd <cloned-repo-location>
-docker pull albertasatdocker/ground-station-website:dev-latest
-```
-
-You can then run a container off the updated image using:
-
-```bash
-docker run --rm -it -v %cd%:/home/ex2_ground_station_website -p 8000:8000 albertasatdocker/ground-station-website:dev-latest
-```
-
-This will open a bash terminal within the docker container.
-
-The `update.sh` and `env.sh` files will need to be converted to use LF line endings. This can be done in [VSCode](https://qvault.io/clean-code/line-breaks-vs-code-lf-vs-crlf/) or [Notepad++](http://www.sql313.com/index.php/43-main-blogs/maincat-dba/62-using-notepad-to-change-end-of-line-characters), or by running the following commands from the `ex2_ground_station_website` directory (while in the bash terminal).
-
-```bash
-sed -i 's/\r//g' update.sh
-sed -i 's/\r//g' env.sh
-```
-
-Install pip and npm libraries by running `update.sh` (while in the bash terminal).
-
-```bash
-source ./update.sh
-```
-
-Then, run the app.
-
-```bash
-flask run --host=0.0.0.0 --port=8000
-```
-
-Finally, open Google Chrome and navigate to [http://localhost:8000](http://localhost:8000).
-
-
-## Manual Installation
-This installation method will work on an Ubuntu operating system.
-
-First please clone the repository and then update the submodules using the following commands:
-
-```bash
-cd <cloned-repo-location>
-git submodule update --init --recursive
-```
-
-Ubuntu dependencies for PostgreSQL, libCSP, and scheduling tasks:
-
-```bash
-sudo apt-get install at build-essential wget curl libpq-dev python3-dev gcc-multilib g++-multilib libsocketcan-dev
-```
-
-To run the app's frontend (i.e. in your web browser), you will need node & npm -- at least version 8. I recommend using the [Node Version Manager](https://github.com/nvm-sh/nvm).
-
-Make sure you have a [Python virtual environment](https://docs.python.org/3/tutorial/venv.html) installed and active! To do this navigate to the root project directory and run the following commands:
-
-```bash
-python3 -m venv env
-source env/bin/activate
-```
-
-Set the environment variables. These environment variables tell Flask which configuration settings to use. Do this in every terminal window or you'll get database errors.
-
-```bash
-source ./env.sh
-```
-
-Install pip and npm libraries by running `update.sh`.
-
-```bash
-source ./update.sh
-```
-
-Finally, run the app.
-
-```bash
-flask run
-```
+---
 
 # Useful Commands
 

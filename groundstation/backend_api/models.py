@@ -2,6 +2,7 @@ from flask import current_app
 import datetime
 import jwt
 from groundstation import db, bcrypt
+from sqlalchemy.sql import func
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -9,9 +10,9 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(128), unique=True)
     password_hash = db.Column(db.String(128))
-    is_admin = db.Column(db.Boolean, default=False, nullable=False)
+    is_admin = db.Column(db.Boolean, server_default="0", nullable=False)
     slack_id = db.Column(db.String(128), nullable=True, unique=True)
-    subscribed_to_slack = db.Column(db.Boolean, default=False)
+    subscribed_to_slack = db.Column(db.Boolean, server_default="0")
     blacklisted_tokens = db.relationship('BlacklistedTokens', backref='user', lazy=True, cascade='all, delete-orphan')
 
     def __init__(self, username, password, is_admin=False, slack_id=None, subscribed_to_slack=False):
@@ -187,7 +188,7 @@ class FlightSchedules(db.Model):
     __tablename__ = 'flightschedules'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    creation_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    creation_date = db.Column(db.DateTime, server_default=func.now())
     upload_date = db.Column(db.DateTime)
     execution_time = db.Column(db.DateTime)
     # status is an integer, where 1=queued, 2=draft, 3=uploaded
@@ -287,7 +288,7 @@ class Communications(db.Model):
     timestamp = db.Column(db.DateTime, nullable=False)      # time at which the command was appended to the table
     sender = db.Column(db.String, nullable=False)           # who sent the command (comm/react/command) as a note, the comm can send commands as responses from the satellite
     receiver = db.Column(db.String, nullable=False)         # who the intended recipient of the command is (comm/react web page/command line)
-    is_queued = db.Column(db.Boolean, default=False, nullable=False) # whether the command is queued to be sent to the satellite or not
+    is_queued = db.Column(db.Boolean, server_default="0", nullable=False) # whether the command is queued to be sent to the satellite or not
 
     # TODO: connecting satellite responses to sent telecommands
     #response = db.Column(db.Integer, db.ForeignKey('communications.id'))
