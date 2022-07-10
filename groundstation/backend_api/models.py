@@ -260,7 +260,7 @@ class Housekeeping(db.Model):
         """
         return {
             'id': self.id,
-            'unix_timestamp': self.unix_timestamp,
+            'unix_timestamp': str(self.unix_timestamp),
             'data_position': self.data_position,
             'adcs': self.adcs.to_json(),
             'athena': self.athena.to_json(),
