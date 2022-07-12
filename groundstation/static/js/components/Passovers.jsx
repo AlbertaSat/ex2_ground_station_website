@@ -61,11 +61,11 @@ const Passovers = (props) => {
 		        <TableRow key={passover.passover_id} id={"passover-" + passover.passover_id}>
                     <div>
     		           <TableCell width="15%" component="th" scope="row">
-    		              {formatDateToUTCString(new Date(passover.timestamp + 'Z'))}
+    		              {formatDateToUTCString(new Date(passover.aos_timestamp + 'Z'))}
     		           </TableCell>
                    </div>
                    <div>
-                       <LinearProgress color="secondary" variant="determinate" value={calculateProgessBar(new Date(props.mostRecentPass.timestamp + 'Z'), new Date(), new Date(passover.timestamp + 'Z'))} />
+                       <LinearProgress color="secondary" variant="determinate" value={calculateProgessBar(new Date(props.mostRecentPass.aos_timestamp + 'Z'), new Date(), new Date(passover.aos_timestamp + 'Z'))} />
                    </div>
                </TableRow>
 		      </TableBody>
