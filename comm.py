@@ -89,13 +89,13 @@ def send_to_simulator(msg):
     except Exception as e:
         print('Unexpected error occured:', e)
 
-def send_to_satellite(csp, msg):
+def send_to_satellite(gs, msg):
     try:
-        command = csp.getInput(inVal=msg)
+        command = gs.getInput(inVal=msg)
         if command is None:
             return "INVALID COMMAND"
         server, port, toSend = command
-        return csp.transaction(server, port, toSend)
+        return gs.transaction(server, port, toSend)
     except Exception as e:
         print('Unexpected error occured:', e)
 
@@ -113,7 +113,7 @@ def save_response(message):
     communication_list.post(local_data=message)
 
 
-def communication_loop(csp=None):
+def communication_loop(gs=None, cli_gs=None):
     """
     Main communication loop which polls for messages that are queued and addressed to comm
     (i.e. messages it needs to send to satellite). This should be run when a passover is
@@ -121,8 +121,8 @@ def communication_loop(csp=None):
 
     :param Csp csp: The Csp instance. See groundStation.py
     """
-    if mode == Connection.SATELLITE and csp is None:
-        raise Exception('Csp instance must be specified if sending to satellite')
+    if mode == Connection.SATELLITE and gs is None:
+        raise Exception('Ground station instance must be specified if sending to satellite')
 
     request_data = {'is_queued': True, 'receiver': 'comm', 'newest-first': False}
 
@@ -145,7 +145,10 @@ def communication_loop(csp=None):
                         msg = message['message'].replace(" ", ".")
                         response = send_to_simulator(msg)
                     elif mode == Connection.SATELLITE:
-                        response = send_to_satellite(csp, msg)
+                        if 'cli.send_cmd' in msg:
+                            response = send_to_satellite(cli_gs, msg)
+                        else:
+                            response = send_to_satellite(gs, msg)
 
                     if response:
                         if isinstance(response, list):
@@ -172,9 +175,11 @@ def main():
     elif mode == Connection.SATELLITE:
         # TODO maybe clean up by putting in a function in gs_software
         opts = gs_software.groundStation.options()
-        csp = gs_software.groundStation.groundStation(opts.getOptions())
+        options = opts.getOptions()
+        gs = gs_software.groundStation.groundStation(options)
+        cli_gs = gs_software.cliGroundStation.cliGroundStation(options)
 
-        communication_loop(csp)
+        communication_loop(gs, cli_gs)
 
 
 if __name__ == '__main__':

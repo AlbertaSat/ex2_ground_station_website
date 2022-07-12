@@ -14,6 +14,7 @@ or:
     python3 manage.py test test_api.TestHousekeepingService.test_get_housekeeping
 
 """
+from readline import set_completion_display_matches_hook
 import sys
 import unittest
 from datetime import datetime, timedelta
@@ -24,7 +25,6 @@ import subprocess
 import os
 
 from flask.cli import FlaskGroup
-from sqlalchemy import false
 
 from groundstation import create_app, db
 from groundstation.backend_api.models import User, Housekeeping, Telecommands, PowerChannels
