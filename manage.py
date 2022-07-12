@@ -50,8 +50,6 @@ def recreate_db():
     db.create_all()
     db.session.commit()
 
-    now = datetime.utcnow()
-    add_passover(aos_timestamp=now - timedelta(seconds=60), los_timestamp=now)
     print("Database has been dropped and recreated.")
 
 
@@ -75,12 +73,15 @@ def test(path=None):
 @cli.command('seed_db')
 @click.pass_context
 def seed_db(ctx):
-    """Imports commands and adds admin and non-admin user.
+    """Imports commands and adds admin and non-admin user as well as a base passover.
     """
     ctx.invoke(import_commands) # no telecommands added if import fails
 
     add_user(username='Admin_user', password='Admin_user', is_admin=True)
     add_user(username='albert', password='albert', is_admin=False)
+
+    now = datetime.utcnow()
+    add_passover(aos_timestamp=now - timedelta(seconds=60), los_timestamp=now)
 
 
 @cli.command('seed_db_example')
