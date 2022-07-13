@@ -251,7 +251,7 @@ class Housekeeping(db.Model):
     __tablename__ = 'housekeeping'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    unix_timestamp = db.Column(db.DateTime, nullable=False)
+    timestamp = db.Column(db.DateTime, nullable=False)
     data_position = db.Column(db.Integer, nullable=False)
     tle = db.Column(db.String(256))
 
@@ -260,8 +260,9 @@ class Housekeeping(db.Model):
         """
         return {
             'id': self.id,
-            'unix_timestamp': str(self.unix_timestamp),
+            'timestamp': str(self.timestamp),
             'data_position': self.data_position,
+            'tle': self.tle,
             'adcs': self.adcs.to_json(),
             'athena': self.athena.to_json(),
             'eps': self.eps.to_json(),
