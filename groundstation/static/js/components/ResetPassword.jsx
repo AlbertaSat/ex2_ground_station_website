@@ -12,14 +12,11 @@ class ResetPassword extends Component {
     constructor() {
         super();
         this.state = {
-            username: null,
-            oldpassword: null,
             newpassword: null,
             newpassword2: null,
             error_message : '',
             success_message: ''
         }
-        this.handleOldPasswordChange = this.handleOldPasswordChange.bind(this);
         this.handleNewPasswordChange = this.handleNewPasswordChange.bind(this);
         this.handleNewPassword2Change = this.handleNewPassword2Change.bind(this);
     }
@@ -35,25 +32,17 @@ class ResetPassword extends Component {
             });
             return;
         }
-        else if (this.state.newpassword === this.state.oldpassword) {
-            this .setState({
-                error_message: 'New password cannot be the same as old password.',
-                success_message: ''
-            });
-            return;
-        }
         
-        
+        let auth_token
         if (!!sessionStorage.getItem('auth_token')) {
-            const auth_token = sessionStorage.getItem('auth_token');
+            auth_token = sessionStorage.getItem('auth_token');
         }
         if (!!localStorage.getItem('auth_token')) {
             sessionStorage.setItem('auth_token', localStorage.getItem('auth_token'));
-            const auth_token = localStorage.getItem('auth_token');
+            auth_token = localStorage.getItem('auth_token');
           }
 
         const post_data = {
-            username: this.state.username,
             password: this.state.newpassword
         }
         fetch('/api/users/' + auth_token, {
@@ -69,8 +58,6 @@ class ResetPassword extends Component {
             if (data.status == 'success') {
                 this.setState({
                     success_message: 'Password was successfully changed.',
-                    username: '',
-                    oldpassword: '',
                     newpassword: '',
                     newpassword2: '',
                     error_message: ''
@@ -119,13 +106,6 @@ class ResetPassword extends Component {
         }
     }
 
-    handleUsernameChange(event) {
-        this.setState({username: event.target.value});
-    }
-
-    handleOldPasswordChange(event) {
-        this.setState({oldpassword: event.target.value});
-    }
 
 
     handleNewPasswordChange(event) {
@@ -147,35 +127,6 @@ class ResetPassword extends Component {
                         </Typography>
                     </div>
                     
-                    <div>
-                        <TextField
-                            style={{width: "100%"}}
-                            required
-                            id="outlined-required"
-                            label="Username"
-                            name="username"
-                            margin="normal"
-                            variant="outlined"
-                            value={this.state.username}
-                            onChange={(event) => this.handleUsernameChange(event)}
-                            error={!(this.state.error_message === '')}
-                        />
-                    </div>
-                    <div>
-                        <TextField
-                            style={{width: "100%"}}
-                            required
-                            id="outlined-oldpassword-input"
-                            label="Current Password"
-                            type="password"
-                            name="password"
-                            margin="normal"
-                            variant="outlined"
-                            value={this.state.oldpassword}
-                            onChange={(event) => this.handleOldPasswordChange(event)}
-                            error={!(this.state.error_message === '')}
-                        />
-                    </div>
                     <div>
                         <TextField
                             style={{width: "100%"}}
