@@ -3,7 +3,7 @@ import datetime
 # Default values for each datatype in fake housekeeping data
 DEFAULT_INT = 42
 DEFAULT_FLOAT = 13.37
-DEFAULT_BYTES = b'\x4e\x65\x76\x65\x72\x20\x67\x6f\x6e\x6e\x61\x20\x67\x69\x76\x65\x20\x79\x6f\x75\x20\x75\x70\x21'
+DEFAULT_BYTES = b'\x46\x61\x6b\x65\x20\x62\x79\x74\x65\x73\x21'
 
 
 def fake_housekeeping_as_dict(timestamp, data_position):
