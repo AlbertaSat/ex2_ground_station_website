@@ -456,7 +456,7 @@ class NorthernSpiritHKValidator(Schema):
 class HousekeepingValidator(Schema):
     """Validator for a housekeeping entry
     """
-    unix_timestamp = fields.DateTime(format='iso', required=True)
+    timestamp = fields.DateTime(format='iso', required=True)
     data_position = fields.Integer(required=True)
     tle = fields.String(required=False)
 
