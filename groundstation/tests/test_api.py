@@ -741,7 +741,41 @@ class TestAutomatedCommandService(BaseTestCase):
         
         num_automatedcommands = len(AutomatedCommands.query.all())
         self.assertEqual(response.status_code, 201)
-        
+    
+    def test_get_all_automatedcommands(self):
+        for i in range(10):
+            automatedcommand = AutomatedCommands(**fake_automatedcommand_as_dict())
+            db.session.add(automatedcommand)
+        db.session.commit()
+
+        with self.client:
+            response = self.client.get('/api/automatedcommands')
+            response_data = json.loads(response.data.decode())
+            automatedcommands = response_data['data']['automatedcommands']
+            self.assertEqual(len(automatedcommands), 10)
+
+    def test_get_all_automatedcommands_limit_by(self):
+        for i in range(10):
+            automatedcommand = AutomatedCommands(**fake_automatedcommand_as_dict())
+            db.session.add(automatedcommand)
+        db.session.commit()
+
+        with self.client:
+            response = self.client.get('/api/automatedcommands?limit=3')
+            response_data = json.loads(response.data.decode())
+            automatedcommands = response_data['data']['automatedcommands']
+            self.assertEqual(len(automatedcommands), 3)    
+
+    def test_get_all_automatedcommands_locally_limit_by(self):
+        for i in range(10):
+            automatedcommand = AutomatedCommands(**fake_automatedcommand_as_dict())
+            db.session.add(automatedcommand)
+        db.session.commit()
+
+        response = AutomatedCommandList().get(local_args={'limit':3})
+        self.assertEqual(response[1], 200)
+        self.assertEqual(len(response[0]['data']['automatedcommands']), 3)
+
 
 
 class TestPassoverService(BaseTestCase):

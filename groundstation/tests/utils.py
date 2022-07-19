@@ -94,7 +94,7 @@ def fake_telecommand_as_dict(command_name='test', num_arguments='0', is_dangerou
             'is_dangerous':is_dangerous
     }
 
-def fake_automatedcommand_as_dict(command_id=1, priority=1, args=[]):
+def fake_automatedcommand_as_dict(command_id=1, priority=0, args=[]):
     return {
         'command': {
             'command_id': command_id
