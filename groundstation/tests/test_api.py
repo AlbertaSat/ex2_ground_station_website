@@ -7,13 +7,16 @@ from groundstation.tests.base import BaseTestCase
 from groundstation import db
 
 from groundstation.backend_api.models import Housekeeping, FlightSchedules, \
-    Passover, Telecommands, FlightScheduleCommands, Communications, PowerChannels
+    Passover, Telecommands, FlightScheduleCommands, Communications, PowerChannels, \
+    AutomatedCommands
 from groundstation.tests.utils import fakeHousekeepingAsDict, \
     fake_flight_schedule_as_dict, fake_passover_as_dict, \
     fake_patch_update_as_dict, fake_telecommand_as_dict, \
-    fake_message_as_dict, fake_user_as_dict, fake_power_channel_as_dict
+    fake_message_as_dict, fake_user_as_dict, fake_power_channel_as_dict, \
+    fake_automatedcommand_as_dict
 from groundstation.backend_api.housekeeping import HousekeepingLogList
 from groundstation.backend_api.flightschedule import FlightScheduleList
+from groundstation.backend_api.automatedcommand import AutomatedCommandList
 from groundstation.backend_api.passover import PassoverList
 from groundstation.backend_api.telecommand import Telecommand, TelecommandList
 from groundstation.backend_api.utils import add_telecommand, \
@@ -706,6 +709,39 @@ class TestFlightScheduleService(BaseTestCase):
             response_data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
 
+#########################################################################
+#Test automated command sequence model
+class TestAutomatedCommandService(BaseTestCase):
+    
+    def test_post(self):
+        automatedcommand = fake_automatedcommand_as_dict()
+        self.assertEqual(len(AutomatedCommands.query.all()), 0)
+
+        with self.client:
+            post_data = json.dumps(automatedcommand)
+            response = self.client.post(
+                '/api/automatedcommands',
+                data=post_data,
+                content_type='application/json'
+            )
+            response_data = json.loads(response_data.decode())
+            self.assertEqual(response.status_code, 201)
+        
+        num_automatedcommands = len(AutomatedCommands.query.all())
+        self.assertTrue(num_automatedcommands > 0)
+    
+    def test_local_post(self):
+        automatedcommand = fake_automatedcommand_as_dict()
+        self.assertEqual(len(AutomatedCommands.query.all()), 0)
+
+        post_data = json.dumps(automatedcommand)
+        response = AutomatedCommandList().post(local_data=post_data)
+
+        self.assertEqual(respons[1], 201)
+        
+        num_automatedcommands = len(AutomatedCommands.query.all())
+        self.assertEqual(response.status_code, 201)
+        
 
 
 class TestPassoverService(BaseTestCase):

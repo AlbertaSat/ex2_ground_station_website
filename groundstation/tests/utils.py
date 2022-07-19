@@ -93,3 +93,12 @@ def fake_telecommand_as_dict(command_name='test', num_arguments='0', is_dangerou
             'num_arguments':num_arguments,
             'is_dangerous':is_dangerous
     }
+
+def fake_automatedcommand_as_dict(command_id=1, priority=1, args=[]):
+    return {
+        'command': {
+            'command_id': command_id
+        },
+        'priority': priority,
+        'args': []
+    }
