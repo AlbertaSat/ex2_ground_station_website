@@ -81,7 +81,7 @@ class UserValidator(Schema):
     username = fields.String(required=True)
     password = fields.String(required=True)
     is_admin = fields.Boolean(required=False)
-    creator = fields.String(required=False)
+    creator_id = fields.String(required=False)
 
 class UserPatchValidator(Schema):
     """Validator for patching existing users

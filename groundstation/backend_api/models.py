@@ -11,18 +11,19 @@ class User(db.Model):
     password_hash = db.Column(db.String(128))
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
     slack_id = db.Column(db.String(128), nullable=True, unique=True)
+    creator_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     subscribed_to_slack = db.Column(db.Boolean, default=False)
     blacklisted_tokens = db.relationship('BlacklistedTokens', backref='user', lazy=True, cascade='all, delete-orphan')
     creator = db.relationship('User', remote_side=[id])
 
-    def __init__(self, username, password, is_admin=False, slack_id=None, subscribed_to_slack=False, creator=None):
+    def __init__(self, username, password, is_admin=False, slack_id=None, subscribed_to_slack=False, creator_id=None):
         self.username = username
         num_rounds = current_app.config.get('BCRYPT_LOG_ROUNDS')
         self.password_hash = bcrypt.generate_password_hash(password, num_rounds).decode()
         self.is_admin = is_admin
         self.slack_id = slack_id
         self.subscribed_to_slack = subscribed_to_slack
-        self.creator = creator
+        self.creator_id = creator_id
 
     def verify_password(self, password):
         """Returns True if passes password is valid, else False

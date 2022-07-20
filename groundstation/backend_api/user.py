@@ -158,7 +158,7 @@ class UserList(Resource):
             }
             return response_object, 400
 
-        new_user = User(**validated_data)
+        new_user = User(**validated_data, creator_id=g.user.id)
         try:
             db.session.add(new_user)
             db.session.commit()

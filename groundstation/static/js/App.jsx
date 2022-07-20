@@ -48,6 +48,7 @@ function isAuthenticated(){
 var username = null
 
 function App() {
+  const [isAdmin, setIsAdmin] = React.useState(false);
   if (isAuthenticated()){
     username = sessionStorage.getItem('username');
 
@@ -64,7 +65,7 @@ function App() {
   }
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
-  const [isAdmin, setIsAdmin] = React.useState(false);
+  
   const anchorRef = React.useRef(null);
 
   

@@ -42,7 +42,6 @@ class AddUser extends Component {
             username: this.state.username,
             password: this.state.password,
             is_admin: this.state.newUserIsAdmin,
-            creator: creator
         }
         fetch('/api/users', {
             method: 'POST',
