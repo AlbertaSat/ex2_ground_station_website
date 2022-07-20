@@ -41,7 +41,7 @@ class AddUser extends Component {
         const post_data = {
             username: this.state.username,
             password: this.state.password,
-            is_admin: this.state.newUserIsAdmin,
+            is_admin: this.state.newUserIsAdmin
         }
         fetch('/api/users', {
             method: 'POST',

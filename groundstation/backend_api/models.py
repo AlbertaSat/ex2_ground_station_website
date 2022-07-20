@@ -79,7 +79,7 @@ class User(db.Model):
             'username': self.username,
             'is_admin': self.is_admin,
             'slack_id': self.slack_id,
-            'creator': self.creator,
+            'creator_id': self.creator_id,
         }
 
 class BlacklistedTokens(db.Model):
