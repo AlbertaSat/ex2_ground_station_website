@@ -56,7 +56,7 @@ def fake_passover_as_dict(timestamps):
     :param list(datetime.datetime) timestamps: The passover timestamps to use
     """
     return {
-        'passovers':[{'timestamp':str(timestamp)} for timestamp in timestamps]
+        'passovers':[{'aos_timestamp':str(timestamp), 'los_timestamp':str(timestamp)} for timestamp in timestamps]
     }
 
 def fake_message_as_dict(message='test', sender='tester', receiver='tester2'):

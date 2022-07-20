@@ -14,6 +14,7 @@ or:
     python3 manage.py test test_api.TestHousekeepingService.test_get_housekeeping
 
 """
+from readline import set_completion_display_matches_hook
 import sys
 import unittest
 from datetime import datetime, timedelta
@@ -24,7 +25,6 @@ import subprocess
 import os
 
 from flask.cli import FlaskGroup
-from sqlalchemy import false
 
 from groundstation import create_app, db
 from groundstation.backend_api.models import User, Housekeeping, Telecommands, PowerChannels
@@ -49,6 +49,7 @@ def recreate_db():
     db.drop_all()
     db.create_all()
     db.session.commit()
+
     print("Database has been dropped and recreated.")
 
 
@@ -72,12 +73,15 @@ def test(path=None):
 @cli.command('seed_db')
 @click.pass_context
 def seed_db(ctx):
-    """Imports commands and adds admin and non-admin user.
+    """Imports commands and adds admin and non-admin user as well as a base passover.
     """
     ctx.invoke(import_commands) # no telecommands added if import fails
 
     add_user(username='Admin_user', password='Admin_user', is_admin=True)
     add_user(username='albert', password='albert', is_admin=False)
+
+    now = datetime.utcnow()
+    add_passover(aos_timestamp=now - timedelta(seconds=60), los_timestamp=now)
 
 
 @cli.command('seed_db_example')
@@ -112,7 +116,7 @@ def seed_db_example(ctx):
         creation_date=timestamp, upload_date=timestamp, status=2, execution_time=timestamp)
 
     # add a few commands to flightschedule
-    commands = Telecommands.query().all()
+    commands = Telecommands.query.all()
 
     for i in range(0, min(len(commands), 2)):
         command = commands[i]
@@ -134,9 +138,9 @@ def seed_db_example(ctx):
     )
 
     now = datetime.utcnow()
-    add_passover(timestamp=now - timedelta(seconds=20))
+    add_passover(aos_timestamp=now - timedelta(seconds=20), los_timestamp=now)
     for i in range(1, 20):
-        p = add_passover(timestamp=now + timedelta(minutes=i*5))
+        p = add_passover(aos_timestamp=now + timedelta(minutes=i*5), los_timestamp=now + timedelta(minutes=i*5 + 1))
     print("Database has been seeded.")
 
 
@@ -242,9 +246,9 @@ def demo_db():
     )
 
     now = datetime.utcnow()
-    add_passover(timestamp=now - timedelta(seconds=10))
+    add_passover(aos_timestamp=now - timedelta(seconds=20), los_timestamp=now)
     for i in range(5):
-        add_passover(timestamp=now + timedelta(minutes=i*10))
+        p = add_passover(aos_timestamp=now + timedelta(minutes=i*5), los_timestamp=now + timedelta(minutes=i*5 + 1))
 
     print("Database has been seeded with demo data.")
 

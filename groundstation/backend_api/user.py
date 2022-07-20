@@ -16,13 +16,13 @@ api = Api(user_blueprint)
 class UserEntity(Resource):
     def __init__(self):
         self.validator = UserPatchValidator()
-        super(UserEntity, self).__init__()    
+        super(UserEntity, self).__init__()
 
     @create_context
     def get(self, auth_token, local_args=None):
-        """Endpoint for getting a user
+        """Endpoint for getting a user's info
 
-        :param int user_id: The id of the user to get
+        :param int auth_token: The auth_token of the user to get
         :param dict local_args: This should be used in place of the QUERY PARAMS that would be used through HTTP, used for local calls.
 
         :returns: response_object, status_code
@@ -49,10 +49,10 @@ class UserEntity(Resource):
 
     @create_context
     @login_required
-    def patch(self, user_id, local_data=None):
-        """ Endpoint for patching a specific user
+    def patch(self, auth_token, local_data=None):
+        """ Endpoint for patching a specific user's data
 
-        :param int user_id: The id of the user to patch
+        :param int auth_token: The auth_token of the user to patch
         :param json_string local_data: This should be used in place of the POST body that would be used through HTTP, used for local calls.
 
         :returns: response_object, status_code
@@ -63,12 +63,12 @@ class UserEntity(Resource):
         else:
             post_data = json.loads(local_data)
 
-        user = User.query.filter_by(id=user_id).first()
+        user = User.query.filter_by(id=User.decode_auth_token(auth_token)).first()
 
         if user is None:
             response_object = {'status': 'fail', 'message': 'User does not exist'}
             return response_object, 404
-        
+
         try:
             validated_data = self.validator.load(post_data)
         except ValidationError as err:
@@ -81,7 +81,9 @@ class UserEntity(Resource):
 
         for attribute in validated_data:
             setattr(user, attribute, validated_data[attribute])
-          
+
+        user.regenerate_password_hash(post_data.get('password'))
+
         db.session.commit()
 
         response_object = {
@@ -101,7 +103,7 @@ class UserList(Resource):
     def get(self, local_args=None):
         """Endpoint for getting a list of users
 
-        :param dict local_args: This should be used in place of the QUERY PARAMS 
+        :param dict local_args: This should be used in place of the QUERY PARAMS
             that would be used through HTTP, used for local calls.
 
         :returns: response_object, status_code

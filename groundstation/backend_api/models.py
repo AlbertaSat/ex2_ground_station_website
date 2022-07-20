@@ -2,6 +2,7 @@ from flask import current_app
 import datetime
 import jwt
 from groundstation import db, bcrypt
+from sqlalchemy.sql import func
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -9,10 +10,10 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(128), unique=True)
     password_hash = db.Column(db.String(128))
-    is_admin = db.Column(db.Boolean, default=False, nullable=False)
+    is_admin = db.Column(db.Boolean, server_default="0", nullable=False)
     slack_id = db.Column(db.String(128), nullable=True, unique=True)
     creator_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    subscribed_to_slack = db.Column(db.Boolean, default=False)
+    subscribed_to_slack = db.Column(db.Boolean, server_default="0")
     blacklisted_tokens = db.relationship('BlacklistedTokens', backref='user', lazy=True, cascade='all, delete-orphan')
     creator = db.relationship('User', remote_side=[id])
 
@@ -25,6 +26,10 @@ class User(db.Model):
         self.subscribed_to_slack = subscribed_to_slack
         self.creator_id = creator_id
 
+    def regenerate_password_hash(self, password):
+        num_rounds = current_app.config.get('BCRYPT_LOG_ROUNDS')
+        self.password_hash = bcrypt.generate_password_hash(password, num_rounds).decode()
+        
     def verify_password(self, password):
         """Returns True if passes password is valid, else False
 
@@ -191,7 +196,7 @@ class FlightSchedules(db.Model):
     __tablename__ = 'flightschedules'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    creation_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    creation_date = db.Column(db.DateTime, server_default=func.now())
     upload_date = db.Column(db.DateTime)
     execution_time = db.Column(db.DateTime)
     # status is an integer, where 1=queued, 2=draft, 3=uploaded
@@ -254,14 +259,16 @@ class Passover(db.Model):
     __tablename__ = 'passovers'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    timestamp = db.Column(db.DateTime)
+    aos_timestamp = db.Column(db.DateTime)
+    los_timestamp = db.Column(db.DateTime)
 
     def to_json(self):
         """Returns a dictionary of some selected model attributes
         """
         return {
             'passover_id': self.id,
-            'timestamp': str(self.timestamp)
+            'aos_timestamp': str(self.aos_timestamp),
+            'los_timestamp': str(self.los_timestamp)
         }
 
 # This will be the table of telecommands being sent to the satellite as well as the responses
@@ -275,9 +282,9 @@ class Communications(db.Model):
     timestamp = db.Column(db.DateTime, nullable=False)      # time at which the command was appended to the table
     sender = db.Column(db.String, nullable=False)           # who sent the command (comm/react/command) as a note, the comm can send commands as responses from the satellite
     receiver = db.Column(db.String, nullable=False)         # who the intended recipient of the command is (comm/react web page/command line)
-    is_queued = db.Column(db.Boolean, default=False, nullable=False) # whether the command is queued to be sent to the satellite or not
+    is_queued = db.Column(db.Boolean, server_default="0", nullable=False) # whether the command is queued to be sent to the satellite or not
 
-    # TODO: connecting satellite responses to sent telecommands 
+    # TODO: connecting satellite responses to sent telecommands
     #response = db.Column(db.Integer, db.ForeignKey('communications.id'))
 
     def to_json(self):

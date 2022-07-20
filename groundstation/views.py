@@ -13,6 +13,7 @@ home_blueprint = Blueprint('home',__name__)
 @home_blueprint.route('/logout')
 @home_blueprint.route('/help')
 @home_blueprint.route('/adduser')
+@home_blueprint.route('/resetpassword')
 def index():
 	return render_template("index.html")
 

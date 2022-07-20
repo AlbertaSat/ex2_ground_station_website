@@ -752,7 +752,7 @@ class TestPassoverService(BaseTestCase):
             if i == 1:
                 correct_next_passover = d
 
-            p = Passover(timestamp=d)
+            p = Passover(aos_timestamp=d, los_timestamp=d)
             db.session.add(p)
 
         db.session.commit()
@@ -763,7 +763,7 @@ class TestPassoverService(BaseTestCase):
             self.assertEqual(response.status_code, 200)
             self.assertTrue('next_passovers' in response_data['data'].keys())
             self.assertEqual(len(response_data['data']['next_passovers']), 1)
-            self.assertEqual(str(correct_next_passover).split('+')[0], response_data['data']['next_passovers'][0]['timestamp'])
+            self.assertEqual(str(correct_next_passover).split('+')[0], response_data['data']['next_passovers'][0]['aos_timestamp'])
 
     def test_get_next_5_passovers(self):
 
@@ -777,7 +777,7 @@ class TestPassoverService(BaseTestCase):
             if i == 1:
                 correct_next_passover = d
 
-            p = Passover(timestamp=d)
+            p = Passover(aos_timestamp=d, los_timestamp=d)
             db.session.add(p)
 
         db.session.commit()
@@ -788,7 +788,7 @@ class TestPassoverService(BaseTestCase):
             self.assertEqual(response.status_code, 200)
             self.assertTrue('next_passovers' in response_data['data'].keys())
             self.assertEqual(len(response_data['data']['next_passovers']), 5)
-            self.assertEqual(str(correct_next_passover).split('+')[0], response_data['data']['next_passovers'][0]['timestamp'])
+            self.assertEqual(str(correct_next_passover).split('+')[0], response_data['data']['next_passovers'][0]['aos_timestamp'])
 
     def test_get_most_recent_passover(self):
 
@@ -803,7 +803,7 @@ class TestPassoverService(BaseTestCase):
             if i == -1:
                 correct_most_recent_passover = d
 
-            p = Passover(timestamp=d)
+            p = Passover(aos_timestamp=d, los_timestamp=d)
             db.session.add(p)
 
         db.session.commit()
@@ -813,7 +813,7 @@ class TestPassoverService(BaseTestCase):
             response_data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertTrue('most_recent_passover' in response_data['data'].keys())
-            self.assertEqual(str(correct_most_recent_passover).split('+')[0], response_data['data']['most_recent_passover']['timestamp'])
+            self.assertEqual(str(correct_most_recent_passover).split('+')[0], response_data['data']['most_recent_passover']['aos_timestamp'])
 
     def test_get_next_passover_when_none_exist(self):
 
@@ -821,7 +821,7 @@ class TestPassoverService(BaseTestCase):
         offset = datetime.timedelta(minutes=90)
         for i in range(-10, -5, 1):
             d = current_time + i * offset
-            p = Passover(timestamp=d)
+            p = Passover(aos_timestamp=d, los_timestamp=d)
             db.session.add(p)
 
         db.session.commit()

@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:alpine
+    environment:
+      - POSTGRES_DB=ex2_gs
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+  webpack:
+    image: node:10.19-slim
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./:/usr/src/app
+    working_dir: /usr/src/app/groundstation/static/
+    command: bash -c "npm install && npm run watch"
+  web:
+    image: albertasatdocker/ground-station-website:dev-latest
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/ex2_gs
+    volumes:
+      - ./:/home/ex2_ground_station_website
+    entrypoint: ./entrypoint.dev.sh
+    command: ["flask", "run", "--host=0.0.0.0", "--port=8000"]
+    depends_on:
+      - db
+      - webpack
