@@ -281,6 +281,13 @@ class AdcsHK(db.Model):
     hk_id = db.Column(db.Integer, db.ForeignKey('housekeeping.id'))
     hk = db.relationship('Housekeeping', backref=backref('adcs', uselist=False))
 
+    Att_Estimate_Mode = db.Column(db.LargeBinary)
+    Att_Control_Mode = db.Column(db.LargeBinary)
+    Run_Mode = db.Column(db.LargeBinary)
+    Flags_arr = db.Column(db.LargeBinary)
+    Longitude = db.Column(db.Float)
+    Latitude = db.Column(db.Float)
+    Altitude = db.Column(db.Float)
     Estimated_Angular_Rate_X = db.Column(db.Float)
     Estimated_Angular_Rate_Y = db.Column(db.Float)
     Estimated_Angular_Rate_Z = db.Column(db.Float)
@@ -339,6 +346,13 @@ class AdcsHK(db.Model):
 
     def to_json(self):
         return {
+            'Att_Estimate_Mode': self.Att_Estimate_Mode.decode('ascii'),
+            'Att_Control_Mode': self.Att_Control_Mode.decode('ascii'),
+            'Run_Mode': self.Run_Mode.decode('ascii'),
+            'Flags_arr': self.Flags_arr.decode('ascii'),
+            'Longitude': self.Longitude,
+            'Latitude': self.Latitude,
+            'Altitude': self.Altitude,
             'Estimated_Angular_Rate_X': self.Estimated_Angular_Rate_X,
             'Estimated_Angular_Rate_Y': self.Estimated_Angular_Rate_Y,
             'Estimated_Angular_Rate_Z': self.Estimated_Angular_Rate_Z,

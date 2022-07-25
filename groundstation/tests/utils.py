@@ -16,6 +16,13 @@ def fake_housekeeping_as_dict(timestamp, data_position):
 
 def fake_adcs_hk_as_dict():
     return {
+        'Att_Estimate_Mode': DEFAULT_BYTES,
+        'Att_Control_Mode': DEFAULT_BYTES,
+        'Run_Mode': DEFAULT_BYTES,
+        'Flags_arr': DEFAULT_BYTES,
+        'Longitude': DEFAULT_FLOAT,
+        'Latitude': DEFAULT_FLOAT,
+        'Altitude': DEFAULT_FLOAT,
         'Estimated_Angular_Rate_X': DEFAULT_FLOAT,
         'Estimated_Angular_Rate_Y': DEFAULT_FLOAT,
         'Estimated_Angular_Rate_Z': DEFAULT_FLOAT,

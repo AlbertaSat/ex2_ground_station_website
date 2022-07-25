@@ -118,6 +118,13 @@ class BytesField(fields.Field):
 class AdcsHKValidator(Schema):
     """Validator for ADCS housekeeping data
     """
+    Att_Estimate_Mode = BytesField(required=False)
+    Att_Control_Mode = BytesField(required=False)
+    Run_Mode = BytesField(required=False)
+    Flags_arr = BytesField(required=False)
+    Longitude = fields.Float(required=False)
+    Latitude = fields.Float(required=False)
+    Altitude = fields.Float(required=False)
     Estimated_Angular_Rate_X = fields.Float(required=False)
     Estimated_Angular_Rate_Y = fields.Float(required=False)
     Estimated_Angular_Rate_Z = fields.Float(required=False)
