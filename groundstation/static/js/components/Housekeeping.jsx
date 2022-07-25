@@ -38,6 +38,7 @@ class HouseKeeping extends Component {
           charon: null,
           dfgm: null,
           northern_spirit: null,
+          iris: null,
         },
       ],
       flightschedule: [],

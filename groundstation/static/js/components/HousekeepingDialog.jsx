@@ -71,6 +71,7 @@ const HousekeepingDialog = (props) => {
   const charonRef = useRef();
   const dfgmRef = useRef();
   const nsRef = useRef();
+  const irisRef = useRef();
 
   /**
    * Scrolls the page to a given section
@@ -158,6 +159,12 @@ const HousekeepingDialog = (props) => {
               onClick={() => handleScrollClick(nsRef)}
             >
               Northern Spirit
+            </a>
+            <a
+              className={`link-items hvr-underline-from-center ${classes.navbarLinks}`}
+              onClick={() => handleScrollClick(irisRef)}
+            >
+              IRIS
             </a>
           </Typography>
         </Toolbar>
@@ -354,6 +361,26 @@ const HousekeepingDialog = (props) => {
                 <ListItemText
                   primary={label}
                   secondary={props.housekeeping.northern_spirit[label]}
+                />
+              </ListItem>
+            </Grid>
+          ))}
+        </Grid>
+      </List>
+
+      <br></br>
+
+      <Typography variant="h4" className={classes.subtitle} ref={irisRef}>
+        IRIS
+      </Typography>
+      <List>
+        <Grid container spacing={2}>
+          {Object.keys(props.housekeeping.iris).map((label) => (
+            <Grid item>
+              <ListItem>
+                <ListItemText
+                  primary={label}
+                  secondary={props.housekeeping.iris[label]}
                 />
               </ListItem>
             </Grid>

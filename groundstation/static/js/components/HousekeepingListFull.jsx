@@ -63,6 +63,7 @@ class HousekeepingLogListFull extends Component {
         charon: {},
         dfgm: {},
         northern_spirit: {},
+        iris: {},
       },
     }),
       (this.handleOpenClick = this.handleOpenClick.bind(this));
