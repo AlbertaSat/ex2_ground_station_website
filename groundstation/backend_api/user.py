@@ -113,12 +113,14 @@ class UserList(Resource):
             'status':'success',
             'data':{}
         }
-        if not local_args:
-            query_limit = request.args.get('limit')
-        else:
-            query_limit = local_args.get('limit')
+        # if not local_args:
+        #     query_limit = request.args.get('limit')
+        # else:
+        #     query_limit = local_args.get('limit')
 
-        users = User.query.order_by(User.id).limit(query_limit).all()
+        # users = User.query.order_by(User.id).limit(query_limit).all()
+
+        users = User.query.filter_by(creator_id=g.user.id).all()
 
         response_object['data'] = users
 

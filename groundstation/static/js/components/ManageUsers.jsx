@@ -3,7 +3,7 @@ import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import CommunicationsList from './CommunicationsListFull';
 import Button from '@material-ui/core/Button';
-import RefreshIcon from '@material-ui/icons/Refresh';
+import AddCircleIcon from '@material-ui/icons/AddCircle';
 
 class ManageUsers extends Component {
     constructor(){
@@ -63,15 +63,15 @@ class ManageUsers extends Component {
                             marginBottom:"1%"
                         }}
                         color="primary"
-                        onClick={ () => this.handleRefresh()}
+                        href = "/adduser"
                         variant="outlined">
-                    <RefreshIcon></RefreshIcon>
-                    Refresh
+                    <AddCircleIcon></AddCircleIcon>
+                    Add User
                     </Button>
                 </div>
                 <div>
                     <Paper style={{paddingTop:"1%", paddingBottom:"2%"}}>
-                        <CommunicationsList autoScroll={false} showQueueButton={true} displayLog={this.state.messages} isEmpty={this.state.is_empty}/>
+                        <UsersList autoScroll={false} showQueueButton={true} displayLog={this.state.messages} isEmpty={this.state.is_empty}/>
                     </Paper>
                 </div>
             </div>
