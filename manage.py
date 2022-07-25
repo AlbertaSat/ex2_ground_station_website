@@ -27,8 +27,14 @@ import os
 from flask.cli import FlaskGroup
 
 from groundstation import create_app, db
-from groundstation.backend_api.models import User, Housekeeping, Telecommands, PowerChannels
-from groundstation.tests.utils import fakeHousekeepingAsDict, fake_power_channel_as_dict
+from groundstation.backend_api.models import AdcsHK, AthenaHK, CharonHK, \
+    DfgmHK, EpsHK, HyperionHK, IrisHK, NorthernSpiritHK, SbandHK, UhfHK, User, \
+    Housekeeping, Telecommands
+from groundstation.tests.utils import fake_adcs_hk_as_dict, \
+    fake_athena_hk_as_dict, fake_charon_hk_as_dict, fake_dfgm_hk_as_dict, \
+    fake_eps_hk_as_dict, fake_housekeeping_as_dict, fake_hyperion_hk_as_dict, \
+    fake_iris_hk_as_dict, fake_northern_spirit_hk_as_dict, \
+    fake_sband_hk_as_dict, fake_uhf_hk_as_dict
 from groundstation.backend_api.housekeeping import HousekeepingLogList
 from groundstation.backend_api.utils import add_telecommand, \
     add_flight_schedule, add_command_to_flightschedule, add_user, \
@@ -74,7 +80,7 @@ def test(path=None):
 def seed_db(ctx):
     """Imports commands and adds admin and non-admin user.
     """
-    ctx.invoke(import_commands) # no telecommands added if import fails
+    ctx.invoke(import_commands)  # no telecommands added if import fails
 
     add_user(username='Admin_user', password='Admin_user', is_admin=True)
     add_user(username='albert', password='albert', is_admin=False)
@@ -86,27 +92,36 @@ def seed_db_example(ctx):
     """Imports commands, adds users and example data.
     """
     # generate timestamps for flightschedule commands
-    timestamp = datetime.fromtimestamp(1570749472)
+    timestamp = datetime.utcnow()
+    data_position = 1
     for x in range(20):
         # 20 days
         for y in range(3):
             # 3 entries per day
-            housekeepingData = fakeHousekeepingAsDict(
-                timestamp + timedelta(days=x, minutes=y*15))
-            if (x+y) % 10 == 0:
-                housekeepingData['satellite_mode'] = 'Danger'
+            housekeepingData = fake_housekeeping_as_dict(
+                timestamp + timedelta(days=x, minutes=y*15), data_position)
 
-            housekeeping = Housekeeping(**housekeepingData)
+            data_position += 1
 
-            for i in range(1, 25):
-                channel = fake_power_channel_as_dict(i)
-                p = PowerChannels(**channel)
-                housekeeping.channels.append(p)
+            housekeeping = Housekeeping(
+                **housekeepingData,
+                adcs=AdcsHK(**fake_adcs_hk_as_dict()),
+                athena=AthenaHK(**fake_athena_hk_as_dict()),
+                eps=EpsHK(**fake_eps_hk_as_dict()),
+                uhf=UhfHK(**fake_uhf_hk_as_dict()),
+                sband=SbandHK(**fake_sband_hk_as_dict()),
+                hyperion=HyperionHK(**fake_hyperion_hk_as_dict()),
+                charon=CharonHK(**fake_charon_hk_as_dict()),
+                dfgm=DfgmHK(**fake_dfgm_hk_as_dict()),
+                northern_spirit=NorthernSpiritHK(
+                    **fake_northern_spirit_hk_as_dict()),
+                iris=IrisHK(**fake_iris_hk_as_dict())
+            )
 
             db.session.add(housekeeping)
     db.session.commit()
 
-    ctx.invoke(import_commands) # no telecommands added if import fails
+    ctx.invoke(import_commands)  # no telecommands added if import fails
 
     flightschedule = add_flight_schedule(
         creation_date=timestamp, upload_date=timestamp, status=2, execution_time=timestamp)
@@ -136,7 +151,8 @@ def seed_db_example(ctx):
     now = datetime.utcnow()
     add_passover(timestamp=now - timedelta(seconds=20))
     for i in range(1, 20):
-        p = add_passover(timestamp=now.replace(second=0) + timedelta(minutes=i*5))
+        p = add_passover(timestamp=now.replace(
+            second=0) + timedelta(minutes=i*5))
     print("Database has been seeded.")
 
 
@@ -150,10 +166,10 @@ def demo_db():
     #time3 = datetime.fromisoformat('2019-11-05 00:08:43.203+00:00')
     #time4 = datetime.fromisoformat('2019-11-05 00:15:20.118+00:00')
 
-    housekeepingData = fakeHousekeepingAsDict(timestamp)
-    hkd2 = fakeHousekeepingAsDict(time2)
-    #hkd3 = fakeHousekeepingAsDict(time3)
-    #hkd4 = fakeHousekeepingAsDict(time4)
+    housekeepingData = fake_housekeeping_as_dict(timestamp)
+    hkd2 = fake_housekeeping_as_dict(time2)
+    #hkd3 = fake_housekeeping_as_dict(time3)
+    #hkd4 = fake_housekeeping_as_dict(time4)
 
     housekeeping = Housekeeping(**housekeepingData)
     hk2 = Housekeeping(**hkd2)
@@ -258,7 +274,8 @@ def import_commands():
     filepath = 'ex2_ground_station_software/CommandDocs.txt'
 
     if not os.path.exists(filepath):
-        print(f'Couldn\'t find list of commands at {filepath}. Seeding database with no commands.')
+        print(
+            f'Couldn\'t find list of commands at {filepath}. Seeding database with no commands.')
         return False
 
     # first regenerate CommandDocs.txt
