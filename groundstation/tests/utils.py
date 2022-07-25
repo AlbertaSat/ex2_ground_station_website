@@ -368,6 +368,24 @@ def fake_northern_spirit_hk_as_dict():
     }
 
 
+def fake_iris_hk_as_dict():
+    return {
+        'VIS_Temperature': DEFAULT_FLOAT,
+        'NIR_Temperature': DEFAULT_FLOAT,
+        'Flash_Temperature': DEFAULT_FLOAT,
+        'Gate_Temperature': DEFAULT_FLOAT,
+        'Image_number': DEFAULT_INT,
+        'Software_Version': DEFAULT_INT,
+        'Error_number': DEFAULT_INT,
+        'MAX_5V_voltage': DEFAULT_INT,
+        'MAX_5V_power': DEFAULT_INT,
+        'MAX_3V_voltage': DEFAULT_INT,
+        'MAX_3V_power': DEFAULT_INT,
+        'MIN_5V_voltage': DEFAULT_INT,
+        'MIN_3V_voltage': DEFAULT_INT
+    }
+
+
 def fake_flight_schedule_as_dict(status=2, commands=[], execution_time=None):
     flightschedule = {
         'status': status,

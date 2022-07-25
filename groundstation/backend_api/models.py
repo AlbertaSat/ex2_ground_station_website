@@ -5,6 +5,7 @@ from groundstation import db, bcrypt
 from sqlalchemy.sql import func
 from sqlalchemy.orm import backref
 
+
 class User(db.Model):
     __tablename__ = 'users'
 
@@ -14,12 +15,14 @@ class User(db.Model):
     is_admin = db.Column(db.Boolean, server_default="0", nullable=False)
     slack_id = db.Column(db.String(128), nullable=True, unique=True)
     subscribed_to_slack = db.Column(db.Boolean, server_default="0")
-    blacklisted_tokens = db.relationship('BlacklistedTokens', backref='user', lazy=True, cascade='all, delete-orphan')
+    blacklisted_tokens = db.relationship(
+        'BlacklistedTokens', backref='user', lazy=True, cascade='all, delete-orphan')
 
     def __init__(self, username, password, is_admin=False, slack_id=None, subscribed_to_slack=False):
         self.username = username
         num_rounds = current_app.config.get('BCRYPT_LOG_ROUNDS')
-        self.password_hash = bcrypt.generate_password_hash(password, num_rounds).decode('ascii')
+        self.password_hash = bcrypt.generate_password_hash(
+            password, num_rounds).decode('ascii')
         self.is_admin = is_admin
         self.slack_id = slack_id
         self.subscribed_to_slack = subscribed_to_slack
@@ -69,11 +72,12 @@ class User(db.Model):
         """Returns a dictionary of some selected model attributes
         """
         return {
-            'id' : self.id,
+            'id': self.id,
             'username': self.username,
             'is_admin': self.is_admin,
             'slack_id': self.slack_id
         }
+
 
 class BlacklistedTokens(db.Model):
     __tablename__ = 'blacklistedtokens'
@@ -82,14 +86,17 @@ class BlacklistedTokens(db.Model):
     token = db.Column(db.String(256))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
+
 class Telecommands(db.Model):
     __tablename__ = 'telecommands'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     command_name = db.Column(db.String(64))
     num_arguments = db.Column(db.Integer)
-    flightschedulecommands = db.relationship('FlightScheduleCommands', backref='command', lazy=True)
-    automatedcommands = db.relationship('AutomatedCommands', backref='command', lazy=True)
+    flightschedulecommands = db.relationship(
+        'FlightScheduleCommands', backref='command', lazy=True)
+    automatedcommands = db.relationship(
+        'AutomatedCommands', backref='command', lazy=True)
     is_dangerous = db.Column(db.Boolean)
 
     def to_json(self):
@@ -102,6 +109,7 @@ class Telecommands(db.Model):
             'is_dangerous': self.is_dangerous
         }
 
+
 class FlightSchedules(db.Model):
     __tablename__ = 'flightschedules'
 
@@ -111,7 +119,8 @@ class FlightSchedules(db.Model):
     execution_time = db.Column(db.DateTime)
     # status is an integer, where 1=queued, 2=draft, 3=uploaded
     status = db.Column(db.Integer)
-    commands = db.relationship('FlightScheduleCommands', backref='flightschedule', lazy=True, cascade='all')
+    commands = db.relationship(
+        'FlightScheduleCommands', backref='flightschedule', lazy=True, cascade='all')
 
     def to_json(self):
         """Returns a dictionary of some selected model attributes
@@ -125,13 +134,16 @@ class FlightSchedules(db.Model):
             'commands': [command.to_json() for command in self.commands]
         }
 
+
 class FlightScheduleCommands(db.Model):
     __tablename__ = 'flightschedulecommands'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    command_id = db.Column(db.Integer, db.ForeignKey('telecommands.id'), nullable=False)
+    command_id = db.Column(db.Integer, db.ForeignKey(
+        'telecommands.id'), nullable=False)
     timestamp = db.Column(db.DateTime)
-    flightschedule_id = db.Column(db.Integer, db.ForeignKey('flightschedules.id'), nullable=False)
+    flightschedule_id = db.Column(db.Integer, db.ForeignKey(
+        'flightschedules.id'), nullable=False)
     arguments = db.relationship('FlightScheduleCommandsArgs',
                                 backref='flightschedulecommand',
                                 lazy=True,
@@ -148,13 +160,15 @@ class FlightScheduleCommands(db.Model):
             'args': [arg.to_json() for arg in self.arguments]
         }
 
+
 class FlightScheduleCommandsArgs(db.Model):
     __tablename__ = 'flightschedulecommandsargs'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     index = db.Column(db.Integer)
     argument = db.Column(db.String(8))
-    flightschedulecommand_id = db.Column(db.Integer, db.ForeignKey('flightschedulecommands.id'), nullable=False)
+    flightschedulecommand_id = db.Column(db.Integer, db.ForeignKey(
+        'flightschedulecommands.id'), nullable=False)
 
     def to_json(self):
         """Returns a dictionary of some selected model attributes
@@ -182,15 +196,22 @@ class Passover(db.Model):
 # This will be the table of telecommands being sent to the satellite as well as the responses
 # the table will allow us to send and receive all commands transactionally allowing us to log
 # them as well as their responses
+
+
 class Communications(db.Model):
     __tablename__ = 'communications'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    message = db.Column(db.String, nullable=False)          # every command is going to be formatted as a string for simplicity
-    timestamp = db.Column(db.DateTime, nullable=False)      # time at which the command was appended to the table
-    sender = db.Column(db.String, nullable=False)           # who sent the command (comm/react/command) as a note, the comm can send commands as responses from the satellite
-    receiver = db.Column(db.String, nullable=False)         # who the intended recipient of the command is (comm/react web page/command line)
-    is_queued = db.Column(db.Boolean, server_default="0", nullable=False) # whether the command is queued to be sent to the satellite or not
+    # every command is going to be formatted as a string for simplicity
+    message = db.Column(db.String, nullable=False)
+    # time at which the command was appended to the table
+    timestamp = db.Column(db.DateTime, nullable=False)
+    # who sent the command (comm/react/command) as a note, the comm can send commands as responses from the satellite
+    sender = db.Column(db.String, nullable=False)
+    # who the intended recipient of the command is (comm/react web page/command line)
+    receiver = db.Column(db.String, nullable=False)
+    # whether the command is queued to be sent to the satellite or not
+    is_queued = db.Column(db.Boolean, server_default="0", nullable=False)
 
     # TODO: connecting satellite responses to sent telecommands
     #response = db.Column(db.Integer, db.ForeignKey('communications.id'))
@@ -207,13 +228,16 @@ class Communications(db.Model):
             'is_queued': self.is_queued
         }
 
+
 class AutomatedCommands(db.Model):
     __tablename__ = 'automatedcommands'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    command_id = db.Column(db.Integer, db.ForeignKey('telecommands.id'), nullable=False)
+    command_id = db.Column(db.Integer, db.ForeignKey(
+        'telecommands.id'), nullable=False)
     priority = db.Column(db.Integer)
-    arguments = db.relationship('AutomatedCommandsArgs', backref='automatedcommand', lazy=True, cascade='all, delete-orphan')
+    arguments = db.relationship(
+        'AutomatedCommandsArgs', backref='automatedcommand', lazy=True, cascade='all, delete-orphan')
 
     def to_json(self):
         """Returns a dictionary of some selected model attributes
@@ -224,13 +248,15 @@ class AutomatedCommands(db.Model):
             'args': [arg.to_json() for arg in self.arguments]
         }
 
+
 class AutomatedCommandsArgs(db.Model):
     __tablename__ = 'automatedcommandsargs'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     index = db.Column(db.Integer)
     argument = db.Column(db.String(8))
-    automatedcommand_id = db.Column(db.Integer, db.ForeignKey('automatedcommands.id'), nullable=False)
+    automatedcommand_id = db.Column(db.Integer, db.ForeignKey(
+        'automatedcommands.id'), nullable=False)
 
     def to_json(self):
         """Returns a dictionary of some selected model attributes
@@ -246,6 +272,7 @@ class AutomatedCommandsArgs(db.Model):
 # Each subsystem is seperated into its own table, all linked
 # together through a main housekeeping table
 ############################################################
+
 
 class Housekeeping(db.Model):
     __tablename__ = 'housekeeping'
@@ -271,15 +298,18 @@ class Housekeeping(db.Model):
             'hyperion': self.hyperion.to_json(),
             'charon': self.charon.to_json(),
             'dfgm': self.dfgm.to_json(),
-            'northern_spirit': self.northern_spirit.to_json()
+            'northern_spirit': self.northern_spirit.to_json(),
+            'iris': self.iris.to_json()
         }
+
 
 class AdcsHK(db.Model):
     __tablename__ = 'adcs_hk'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     hk_id = db.Column(db.Integer, db.ForeignKey('housekeeping.id'))
-    hk = db.relationship('Housekeeping', backref=backref('adcs', uselist=False))
+    hk = db.relationship(
+        'Housekeeping', backref=backref('adcs', uselist=False))
 
     Att_Estimate_Mode = db.Column(db.LargeBinary)
     Att_Control_Mode = db.Column(db.LargeBinary)
@@ -410,12 +440,14 @@ class AdcsHK(db.Model):
             'Rate_Sensor_Temp_Z': self.Rate_Sensor_Temp_Z,
         }
 
+
 class AthenaHK(db.Model):
     __tablename__ = 'athena_hk'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     hk_id = db.Column(db.Integer, db.ForeignKey('housekeeping.id'))
-    hk = db.relationship('Housekeeping', backref=backref('athena', uselist=False))
+    hk = db.relationship(
+        'Housekeeping', backref=backref('athena', uselist=False))
 
     temparray1 = db.Column(db.Integer)
     temparray2 = db.Column(db.Integer)
@@ -441,6 +473,7 @@ class AthenaHK(db.Model):
             'cmds_received': self.cmds_received,
             'pckts_incovered_by_FEC': self.pckts_incovered_by_FEC
         }
+
 
 class EpsHK(db.Model):
     __tablename__ = 'eps_hk'
@@ -712,6 +745,7 @@ class EpsHK(db.Model):
             'PingWdt_turnOffs': self.PingWdt_turnOffs.decode('ascii')
         }
 
+
 class UhfHK(db.Model):
     __tablename__ = 'uhf_hk'
 
@@ -766,12 +800,14 @@ class UhfHK(db.Model):
             'temperature': self.temperature
         }
 
+
 class SbandHK(db.Model):
     __tablename__ = 'sband_hk'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     hk_id = db.Column(db.Integer, db.ForeignKey('housekeeping.id'))
-    hk = db.relationship('Housekeeping', backref=backref('sband', uselist=False))
+    hk = db.relationship(
+        'Housekeeping', backref=backref('sband', uselist=False))
 
     Output_Power = db.Column(db.Float)
     PA_Temp = db.Column(db.Float)
@@ -794,12 +830,14 @@ class SbandHK(db.Model):
             'PA_Voltage': self.PA_Voltage
         }
 
+
 class HyperionHK(db.Model):
     __tablename__ = 'hyperion_hk'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     hk_id = db.Column(db.Integer, db.ForeignKey('housekeeping.id'))
-    hk = db.relationship('Housekeeping', backref=backref('hyperion', uselist=False))
+    hk = db.relationship(
+        'Housekeeping', backref=backref('hyperion', uselist=False))
 
     Nadir_Temp1 = db.Column(db.LargeBinary)
     Nadir_Temp_Adc = db.Column(db.LargeBinary)
@@ -902,12 +940,14 @@ class HyperionHK(db.Model):
             'Zenith_Current': self.Zenith_Current
         }
 
+
 class CharonHK(db.Model):
     __tablename__ = 'charon_hk'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     hk_id = db.Column(db.Integer, db.ForeignKey('housekeeping.id'))
-    hk = db.relationship('Housekeeping', backref=backref('charon', uselist=False))
+    hk = db.relationship(
+        'Housekeeping', backref=backref('charon', uselist=False))
 
     gps_crc = db.Column(db.Integer)
     charon_temp1 = db.Column(db.LargeBinary)
@@ -932,12 +972,14 @@ class CharonHK(db.Model):
             'charon_temp8': self.charon_temp8.decode('ascii')
         }
 
+
 class DfgmHK(db.Model):
     __tablename__ = 'dfgm_hk'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     hk_id = db.Column(db.Integer, db.ForeignKey('housekeeping.id'))
-    hk = db.relationship('Housekeeping', backref=backref('dfgm', uselist=False))
+    hk = db.relationship(
+        'Housekeeping', backref=backref('dfgm', uselist=False))
 
     Core_Voltage = db.Column(db.Integer)
     Sensor_Temperature = db.Column(db.Integer)
@@ -968,12 +1010,14 @@ class DfgmHK(db.Model):
             'Reserved_4': self.Reserved_4
         }
 
+
 class NorthernSpiritHK(db.Model):
     __tablename__ = 'northern_spirit_hk'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     hk_id = db.Column(db.Integer, db.ForeignKey('housekeeping.id'))
-    hk = db.relationship('Housekeeping', backref=backref('northern_spirit', uselist=False))
+    hk = db.relationship('Housekeeping', backref=backref(
+        'northern_spirit', uselist=False))
 
     ns_temp0 = db.Column(db.Integer)
     ns_temp1 = db.Column(db.Integer)
@@ -998,4 +1042,44 @@ class NorthernSpiritHK(db.Model):
             'ram_avail': self.ram_avail,
             'lowest_img_num': self.lowest_img_num,
             'first_blank_img_num': self.first_blank_img_num
+        }
+
+
+class IrisHK(db.Model):
+    __tablename__ = 'iris_hk'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    hk_id = db.Column(db.Integer, db.ForeignKey('housekeeping.id'))
+    hk = db.relationship(
+        'Housekeeping', backref=backref('iris', uselist=False))
+
+    VIS_Temperature = db.Column(db.Float)
+    NIR_Temperature = db.Column(db.Float)
+    Flash_Temperature = db.Column(db.Float)
+    Gate_Temperature = db.Column(db.Float)
+    Image_number = db.Column(db.Integer)
+    Software_Version = db.Column(db.Integer)
+    Error_number = db.Column(db.Integer)
+    MAX_5V_voltage = db.Column(db.Integer)
+    MAX_5V_power = db.Column(db.Integer)
+    MAX_3V_voltage = db.Column(db.Integer)
+    MAX_3V_power = db.Column(db.Integer)
+    MIN_5V_voltage = db.Column(db.Integer)
+    MIN_3V_voltage = db.Column(db.Integer)
+
+    def to_json(self):
+        return {
+            'VIS_Temperature': self.VIS_Temperature,
+            'NIR_Temperature': self.NIR_Temperature,
+            'Flash_Temperature': self.Flash_Temperature,
+            'Gate_Temperature': self.Gate_Temperature,
+            'Image_number': self.Image_number,
+            'Software_Version': self.Software_Version,
+            'Error_number': self.Error_number,
+            'MAX_5V_voltage': self.MAX_5V_voltage,
+            'MAX_5V_power': self.MAX_5V_power,
+            'MAX_3V_voltage': self.MAX_3V_voltage,
+            'MAX_3V_power': self.MAX_3V_power,
+            'MIN_5V_voltage': self.MIN_5V_voltage,
+            'MIN_3V_voltage': self.MIN_3V_voltage
         }
