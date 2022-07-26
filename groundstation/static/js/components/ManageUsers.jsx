@@ -5,6 +5,11 @@ import CommunicationsList from './CommunicationsListFull';
 import Button from '@material-ui/core/Button';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 
+
+const UserEntry = (props) => ({
+
+})
+
 class ManageUsers extends Component {
     constructor(){
         super();
@@ -71,7 +76,7 @@ class ManageUsers extends Component {
                 </div>
                 <div>
                     <Paper style={{paddingTop:"1%", paddingBottom:"2%"}}>
-                        <UsersList autoScroll={false} showQueueButton={true} displayLog={this.state.messages} isEmpty={this.state.is_empty}/>
+                        <UserEntry autoScroll={false} displayUsers={this.state.users} isEmpty={this.state.is_empty}/>
                     </Paper>
                 </div>
             </div>
