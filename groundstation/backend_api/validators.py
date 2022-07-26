@@ -216,7 +216,7 @@ class AthenaHKValidator(Schema):
     OBC_software_ver = BytesField(required=False)
     solar_panel_supply_curr = fields.Integer(required=False)
     cmds_received = fields.Integer(required=False)
-    pckts_incovered_by_FEC = fields.Integer(required=False)
+    pckts_uncovered_by_FEC = fields.Integer(required=False)
 
 
 class EpsHKValidator(Schema):

@@ -92,7 +92,7 @@ def fake_athena_hk_as_dict():
         'OBC_software_ver': DEFAULT_BYTES,
         'solar_panel_supply_curr': DEFAULT_INT,
         'cmds_received': DEFAULT_INT,
-        'pckts_incovered_by_FEC': DEFAULT_INT,
+        'pckts_uncovered_by_FEC': DEFAULT_INT,
     }
 
 

@@ -458,7 +458,7 @@ class AthenaHK(db.Model):
     OBC_software_ver = db.Column(db.LargeBinary)
     solar_panel_supply_curr = db.Column(db.Integer)
     cmds_received = db.Column(db.Integer)
-    pckts_incovered_by_FEC = db.Column(db.Integer)
+    pckts_uncovered_by_FEC = db.Column(db.Integer)
 
     def to_json(self):
         return {
@@ -471,7 +471,7 @@ class AthenaHK(db.Model):
             'OBC_software_ver': self.OBC_software_ver.decode('ascii'),
             'solar_panel_supply_curr': self.solar_panel_supply_curr,
             'cmds_received': self.cmds_received,
-            'pckts_incovered_by_FEC': self.pckts_incovered_by_FEC
+            'pckts_uncovered_by_FEC': self.pckts_uncovered_by_FEC
         }
 
 
