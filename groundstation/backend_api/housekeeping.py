@@ -6,7 +6,7 @@ from datetime import datetime
 import json
 
 from groundstation.backend_api.models import Housekeeping, AdcsHK, AthenaHK, \
-    EpsHK, UhfHK, SbandHK, HyperionHK, CharonHK, DfgmHK, NorthernSpiritHK
+    EpsHK, IrisHK, UhfHK, SbandHK, HyperionHK, CharonHK, DfgmHK, NorthernSpiritHK
 from groundstation import db
 from groundstation.backend_api.utils import create_context, login_required, \
     dynamic_filters_housekeeping
@@ -87,6 +87,7 @@ class HousekeepingLogList(Resource):
         charon_data = validated_data.pop('charon')
         dfgm_data = validated_data.pop('dfgm')
         northern_spirit_data = validated_data.pop('northern_spirit')
+        iris_data = validated_data.pop('iris')
 
         subsystems = {
             'adcs': AdcsHK(**adcs_data),
@@ -97,7 +98,8 @@ class HousekeepingLogList(Resource):
             'hyperion': HyperionHK(**hyperion_data),
             'charon': CharonHK(**charon_data),
             'dfgm': DfgmHK(**dfgm_data),
-            'northern_spirit': NorthernSpiritHK(**northern_spirit_data)
+            'northern_spirit': NorthernSpiritHK(**northern_spirit_data),
+            'iris': IrisHK(**iris_data)
         }
         housekeeping = Housekeeping(**validated_data, **subsystems)
 
