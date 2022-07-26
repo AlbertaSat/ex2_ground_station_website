@@ -311,10 +311,10 @@ class AdcsHK(db.Model):
     hk = db.relationship(
         'Housekeeping', backref=backref('adcs', uselist=False))
 
-    Att_Estimate_Mode = db.Column(db.LargeBinary)
-    Att_Control_Mode = db.Column(db.LargeBinary)
-    Run_Mode = db.Column(db.LargeBinary)
-    Flags_arr = db.Column(db.LargeBinary)
+    Att_Estimate_Mode = db.Column(db.Integer)
+    Att_Control_Mode = db.Column(db.Integer)
+    Run_Mode = db.Column(db.Integer)
+    Flags_arr = db.Column(db.Integer)
     Longitude = db.Column(db.Float)
     Latitude = db.Column(db.Float)
     Altitude = db.Column(db.Float)
@@ -353,12 +353,12 @@ class AdcsHK(db.Model):
     Mag_Field_Vector_Z = db.Column(db.Float)
     TC_num = db.Column(db.Integer)
     TM_num = db.Column(db.Integer)
-    CommsStat_flags_1 = db.Column(db.LargeBinary)
-    CommsStat_flags_2 = db.Column(db.LargeBinary)
-    CommsStat_flags_3 = db.Column(db.LargeBinary)
-    CommsStat_flags_4 = db.Column(db.LargeBinary)
-    CommsStat_flags_5 = db.Column(db.LargeBinary)
-    CommsStat_flags_6 = db.Column(db.LargeBinary)
+    CommsStat_flags_1 = db.Column(db.Integer)
+    CommsStat_flags_2 = db.Column(db.Integer)
+    CommsStat_flags_3 = db.Column(db.Integer)
+    CommsStat_flags_4 = db.Column(db.Integer)
+    CommsStat_flags_5 = db.Column(db.Integer)
+    CommsStat_flags_6 = db.Column(db.Integer)
     Wheel1_Current = db.Column(db.Float)
     Wheel2_Current = db.Column(db.Float)
     Wheel3_Current = db.Column(db.Float)
@@ -376,10 +376,10 @@ class AdcsHK(db.Model):
 
     def to_json(self):
         return {
-            'Att_Estimate_Mode': self.Att_Estimate_Mode.decode('ascii'),
-            'Att_Control_Mode': self.Att_Control_Mode.decode('ascii'),
-            'Run_Mode': self.Run_Mode.decode('ascii'),
-            'Flags_arr': self.Flags_arr.decode('ascii'),
+            'Att_Estimate_Mode': self.Att_Estimate_Mode,
+            'Att_Control_Mode': self.Att_Control_Mode,
+            'Run_Mode': self.Run_Mode,
+            'Flags_arr': self.Flags_arr,
             'Longitude': self.Longitude,
             'Latitude': self.Latitude,
             'Altitude': self.Altitude,
@@ -418,12 +418,12 @@ class AdcsHK(db.Model):
             'Mag_Field_Vector_Z': self.Mag_Field_Vector_Z,
             'TC_num': self.TC_num,
             'TM_num': self.TM_num,
-            'CommsStat_flags_1': self.CommsStat_flags_1.decode('ascii'),
-            'CommsStat_flags_2': self.CommsStat_flags_2.decode('ascii'),
-            'CommsStat_flags_3': self.CommsStat_flags_3.decode('ascii'),
-            'CommsStat_flags_4': self.CommsStat_flags_4.decode('ascii'),
-            'CommsStat_flags_5': self.CommsStat_flags_5.decode('ascii'),
-            'CommsStat_flags_6': self.CommsStat_flags_6.decode('ascii'),
+            'CommsStat_flags_1': self.CommsStat_flags_1,
+            'CommsStat_flags_2': self.CommsStat_flags_2,
+            'CommsStat_flags_3': self.CommsStat_flags_3,
+            'CommsStat_flags_4': self.CommsStat_flags_4,
+            'CommsStat_flags_5': self.CommsStat_flags_5,
+            'CommsStat_flags_6': self.CommsStat_flags_6,
             'Wheel1_Current': self.Wheel1_Current,
             'Wheel2_Current': self.Wheel2_Current,
             'Wheel3_Current': self.Wheel3_Current,
@@ -452,10 +452,10 @@ class AthenaHK(db.Model):
     temparray1 = db.Column(db.Integer)
     temparray2 = db.Column(db.Integer)
     boot_cnt = db.Column(db.Integer)
-    last_reset_reason = db.Column(db.LargeBinary)
-    OBC_mode = db.Column(db.LargeBinary)
+    last_reset_reason = db.Column(db.Integer)
+    OBC_mode = db.Column(db.Integer)
     OBC_uptime = db.Column(db.Integer)
-    OBC_software_ver = db.Column(db.LargeBinary)
+    OBC_software_ver = db.Column(db.Integer)
     solar_panel_supply_curr = db.Column(db.Integer)
     cmds_received = db.Column(db.Integer)
     pckts_uncovered_by_FEC = db.Column(db.Integer)
@@ -465,10 +465,10 @@ class AthenaHK(db.Model):
             'temparray1': self.temparray1,
             'temparray2': self.temparray2,
             'boot_cnt': self.boot_cnt,
-            'last_reset_reason': self.last_reset_reason.decode('ascii'),
-            'OBC_mode': self.OBC_mode.decode('ascii'),
+            'last_reset_reason': self.last_reset_reason,
+            'OBC_mode': self.OBC_mode,
             'OBC_uptime': self.OBC_uptime,
-            'OBC_software_ver': self.OBC_software_ver.decode('ascii'),
+            'OBC_software_ver': self.OBC_software_ver,
             'solar_panel_supply_curr': self.solar_panel_supply_curr,
             'cmds_received': self.cmds_received,
             'pckts_uncovered_by_FEC': self.pckts_uncovered_by_FEC
@@ -482,8 +482,8 @@ class EpsHK(db.Model):
     hk_id = db.Column(db.Integer, db.ForeignKey('housekeeping.id'))
     hk = db.relationship('Housekeeping', backref=backref('eps', uselist=False))
 
-    cmd = db.Column(db.LargeBinary)
-    status = db.Column(db.LargeBinary)
+    cmd = db.Column(db.Integer)
+    status = db.Column(db.Integer)
     timestamp = db.Column(db.Float)
     uptimeInS = db.Column(db.Integer)
     bootCnt = db.Column(db.Integer)
@@ -533,7 +533,7 @@ class EpsHK(db.Model):
     outputConverterVoltage6 = db.Column(db.Integer)
     outputConverterVoltage7 = db.Column(db.Integer)
     outputConverterVoltage8 = db.Column(db.Integer)
-    outputConverterState = db.Column(db.LargeBinary)
+    outputConverterState = db.Column(db.Integer)
     outputStatus = db.Column(db.Integer)
     outputFaultStatus = db.Column(db.Integer)
     protectedOutputAccessCnt = db.Column(db.Integer)
@@ -573,49 +573,49 @@ class EpsHK(db.Model):
     outputOffDelta16 = db.Column(db.Integer)
     outputOffDelta17 = db.Column(db.Integer)
     outputOffDelta18 = db.Column(db.Integer)
-    outputFaultCount1 = db.Column(db.LargeBinary)
-    outputFaultCount2 = db.Column(db.LargeBinary)
-    outputFaultCount3 = db.Column(db.LargeBinary)
-    outputFaultCount4 = db.Column(db.LargeBinary)
-    outputFaultCount5 = db.Column(db.LargeBinary)
-    outputFaultCount6 = db.Column(db.LargeBinary)
-    outputFaultCount7 = db.Column(db.LargeBinary)
-    outputFaultCount8 = db.Column(db.LargeBinary)
-    outputFaultCount9 = db.Column(db.LargeBinary)
-    outputFaultCount10 = db.Column(db.LargeBinary)
-    outputFaultCount11 = db.Column(db.LargeBinary)
-    outputFaultCount12 = db.Column(db.LargeBinary)
-    outputFaultCount13 = db.Column(db.LargeBinary)
-    outputFaultCount14 = db.Column(db.LargeBinary)
-    outputFaultCount15 = db.Column(db.LargeBinary)
-    outputFaultCount16 = db.Column(db.LargeBinary)
-    outputFaultCount17 = db.Column(db.LargeBinary)
-    outputFaultCount18 = db.Column(db.LargeBinary)
-    temp1_c = db.Column(db.LargeBinary)
-    temp2_c = db.Column(db.LargeBinary)
-    temp3_c = db.Column(db.LargeBinary)
-    temp4_c = db.Column(db.LargeBinary)
-    temp5_c = db.Column(db.LargeBinary)
-    temp6_c = db.Column(db.LargeBinary)
-    temp7_c = db.Column(db.LargeBinary)
-    temp8_c = db.Column(db.LargeBinary)
-    temp9_c = db.Column(db.LargeBinary)
-    temp10_c = db.Column(db.LargeBinary)
-    temp11_c = db.Column(db.LargeBinary)
-    temp12_c = db.Column(db.LargeBinary)
-    temp13_c = db.Column(db.LargeBinary)
-    temp14_c = db.Column(db.LargeBinary)
-    battMode = db.Column(db.LargeBinary)
-    mpptMode = db.Column(db.LargeBinary)
-    battHeaterMode = db.Column(db.LargeBinary)
-    battHeaterState = db.Column(db.LargeBinary)
+    outputFaultCount1 = db.Column(db.Integer)
+    outputFaultCount2 = db.Column(db.Integer)
+    outputFaultCount3 = db.Column(db.Integer)
+    outputFaultCount4 = db.Column(db.Integer)
+    outputFaultCount5 = db.Column(db.Integer)
+    outputFaultCount6 = db.Column(db.Integer)
+    outputFaultCount7 = db.Column(db.Integer)
+    outputFaultCount8 = db.Column(db.Integer)
+    outputFaultCount9 = db.Column(db.Integer)
+    outputFaultCount10 = db.Column(db.Integer)
+    outputFaultCount11 = db.Column(db.Integer)
+    outputFaultCount12 = db.Column(db.Integer)
+    outputFaultCount13 = db.Column(db.Integer)
+    outputFaultCount14 = db.Column(db.Integer)
+    outputFaultCount15 = db.Column(db.Integer)
+    outputFaultCount16 = db.Column(db.Integer)
+    outputFaultCount17 = db.Column(db.Integer)
+    outputFaultCount18 = db.Column(db.Integer)
+    temp1_c = db.Column(db.Integer)
+    temp2_c = db.Column(db.Integer)
+    temp3_c = db.Column(db.Integer)
+    temp4_c = db.Column(db.Integer)
+    temp5_c = db.Column(db.Integer)
+    temp6_c = db.Column(db.Integer)
+    temp7_c = db.Column(db.Integer)
+    temp8_c = db.Column(db.Integer)
+    temp9_c = db.Column(db.Integer)
+    temp10_c = db.Column(db.Integer)
+    temp11_c = db.Column(db.Integer)
+    temp12_c = db.Column(db.Integer)
+    temp13_c = db.Column(db.Integer)
+    temp14_c = db.Column(db.Integer)
+    battMode = db.Column(db.Integer)
+    mpptMode = db.Column(db.Integer)
+    battHeaterMode = db.Column(db.Integer)
+    battHeaterState = db.Column(db.Integer)
     PingWdt_toggles = db.Column(db.Integer)
-    PingWdt_turnOffs = db.Column(db.LargeBinary)
+    PingWdt_turnOffs = db.Column(db.Integer)
 
     def to_json(self):
         return {
-            'cmd': self.cmd.decode('ascii'),
-            'status': self.status.decode('ascii'),
+            'cmd': self.cmd,
+            'status': self.status,
             'timestamp': self.timestamp,
             'uptimeInS': self.uptimeInS,
             'bootCnt': self.bootCnt,
@@ -665,7 +665,7 @@ class EpsHK(db.Model):
             'outputConverterVoltage6': self.outputConverterVoltage6,
             'outputConverterVoltage7': self.outputConverterVoltage7,
             'outputConverterVoltage8': self.outputConverterVoltage8,
-            'outputConverterState': self.outputConverterState.decode('ascii'),
+            'outputConverterState': self.outputConverterState,
             'outputStatus': self.outputStatus,
             'outputFaultStatus': self.outputFaultStatus,
             'protectedOutputAccessCnt': self.protectedOutputAccessCnt,
@@ -705,44 +705,44 @@ class EpsHK(db.Model):
             'outputOffDelta16': self.outputOffDelta16,
             'outputOffDelta17': self.outputOffDelta17,
             'outputOffDelta18': self.outputOffDelta18,
-            'outputFaultCount1': self.outputFaultCount1.decode('ascii'),
-            'outputFaultCount2': self.outputFaultCount2.decode('ascii'),
-            'outputFaultCount3': self.outputFaultCount3.decode('ascii'),
-            'outputFaultCount4': self.outputFaultCount4.decode('ascii'),
-            'outputFaultCount5': self.outputFaultCount5.decode('ascii'),
-            'outputFaultCount6': self.outputFaultCount6.decode('ascii'),
-            'outputFaultCount7': self.outputFaultCount7.decode('ascii'),
-            'outputFaultCount8': self.outputFaultCount8.decode('ascii'),
-            'outputFaultCount9': self.outputFaultCount9.decode('ascii'),
-            'outputFaultCount10': self.outputFaultCount10.decode('ascii'),
-            'outputFaultCount11': self.outputFaultCount11.decode('ascii'),
-            'outputFaultCount12': self.outputFaultCount12.decode('ascii'),
-            'outputFaultCount13': self.outputFaultCount13.decode('ascii'),
-            'outputFaultCount14': self.outputFaultCount14.decode('ascii'),
-            'outputFaultCount15': self.outputFaultCount15.decode('ascii'),
-            'outputFaultCount16': self.outputFaultCount16.decode('ascii'),
-            'outputFaultCount17': self.outputFaultCount17.decode('ascii'),
-            'outputFaultCount18': self.outputFaultCount18.decode('ascii'),
-            'temp1_c': self.temp1_c.decode('ascii'),
-            'temp2_c': self.temp2_c.decode('ascii'),
-            'temp3_c': self.temp3_c.decode('ascii'),
-            'temp4_c': self.temp4_c.decode('ascii'),
-            'temp5_c': self.temp5_c.decode('ascii'),
-            'temp6_c': self.temp6_c.decode('ascii'),
-            'temp7_c': self.temp7_c.decode('ascii'),
-            'temp8_c': self.temp8_c.decode('ascii'),
-            'temp9_c': self.temp9_c.decode('ascii'),
-            'temp10_c': self.temp10_c.decode('ascii'),
-            'temp11_c': self.temp11_c.decode('ascii'),
-            'temp12_c': self.temp12_c.decode('ascii'),
-            'temp13_c': self.temp13_c.decode('ascii'),
-            'temp14_c': self.temp14_c.decode('ascii'),
-            'battMode': self.battMode.decode('ascii'),
-            'mpptMode': self.mpptMode.decode('ascii'),
-            'battHeaterMode': self.battHeaterMode.decode('ascii'),
-            'battHeaterState': self.battHeaterState.decode('ascii'),
+            'outputFaultCount1': self.outputFaultCount1,
+            'outputFaultCount2': self.outputFaultCount2,
+            'outputFaultCount3': self.outputFaultCount3,
+            'outputFaultCount4': self.outputFaultCount4,
+            'outputFaultCount5': self.outputFaultCount5,
+            'outputFaultCount6': self.outputFaultCount6,
+            'outputFaultCount7': self.outputFaultCount7,
+            'outputFaultCount8': self.outputFaultCount8,
+            'outputFaultCount9': self.outputFaultCount9,
+            'outputFaultCount10': self.outputFaultCount10,
+            'outputFaultCount11': self.outputFaultCount11,
+            'outputFaultCount12': self.outputFaultCount12,
+            'outputFaultCount13': self.outputFaultCount13,
+            'outputFaultCount14': self.outputFaultCount14,
+            'outputFaultCount15': self.outputFaultCount15,
+            'outputFaultCount16': self.outputFaultCount16,
+            'outputFaultCount17': self.outputFaultCount17,
+            'outputFaultCount18': self.outputFaultCount18,
+            'temp1_c': self.temp1_c,
+            'temp2_c': self.temp2_c,
+            'temp3_c': self.temp3_c,
+            'temp4_c': self.temp4_c,
+            'temp5_c': self.temp5_c,
+            'temp6_c': self.temp6_c,
+            'temp7_c': self.temp7_c,
+            'temp8_c': self.temp8_c,
+            'temp9_c': self.temp9_c,
+            'temp10_c': self.temp10_c,
+            'temp11_c': self.temp11_c,
+            'temp12_c': self.temp12_c,
+            'temp13_c': self.temp13_c,
+            'temp14_c': self.temp14_c,
+            'battMode': self.battMode,
+            'mpptMode': self.mpptMode,
+            'battHeaterMode': self.battHeaterMode,
+            'battHeaterState': self.battHeaterState,
             'PingWdt_toggles': self.PingWdt_toggles,
-            'PingWdt_turnOffs': self.PingWdt_turnOffs.decode('ascii')
+            'PingWdt_turnOffs': self.PingWdt_turnOffs
         }
 
 
@@ -753,18 +753,18 @@ class UhfHK(db.Model):
     hk_id = db.Column(db.Integer, db.ForeignKey('housekeeping.id'))
     hk = db.relationship('Housekeeping', backref=backref('uhf', uselist=False))
 
-    scw1 = db.Column(db.LargeBinary)
-    scw2 = db.Column(db.LargeBinary)
-    scw3 = db.Column(db.LargeBinary)
-    scw4 = db.Column(db.LargeBinary)
-    scw5 = db.Column(db.LargeBinary)
-    scw6 = db.Column(db.LargeBinary)
-    scw7 = db.Column(db.LargeBinary)
-    scw8 = db.Column(db.LargeBinary)
-    scw9 = db.Column(db.LargeBinary)
-    scw10 = db.Column(db.LargeBinary)
-    scw11 = db.Column(db.LargeBinary)
-    scw12 = db.Column(db.LargeBinary)
+    scw1 = db.Column(db.Integer)
+    scw2 = db.Column(db.Integer)
+    scw3 = db.Column(db.Integer)
+    scw4 = db.Column(db.Integer)
+    scw5 = db.Column(db.Integer)
+    scw6 = db.Column(db.Integer)
+    scw7 = db.Column(db.Integer)
+    scw8 = db.Column(db.Integer)
+    scw9 = db.Column(db.Integer)
+    scw10 = db.Column(db.Integer)
+    scw11 = db.Column(db.Integer)
+    scw12 = db.Column(db.Integer)
     freq = db.Column(db.Integer)
     pipe_t = db.Column(db.Integer)
     beacon_t = db.Column(db.Integer)
@@ -777,18 +777,18 @@ class UhfHK(db.Model):
 
     def to_json(self):
         return {
-            'scw1': self.scw1.decode('ascii'),
-            'scw2': self.scw2.decode('ascii'),
-            'scw3': self.scw3.decode('ascii'),
-            'scw4': self.scw4.decode('ascii'),
-            'scw5': self.scw5.decode('ascii'),
-            'scw6': self.scw6.decode('ascii'),
-            'scw7': self.scw7.decode('ascii'),
-            'scw8': self.scw8.decode('ascii'),
-            'scw9': self.scw9.decode('ascii'),
-            'scw10': self.scw10.decode('ascii'),
-            'scw11': self.scw11.decode('ascii'),
-            'scw12': self.scw12.decode('ascii'),
+            'scw1': self.scw1,
+            'scw2': self.scw2,
+            'scw3': self.scw3,
+            'scw4': self.scw4,
+            'scw5': self.scw5,
+            'scw6': self.scw6,
+            'scw7': self.scw7,
+            'scw8': self.scw8,
+            'scw9': self.scw9,
+            'scw10': self.scw10,
+            'scw11': self.scw11,
+            'scw12': self.scw12,
             'freq': self.freq,
             'pipe_t': self.pipe_t,
             'beacon_t': self.beacon_t,
@@ -839,44 +839,44 @@ class HyperionHK(db.Model):
     hk = db.relationship(
         'Housekeeping', backref=backref('hyperion', uselist=False))
 
-    Nadir_Temp1 = db.Column(db.LargeBinary)
-    Nadir_Temp_Adc = db.Column(db.LargeBinary)
-    Port_Temp1 = db.Column(db.LargeBinary)
-    Port_Temp2 = db.Column(db.LargeBinary)
-    Port_Temp3 = db.Column(db.LargeBinary)
-    Port_Temp_Adc = db.Column(db.LargeBinary)
-    Port_Dep_Temp1 = db.Column(db.LargeBinary)
-    Port_Dep_Temp2 = db.Column(db.LargeBinary)
-    Port_Dep_Temp3 = db.Column(db.LargeBinary)
-    Port_Dep_Temp_Adc = db.Column(db.LargeBinary)
-    Star_Temp1 = db.Column(db.LargeBinary)
-    Star_Temp2 = db.Column(db.LargeBinary)
-    Star_Temp3 = db.Column(db.LargeBinary)
-    Star_Temp_Adc = db.Column(db.LargeBinary)
-    Star_Dep_Temp1 = db.Column(db.LargeBinary)
-    Star_Dep_Temp2 = db.Column(db.LargeBinary)
-    Star_Dep_Temp3 = db.Column(db.LargeBinary)
-    Star_Dep_Temp_Adc = db.Column(db.LargeBinary)
-    Zenith_Temp1 = db.Column(db.LargeBinary)
-    Zenith_Temp2 = db.Column(db.LargeBinary)
-    Zenith_Temp3 = db.Column(db.LargeBinary)
-    Zenith_Temp_Adc = db.Column(db.LargeBinary)
-    Nadir_Pd1 = db.Column(db.LargeBinary)
-    Port_Pd1 = db.Column(db.LargeBinary)
-    Port_Pd2 = db.Column(db.LargeBinary)
-    Port_Pd3 = db.Column(db.LargeBinary)
-    Port_Dep_Pd1 = db.Column(db.LargeBinary)
-    Port_Dep_Pd2 = db.Column(db.LargeBinary)
-    Port_Dep_Pd3 = db.Column(db.LargeBinary)
-    Star_Pd1 = db.Column(db.LargeBinary)
-    Star_Pd2 = db.Column(db.LargeBinary)
-    Star_Pd3 = db.Column(db.LargeBinary)
-    Star_Dep_Pd1 = db.Column(db.LargeBinary)
-    Star_Dep_Pd2 = db.Column(db.LargeBinary)
-    Star_Dep_Pd3 = db.Column(db.LargeBinary)
-    Zenith_Pd1 = db.Column(db.LargeBinary)
-    Zenith_Pd2 = db.Column(db.LargeBinary)
-    Zenith_Pd3 = db.Column(db.LargeBinary)
+    Nadir_Temp1 = db.Column(db.Integer)
+    Nadir_Temp_Adc = db.Column(db.Integer)
+    Port_Temp1 = db.Column(db.Integer)
+    Port_Temp2 = db.Column(db.Integer)
+    Port_Temp3 = db.Column(db.Integer)
+    Port_Temp_Adc = db.Column(db.Integer)
+    Port_Dep_Temp1 = db.Column(db.Integer)
+    Port_Dep_Temp2 = db.Column(db.Integer)
+    Port_Dep_Temp3 = db.Column(db.Integer)
+    Port_Dep_Temp_Adc = db.Column(db.Integer)
+    Star_Temp1 = db.Column(db.Integer)
+    Star_Temp2 = db.Column(db.Integer)
+    Star_Temp3 = db.Column(db.Integer)
+    Star_Temp_Adc = db.Column(db.Integer)
+    Star_Dep_Temp1 = db.Column(db.Integer)
+    Star_Dep_Temp2 = db.Column(db.Integer)
+    Star_Dep_Temp3 = db.Column(db.Integer)
+    Star_Dep_Temp_Adc = db.Column(db.Integer)
+    Zenith_Temp1 = db.Column(db.Integer)
+    Zenith_Temp2 = db.Column(db.Integer)
+    Zenith_Temp3 = db.Column(db.Integer)
+    Zenith_Temp_Adc = db.Column(db.Integer)
+    Nadir_Pd1 = db.Column(db.Integer)
+    Port_Pd1 = db.Column(db.Integer)
+    Port_Pd2 = db.Column(db.Integer)
+    Port_Pd3 = db.Column(db.Integer)
+    Port_Dep_Pd1 = db.Column(db.Integer)
+    Port_Dep_Pd2 = db.Column(db.Integer)
+    Port_Dep_Pd3 = db.Column(db.Integer)
+    Star_Pd1 = db.Column(db.Integer)
+    Star_Pd2 = db.Column(db.Integer)
+    Star_Pd3 = db.Column(db.Integer)
+    Star_Dep_Pd1 = db.Column(db.Integer)
+    Star_Dep_Pd2 = db.Column(db.Integer)
+    Star_Dep_Pd3 = db.Column(db.Integer)
+    Zenith_Pd1 = db.Column(db.Integer)
+    Zenith_Pd2 = db.Column(db.Integer)
+    Zenith_Pd3 = db.Column(db.Integer)
     Port_Voltage = db.Column(db.Integer)
     Port_Dep_Voltage = db.Column(db.Integer)
     Star_Voltage = db.Column(db.Integer)
@@ -890,44 +890,44 @@ class HyperionHK(db.Model):
 
     def to_json(self):
         return {
-            'Nadir_Temp1': self.Nadir_Temp1.decode('ascii'),
-            'Nadir_Temp_Adc': self.Nadir_Temp_Adc.decode('ascii'),
-            'Port_Temp1': self.Port_Temp1.decode('ascii'),
-            'Port_Temp2': self.Port_Temp2.decode('ascii'),
-            'Port_Temp3': self.Port_Temp3.decode('ascii'),
-            'Port_Temp_Adc': self.Port_Temp_Adc.decode('ascii'),
-            'Port_Dep_Temp1': self.Port_Dep_Temp1.decode('ascii'),
-            'Port_Dep_Temp2': self.Port_Dep_Temp2.decode('ascii'),
-            'Port_Dep_Temp3': self.Port_Dep_Temp3.decode('ascii'),
-            'Port_Dep_Temp_Adc': self.Port_Dep_Temp_Adc.decode('ascii'),
-            'Star_Temp1': self.Star_Temp1.decode('ascii'),
-            'Star_Temp2': self.Star_Temp2.decode('ascii'),
-            'Star_Temp3': self.Star_Temp3.decode('ascii'),
-            'Star_Temp_Adc': self.Star_Temp_Adc.decode('ascii'),
-            'Star_Dep_Temp1': self.Star_Dep_Temp1.decode('ascii'),
-            'Star_Dep_Temp2': self.Star_Dep_Temp2.decode('ascii'),
-            'Star_Dep_Temp3': self.Star_Dep_Temp3.decode('ascii'),
-            'Star_Dep_Temp_Adc': self.Star_Dep_Temp_Adc.decode('ascii'),
-            'Zenith_Temp1': self.Zenith_Temp1.decode('ascii'),
-            'Zenith_Temp2': self.Zenith_Temp2.decode('ascii'),
-            'Zenith_Temp3': self.Zenith_Temp3.decode('ascii'),
-            'Zenith_Temp_Adc': self.Zenith_Temp_Adc.decode('ascii'),
-            'Nadir_Pd1': self.Nadir_Pd1.decode('ascii'),
-            'Port_Pd1': self.Port_Pd1.decode('ascii'),
-            'Port_Pd2': self.Port_Pd2.decode('ascii'),
-            'Port_Pd3': self.Port_Pd3.decode('ascii'),
-            'Port_Dep_Pd1': self.Port_Dep_Pd1.decode('ascii'),
-            'Port_Dep_Pd2': self.Port_Dep_Pd2.decode('ascii'),
-            'Port_Dep_Pd3': self.Port_Dep_Pd3.decode('ascii'),
-            'Star_Pd1': self.Star_Pd1.decode('ascii'),
-            'Star_Pd2': self.Star_Pd2.decode('ascii'),
-            'Star_Pd3': self.Star_Pd3.decode('ascii'),
-            'Star_Dep_Pd1': self.Star_Dep_Pd1.decode('ascii'),
-            'Star_Dep_Pd2': self.Star_Dep_Pd2.decode('ascii'),
-            'Star_Dep_Pd3': self.Star_Dep_Pd3.decode('ascii'),
-            'Zenith_Pd1': self.Zenith_Pd1.decode('ascii'),
-            'Zenith_Pd2': self.Zenith_Pd2.decode('ascii'),
-            'Zenith_Pd3': self.Zenith_Pd3.decode('ascii'),
+            'Nadir_Temp1': self.Nadir_Temp1,
+            'Nadir_Temp_Adc': self.Nadir_Temp_Adc,
+            'Port_Temp1': self.Port_Temp1,
+            'Port_Temp2': self.Port_Temp2,
+            'Port_Temp3': self.Port_Temp3,
+            'Port_Temp_Adc': self.Port_Temp_Adc,
+            'Port_Dep_Temp1': self.Port_Dep_Temp1,
+            'Port_Dep_Temp2': self.Port_Dep_Temp2,
+            'Port_Dep_Temp3': self.Port_Dep_Temp3,
+            'Port_Dep_Temp_Adc': self.Port_Dep_Temp_Adc,
+            'Star_Temp1': self.Star_Temp1,
+            'Star_Temp2': self.Star_Temp2,
+            'Star_Temp3': self.Star_Temp3,
+            'Star_Temp_Adc': self.Star_Temp_Adc,
+            'Star_Dep_Temp1': self.Star_Dep_Temp1,
+            'Star_Dep_Temp2': self.Star_Dep_Temp2,
+            'Star_Dep_Temp3': self.Star_Dep_Temp3,
+            'Star_Dep_Temp_Adc': self.Star_Dep_Temp_Adc,
+            'Zenith_Temp1': self.Zenith_Temp1,
+            'Zenith_Temp2': self.Zenith_Temp2,
+            'Zenith_Temp3': self.Zenith_Temp3,
+            'Zenith_Temp_Adc': self.Zenith_Temp_Adc,
+            'Nadir_Pd1': self.Nadir_Pd1,
+            'Port_Pd1': self.Port_Pd1,
+            'Port_Pd2': self.Port_Pd2,
+            'Port_Pd3': self.Port_Pd3,
+            'Port_Dep_Pd1': self.Port_Dep_Pd1,
+            'Port_Dep_Pd2': self.Port_Dep_Pd2,
+            'Port_Dep_Pd3': self.Port_Dep_Pd3,
+            'Star_Pd1': self.Star_Pd1,
+            'Star_Pd2': self.Star_Pd2,
+            'Star_Pd3': self.Star_Pd3,
+            'Star_Dep_Pd1': self.Star_Dep_Pd1,
+            'Star_Dep_Pd2': self.Star_Dep_Pd2,
+            'Star_Dep_Pd3': self.Star_Dep_Pd3,
+            'Zenith_Pd1': self.Zenith_Pd1,
+            'Zenith_Pd2': self.Zenith_Pd2,
+            'Zenith_Pd3': self.Zenith_Pd3,
             'Port_Voltage': self.Port_Voltage,
             'Port_Dep_Voltage': self.Port_Dep_Voltage,
             'Star_Voltage': self.Star_Voltage,
@@ -950,26 +950,26 @@ class CharonHK(db.Model):
         'Housekeeping', backref=backref('charon', uselist=False))
 
     gps_crc = db.Column(db.Integer)
-    charon_temp1 = db.Column(db.LargeBinary)
-    charon_temp2 = db.Column(db.LargeBinary)
-    charon_temp3 = db.Column(db.LargeBinary)
-    charon_temp4 = db.Column(db.LargeBinary)
-    charon_temp5 = db.Column(db.LargeBinary)
-    charon_temp6 = db.Column(db.LargeBinary)
-    charon_temp7 = db.Column(db.LargeBinary)
-    charon_temp8 = db.Column(db.LargeBinary)
+    charon_temp1 = db.Column(db.Integer)
+    charon_temp2 = db.Column(db.Integer)
+    charon_temp3 = db.Column(db.Integer)
+    charon_temp4 = db.Column(db.Integer)
+    charon_temp5 = db.Column(db.Integer)
+    charon_temp6 = db.Column(db.Integer)
+    charon_temp7 = db.Column(db.Integer)
+    charon_temp8 = db.Column(db.Integer)
 
     def to_json(self):
         return {
             'gps_crc': self.gps_crc,
-            'charon_temp1': self.charon_temp1.decode('ascii'),
-            'charon_temp2': self.charon_temp2.decode('ascii'),
-            'charon_temp3': self.charon_temp3.decode('ascii'),
-            'charon_temp4': self.charon_temp4.decode('ascii'),
-            'charon_temp5': self.charon_temp5.decode('ascii'),
-            'charon_temp6': self.charon_temp6.decode('ascii'),
-            'charon_temp7': self.charon_temp7.decode('ascii'),
-            'charon_temp8': self.charon_temp8.decode('ascii')
+            'charon_temp1': self.charon_temp1,
+            'charon_temp2': self.charon_temp2,
+            'charon_temp3': self.charon_temp3,
+            'charon_temp4': self.charon_temp4,
+            'charon_temp5': self.charon_temp5,
+            'charon_temp6': self.charon_temp6,
+            'charon_temp7': self.charon_temp7,
+            'charon_temp8': self.charon_temp8
         }
 
 
