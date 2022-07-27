@@ -13,7 +13,7 @@ const UserEntry = (props) => {
 
     return (
         <div style={divStyle}>
-            <p> <span>Username: {props.user.username}</span> {props.user.is_admin && <span margin = "0 5%">Admin</span>}</p>
+            <p> <span>Username: {props.user.username}</span> {props.user.is_admin && <span margin-right = "0%">Admin</span>}</p>
             <p>Password: {props.user.password}</p>
         </div>
     )
