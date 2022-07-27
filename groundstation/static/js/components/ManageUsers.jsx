@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import CommunicationsList from './CommunicationsListFull';
@@ -6,9 +6,18 @@ import Button from '@material-ui/core/Button';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 
 
-const UserEntry = (props) => ({
+const UserEntry = (props) => {
+    const [isEditing, setIsEditing] = useState(false);
 
-})
+    const divStyle = {};
+
+    return (
+        <div style={divStyle}>
+            <p> <span>Username: {props.user.username}</span> {props.user.is_admin && <span margin = "0 5%">Admin</span>}</p>
+            <p>Password: {props.user.password}</p>
+        </div>
+    )
+}
 
 class ManageUsers extends Component {
     constructor(){
