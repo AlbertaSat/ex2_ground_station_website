@@ -175,7 +175,7 @@ class LiveCommands extends Component {
     const args =
       openIndex + 1 === closeIndex
         ? [] // Prevents [""] which has length 1
-        : str.substring(openIndex + 1, closeIndex).split(" ");
+        : str.substring(openIndex + 1, closeIndex).split(",");
     if (matching_command.num_arguments !== args.length) {
       return false;
     }
