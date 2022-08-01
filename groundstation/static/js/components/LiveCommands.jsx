@@ -14,9 +14,6 @@ const SAT_PREFIX = [
   { value: "yuk", label: "YUK" },
   { value: "ari", label: "ARI" },
   { value: "eps", label: "EPS" },
-  { value: "gnd", label: "GND" },
-  { value: "pipe", label: "PIPE" },
-  { value: "last", label: "LAST" },
 ];
 
 const useStyles = makeStyles((theme) => ({
