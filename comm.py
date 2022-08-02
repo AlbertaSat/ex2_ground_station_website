@@ -7,9 +7,16 @@ import time
 import json
 import signal
 from enum import Enum
+from datetime import datetime
 
 from groundstation.backend_api.flightschedule import FlightScheduleList, Flightschedule
 from groundstation.backend_api.communications import CommunicationList, Communication
+
+from groundstation.backend_api.housekeeping import HousekeepingLogList
+from groundstation.tests.utils import fake_housekeeping_as_dict, fake_adcs_hk_as_dict, \
+    fake_athena_hk_as_dict, fake_eps_hk_as_dict, fake_uhf_hk_as_dict, \
+    fake_sband_hk_as_dict, fake_hyperion_hk_as_dict, fake_charon_hk_as_dict, \
+    fake_dfgm_hk_as_dict, fake_northern_spirit_hk_as_dict, fake_iris_hk_as_dict
 
 
 class Connection(Enum):
@@ -23,6 +30,7 @@ communication_list = CommunicationList()
 communication_patch = Communication()
 flightschedule_list = FlightScheduleList()
 flightschedule_patch = Flightschedule()
+housekeeping_post = HousekeepingLogList()
 
 
 # Handle the sig alarm
@@ -68,7 +76,6 @@ def upload_fs():
     local_args = {'limit': 1, 'queued': True}
     fs = flightschedule_list.get(local_args=local_args)
 
-
     if len(fs[0]['data']['flightschedules']) < 1:
         save_response('A queued flight schedule does not exist.')
         return None
@@ -83,11 +90,61 @@ def upload_fs():
         return 'upload-fs'
 
 
+def log_housekeeping(response):
+    """
+    Parses housekeeping data from the HOUSEKEEPING.GET_HK command and creates
+    a database entry for each housekeeping entry.
+    """
+    for log in response:
+        # Form baseline schema for the post data
+        hk = fake_housekeeping_as_dict(
+            timestamp=datetime.fromtimestamp(log['UNIXtimestamp']).isoformat(),
+            data_position=log['dataPosition']
+        )
+        hk['adcs'] = fake_adcs_hk_as_dict()
+        hk['athena'] = fake_athena_hk_as_dict()
+        hk['eps'] = fake_eps_hk_as_dict()
+        hk['uhf'] = fake_uhf_hk_as_dict()
+        hk['sband'] = fake_sband_hk_as_dict()
+        hk['hyperion'] = fake_hyperion_hk_as_dict()
+        hk['charon'] = fake_charon_hk_as_dict()
+        hk['dfgm'] = fake_dfgm_hk_as_dict()
+        hk['northern_spirit'] = fake_northern_spirit_hk_as_dict()
+        hk['iris'] = fake_iris_hk_as_dict()
+
+        # Strip the subsystem title from response data
+        for key in list(log):
+            if '#' in key:
+                log[key.split('\r\n')[-1]] = log.pop(key)
+
+        # Copy over response data to post data
+        subsystems = [
+            'adcs',
+            'athena',
+            'eps',
+            'uhf',
+            'sband',
+            'hyperion',
+            'charon',
+            'dfgm',
+            'northern_spirit',
+            'iris'
+        ]
+        for subsystem in subsystems:
+            for key in hk[subsystem]:
+                hk[subsystem][key] = log[key]
+
+        # Post HK data
+        post_data = json.dumps(hk)
+        housekeeping_post.post(local_data=post_data)
+
+
 def send_to_simulator(msg):
     try:
         return antenna.send(msg)
     except Exception as e:
         print('Unexpected error occured:', e)
+
 
 def send_to_satellite(gs, msg):
     try:
@@ -122,9 +179,11 @@ def communication_loop(gs=None, cli_gs=None):
     :param Csp csp: The Csp instance. See groundStation.py
     """
     if mode == Connection.SATELLITE and gs is None:
-        raise Exception('Ground station instance must be specified if sending to satellite')
+        raise Exception(
+            'Ground station instance must be specified if sending to satellite')
 
-    request_data = {'is_queued': True, 'receiver': 'comm', 'newest-first': False}
+    request_data = {'is_queued': True,
+                    'receiver': 'comm', 'newest-first': False}
 
     # Check communication table every minute
     while True:
@@ -151,7 +210,10 @@ def communication_loop(gs=None, cli_gs=None):
                             response = send_to_satellite(gs, msg)
 
                     if response:
-                        if isinstance(response, list):
+                        if 'housekeeping.get_hk' in msg:
+                            save_response('Housekeeping logged')
+                            log_housekeeping(response)
+                        elif isinstance(response, list):
                             for item in response:
                                 save_response(item)
                         else:
@@ -184,7 +246,7 @@ def main():
 
 if __name__ == '__main__':
     if input('Would like to communicate with the satellite simulator (if not, the program '
-        'will attempt to communicate with the satellite) [Y/n]: ').strip() in ('Y', 'y'):
+             'will attempt to communicate with the satellite) [Y/n]: ').strip() in ('Y', 'y'):
         mode = Connection.SIMULATOR
         import satellite_simulator.antenna as antenna
     else:
