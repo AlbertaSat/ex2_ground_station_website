@@ -96,7 +96,7 @@ def automate_passovers():
         orb = Orbital('ex-alta 2', line1=lines[0], line2=lines[1])
         dtobj = datetime.utcnow()
         passes = orb.get_next_passes(dtobj, 24, -113.4938, 53.5461, 0.645) # edmonton coordinates and elevation
-        ps_data = {'passovers': [{'timestamp': str(ps[0])} for ps in passes]}
+        ps_data = {'passovers': [{'aos_timestamp': str(ps[0]), 'los_timestamp': str(ps[1])} for ps in passes]}
 
         passover.post(local_data=json.dumps(ps_data))
 

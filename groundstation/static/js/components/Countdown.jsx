@@ -24,17 +24,17 @@ function fetchPassovers(next, most_recent) {
                 if (data.data.next_passovers === undefined || data.data.next_passovers.length == 0) {
                     nextPassover = null;
                 } else {
-                    let newNextDate = data.data.next_passovers[0].timestamp.replace(' ', 'T');
-                    newNextDate.slice(-3);
-                    nextPassover = Date.parse(newNextDate);
+                    let newNextDate_aos = data.data.next_passovers[0].aos_timestamp.replace(' ', 'T');
+                    let newNextDate_los = data.data.next_passovers[0].los_timestamp.replace(' ', 'T');
+                    nextPassover = {'aos': Date.parse(newNextDate_aos), 'los': Date.parse(newNextDate_los)};
                 }
 
                 if (data.data.most_recent_passover === undefined || data.data.most_recent_passover === null) {
                     mostRecentPassover = null;
                 } else {
-                    let newMostRecentDate = data.data.most_recent_passover.timestamp.replace(' ', 'T');
-                    newMostRecentDate.slice(-3);
-                    mostRecentPassover = Date.parse(newMostRecentDate)
+                    let newMostRecentDate_aos = data.data.most_recent_passover.aos_timestamp.replace(' ', 'T');
+                    let newMostRecentDate_los = data.data.most_recent_passover.los_timestamp.replace(' ', 'T');
+                    mostRecentPassover = {'aos': Date.parse(newMostRecentDate_aos), 'los': Date.parse(newMostRecentDate_los)};
                 }
                 resolve({
                     nextPassover: nextPassover,
@@ -49,7 +49,6 @@ function fetchPassovers(next, most_recent) {
 
 // inspired by https://www.cssscript.com/minimal-digital-clock-javascript-css/
 class Countdown extends Component{
-    // passoverDuration is in seconds
 	constructor(){
 		super();
 		this.state = {
@@ -57,7 +56,6 @@ class Countdown extends Component{
 			minute: '00',
 			second: '00',
             displayCountdown:false,
-            passoverDuration:2*60,
 			nextPassover: null,
 			untilPassover: null,
             operationIsAdd:false,
@@ -96,7 +94,7 @@ class Countdown extends Component{
 		let today =  new Date(Date.now());
 
 		utcToday = new Date(today.getTime() + (today.getTimezoneOffset() * 60000));
-        let new_value = this.state.operationIsAdd ? utcToday - this.state.mostRecentPassover : this.state.nextPassover - utcToday;
+        let new_value = this.state.operationIsAdd ? utcToday - this.state.mostRecentPassover.aos : this.state.nextPassover.aos - utcToday;
 
         let hour = Math.floor((new_value / (1000 * 60 * 60)) % 24);
         let minute = Math.floor((new_value / (1000 * 60)) % 60);
@@ -127,10 +125,10 @@ class Countdown extends Component{
             return
         }
 
-        var timeDifferenceWithMostRecent = utcToday - this.state.mostRecentPassover;
-        var timeDifferenceWithNext = this.state.nextPassover - utcToday;
+        var timeDifferenceWithMostRecent = utcToday - this.state.mostRecentPassover.los;
+        var timeDifferenceWithNext = this.state.nextPassover.aos - utcToday;
 
-        if (timeDifferenceWithMostRecent <= this.state.passoverDuration*1000) {
+        if (timeDifferenceWithMostRecent <= 0) {
             this.setState(
                 {operationIsAdd:true, operatorChar:'+', color:"#2ecc40"},
                 this.drawCountdownAfterStateChange

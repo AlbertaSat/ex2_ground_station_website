@@ -82,6 +82,8 @@ class UserEntity(Resource):
         for attribute in validated_data:
             setattr(user, attribute, validated_data[attribute])
 
+        user.regenerate_password_hash(post_data.get('password'))
+
         db.session.commit()
 
         response_object = {

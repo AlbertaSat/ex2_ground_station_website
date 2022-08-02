@@ -6,6 +6,8 @@ with the satellite (or the simulator).
 import time
 import json
 import signal
+import sys
+import os
 from enum import Enum
 from datetime import datetime
 
@@ -148,13 +150,11 @@ def send_to_simulator(msg):
 
 def send_to_satellite(gs, msg):
     try:
-        command = gs.getInput(inVal=msg)
-        if command is None:
-            return "INVALID COMMAND"
-        server, port, toSend = command
-        return gs.transaction(server, port, toSend)
+        transactObj = gs.interactive.getTransactionObject(msg, gs.networkManager)
+        return transactObj.execute()
     except Exception as e:
         print('Unexpected error occured:', e)
+        return 'Unexpected error occured: {}'.format(e)
 
 
 # Save the satellite response as a comm log
@@ -204,10 +204,7 @@ def communication_loop(gs=None, cli_gs=None):
                         msg = message['message'].replace(" ", ".")
                         response = send_to_simulator(msg)
                     elif mode == Connection.SATELLITE:
-                        if 'cli.send_cmd' in msg:
-                            response = send_to_satellite(cli_gs, msg)
-                        else:
-                            response = send_to_satellite(gs, msg)
+                        response = send_to_satellite(gs, msg)
 
                     if response:
                         if 'housekeeping.get_hk' in msg:
@@ -235,13 +232,10 @@ def main():
     if mode == Connection.SIMULATOR:
         communication_loop()
     elif mode == Connection.SATELLITE:
-        # TODO maybe clean up by putting in a function in gs_software
-        opts = gs_software.groundStation.options()
-        options = opts.getOptions()
-        gs = gs_software.groundStation.groundStation(options)
-        cli_gs = gs_software.cliGroundStation.cliGroundStation(options)
+        opts = optionsFactory("basic")
+        gs = GroundStation(opts.getOptions())
 
-        communication_loop(gs, cli_gs)
+        communication_loop(gs)
 
 
 if __name__ == '__main__':
@@ -251,6 +245,10 @@ if __name__ == '__main__':
         import satellite_simulator.antenna as antenna
     else:
         mode = Connection.SATELLITE
-        import ex2_ground_station_software.src.groundStation as gs_software
+        # Really jank path workaround that prevents messing up a lot of imports
+        # in ex2_ground_station_software for non-website users
+        sys.path.append(os.path.join(sys.path[0], 'ex2_ground_station_software', 'src'))
+        from groundStation import GroundStation
+        from options import optionsFactory
 
     main()

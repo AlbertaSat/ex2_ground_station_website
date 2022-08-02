@@ -31,3 +31,5 @@ selenium
 gunicorn==19.9.0
 slackclient==2.9.3
 pyorbital==1.7.1
+zmq
+pyserial

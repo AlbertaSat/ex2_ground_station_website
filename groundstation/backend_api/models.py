@@ -27,6 +27,10 @@ class User(db.Model):
         self.slack_id = slack_id
         self.subscribed_to_slack = subscribed_to_slack
 
+    def regenerate_password_hash(self, password):
+        num_rounds = current_app.config.get('BCRYPT_LOG_ROUNDS')
+        self.password_hash = bcrypt.generate_password_hash(password, num_rounds).decode()
+        
     def verify_password(self, password):
         """Returns True if passes password is valid, else False
 
@@ -183,14 +187,16 @@ class Passover(db.Model):
     __tablename__ = 'passovers'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    timestamp = db.Column(db.DateTime)
+    aos_timestamp = db.Column(db.DateTime)
+    los_timestamp = db.Column(db.DateTime)
 
     def to_json(self):
         """Returns a dictionary of some selected model attributes
         """
         return {
             'passover_id': self.id,
-            'timestamp': str(self.timestamp)
+            'aos_timestamp': str(self.aos_timestamp),
+            'los_timestamp': str(self.los_timestamp)
         }
 
 # This will be the table of telecommands being sent to the satellite as well as the responses
