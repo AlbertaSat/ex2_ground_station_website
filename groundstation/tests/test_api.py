@@ -775,6 +775,75 @@ class TestAutomatedCommandService(BaseTestCase):
         num_automatedcommands = len(AutomatedCommands.query.all())
         self.assertTrue(num_automatedcommands > 0)    
 
+    def test_patch_without_admin_priviliges(self):
+        current_app.config.update(BYPASS_AUTH=False)
+
+        commands = {
+            'ping': (0,False),
+            'get-hk':(0,False),
+        }
+        for name, (num_args, is_danger) in commands.items():
+            c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
+        command1 = Telecommands.query.filter_by(command_name='ping').first() 
+        command2 = Telecommands.query.filter_by(command_name='get-hk').first()     
+
+        user = add_user('user', 'user', is_admin=False)
+        auth_token = user.encode_auth_token_by_id().decode()
+
+        automatedcommand = AutomatedCommands(command_id=command1.id, priority=1)
+        db.session.add(automatedcommand)
+        db.session.commit()      
+
+        patch_update = {'command': {'command_id': command2.id}, 'priority': 2, 'args': []}
+        post_data = json.dumps(patch_update)
+
+        with self.client:
+            response = self.client.patch(
+                f'api/automatedcommands/{automatedcommand.id}',
+                headers={'Authorization': f'Bearer {auth_token}'},
+                data=post_data,
+                content_type='application/json'
+            )
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 403)
+            self.assertIn('fail', response_data['status'])
+            self.assertIn('You do not have permission to patch automated commands.', response_data['message'])              
+
+    def test_patch_with_admin_priviliges(self):
+        current_app.config.update(BYPASS_AUTH=False)
+
+        commands = {
+            'ping': (0,False),
+            'get-hk':(0,False),
+        }
+        for name, (num_args, is_danger) in commands.items():
+            c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
+        command1 = Telecommands.query.filter_by(command_name='ping').first() 
+        command2 = Telecommands.query.filter_by(command_name='get-hk').first()     
+
+        admin = add_user('admin', 'admin', is_admin=True)
+        auth_token = admin.encode_auth_token_by_id().decode()
+
+        automatedcommand = AutomatedCommands(command_id=command1.id, priority=1)
+        db.session.add(automatedcommand)
+        db.session.commit()      
+
+        patch_update = {'command': {'command_id': command2.id}, 'priority': 2, 'args': []}
+        post_data = json.dumps(patch_update)
+
+        with self.client:
+            response = self.client.patch(
+                f'api/automatedcommands/{automatedcommand.id}',
+                headers={'Authorization': f'Bearer {auth_token}'},
+                data=post_data,
+                content_type='application/json'
+            )
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response_data['data']['command']['command_id'], command2.id)
+            self.assertEqual(response_data['data']['priority'], 2)
+            self.assertIn('success', response_data['status'])
+
     def test_delete_without_admin_priviliges(self):
         current_app.config.update(BYPASS_AUTH=False)
 

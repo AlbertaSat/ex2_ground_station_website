@@ -29,6 +29,13 @@ class AutomatedCommand(Resource):
         :rtype: tuple (dict, int)
         """        
         
+        if not g.user.is_admin:
+            response_object = {
+                'status': 'fail',
+                'message': 'You do not have permission to patch automated commands.'
+            }
+            return response_object, 403  
+
         if not local_data:
             patch_data = request.get_json()
         else:
