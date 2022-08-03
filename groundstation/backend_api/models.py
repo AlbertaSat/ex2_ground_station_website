@@ -15,7 +15,7 @@ class User(db.Model):
     creator_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     subscribed_to_slack = db.Column(db.Boolean, server_default="0")
     blacklisted_tokens = db.relationship('BlacklistedTokens', backref='user', lazy=True, cascade='all, delete-orphan')
-    creator = db.relationship('User', remote_side=[id])
+    creator = db.relationship('User', remote_side=[id], lazy=True)
 
     def __init__(self, username, password, is_admin=False, slack_id=None, subscribed_to_slack=False, creator_id=None):
         self.username = username

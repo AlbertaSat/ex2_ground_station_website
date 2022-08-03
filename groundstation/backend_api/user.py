@@ -109,9 +109,10 @@ class UserList(Resource):
         :returns: response_object, status_code
         :rtype: tuple (dict, int)
         """
+
         response_object = {
             'status':'success',
-            'data':{}
+            'data':{'users': []},
         }
         # if not local_args:
         #     query_limit = request.args.get('limit')
@@ -119,10 +120,10 @@ class UserList(Resource):
         #     query_limit = local_args.get('limit')
 
         # users = User.query.order_by(User.id).limit(query_limit).all()
+        
+        users = User.query.filter(User.creator_id==g.user.id).all()# g.user.id not working
 
-        users = User.query.filter_by(creator_id=g.user.id).all()
-
-        response_object['data'] = users
+        response_object['data'] = {'users': [user.to_json for user in users]}
 
         return response_object, 200
 

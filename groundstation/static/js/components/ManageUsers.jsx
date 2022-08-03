@@ -9,12 +9,23 @@ import AddCircleIcon from '@material-ui/icons/AddCircle';
 const UserEntry = (props) => {
     const [isEditing, setIsEditing] = useState(false);
 
-    const divStyle = {};
+    // const divStyle = {
+    //     paddingBottom:'1%',
+    //     paddingLeft:'1%',
+    //     paddingRight:'1%',
+    // };
 
     return (
-        <div style={divStyle}>
-            <p> <span>Username: {props.user.username}</span> {props.user.is_admin && <span margin-right = "0%">Admin</span>}</p>
-            <p>Password: {props.user.password}</p>
+        <div style={{display: 'flex', justifyContent: 'space-between'}}>
+            <div>
+                <p>Username: {props.user.username}</p><p>Password: {props.user.password}</p>{props.user.is_admin && <p>Admin</p>}
+            </div>
+            <div>
+                <Button style={{marginBottom:"1%"}}
+                color = "primary"
+                onClick={editHandler}
+                variant = 'outlined'>Edit</Button>
+            </div>
         </div>
     )
 }
@@ -30,13 +41,15 @@ class ManageUsers extends Component {
     }
 
     handleRefresh(){
-        fetch('/api/communications?newest-first=true')
+        const auth_token = sessionStorage.getItem('auth_token');
+        fetch('/api/users')
             .then( response => {
                 return response.json();
             }).then(data => {
                 if (data.status == 'success'){
+                    console.log(data.current_user_id)
                     this.setState({
-                        messages: data.data.messages,
+                        users: data.data.users,
                         is_empty: false
                     })
                 } else{
@@ -44,7 +57,8 @@ class ManageUsers extends Component {
                     console.log('get failed')
                     this.setState({
                         is_empty: true,
-                        error_message: 'error fetching messages: ' + data.message
+                        //error_message: 'error fetching messages: ' + data.message
+                        error_message: 'error fetching users'
                     })
                 }
             });
@@ -85,7 +99,11 @@ class ManageUsers extends Component {
                 </div>
                 <div>
                     <Paper style={{paddingTop:"1%", paddingBottom:"2%"}}>
-                        <UserEntry autoScroll={false} displayUsers={this.state.users} isEmpty={this.state.is_empty}/>
+                        <div>
+                            {this.state.users.map(user => (
+                            <UserEntry autoScroll={false} user={user}/>
+                            ))}
+                        </div>
                     </Paper>
                 </div>
             </div>
