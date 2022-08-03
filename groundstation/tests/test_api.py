@@ -713,38 +713,79 @@ class TestFlightScheduleService(BaseTestCase):
 #Test automated command sequence model
 class TestAutomatedCommandService(BaseTestCase):
     
-    def test_post(self):
-        automatedcommand = fake_automatedcommand_as_dict()
+    def test_post_without_admin_priviliges(self):
+        current_app.config.update(BYPASS_AUTH=False)
+
+        commands = {
+            'ping': (0,False),
+            'get-hk':(0,False),
+        }
+        for name, (num_args, is_danger) in commands.items():
+            c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
+        command1 = Telecommands.query.filter_by(command_name='ping').first()   
+
+        user = add_user('user', 'user', is_admin=False)
+        auth_token = user.encode_auth_token_by_id().decode()
+
+        automatedcommand = fake_automatedcommand_as_dict(command_id=command1.id)
         self.assertEqual(len(AutomatedCommands.query.all()), 0)
 
         with self.client:
             post_data = json.dumps(automatedcommand)
+            kw_args = {'data': post_data, 'content_type': 'application/json'}
             response = self.client.post(
                 '/api/automatedcommands',
-                data=post_data,
-                content_type='application/json'
+                headers={'Authorization': f'Bearer {auth_token}'}, 
+                **kw_args
             )
-            response_data = json.loads(response_data.decode())
-            self.assertEqual(response.status_code, 201)
-        
-        num_automatedcommands = len(AutomatedCommands.query.all())
-        self.assertTrue(num_automatedcommands > 0)
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 403)
+            self.assertIn('fail', response_data['status'])
+            self.assertIn('You do not have permission to create automated commands.', response_data['message'])
     
-    def test_local_post(self):
-        automatedcommand = fake_automatedcommand_as_dict()
+    def test_post_with_admin_priviliges(self):
+        current_app.config.update(BYPASS_AUTH=False)
+
+        commands = {
+            'ping': (0,False),
+            'get-hk':(0,False),
+        }
+        for name, (num_args, is_danger) in commands.items():
+            c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
+        command1 = Telecommands.query.filter_by(command_name='ping').first()   
+
+        admin = add_user('admin', 'admin', is_admin=True)
+        auth_token = admin.encode_auth_token_by_id().decode()
+
+        automatedcommand = fake_automatedcommand_as_dict(command_id=command1.id)
         self.assertEqual(len(AutomatedCommands.query.all()), 0)
 
-        post_data = json.dumps(automatedcommand)
-        response = AutomatedCommandList().post(local_data=post_data)
-
-        self.assertEqual(respons[1], 201)
-        
+        with self.client:
+            post_data = json.dumps(automatedcommand)
+            kw_args = {'data': post_data, 'content_type': 'application/json'}
+            response = self.client.post(
+                '/api/automatedcommands',
+                headers={'Authorization': f'Bearer {auth_token}'}, 
+                **kw_args
+            )
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 201)
+            self.assertIn('success', response_data['status'])
+    
         num_automatedcommands = len(AutomatedCommands.query.all())
-        self.assertEqual(response.status_code, 201)
+        self.assertTrue(num_automatedcommands > 0)    
     
     def test_get_all_automatedcommands(self):
+        commands = {
+            'ping': (0,False),
+            'get-hk':(0,False),
+        }
+        for name, (num_args, is_danger) in commands.items():
+            c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
+        command1 = Telecommands.query.filter_by(command_name='ping').first()  
+
         for i in range(10):
-            automatedcommand = AutomatedCommands(**fake_automatedcommand_as_dict())
+            automatedcommand = AutomatedCommands(command_id=command1.id, priority=i)
             db.session.add(automatedcommand)
         db.session.commit()
 

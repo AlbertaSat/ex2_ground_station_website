@@ -1,5 +1,5 @@
 import json
-from flask import request
+from flask import request, g
 from flask import Blueprint
 from flask_restful import Resource, Api
 from marshmallow import ValidationError
@@ -158,6 +158,13 @@ class AutomatedCommandList(Resource):
         :returns: response_object, status_code
         :rtype: tuple (dict, int)
         """        
+
+        if not g.user.is_admin:
+            response_object = {
+                'status': 'fail',
+                'message': 'You do not have permission to create automated commands.'
+            }
+            return response_object, 403        
 
         if not local_data:
             post_data = request.get_json()
