@@ -774,7 +774,63 @@ class TestAutomatedCommandService(BaseTestCase):
     
         num_automatedcommands = len(AutomatedCommands.query.all())
         self.assertTrue(num_automatedcommands > 0)    
+
+    def test_delete_without_admin_priviliges(self):
+        current_app.config.update(BYPASS_AUTH=False)
+
+        commands = {
+            'ping': (0,False),
+            'get-hk':(0,False),
+        }
+        for name, (num_args, is_danger) in commands.items():
+            c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
+        command1 = Telecommands.query.filter_by(command_name='ping').first()   
+
+        user = add_user('user', 'user', is_admin=False)
+        auth_token = user.encode_auth_token_by_id().decode()
+
+        automatedcommand = AutomatedCommands(command_id=command1.id, priority=1)
+        db.session.add(automatedcommand)
+        db.session.commit()        
+
+        with self.client:
+            response = self.client.delete(
+                f'api/automatedcommands/{automatedcommand.id}',
+                headers={'Authorization': f'Bearer {auth_token}'}
+            )
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 403)
+            self.assertIn('fail', response_data['status'])
+            self.assertIn('You do not have permission to delete automated commands.', response_data['message'])        
     
+    def test_delete_with_admin_priviliges(self):
+        current_app.config.update(BYPASS_AUTH=False)
+
+        commands = {
+            'ping': (0,False),
+            'get-hk':(0,False),
+        }
+        for name, (num_args, is_danger) in commands.items():
+            c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
+        command1 = Telecommands.query.filter_by(command_name='ping').first()   
+
+        admin = add_user('admin', 'admin', is_admin=True)
+        auth_token = admin.encode_auth_token_by_id().decode()
+
+        automatedcommand = AutomatedCommands(command_id=command1.id, priority=1)
+        db.session.add(automatedcommand)
+        db.session.commit()        
+
+        with self.client:
+            response = self.client.delete(
+                f'api/automatedcommands/{automatedcommand.id}',
+                headers={'Authorization': f'Bearer {auth_token}'}
+            )
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(AutomatedCommands.query.filter_by(id=automatedcommand.id).first(), None)
+            self.assertIn('success', response_data['status']) 
+
     def test_get_all_automatedcommands(self):
         commands = {
             'ping': (0,False),
@@ -796,8 +852,16 @@ class TestAutomatedCommandService(BaseTestCase):
             self.assertEqual(len(automatedcommands), 10)
 
     def test_get_all_automatedcommands_limit_by(self):
+        commands = {
+            'ping': (0,False),
+            'get-hk':(0,False),
+        }
+        for name, (num_args, is_danger) in commands.items():
+            c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
+        command1 = Telecommands.query.filter_by(command_name='ping').first()  
+
         for i in range(10):
-            automatedcommand = AutomatedCommands(**fake_automatedcommand_as_dict())
+            automatedcommand = AutomatedCommands(command_id=command1.id, priority=i)
             db.session.add(automatedcommand)
         db.session.commit()
 
@@ -808,8 +872,16 @@ class TestAutomatedCommandService(BaseTestCase):
             self.assertEqual(len(automatedcommands), 3)    
 
     def test_get_all_automatedcommands_locally_limit_by(self):
+        commands = {
+            'ping': (0,False),
+            'get-hk':(0,False),
+        }
+        for name, (num_args, is_danger) in commands.items():
+            c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
+        command1 = Telecommands.query.filter_by(command_name='ping').first()  
+
         for i in range(10):
-            automatedcommand = AutomatedCommands(**fake_automatedcommand_as_dict())
+            automatedcommand = AutomatedCommands(command_id=command1.id, priority=i)
             db.session.add(automatedcommand)
         db.session.commit()
 

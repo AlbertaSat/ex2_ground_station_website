@@ -87,6 +87,13 @@ class AutomatedCommand(Resource):
         :rtype: tuple (dict, int)
         """        
 
+        if not g.user.is_admin:
+            response_object = {
+                'status': 'fail',
+                'message': 'You do not have permission to delete automated commands.'
+            }
+            return response_object, 403   
+
         all_commands = AutomatedCommands.query.order_by(AutomatedCommands.priority).all()
         automatedcommand = AutomatedCommands.query.filter_by(id=automatedcommand_id).first()
 
