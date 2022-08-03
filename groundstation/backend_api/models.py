@@ -23,6 +23,10 @@ class User(db.Model):
         self.slack_id = slack_id
         self.subscribed_to_slack = subscribed_to_slack
 
+    def regenerate_password_hash(self, password):
+        num_rounds = current_app.config.get('BCRYPT_LOG_ROUNDS')
+        self.password_hash = bcrypt.generate_password_hash(password, num_rounds).decode()
+        
     def verify_password(self, password):
         """Returns True if passes password is valid, else False
 
