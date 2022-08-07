@@ -1,5 +1,5 @@
 import json
-from flask import request
+from flask import request, g
 from flask import Blueprint
 from flask_restful import Resource, Api
 from marshmallow import ValidationError
@@ -29,6 +29,13 @@ class AutomatedCommand(Resource):
         :rtype: tuple (dict, int)
         """        
         
+        if not g.user.is_admin:
+            response_object = {
+                'status': 'fail',
+                'message': 'You do not have permission to patch automated commands.'
+            }
+            return response_object, 403  
+
         if not local_data:
             patch_data = request.get_json()
         else:
@@ -86,6 +93,13 @@ class AutomatedCommand(Resource):
         :returns: response_object, status_code
         :rtype: tuple (dict, int)
         """        
+
+        if not g.user.is_admin:
+            response_object = {
+                'status': 'fail',
+                'message': 'You do not have permission to delete automated commands.'
+            }
+            return response_object, 403   
 
         all_commands = AutomatedCommands.query.order_by(AutomatedCommands.priority).all()
         automatedcommand = AutomatedCommands.query.filter_by(id=automatedcommand_id).first()
@@ -158,6 +172,13 @@ class AutomatedCommandList(Resource):
         :returns: response_object, status_code
         :rtype: tuple (dict, int)
         """        
+
+        if not g.user.is_admin:
+            response_object = {
+                'status': 'fail',
+                'message': 'You do not have permission to create automated commands.'
+            }
+            return response_object, 403        
 
         if not local_data:
             post_data = request.get_json()
