@@ -69,10 +69,20 @@ const UserEntry = (props) => {
     }
 
     return (
-        <div style={{display: 'flex', justifyContent: 'space-between', marginLeft: '2%', marginRight: '2%'}}>
+        <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '5%', marginLeft: '2%', marginRight: '2%', backgroundColor:'rgb(242,242,242)'}}>
+            {props.user.is_admin &&
+            <div>
+                
+                <p style={{marginTop: '1%', paddingLeft:'10%'}}>
+                    Admin
+                </p>
+            </div>}
             {!isEditing ? 
-            <div style={{marginTop: '1%'}}>
-                <p>Username: {props.user.username}</p>{props.user.is_admin && <p>Admin</p>}
+            <div>
+                <p style={{marginTop: '5%'}}>
+                    Username: {props.user.username}
+                </p>
+                
             </div>:
             <div>
                 <div style={{display: 'flex', justifyContent: 'space-between'}}>
@@ -113,14 +123,14 @@ const UserEntry = (props) => {
             {!isEditing ? 
             <div style={{display: 'flex', justifyContent: 'space-between'}}>
                 <span>
-                    <Button style={{marginBottom:"1%", width: "70%"}}
+                    <Button style={{marginBottom:"1%", width: "100%"}}
                     color = "primary"
                     onClick={editHandler}
                     variant = 'outlined'>Edit</Button>
                 </span>
                 {!props.user.is_admin &&
                 <span>
-                    <Button style={{marginBottom:"1%", width: "85%"}}
+                    <Button style={{marginBottom:"1%", width: "92%", marginLeft:"8%"}}
                     color = "primary"
                     onClick={deleteHandler}
                     variant = 'outlined'>Delete</Button>
