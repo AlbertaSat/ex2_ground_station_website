@@ -83,8 +83,17 @@ class UserEntity(Resource):
             setattr(user, attribute, validated_data[attribute])
 
         user.regenerate_password_hash(post_data.get('password'))
-
-        db.session.commit()
+        try:
+            db.session.commit()
+        except exc.IntegrityError as e:
+            db.session.rollback()
+            # TODO: Probably remove dev_message
+            response_object = {
+                'status':'fail',
+                'message':'Username already taken!',
+                'dev_message':str(e.orig)
+            }
+            return response_object, 400
 
         response_object = {
             'status': 'success',
