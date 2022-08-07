@@ -4,12 +4,18 @@ from selenium import webdriver
 import urllib.request
 from datetime import datetime, timedelta
 
-from groundstation.backend_api.models import Housekeeping, PowerChannels, Telecommands
-from groundstation.tests.utils import fakeHousekeepingAsDict, fake_power_channel_as_dict
+from groundstation.backend_api.models import AdcsHK, AthenaHK, CharonHK, \
+    DfgmHK, EpsHK, Housekeeping, HyperionHK, IrisHK, NorthernSpiritHK, \
+    SbandHK, Telecommands, UhfHK
 from groundstation.backend_api.utils import add_telecommand, \
-add_flight_schedule, add_command_to_flightschedule, add_user, \
-add_arg_to_flightschedulecommand, add_message_to_communications, \
-add_passover
+    add_flight_schedule, add_command_to_flightschedule, add_user, \
+    add_arg_to_flightschedulecommand, add_message_to_communications, \
+    add_passover
+from groundstation.tests.utils import fake_adcs_hk_as_dict, \
+    fake_athena_hk_as_dict, fake_charon_hk_as_dict, fake_dfgm_hk_as_dict, \
+    fake_eps_hk_as_dict, fake_housekeeping_as_dict, fake_hyperion_hk_as_dict, \
+    fake_iris_hk_as_dict, fake_northern_spirit_hk_as_dict, \
+    fake_sband_hk_as_dict, fake_uhf_hk_as_dict
 
 
 app = create_app()
@@ -43,15 +49,24 @@ class BaseTestCaseFrontEnd(LiveServerTestCase):
         db.session.commit()
 
         # seed the database for testing
-        timestamp = datetime.fromtimestamp(1570749472)
+        timestamp = datetime.fromtimestamp(1659816386)
         for i in range(20):
-            housekeepingData = fakeHousekeepingAsDict(timestamp + timedelta(minutes=i*15))
-            housekeeping = Housekeeping(**housekeepingData)
+            housekeepingData = fake_housekeeping_as_dict(timestamp + timedelta(minutes=i*15), i)
 
-            for i in range(1, 25):
-                channel = fake_power_channel_as_dict(i)
-                p = PowerChannels(**channel)
-                housekeeping.channels.append(p)
+            housekeeping = Housekeeping(
+                **housekeepingData,
+                adcs=AdcsHK(**fake_adcs_hk_as_dict()),
+                athena=AthenaHK(**fake_athena_hk_as_dict()),
+                eps=EpsHK(**fake_eps_hk_as_dict()),
+                uhf=UhfHK(**fake_uhf_hk_as_dict()),
+                sband=SbandHK(**fake_sband_hk_as_dict()),
+                hyperion=HyperionHK(**fake_hyperion_hk_as_dict()),
+                charon=CharonHK(**fake_charon_hk_as_dict()),
+                dfgm=DfgmHK(**fake_dfgm_hk_as_dict()),
+                northern_spirit=NorthernSpiritHK(
+                    **fake_northern_spirit_hk_as_dict()),
+                iris=IrisHK(**fake_iris_hk_as_dict())
+            )
 
             db.session.add(housekeeping)
         db.session.commit()
