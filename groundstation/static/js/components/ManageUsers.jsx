@@ -14,17 +14,29 @@ const UserEntry = (props) => {
     //     paddingLeft:'1%',
     //     paddingRight:'1%',
     // };
-
+    function editHandler() {
+        setIsEditing(true);
+    }
+    function deleteHandler() {}
     return (
-        <div style={{display: 'flex', justifyContent: 'space-between'}}>
-            <div>
-                <p>Username: {props.user.username}</p><p>Password: {props.user.password}</p>{props.user.is_admin && <p>Admin</p>}
+        <div style={{display: 'flex', justifyContent: 'space-between', marginLeft: '2%', marginRight: '2%'}}>
+            <div style={{marginTop: '1%'}}>
+                <p>Username: {props.user.username}</p>{props.user.is_admin && <p>Admin</p>}
             </div>
             <div>
-                <Button style={{marginBottom:"1%"}}
-                color = "primary"
-                onClick={editHandler}
-                variant = 'outlined'>Edit</Button>
+                <span>
+                    <Button style={{marginBottom:"1%"}}
+                    color = "primary"
+                    onClick={editHandler}
+                    variant = 'outlined'>Edit</Button>
+                </span>
+                {!props.user.is_admin &&
+                <span>
+                    <Button style={{marginBottom:"1%"}}
+                    color = "primary"
+                    onClick={deleteHandler}
+                    variant = 'outlined'>Delete</Button>
+                </span>}
             </div>
         </div>
     )
@@ -42,12 +54,11 @@ class ManageUsers extends Component {
 
     handleRefresh(){
         const auth_token = sessionStorage.getItem('auth_token');
-        fetch('/api/users')
+        fetch('/api/users', {headers: {'Authorization':'Bearer '+ auth_token}})
             .then( response => {
                 return response.json();
             }).then(data => {
                 if (data.status == 'success'){
-                    console.log(data.current_user_id)
                     this.setState({
                         users: data.data.users,
                         is_empty: false
@@ -93,7 +104,7 @@ class ManageUsers extends Component {
                         color="primary"
                         href = "/adduser"
                         variant="outlined">
-                    <AddCircleIcon></AddCircleIcon>
+                    <AddCircleIcon viewBox="-2 -2 30 30"></AddCircleIcon>
                     Add User
                     </Button>
                 </div>

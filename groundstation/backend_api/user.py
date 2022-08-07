@@ -100,6 +100,7 @@ class UserList(Resource):
         super(UserList, self).__init__()
 
     @create_context
+    @login_required
     def get(self, local_args=None):
         """Endpoint for getting a list of users
 
@@ -109,11 +110,7 @@ class UserList(Resource):
         :returns: response_object, status_code
         :rtype: tuple (dict, int)
         """
-
-        response_object = {
-            'status':'success',
-            'data':{'users': []},
-        }
+        response_object = {}
         # if not local_args:
         #     query_limit = request.args.get('limit')
         # else:
@@ -121,9 +118,11 @@ class UserList(Resource):
 
         # users = User.query.order_by(User.id).limit(query_limit).all()
         
-        users = User.query.filter(User.creator_id==g.user.id).all()# g.user.id not working
-
-        response_object['data'] = {'users': [user.to_json for user in users]}
+        users = User.query.filter_by(creator_id=g.user.id).all()
+        response_object = {
+            'status': 'success', 
+            'data': {'users': [user.to_json() for user in users]}
+        }
 
         return response_object, 200
 
