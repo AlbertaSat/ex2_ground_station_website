@@ -163,10 +163,10 @@ def add_message_to_communications(timestamp, message, receiver, sender, is_queue
     db.session.commit()
     return message
 
-def add_passover(timestamp):
+def add_passover(aos_timestamp, los_timestamp):
     """Add a new passover to the database
     """
-    passover = Passover(timestamp=timestamp)
+    passover = Passover(aos_timestamp=aos_timestamp, los_timestamp=los_timestamp)
     db.session.add(passover)
     db.session.commit()
     return passover

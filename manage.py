@@ -35,8 +35,7 @@ from groundstation.backend_api.utils import add_telecommand, \
     add_arg_to_flightschedulecommand, add_message_to_communications, \
     add_passover
 
-from ex2_ground_station_software.src.groundStation.system import SystemValues
-server_prefixes = SystemValues().APP_DICT.keys()
+from ex2_ground_station_software.src.system import SatelliteNodes
 
 app = create_app()
 cli = FlaskGroup(create_app=create_app)
@@ -49,6 +48,7 @@ def recreate_db():
     db.drop_all()
     db.create_all()
     db.session.commit()
+
     print("Database has been dropped and recreated.")
 
 
@@ -72,12 +72,15 @@ def test(path=None):
 @cli.command('seed_db')
 @click.pass_context
 def seed_db(ctx):
-    """Imports commands and adds admin and non-admin user.
+    """Imports commands and adds admin and non-admin user as well as a base passover.
     """
     ctx.invoke(import_commands) # no telecommands added if import fails
 
     add_user(username='Admin_user', password='Admin_user', is_admin=True)
     add_user(username='albert', password='albert', is_admin=False)
+
+    now = datetime.utcnow()
+    add_passover(aos_timestamp=now - timedelta(seconds=60), los_timestamp=now)
 
 
 @cli.command('seed_db_example')
@@ -134,9 +137,9 @@ def seed_db_example(ctx):
     )
 
     now = datetime.utcnow()
-    add_passover(timestamp=now - timedelta(seconds=20))
+    add_passover(aos_timestamp=now - timedelta(seconds=20), los_timestamp=now)
     for i in range(1, 20):
-        p = add_passover(timestamp=now.replace(second=0) + timedelta(minutes=i*5))
+        p = add_passover(aos_timestamp=now + timedelta(minutes=i*5), los_timestamp=now + timedelta(minutes=i*5 + 1))
     print("Database has been seeded.")
 
 
@@ -242,9 +245,9 @@ def demo_db():
     )
 
     now = datetime.utcnow()
-    add_passover(timestamp=now - timedelta(seconds=10))
+    add_passover(aos_timestamp=now - timedelta(seconds=20), los_timestamp=now)
     for i in range(5):
-        add_passover(timestamp=now + timedelta(minutes=i*10))
+        p = add_passover(aos_timestamp=now + timedelta(minutes=i*5), los_timestamp=now + timedelta(minutes=i*5 + 1))
 
     print("Database has been seeded with demo data.")
 
@@ -281,8 +284,8 @@ def import_commands():
             num_arguments = len(re.findall(',', arguments)) + 1
 
         # make a copy of each command for each server
-        for prefix in server_prefixes:
-            c = add_telecommand(command_name=(prefix + '.' + command_name).lower(), num_arguments=num_arguments,
+        for prefix in SatelliteNodes:
+            c = add_telecommand(command_name=(prefix.name + '.' + command_name).lower(), num_arguments=num_arguments,
                                 is_dangerous=is_dangerous)
 
     print("Added new telecommands.")

@@ -56,7 +56,7 @@ def fake_passover_as_dict(timestamps):
     :param list(datetime.datetime) timestamps: The passover timestamps to use
     """
     return {
-        'passovers':[{'timestamp':str(timestamp)} for timestamp in timestamps]
+        'passovers':[{'aos_timestamp':str(timestamp), 'los_timestamp':str(timestamp)} for timestamp in timestamps]
     }
 
 def fake_message_as_dict(message='test', sender='tester', receiver='tester2'):
@@ -117,4 +117,13 @@ def fake_telecommand_as_dict(command_name='test', num_arguments='0', is_dangerou
     return {'command_name':command_name,
             'num_arguments':num_arguments,
             'is_dangerous':is_dangerous
+    }
+
+def fake_automatedcommand_as_dict(command_id=1, priority=0, args=[]):
+    return {
+        'command': {
+            'command_id': command_id
+        },
+        'priority': priority,
+        'args': []
     }

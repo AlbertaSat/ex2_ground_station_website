@@ -8,25 +8,30 @@ Prior to starting, please [install docker](https://www.docker.com/get-started) f
 ## Developer Installation
 This installation method is for developers who wish to see their website and API changes live as they develop.
 
-1. Clone this repository and enter it:
+1. Clone this repository and enter it by running:
     ```bash
     git clone git@github.com:AlbertaSat/ex2_ground_station_website.git
     cd ex2_ground_station_website
     ```
 
-2. Create a copy of `keys-example.sh` and name it `keys.sh`
+2. Clone this repository's submodules (ex2_ground_station_software/ and libcsp/) by running:
+    ```bash
+    git submodule update --init --recursive
+    ```
+
+3. Create a copy of `keys-example.sh` and name it `keys.sh`
     ```bash
     cp keys-example.sh keys.sh
     ```
    Feel free to change any of the values inside `keys.sh` but their default values works fine. Note that `SLACK_TOKEN` is used in `automation.py` as a way of notifying users through Slack when a satellite passover occurs. Information on using the Slack API can be found [here](https://api.slack.com/).
 
-3. Start the development environment by running:
+4. Start the development environment by running:
     ```bash
     docker-compose up
     ```
    It may take a while for the first time but subsequent runs will be much quicker.
 
-4. Visit [http://localhost:8000](http://localhost:8000) to view the webpage
+5. Visit [http://localhost:8000](http://localhost:8000) to view the webpage
 
    Note that on Safari and iOS, timestamps render improperly so it is recommended that you use a Chromium browser (Chrome, Edge, etc.) or Firefox.
 
@@ -82,7 +87,12 @@ These instructions assume that the production server is running Ubuntu 20.04 wit
     cd ex2_ground_station_website
     ```
 
-2. Create a copy of `keys-example.sh` and name it `keys.sh`
+2. Clone this repository's submodules (ex2_ground_station_software/ and libcsp/) by running:
+    ```bash
+    git submodule update --init --recursive
+    ```
+
+3. Create a copy of `keys-example.sh` and name it `keys.sh`
     ```bash
     cp keys-example.sh keys.sh
     ```
@@ -90,26 +100,26 @@ These instructions assume that the production server is running Ubuntu 20.04 wit
 
    Note that `SLACK_TOKEN` is used in `automation.py` as a way of notifying users through Slack when a satellite passover occurs. Information on using the Slack API can be found [here](https://api.slack.com/).
 
-3. Set the system's environment variables by running:
+4. Set the system's environment variables by running:
     ```bash
     source ./env.sh
     source ./keys.sh
     ```
 
-4. Inside the repo, create a folder called `db_backups` and give initialize its permissions as followed:
+5. Inside the repo, create a folder called `db_backups` and give initialize its permissions as followed:
     ```bash
     mkdir db_backups
     sudo chown -R 999:999 db_backups/
     ```
 
-5. Create a Python virtual environment and install the website's Python dependencies by running:
+6. Create a Python virtual environment and install the website's Python dependencies by running:
     ```bash
     python3 -m venv .venv # Creates python virtual environment in .venv/
     source .venv/bin/activate # Activates virtual environment
     pip install -r requirements.txt # Installs dependencies
     ```
 
-6. Start the production environment by running:
+7. Start the production environment by running:
     ```bash
     sudo -E docker-compose -f docker-compose.prod.yml up -d
     ```
@@ -118,7 +128,7 @@ These instructions assume that the production server is running Ubuntu 20.04 wit
    sudo docker-compose logs -f -t
    ```
 
-7. Ensure that port 80 is port-forwarded on the web server and you can now access the website by visiting [http://localhost](http://localhost) if using a browser on the webserver or by visiting `http://<server ip here>` on a different device
+8. Ensure that port 80 is port-forwarded on the web server and you can now access the website by visiting [http://localhost](http://localhost) if using a browser on the webserver or by visiting `http://<server ip here>` on a different device
 
 ### Updating Production
 When there is a new update to master, follow these instructions to update the server:

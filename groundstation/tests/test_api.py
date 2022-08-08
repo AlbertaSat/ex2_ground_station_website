@@ -7,13 +7,16 @@ from groundstation.tests.base import BaseTestCase
 from groundstation import db
 
 from groundstation.backend_api.models import Housekeeping, FlightSchedules, \
-    Passover, Telecommands, FlightScheduleCommands, Communications, PowerChannels
+    Passover, Telecommands, FlightScheduleCommands, Communications, PowerChannels, \
+    AutomatedCommands
 from groundstation.tests.utils import fakeHousekeepingAsDict, \
     fake_flight_schedule_as_dict, fake_passover_as_dict, \
     fake_patch_update_as_dict, fake_telecommand_as_dict, \
-    fake_message_as_dict, fake_user_as_dict, fake_power_channel_as_dict
+    fake_message_as_dict, fake_user_as_dict, fake_power_channel_as_dict, \
+    fake_automatedcommand_as_dict
 from groundstation.backend_api.housekeeping import HousekeepingLogList
 from groundstation.backend_api.flightschedule import FlightScheduleList
+from groundstation.backend_api.automatedcommand import AutomatedCommandList
 from groundstation.backend_api.passover import PassoverList
 from groundstation.backend_api.telecommand import Telecommand, TelecommandList
 from groundstation.backend_api.utils import add_telecommand, \
@@ -706,6 +709,255 @@ class TestFlightScheduleService(BaseTestCase):
             response_data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
 
+#########################################################################
+#Test automated command sequence model
+class TestAutomatedCommandService(BaseTestCase):
+    
+    def test_post_without_admin_priviliges(self):
+        current_app.config.update(BYPASS_AUTH=False)
+
+        commands = {
+            'ping': (0,False),
+            'get-hk':(0,False),
+        }
+        for name, (num_args, is_danger) in commands.items():
+            c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
+        command1 = Telecommands.query.filter_by(command_name='ping').first()   
+
+        user = add_user('user', 'user', is_admin=False)
+        auth_token = user.encode_auth_token_by_id().decode()
+
+        automatedcommand = fake_automatedcommand_as_dict(command_id=command1.id)
+        self.assertEqual(len(AutomatedCommands.query.all()), 0)
+
+        with self.client:
+            post_data = json.dumps(automatedcommand)
+            kw_args = {'data': post_data, 'content_type': 'application/json'}
+            response = self.client.post(
+                '/api/automatedcommands',
+                headers={'Authorization': f'Bearer {auth_token}'}, 
+                **kw_args
+            )
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 403)
+            self.assertIn('fail', response_data['status'])
+            self.assertIn('You do not have permission to create automated commands.', response_data['message'])
+    
+    def test_post_with_admin_priviliges(self):
+        current_app.config.update(BYPASS_AUTH=False)
+
+        commands = {
+            'ping': (0,False),
+            'get-hk':(0,False),
+        }
+        for name, (num_args, is_danger) in commands.items():
+            c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
+        command1 = Telecommands.query.filter_by(command_name='ping').first()   
+
+        admin = add_user('admin', 'admin', is_admin=True)
+        auth_token = admin.encode_auth_token_by_id().decode()
+
+        automatedcommand = fake_automatedcommand_as_dict(command_id=command1.id)
+        self.assertEqual(len(AutomatedCommands.query.all()), 0)
+
+        with self.client:
+            post_data = json.dumps(automatedcommand)
+            kw_args = {'data': post_data, 'content_type': 'application/json'}
+            response = self.client.post(
+                '/api/automatedcommands',
+                headers={'Authorization': f'Bearer {auth_token}'}, 
+                **kw_args
+            )
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 201)
+            self.assertIn('success', response_data['status'])
+    
+        num_automatedcommands = len(AutomatedCommands.query.all())
+        self.assertTrue(num_automatedcommands > 0)    
+
+    def test_patch_without_admin_priviliges(self):
+        current_app.config.update(BYPASS_AUTH=False)
+
+        commands = {
+            'ping': (0,False),
+            'get-hk':(0,False),
+        }
+        for name, (num_args, is_danger) in commands.items():
+            c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
+        command1 = Telecommands.query.filter_by(command_name='ping').first() 
+        command2 = Telecommands.query.filter_by(command_name='get-hk').first()     
+
+        user = add_user('user', 'user', is_admin=False)
+        auth_token = user.encode_auth_token_by_id().decode()
+
+        automatedcommand = AutomatedCommands(command_id=command1.id, priority=1)
+        db.session.add(automatedcommand)
+        db.session.commit()      
+
+        patch_update = {'command': {'command_id': command2.id}, 'priority': 2, 'args': []}
+        post_data = json.dumps(patch_update)
+
+        with self.client:
+            response = self.client.patch(
+                f'api/automatedcommands/{automatedcommand.id}',
+                headers={'Authorization': f'Bearer {auth_token}'},
+                data=post_data,
+                content_type='application/json'
+            )
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 403)
+            self.assertIn('fail', response_data['status'])
+            self.assertIn('You do not have permission to patch automated commands.', response_data['message'])              
+
+    def test_patch_with_admin_priviliges(self):
+        current_app.config.update(BYPASS_AUTH=False)
+
+        commands = {
+            'ping': (0,False),
+            'get-hk':(0,False),
+        }
+        for name, (num_args, is_danger) in commands.items():
+            c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
+        command1 = Telecommands.query.filter_by(command_name='ping').first() 
+        command2 = Telecommands.query.filter_by(command_name='get-hk').first()     
+
+        admin = add_user('admin', 'admin', is_admin=True)
+        auth_token = admin.encode_auth_token_by_id().decode()
+
+        automatedcommand = AutomatedCommands(command_id=command1.id, priority=1)
+        db.session.add(automatedcommand)
+        db.session.commit()      
+
+        patch_update = {'command': {'command_id': command2.id}, 'priority': 2, 'args': []}
+        post_data = json.dumps(patch_update)
+
+        with self.client:
+            response = self.client.patch(
+                f'api/automatedcommands/{automatedcommand.id}',
+                headers={'Authorization': f'Bearer {auth_token}'},
+                data=post_data,
+                content_type='application/json'
+            )
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response_data['data']['command']['command_id'], command2.id)
+            self.assertEqual(response_data['data']['priority'], 2)
+            self.assertIn('success', response_data['status'])
+
+    def test_delete_without_admin_priviliges(self):
+        current_app.config.update(BYPASS_AUTH=False)
+
+        commands = {
+            'ping': (0,False),
+            'get-hk':(0,False),
+        }
+        for name, (num_args, is_danger) in commands.items():
+            c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
+        command1 = Telecommands.query.filter_by(command_name='ping').first()   
+
+        user = add_user('user', 'user', is_admin=False)
+        auth_token = user.encode_auth_token_by_id().decode()
+
+        automatedcommand = AutomatedCommands(command_id=command1.id, priority=1)
+        db.session.add(automatedcommand)
+        db.session.commit()        
+
+        with self.client:
+            response = self.client.delete(
+                f'api/automatedcommands/{automatedcommand.id}',
+                headers={'Authorization': f'Bearer {auth_token}'}
+            )
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 403)
+            self.assertIn('fail', response_data['status'])
+            self.assertIn('You do not have permission to delete automated commands.', response_data['message'])        
+    
+    def test_delete_with_admin_priviliges(self):
+        current_app.config.update(BYPASS_AUTH=False)
+
+        commands = {
+            'ping': (0,False),
+            'get-hk':(0,False),
+        }
+        for name, (num_args, is_danger) in commands.items():
+            c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
+        command1 = Telecommands.query.filter_by(command_name='ping').first()   
+
+        admin = add_user('admin', 'admin', is_admin=True)
+        auth_token = admin.encode_auth_token_by_id().decode()
+
+        automatedcommand = AutomatedCommands(command_id=command1.id, priority=1)
+        db.session.add(automatedcommand)
+        db.session.commit()        
+
+        with self.client:
+            response = self.client.delete(
+                f'api/automatedcommands/{automatedcommand.id}',
+                headers={'Authorization': f'Bearer {auth_token}'}
+            )
+            response_data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(AutomatedCommands.query.filter_by(id=automatedcommand.id).first(), None)
+            self.assertIn('success', response_data['status']) 
+
+    def test_get_all_automatedcommands(self):
+        commands = {
+            'ping': (0,False),
+            'get-hk':(0,False),
+        }
+        for name, (num_args, is_danger) in commands.items():
+            c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
+        command1 = Telecommands.query.filter_by(command_name='ping').first()  
+
+        for i in range(10):
+            automatedcommand = AutomatedCommands(command_id=command1.id, priority=i)
+            db.session.add(automatedcommand)
+        db.session.commit()
+
+        with self.client:
+            response = self.client.get('/api/automatedcommands')
+            response_data = json.loads(response.data.decode())
+            automatedcommands = response_data['data']['automatedcommands']
+            self.assertEqual(len(automatedcommands), 10)
+
+    def test_get_all_automatedcommands_limit_by(self):
+        commands = {
+            'ping': (0,False),
+            'get-hk':(0,False),
+        }
+        for name, (num_args, is_danger) in commands.items():
+            c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
+        command1 = Telecommands.query.filter_by(command_name='ping').first()  
+
+        for i in range(10):
+            automatedcommand = AutomatedCommands(command_id=command1.id, priority=i)
+            db.session.add(automatedcommand)
+        db.session.commit()
+
+        with self.client:
+            response = self.client.get('/api/automatedcommands?limit=3')
+            response_data = json.loads(response.data.decode())
+            automatedcommands = response_data['data']['automatedcommands']
+            self.assertEqual(len(automatedcommands), 3)    
+
+    def test_get_all_automatedcommands_locally_limit_by(self):
+        commands = {
+            'ping': (0,False),
+            'get-hk':(0,False),
+        }
+        for name, (num_args, is_danger) in commands.items():
+            c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
+        command1 = Telecommands.query.filter_by(command_name='ping').first()  
+
+        for i in range(10):
+            automatedcommand = AutomatedCommands(command_id=command1.id, priority=i)
+            db.session.add(automatedcommand)
+        db.session.commit()
+
+        response = AutomatedCommandList().get(local_args={'limit':3})
+        self.assertEqual(response[1], 200)
+        self.assertEqual(len(response[0]['data']['automatedcommands']), 3)
+
 
 
 class TestPassoverService(BaseTestCase):
@@ -752,7 +1004,7 @@ class TestPassoverService(BaseTestCase):
             if i == 1:
                 correct_next_passover = d
 
-            p = Passover(timestamp=d)
+            p = Passover(aos_timestamp=d, los_timestamp=d)
             db.session.add(p)
 
         db.session.commit()
@@ -763,7 +1015,7 @@ class TestPassoverService(BaseTestCase):
             self.assertEqual(response.status_code, 200)
             self.assertTrue('next_passovers' in response_data['data'].keys())
             self.assertEqual(len(response_data['data']['next_passovers']), 1)
-            self.assertEqual(str(correct_next_passover).split('+')[0], response_data['data']['next_passovers'][0]['timestamp'])
+            self.assertEqual(str(correct_next_passover).split('+')[0], response_data['data']['next_passovers'][0]['aos_timestamp'])
 
     def test_get_next_5_passovers(self):
 
@@ -777,7 +1029,7 @@ class TestPassoverService(BaseTestCase):
             if i == 1:
                 correct_next_passover = d
 
-            p = Passover(timestamp=d)
+            p = Passover(aos_timestamp=d, los_timestamp=d)
             db.session.add(p)
 
         db.session.commit()
@@ -788,7 +1040,7 @@ class TestPassoverService(BaseTestCase):
             self.assertEqual(response.status_code, 200)
             self.assertTrue('next_passovers' in response_data['data'].keys())
             self.assertEqual(len(response_data['data']['next_passovers']), 5)
-            self.assertEqual(str(correct_next_passover).split('+')[0], response_data['data']['next_passovers'][0]['timestamp'])
+            self.assertEqual(str(correct_next_passover).split('+')[0], response_data['data']['next_passovers'][0]['aos_timestamp'])
 
     def test_get_most_recent_passover(self):
 
@@ -803,7 +1055,7 @@ class TestPassoverService(BaseTestCase):
             if i == -1:
                 correct_most_recent_passover = d
 
-            p = Passover(timestamp=d)
+            p = Passover(aos_timestamp=d, los_timestamp=d)
             db.session.add(p)
 
         db.session.commit()
@@ -813,7 +1065,7 @@ class TestPassoverService(BaseTestCase):
             response_data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertTrue('most_recent_passover' in response_data['data'].keys())
-            self.assertEqual(str(correct_most_recent_passover).split('+')[0], response_data['data']['most_recent_passover']['timestamp'])
+            self.assertEqual(str(correct_most_recent_passover).split('+')[0], response_data['data']['most_recent_passover']['aos_timestamp'])
 
     def test_get_next_passover_when_none_exist(self):
 
@@ -821,7 +1073,7 @@ class TestPassoverService(BaseTestCase):
         offset = datetime.timedelta(minutes=90)
         for i in range(-10, -5, 1):
             d = current_time + i * offset
-            p = Passover(timestamp=d)
+            p = Passover(aos_timestamp=d, los_timestamp=d)
             db.session.add(p)
 
         db.session.commit()
