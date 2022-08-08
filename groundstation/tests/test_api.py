@@ -8,14 +8,15 @@ from groundstation import db
 from groundstation.backend_api.models import AdcsHK, AthenaHK, CharonHK, \
     DfgmHK, EpsHK, Housekeeping, FlightSchedules, HyperionHK, IrisHK, \
     NorthernSpiritHK, Passover, SbandHK, Telecommands, FlightScheduleCommands, \
-    Communications, UhfHK
+    Communications, UhfHK, AutomatedCommands
 from groundstation.tests.utils import fake_adcs_hk_as_dict, \
     fake_athena_hk_as_dict, fake_charon_hk_as_dict, fake_dfgm_hk_as_dict, \
     fake_eps_hk_as_dict, fake_housekeeping_as_dict, \
     fake_flight_schedule_as_dict, fake_hyperion_hk_as_dict, \
     fake_iris_hk_as_dict, fake_northern_spirit_hk_as_dict, fake_passover_as_dict, \
     fake_patch_update_as_dict, fake_sband_hk_as_dict, fake_telecommand_as_dict, \
-    fake_message_as_dict, fake_uhf_hk_as_dict, fake_user_as_dict
+    fake_message_as_dict, fake_uhf_hk_as_dict, fake_user_as_dict, \
+    fake_automatedcommand_as_dict
 from groundstation.backend_api.housekeeping import HousekeepingLogList
 from groundstation.backend_api.flightschedule import FlightScheduleList
 from groundstation.backend_api.automatedcommand import AutomatedCommandList
