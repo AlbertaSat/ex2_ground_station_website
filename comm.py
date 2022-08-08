@@ -271,13 +271,6 @@ def communication_loop(gs=None, cli_gs=None):
 
         time.sleep(5)
 
-def import_ground_station_software():
-    try:
-        sys.path.append(os.path.join(sys.path[0], 'ex2_ground_station_software', 'src'))
-        from groundStation import GroundStation
-        from options import optionsFactory
-    except ImportError:
-        print('Cannot import ground station software!')
 
 def main():
     # Terminate after 10 minutes
@@ -298,7 +291,9 @@ if __name__ == '__main__':
         print('Detected CLI arguments for Ground Station Software!')
         print('Automatically setting mode to satellite...')
         mode = Connection.SATELLITE
-        import_ground_station_software()
+        sys.path.append(os.path.join(sys.path[0], 'ex2_ground_station_software', 'src'))
+        from groundStation import GroundStation
+        from options import optionsFactory
     else:
         if input('Would like to communicate with the satellite simulator (if not, the program '
                  'will attempt to communicate with the satellite) [Y/n]: ').strip() in ('Y', 'y'):
@@ -306,6 +301,8 @@ if __name__ == '__main__':
             import satellite_simulator.antenna as antenna
         else:
             mode = Connection.SATELLITE
-            import_ground_station_software()
+            sys.path.append(os.path.join(sys.path[0], 'ex2_ground_station_software', 'src'))
+            from groundStation import GroundStation
+            from options import optionsFactory
 
     main()
