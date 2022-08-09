@@ -3,7 +3,6 @@ The Communications Module is responsible for sending and retrieving data
 with the satellite (or the simulator).
 """
 
-from ast import Import
 import time
 import json
 import signal
@@ -20,6 +19,11 @@ class Connection(Enum):
     SIMULATOR = 1
     SATELLITE = 2
 
+class FSStatus(Enum):
+    QUEUED = 1
+    DRAFT = 2
+    UPLOADED = 3
+
 
 # Global variables
 mode = None
@@ -34,53 +38,44 @@ def handler(signum, frame):
     exit()
 
 
-def handle_message(message):
+def change_fs_status(fs_id, new_status, execution_time=None, error=0):
     """
-    Messages sent to comm will pass through this function, essentially acting
-    as a decorator.
+    Given a flightschedule, change its status
 
-    TODO: this needs to be implmented to support flight schedule functionality.
+    :param fs_id: The id of the flightschedule to change
+    :param new_status: The new status of the flightschedule.
+    :param execution_time: The execution time of the flightschedule.
+    :param error: The error code returned after upload (0 means success).
 
-    :param str message: The incoming message to comm
-
-    :returns: Return is dependent on the handler function triggered
-    :rtype: Optional
+    :returns: A dict representing the newly patched flightschedule
     """
-    # Groundstation functions with additional capabilities rather than just sending a string
-    gs_commands = {
-        'upload-fs': upload_fs
+    if execution_time is None:
+        fs = flightschedule_patch.get(fs_id)
+        execution_time = fs[0]['data']['execution_time']
+    patch_data = {
+        'status': new_status,
+        'execution_time': execution_time,
+        'commands': [],
+        'error': error
     }
-
-    handle = gs_commands.get(message)
-
-    if handle:
-        return handle()
-    else:
-        return message
+    return flightschedule_patch.patch(
+        fs_id, local_data=json.dumps(patch_data))[0]['data']
 
 
 def get_queued_fs():
     """
-    If there is no queued flightschedule log it, otherwise, set its status
-    to uploaded and send something to the flight schedule (this may be handled
-    differently right now we are blindly trusting that a sent flightschedule
-    is uploaded) and no data of the flight schedule is actually sent at the
-    moment.
+    Fetches a queued flightschedule.
 
-    TODO: this needs to be implemented properly.
+    The website's API logic only allowes for one flightschedule to be queued
+    at any given time.
 
-    :returns: A dict representing the flight schedule object
+    :returns: A dict representing the queued flightschedule object
     """
     local_args = {'limit': 1, 'queued': 1}
     fs = flightschedule_list.get(local_args=local_args)
 
     if len(fs[0]['data']['flightschedules']) >= 1:
-        fs_id = fs[0]['data']['flightschedules'][0]['flightschedule_id']
-        fs_ex = fs[0]['data']['flightschedules'][0]['execution_time']
-        local_data = {'status': 3, 'execution_time': fs_ex, 'commands': []}
-
-        return flightschedule_patch.patch(
-            fs_id, local_data=json.dumps(local_data))[0]['data']
+        return fs[0]['data']['flightschedules'][0]
 
     return None
 
@@ -98,14 +93,10 @@ def reset_fs_status_except_uploaded(uploadedID):
 
     for prev_fs in prev_uploaded[0]['data']['flightschedules']:
         if prev_fs['flightschedule_id'] != uploadedID:
-            patch_data = {
-                'status': 2,
-                'execution_time': prev_fs['execution_time'],
-                'commands': []
-            }
-            flightschedule_patch.patch(
+            change_fs_status(
                 prev_fs['flightschedule_id'],
-                local_data=json.dumps(patch_data)
+                FSStatus.DRAFT.value,
+                prev_fs['execution_time']
             )
 
 
@@ -170,6 +161,32 @@ def generate_fs_file(fs):
     return file_name
 
 
+def send_flightschedules(gs):
+    queued_fs = get_queued_fs()
+    if queued_fs is not None:
+        if mode == Connection.SIMULATOR:
+            resp = send_to_simulator(queued_fs)
+        elif mode == Connection.SATELLITE:
+            file_path = generate_fs_file(queued_fs)
+            resp = send_to_satellite(
+                gs, 'ex2.scheduler.set_schedule({})'.format(file_path))
+            save_response(resp)
+            if resp['err'] == 0:
+                change_fs_status(
+                    queued_fs['flightschedule_id'],
+                    FSStatus.UPLOADED.value,
+                    queued_fs['execution_time']
+                )
+                reset_fs_status_except_uploaded(queued_fs['flightschedule_id'])
+            else:
+                change_fs_status(
+                    queued_fs['flightschedule_id'],
+                    FSStatus.DRAFT.value,
+                    queued_fs['execution_time'],
+                    resp['err']
+                )
+
+
 def send_to_simulator(msg):
     try:
         return antenna.send(json.dumps(msg))
@@ -214,18 +231,9 @@ def communication_loop(gs=None, cli_gs=None):
 
     # Check communication table every minute
     while True:
-        # Upload any queued flight schedules
-        queued_fs = get_queued_fs()
-        if queued_fs is not None:
-            if mode == Connection.SIMULATOR:
-                resp = send_to_simulator(queued_fs)
-            elif mode == Connection.SATELLITE:
-                fs_file_path = generate_fs_file(queued_fs)
-                # TODO: Upload fs file to satellite via ground station
-                # and handle acknowledgement
-                resp = fs_file_path
-                save_response("Generated: " + resp)
-                reset_fs_status_except_uploaded(queued_fs['flightschedule_id'])
+        if mode == Connection.SATELLITE:
+            # Upload any queued flight schedules
+            send_flightschedules(gs)
 
         # Get queued communications
         messages = communication_list.get(local_data=request_data)[0]
