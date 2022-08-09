@@ -39,11 +39,14 @@ const UserEntry = (props) => {
           }
 
         const post_data = {
-            password: password
+            username: username,
+            password: password,
+            id: props.user.id
         }
         // right now the patch endpoint patches logged-in user using auth token
         // how to patch any user??
         // also when is encode_auth_token called?
+        // also drop-down getting too long
         fetch('/api/users/' + auth_token, {
             method: 'PATCH',
             headers: {

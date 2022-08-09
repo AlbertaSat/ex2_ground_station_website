@@ -49,10 +49,11 @@ class UserEntity(Resource):
 
     @create_context
     @login_required
-    def patch(self, auth_token, local_data=None):
+    def patch(self, auth_token=None, local_data=None):
         """ Endpoint for patching a specific user's data
 
         :param int auth_token: The auth_token of the user to patch
+        :param int user_id: id of user to patch, if admin user is patching another user
         :param json_string local_data: This should be used in place of the POST body that would be used through HTTP, used for local calls.
 
         :returns: response_object, status_code
@@ -63,7 +64,19 @@ class UserEntity(Resource):
         else:
             post_data = json.loads(local_data)
 
-        user = User.query.filter_by(id=User.decode_auth_token(auth_token)).first()
+        other_user_id = post_data.get('id')
+
+        if other_user_id:
+            if not g.user.is_admin:
+                response_object = {
+                    'status':'fail',
+                    'message':'You do not have permission to create users.'
+                }
+                return response_object, 403
+            else:
+                user = User.query.filter_by(id=other_user_id).first()
+        else:
+            user = User.query.filter_by(id=User.decode_auth_token(auth_token)).first()
 
         if user is None:
             response_object = {'status': 'fail', 'message': 'User does not exist'}
