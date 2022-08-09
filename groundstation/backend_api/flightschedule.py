@@ -89,6 +89,11 @@ class Flightschedule(Resource):
 
         flightschedule.status = validated_data['status']
         flightschedule.execution_time = validated_data['execution_time']
+        flightschedule.error = validated_data['error']
+
+        # Automatically set failed uploads back to draft, if not done so already
+        if validated_data['error'] != 0 and validated_data['status'] != 2:
+            flightschedule.status = 2
 
         # go through the operations for this patch, inspired by the parse JSON syntax
         # we have replace, add, or remove as valid operations on the flight schedule

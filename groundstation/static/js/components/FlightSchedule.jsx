@@ -192,6 +192,7 @@ class FlightSchedule extends Component {
       status: this.state.thisFlightScheduleStatus,
       execution_time: this.state.thisExecutionTime,
       commands: this.state.thisFlightscheduleCommands,
+      error: 0
     };
 
     let url = this.state.editFlight

@@ -10,9 +10,9 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(128), unique=True)
     password_hash = db.Column(db.String(128))
-    is_admin = db.Column(db.Boolean, server_default="0", nullable=False)
+    is_admin = db.Column(db.Boolean, server_default='0', nullable=False)
     slack_id = db.Column(db.String(128), nullable=True, unique=True)
-    subscribed_to_slack = db.Column(db.Boolean, server_default="0")
+    subscribed_to_slack = db.Column(db.Boolean, server_default='0')
     blacklisted_tokens = db.relationship('BlacklistedTokens', backref='user', lazy=True, cascade='all, delete-orphan')
 
     def __init__(self, username, password, is_admin=False, slack_id=None, subscribed_to_slack=False):
@@ -26,7 +26,7 @@ class User(db.Model):
     def regenerate_password_hash(self, password):
         num_rounds = current_app.config.get('BCRYPT_LOG_ROUNDS')
         self.password_hash = bcrypt.generate_password_hash(password, num_rounds).decode()
-        
+
     def verify_password(self, password):
         """Returns True if passes password is valid, else False
 
@@ -197,6 +197,7 @@ class FlightSchedules(db.Model):
     execution_time = db.Column(db.DateTime)
     # status is an integer, where 1=queued, 2=draft, 3=uploaded
     status = db.Column(db.Integer)
+    error = db.Column(db.Integer, nullable=False, server_default='0')
     commands = db.relationship('FlightScheduleCommands', backref='flightschedule', lazy=True, cascade='all')
 
     def to_json(self):
@@ -207,6 +208,7 @@ class FlightSchedules(db.Model):
             'creation_date': str(self.creation_date),
             'upload_date': str(self.upload_date),
             'status': self.status,
+            'error': self.error,
             'execution_time': self.execution_time.isoformat(),
             'commands': [command.to_json() for command in self.commands]
         }
@@ -294,7 +296,7 @@ class Communications(db.Model):
     timestamp = db.Column(db.DateTime, nullable=False)      # time at which the command was appended to the table
     sender = db.Column(db.String, nullable=False)           # who sent the command (comm/react/command) as a note, the comm can send commands as responses from the satellite
     receiver = db.Column(db.String, nullable=False)         # who the intended recipient of the command is (comm/react web page/command line)
-    is_queued = db.Column(db.Boolean, server_default="0", nullable=False) # whether the command is queued to be sent to the satellite or not
+    is_queued = db.Column(db.Boolean, server_default='0', nullable=False) # whether the command is queued to be sent to the satellite or not
 
     # TODO: connecting satellite responses to sent telecommands
     #response = db.Column(db.Integer, db.ForeignKey('communications.id'))

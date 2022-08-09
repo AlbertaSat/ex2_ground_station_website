@@ -77,6 +77,9 @@ class FlightScheduleValidator(Schema):
         FlightScheduleCommandValidator, many=True, required=True)
     execution_time = fields.DateTime(format='iso', required=True)
 
+    # Prevents posting a flight schedule with an error
+    error = fields.Integer(required=True, validate=validate.Equal(0))
+
 
 class FlightSchedulePatchCommandValidator(Schema):
     """Validator for patching (editing) a flightschedule's commands
@@ -98,6 +101,7 @@ class FlightSchedulePatchValidator(Schema):
     commands = fields.Nested(
         FlightSchedulePatchCommandValidator, many=True, required=True)
     execution_time = fields.DateTime(format='iso', required=True)
+    error = fields.Integer(required=True)
 
 
 class PassoverValidator(Schema):
