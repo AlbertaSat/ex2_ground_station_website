@@ -16,12 +16,12 @@ after running `source ./update.sh` and building libcsp in this repo.
 # FORMAT:
 # (command, expected server, expected port, expected buffer)
 commands = [
-    ("ex2.time_management.get_time()", 1, 8, 10, b'\n'),
-    ("ari.time_management.set_time(1234567890)", 3, 8, 11, b'\x0bI\x96\x02\xd2'),
-    ("yuk.logger.get_file()", 2, 13, 0, b'\x00'),
-    ("eps.time_management.get_eps_time()", 4, 8, 0, b'\x00'),
-    ("eps.control.single_output_control(10,0,0)", 4, 14, 0, b'\x00\n\x00\x00\x00'),
-    ("eps.configuration.get_active_config(136,2)", 4, 9, 0, b'\x00\x88\x00\x02'),
+    ("ex2.time_management.get_time()", 1, 8, b'\n'),
+    ("ari.time_management.set_time(1234567890)", 3, 8, b'\x0bI\x96\x02\xd2'),
+    ("yuk.logger.get_file()", 2, 13, b'\x00'),
+    ("eps.time_management.get_eps_time()", 4, 8, b'\x00'),
+    ("eps.control.single_output_control(10,0,0)", 4, 14, b'\x00\n\x00\x00\x00'),
+    ("eps.configuration.get_active_config(136,2)", 4, 9, b'\x00\x88\x00\x02'),
 ]
 
 class Options():
@@ -51,9 +51,7 @@ class TestGroundstation(BaseTestCase):
                 with self.subTest():
                     self.assertEqual(resp['dport'], c[2])
                 with self.subTest():
-                    self.assertEqual(resp['subservice'], c[3])
-                with self.subTest():
-                    self.assertEqual(resp['args'], c[4])
+                    self.assertEqual(resp['args'], c[3])
 
 if __name__ == '__main__':
     unittest.main()
