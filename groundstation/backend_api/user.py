@@ -49,11 +49,10 @@ class UserEntity(Resource):
 
     @create_context
     @login_required
-    def patch(self, auth_token=None, local_data=None):
+    def patch(self, auth_token, local_data=None):
         """ Endpoint for patching a specific user's data
 
         :param int auth_token: The auth_token of the user to patch
-        :param int user_id: id of user to patch, if admin user is patching another user
         :param json_string local_data: This should be used in place of the POST body that would be used through HTTP, used for local calls.
 
         :returns: response_object, status_code
@@ -64,7 +63,7 @@ class UserEntity(Resource):
         else:
             post_data = json.loads(local_data)
 
-        other_user_id = post_data.get('id')
+        other_user_id = post_data.get('id') # has to be called id in request JSON for data to be validated
 
         if other_user_id:
             if not g.user.is_admin:
@@ -113,6 +112,45 @@ class UserEntity(Resource):
             'data': user.to_json()
         }
         return response_object, 200
+
+    @create_context
+    @login_required
+    def delete(self, auth_token, local_data=None):
+        response_object = {
+            'status': None,
+            'message': None
+        }
+
+        if not local_data:
+            delete_data = request.get_json()
+        else:
+            delete_data = json.loads(local_data)
+        
+        id_to_delete = delete_data.get('id_to_delete')
+
+        if not id_to_delete:
+            response_object = {
+                'status': 'fail',
+                'message': 'unable to delete user without user id'
+            }
+            return response_object, 403
+        
+        user = User.query.filter_by(id=id_to_delete).first()
+        if not user:
+            response_object = {
+                'status': 'fail',
+                'message': 'user not found'
+            }
+            return response_object, 404
+
+        db.session.delete(user)
+        db.session.commit()
+        response_object = {
+            'status': 'success',
+            'message': 'user successfully deleted'
+        }
+        return response_object, 200
+
 
 
 class UserList(Resource):

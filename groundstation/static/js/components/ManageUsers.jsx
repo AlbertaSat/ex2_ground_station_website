@@ -12,7 +12,8 @@ const UserEntry = (props) => {
     const [isEditing, setIsEditing] = useState(false);
     const [username, setUsername] = useState(props.user.username);
     const [password, setPassword] = useState('');
-    const [error, setError] = useState('')
+    const [error, setError] = useState('');
+    const [userDeleted, setUserDeleted] = useState(false);
 
     // const divStyle = {
     //     paddingBottom:'1%',
@@ -22,7 +23,40 @@ const UserEntry = (props) => {
     function editHandler() {
         setIsEditing(true);
     }
-    function deleteHandler() {}
+    function deleteHandler() {
+        let auth_token
+        if (!!sessionStorage.getItem('auth_token')) {
+            auth_token = sessionStorage.getItem('auth_token');
+        }
+        if (!!localStorage.getItem('auth_token')) {
+            sessionStorage.setItem('auth_token', localStorage.getItem('auth_token'));
+            auth_token = localStorage.getItem('auth_token');
+        }
+
+        const post_data = {
+            id_to_delete: props.user.id
+        }
+        fetch('/api/users/' + auth_token, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization':'Bearer '+ sessionStorage.getItem('auth_token')
+              },
+            body: JSON.stringify(post_data),
+        }).then(results => {
+            return results.json();
+        }).then(data => {
+            if (data.status == 'success') {
+                console.log(data.status);
+                setUserDeleted(true); // this doesn't rerender page
+            } else {
+                console.error('Unexpected error occurred.');
+                console.error(data);
+                setError("Error occurred. User was not deleted successfully.")
+            }
+        })
+
+    }
 
     function handleUsernameChange(event) {setUsername(event.target.value)}
 
@@ -36,7 +70,7 @@ const UserEntry = (props) => {
         if (!!localStorage.getItem('auth_token')) {
             sessionStorage.setItem('auth_token', localStorage.getItem('auth_token'));
             auth_token = localStorage.getItem('auth_token');
-          }
+        }
 
         const post_data = {
             username: username,
@@ -46,7 +80,7 @@ const UserEntry = (props) => {
         // right now the patch endpoint patches logged-in user using auth token
         // how to patch any user??
         // also when is encode_auth_token called?
-        // also drop-down getting too long
+        // also drop-down getting too long, maybe remove add users row
         fetch('/api/users/' + auth_token, {
             method: 'PATCH',
             headers: {
@@ -65,7 +99,7 @@ const UserEntry = (props) => {
             } else {
                 console.error('Unexpected error occurred.');
                 console.error(data);
-                setError("Error occurred. User was not updated successfully.")
+                setError(data.message)
             }
         })
 
