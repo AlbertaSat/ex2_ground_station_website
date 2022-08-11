@@ -127,9 +127,9 @@ class ResetPassword extends Component {
                         </Typography>
                     </div>
                     
-                    <div>
+                    <div style={{textAlign: "center"}}>
                         <TextField
-                            style={{width: "100%"}}
+                            style={{width: "60%"}}
                             required
                             id="outlined-newpassword-input"
                             label="New Password"
@@ -142,9 +142,9 @@ class ResetPassword extends Component {
                             error={!(this.state.error_message === '')}
                         />
                     </div>
-                    <div>
+                    <div style={{textAlign: "center"}}>
                         <TextField
-                            style={{width: "100%"}}
+                            style={{width: "60%"}}
                             required
                             id="outlined-newpassword2-input"
                             label="Confirm New Password"

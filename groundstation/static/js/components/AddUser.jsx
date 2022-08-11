@@ -133,9 +133,9 @@ class AddUser extends Component {
                         </Typography>
                     </div>
                     
-                    <div>
+                    <div style={{textAlign: "center"}}>
                         <TextField
-                            style={{width: "100%"}}
+                            style={{width: "60%"}}
                             required
                             id="outlined-required"
                             label="Username"
@@ -147,9 +147,9 @@ class AddUser extends Component {
                             error={!(this.state.error_message === '')}
                         />
                     </div>
-                    <div>
+                    <div style={{textAlign: "center"}}>
                         <TextField
-                            style={{width: "100%"}}
+                            style={{width: "60%"}}
                             required
                             id="outlined-password-input"
                             label="Password"
@@ -162,9 +162,9 @@ class AddUser extends Component {
                             error={!(this.state.error_message === '')}
                         />
                     </div>
-                    <div>
+                    <div style={{textAlign: "center"}}>
                         <TextField
-                            style={{width: "100%"}}
+                            style={{width: "60%"}}
                             required
                             id="outlined-confirmpassword-input"
                             label="Confirm Password"
@@ -181,7 +181,7 @@ class AddUser extends Component {
                     <div>
                         {this.handleError()}
                     </div>
-                    <div>
+                    <div style={{textAlign: "center"}}>
                         <FormControlLabel label="Admin User"
                             control={<Checkbox checked={this.state.newUserIsAdmin} onChange={(event) => this.handleChecked(event)} />} />
                     </div>

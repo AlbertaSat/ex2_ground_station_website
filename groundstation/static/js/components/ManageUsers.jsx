@@ -5,6 +5,7 @@ import CommunicationsList from './CommunicationsListFull';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
+import Dialog from '@material-ui/core/Dialog';
 
 
 
@@ -15,14 +16,21 @@ const UserEntry = (props) => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
     function cancelHandler() {
+        setIsDeleteDialogOpen(false);
         setIsEditing(false);
         setUsername(username);
         setTempUsername('');
         setPassword('');
         setError('');
         setSuccess('');
+        
+    }
+
+    function openDeleteDialog() {
+        setIsDeleteDialogOpen(true);
     }
 
     function editHandler() {
@@ -58,6 +66,7 @@ const UserEntry = (props) => {
         }).then(data => {
             if (data.status == 'success') {
                 console.log(data.status);
+                setIsDeleteDialogOpen(false);
                 setSuccess('');
                 setError('');
                 props.rerenderList();
@@ -126,21 +135,37 @@ const UserEntry = (props) => {
     }
 
     return (
-        <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '5%', marginLeft: '2%', marginRight: '2%', backgroundColor:'rgb(242,242,242)'}}>
-            {!isEditing ? 
-            <div>
+            
+        <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '2%', marginLeft: '2%', marginRight: '2%', marginTop: '2%', backgroundColor:'rgb(242,242,242)', alignItems: 'center'}}>
+            <Dialog open={isDeleteDialogOpen} fullWidth={true} focused={true} justifyContent='middle'>
+                <div style={{padding:'5%', width: 'max-content', margin:'auto'}}>
+                    <p>
+                    Are you sure you want to delete this user?
+                    </p>
+                </div>
+                <div style={{display: 'flex', justifyContent: 'space-evenly', paddingBottom: '5%'}}>
+                    <span>
+                        <Button 
+                            onClick={deleteHandler}
+                            variant = 'outlined'
+                            colour='primary'>Delete</Button>
+                    </span>
+                    <span>
+                        <Button 
+                            onClick={cancelHandler}
+                            variant = 'outlined'>Cancel</Button>
+                    </span>
+                </div>
                 
-                <p style={{marginTop: '5%', marginLeft: '5%', width:'max-content'}}>
+            </Dialog>
+            {!isEditing ? 
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                
+                <p style={{marginTop: '2%', marginLeft: '5%', marginBottom: '1%',width:'min-content'}}>
                     Username: <strong>{username}</strong>
                 </p>
                 
-                {props.user.is_admin &&
-                <div>
-                    
-                    <p style={{marginTop: '1%', paddingLeft:'10%', colour:'grey', fontStyle:"italic"}}>
-                        {'(Admin)'}
-                    </p>
-                </div>}
+                
                 
             </div>:
             <div>
@@ -176,41 +201,48 @@ const UserEntry = (props) => {
             </div>}
             {!(error === '') ? 
                 <div>
-                    <Typography style={{color: 'red', marginTop: '10%'}}>
+                    <Typography style={{color: 'red', width: 'min-content'}}>
                         {error}
                     </Typography>
                 </div>: null}
             {!(success === '') ? 
                 <div>
-                    <Typography style={{color: 'green', marginTop: '5%'}}>
+                    <Typography style={{color: 'green'}}>
                         {success}
                     </Typography>
                 </div>: null}
+                {props.user.is_admin &&
+                <div vertical-align="center">
+                    
+                    <p style={{fontStyle:"italic"}}>
+                        {'(Admin)'}
+                    </p>
+                </div>}
             {!isEditing ? 
-            <div style={{display: 'flex', justifyContent: 'space-between'}}>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems:'center'}}>
                 <span>
-                    <Button style={{marginBottom:"1%", width: "100%"}}
+                    <Button
                     color = "primary"
                     onClick={editHandler}
                     variant = 'outlined'>Edit</Button>
                 </span>
                 {!props.user.is_admin &&
                 <span>
-                    <Button style={{marginBottom:"1%", width: "92%", marginLeft:"8%"}}
+                    <Button
                     color = "primary"
-                    onClick={deleteHandler}
+                    onClick={openDeleteDialog}
                     variant = 'outlined'>Delete</Button>
                 </span>}
             </div>:
-            <div>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems:'center'}}>
                 <span>
-                    <Button style={{marginTop:"12%",marginBottom:"1%"}}
+                    <Button
                     color = "primary"
                     onClick={cancelHandler}
                     variant = 'outlined'>Cancel</Button>
                 </span>
                 <span>
-                    <Button style={{marginTop:"12%",marginBottom:"1%"}}
+                    <Button
                     color = "primary"
                     onClick={saveHandler}
                     variant = 'outlined'>Save</Button>
@@ -279,6 +311,12 @@ class ManageUsers extends Component {
         return (
             <div>
                 {this.handleError()}
+                <div style={{padding: '20px', textAlign: "center"}}>
+                        <Typography variant="h4" style={{color: '#28324C'}}>
+                            Manage Users
+                        </Typography>
+                </div>
+
                 <div>
                     <Button
                         style={{
@@ -291,6 +329,7 @@ class ManageUsers extends Component {
                     Add User
                     </Button>
                 </div>
+
                 <div>
                     <Paper style={{paddingTop:"2%", paddingBottom:"2%"}}>
                         <div>
