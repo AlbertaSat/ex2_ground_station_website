@@ -11,18 +11,34 @@ import AddCircleIcon from '@material-ui/icons/AddCircle';
 const UserEntry = (props) => {
     const [isEditing, setIsEditing] = useState(false);
     const [username, setUsername] = useState(props.user.username);
+    const [tempUsername, setTempUsername] = useState(props.user.username);
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const [userDeleted, setUserDeleted] = useState(false);
+    const [success, setSuccess] = useState('');
 
     // const divStyle = {
     //     paddingBottom:'1%',
     //     paddingLeft:'1%',
     //     paddingRight:'1%',
     // };
+    function cancelHandler() {
+        setIsEditing(false);
+        setUsername(username);
+        setTempUsername('');
+        setPassword('');
+        setError('');
+        setSuccess('');
+        // props.rerenderList();
+    }
+
     function editHandler() {
         setIsEditing(true);
+        setTempUsername(username);
+        setPassword('');
+        setError('');
+        setSuccess('');
     }
+
     function deleteHandler() {
         let auth_token
         if (!!sessionStorage.getItem('auth_token')) {
@@ -48,21 +64,28 @@ const UserEntry = (props) => {
         }).then(data => {
             if (data.status == 'success') {
                 console.log(data.status);
-                setUserDeleted(true); // this doesn't rerender page
+                setSuccess('');
+                setError('');
+                props.rerenderList();
             } else {
                 console.error('Unexpected error occurred.');
                 console.error(data);
+                setSuccess('');
                 setError("Error occurred. User was not deleted successfully.")
             }
         })
 
     }
 
-    function handleUsernameChange(event) {setUsername(event.target.value)}
+    function handleUsernameChange(event) {setTempUsername(event.target.value)}
 
     function handlePasswordChange(event) {setPassword(event.target.value)}
 
     function saveHandler() {
+        if (password == '') {
+            setError('Please enter a password');
+            return;
+        }
         let auth_token
         if (!!sessionStorage.getItem('auth_token')) {
             auth_token = sessionStorage.getItem('auth_token');
@@ -73,12 +96,11 @@ const UserEntry = (props) => {
         }
 
         const post_data = {
-            username: username,
+            username: tempUsername,
             password: password,
             id: props.user.id
         }
-        // right now the patch endpoint patches logged-in user using auth token
-        // how to patch any user??
+
         // also when is encode_auth_token called?
         // also drop-down getting too long, maybe remove add users row
         fetch('/api/users/' + auth_token, {
@@ -92,14 +114,18 @@ const UserEntry = (props) => {
             return results.json();
         }).then(data => {
             if (data.status == 'success') {
-                setUsername('');
+                setUsername(tempUsername);
+                setTempUsername('');
                 setPassword('');
                 setError('');
                 setIsEditing(false);
+                setSuccess('User successfully updated');
+
             } else {
                 console.error('Unexpected error occurred.');
                 console.error(data);
-                setError(data.message)
+                setError(data.message);
+                setSuccess('');
             }
         })
 
@@ -107,21 +133,24 @@ const UserEntry = (props) => {
 
     return (
         <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '5%', marginLeft: '2%', marginRight: '2%', backgroundColor:'rgb(242,242,242)'}}>
-            {props.user.is_admin &&
-            <div>
-                
-                <p style={{marginTop: '1%', paddingLeft:'10%'}}>
-                    Admin
-                </p>
-            </div>}
             {!isEditing ? 
             <div>
-                <p style={{marginTop: '5%'}}>
-                    Username: {props.user.username}
+                
+                <p style={{marginTop: '5%', marginLeft: '5%', width:'max-content'}}>
+                    Username: <strong>{username}</strong>
                 </p>
+                
+                {props.user.is_admin &&
+                <div>
+                    
+                    <p style={{marginTop: '1%', paddingLeft:'10%', colour:'grey', fontStyle:"italic"}}>
+                        {'(Admin)'}
+                    </p>
+                </div>}
                 
             </div>:
             <div>
+                
                 <div style={{display: 'flex', justifyContent: 'space-between'}}>
                     <span>
                         <TextField
@@ -132,7 +161,7 @@ const UserEntry = (props) => {
                                     name="username"
                                     margin="normal"
                                     variant="outlined"
-                                    value={username}
+                                    value={tempUsername}
                                     onChange={(event) => handleUsernameChange(event)}
                                     error={!(error === '')}/>
                     </span>
@@ -153,8 +182,14 @@ const UserEntry = (props) => {
             </div>}
             {!(error === '') ? 
                 <div>
-                    <Typography style={{color: 'red'}}>
+                    <Typography style={{color: 'red', marginTop: '10%'}}>
                         {error}
+                    </Typography>
+                </div>: null}
+            {!(success === '') ? 
+                <div>
+                    <Typography style={{color: 'green', marginTop: '5%'}}>
+                        {success}
                     </Typography>
                 </div>: null}
             {!isEditing ? 
@@ -175,7 +210,13 @@ const UserEntry = (props) => {
             </div>:
             <div>
                 <span>
-                    <Button style={{marginTop:"30%",marginBottom:"1%"}}
+                    <Button style={{marginTop:"12%",marginBottom:"1%"}}
+                    color = "primary"
+                    onClick={cancelHandler}
+                    variant = 'outlined'>Cancel</Button>
+                </span>
+                <span>
+                    <Button style={{marginTop:"12%",marginBottom:"1%"}}
                     color = "primary"
                     onClick={saveHandler}
                     variant = 'outlined'>Save</Button>
@@ -193,6 +234,7 @@ class ManageUsers extends Component {
             is_empty: false,
             error_message: ''
         }
+        this.handleDelete = this.handleDelete.bind(this);
     }
 
     handleRefresh(){
@@ -219,6 +261,10 @@ class ManageUsers extends Component {
     }
 
     componentDidMount(){
+        this.handleRefresh();
+    }
+
+    handleDelete(){
         this.handleRefresh();
     }
 
@@ -255,7 +301,7 @@ class ManageUsers extends Component {
                     <Paper style={{paddingTop:"2%", paddingBottom:"2%"}}>
                         <div>
                             {this.state.users.map(user => (
-                            <UserEntry autoScroll={false} user={user}/>
+                            <UserEntry autoScroll={false} user={user} rerenderList={this.handleDelete}/>
                             ))}
                         </div>
                     </Paper>
