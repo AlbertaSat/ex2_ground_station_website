@@ -16,11 +16,6 @@ const UserEntry = (props) => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
-    // const divStyle = {
-    //     paddingBottom:'1%',
-    //     paddingLeft:'1%',
-    //     paddingRight:'1%',
-    // };
     function cancelHandler() {
         setIsEditing(false);
         setUsername(username);
@@ -28,7 +23,6 @@ const UserEntry = (props) => {
         setPassword('');
         setError('');
         setSuccess('');
-        // props.rerenderList();
     }
 
     function editHandler() {
