@@ -89,7 +89,7 @@ class AddUser extends Component {
             console.log('error')
             return  (
                 <div>
-                    <Typography style={{color: 'red'}}>
+                    <Typography style={{color: "red"}}>
                         {this.state.error_message}
                     </Typography>
                 </div>
@@ -102,7 +102,7 @@ class AddUser extends Component {
             console.log('success')
             return  (
                 <div>
-                    <Typography style={{color: 'green'}}>
+                    <Typography style={{color: "green"}}>
                         {this.state.success_message}
                     </Typography>
                 </div>
@@ -127,8 +127,8 @@ class AddUser extends Component {
         return (
             <Paper className="grid-containers adduser-container">
                 <div>
-                    <div style={{padding: '20px', textAlign: "center"}}>
-                        <Typography variant="h4" style={{color: '#28324C'}}>
+                    <div style={{padding: "20px", textAlign: "center"}}>
+                        <Typography variant="h4" style={{color: "#28324C"}}>
                             Register New User
                         </Typography>
                     </div>
@@ -186,7 +186,7 @@ class AddUser extends Component {
                             control={<Checkbox checked={this.state.newUserIsAdmin} onChange={(event) => this.handleChecked(event)} />} />
                     </div>
                     
-                    <div style = {{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                    <div style = {{display: "flex", alignItems: "center", justifyContent: "center"}}>
                         <Button
                             style={{color: "#118851", marginTop: "10px"}}
                             onClick={ () => this.handleAddUser()}
