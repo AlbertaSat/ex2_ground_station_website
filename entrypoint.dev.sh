@@ -1,4 +1,8 @@
 #!/bin/bash
+
+# Setup autoformat hook
+git config core.hooksPath .git-hooks/hooks/
+
 pip install -r requirements.txt
 source ./env.sh
 source ./keys.sh
