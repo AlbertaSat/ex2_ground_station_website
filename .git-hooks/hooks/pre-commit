@@ -1,4 +1,43 @@
 #!/bin/sh
 
+# Run formatting on javascript files
+echo "Formatting JS & JSX files..."
 cd groundstation/static
 npx lint-staged
+cd ../..
+
+# Run formatting on python files
+# Adapted from: https://gist.github.com/dandanwei/911c8f3c3087d0628f61df9009e3ff17
+function python_checks {
+    staged=$1
+
+    RED='\033[0;31m'
+    NC='\033[0m' # No Color
+
+    # test that we have autopep8.
+    which autopep8 > /dev/null 2>&1
+    # examine exit status
+    if [ $? -gt 0 ]; then
+        echo -e "${RED}autopep8 not installed. Cannot proceed${NC}"
+        exit 1
+    fi
+
+    # run autopep8 to see if changes need to made.
+    autopep_results=$(autopep8 --diff ${staged})
+
+    if [ "$autopep_results" != "" ]; then
+        # Make the changes.
+        autopep8 --in-place ${staged}
+        # And restage.
+        git add ${staged}
+    fi
+}
+
+# Look for python files that are about to be committed.
+staged_py_files=$(git diff --name-only --cached | grep "\.py$")
+if [[ ! -z "$staged_py_files" ]]; then
+    echo "Formatting Python Files..."
+    python_checks ${staged_py_files}
+fi
+
+exit 0
