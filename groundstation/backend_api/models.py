@@ -313,6 +313,7 @@ class AutomatedCommands(db.Model):
         return {
             'automatedcommand_id': self.id, 
             'command': self.command.to_json(),
+            'priority': self.priority,
             'args': [arg.to_json() for arg in self.arguments]
         }
 

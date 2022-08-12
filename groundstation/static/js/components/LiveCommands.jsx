@@ -14,9 +14,6 @@ const SAT_PREFIX = [
   { value: "yuk", label: "YUK" },
   { value: "ari", label: "ARI" },
   { value: "eps", label: "EPS" },
-  { value: "gnd", label: "GND" },
-  { value: "pipe", label: "PIPE" },
-  { value: "last", label: "LAST" },
 ];
 
 const useStyles = makeStyles((theme) => ({
@@ -178,7 +175,7 @@ class LiveCommands extends Component {
     const args =
       openIndex + 1 === closeIndex
         ? [] // Prevents [""] which has length 1
-        : str.substring(openIndex + 1, closeIndex).split(" ");
+        : str.substring(openIndex + 1, closeIndex).split(",");
     if (matching_command.num_arguments !== args.length) {
       return false;
     }
