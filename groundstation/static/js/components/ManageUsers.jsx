@@ -279,7 +279,6 @@ class ManageUsers extends Component {
                     console.log('get failed')
                     this.setState({
                         is_empty: true,
-                        //error_message: 'error fetching messages: ' + data.message
                         error_message: 'error fetching users'
                     })
                 }
@@ -307,7 +306,6 @@ class ManageUsers extends Component {
     }
 
     render(){
-        // const { classes } = this.props;
         return (
             <div>
                 {this.handleError()}

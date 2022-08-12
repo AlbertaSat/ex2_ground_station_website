@@ -184,10 +184,6 @@ function App() {
                         <ClickAwayListener onClickAway={handleClose}>
                           <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
                             <MenuItem disabled>{username}</MenuItem>
-                              {isAdmin && 
-                              <MenuItem onClick={handleClose}>
-                                <a style={{color: 'rgb(40, 50, 76)'}}href="/adduser">Add User</a>
-                              </MenuItem> }
                               {isAdmin &&
                               <MenuItem onClick={handleClose}>
                                 <a style={{color: 'rgb(40, 50, 76)'}}href="/manageusers">Manage Users</a>

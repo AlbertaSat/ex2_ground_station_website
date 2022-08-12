@@ -121,6 +121,13 @@ class UserEntity(Resource):
             'message': None
         }
 
+        if not g.user.is_admin:
+            response_object = {
+                'status': 'fail',
+                'message': 'You are not authorized to delete users.'
+            }
+            return response_object, 403
+
         if not local_data:
             delete_data = request.get_json()
         else:
@@ -143,6 +150,20 @@ class UserEntity(Resource):
             }
             return response_object, 404
 
+        if user.is_admin:
+            response_object = {
+                'status': 'fail',
+                'message': 'Admin users cannot be deleted.'
+            }
+            return response_object, 403
+
+        if (user.creator_id != g.user.id):
+            response_object = {
+                'status': 'fail',
+                'message': 'You are not authorized to delete this user.'
+            }
+            return response_object, 403
+
         db.session.delete(user)
         db.session.commit()
         response_object = {
@@ -162,7 +183,7 @@ class UserList(Resource):
     @create_context
     @login_required
     def get(self, local_args=None):
-        """Endpoint for getting a list of users
+        """Endpoint for getting a list of users an admin user has created.
 
         :param dict local_args: This should be used in place of the QUERY PARAMS
             that would be used through HTTP, used for local calls.
