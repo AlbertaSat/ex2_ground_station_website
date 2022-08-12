@@ -8,6 +8,8 @@ import Login from './components/Login';
 import Logout from './components/Logout';
 import Logs from './components/ViewLogs';
 import Help from './components/Help';
+import AddUser from './components/AddUser';
+import ManageUsers from './components/ManageUsers';
 import AutomatedCommandSequence from './components/AutomatedCommandSequence';
 import ResetPassword from './components/ResetPassword';
 
@@ -22,6 +24,8 @@ const Routes = () => (
         <Route exact path='/logout' component={Logout}/>
         <Route exact path='/logs' component={Logs}/>
         <Route exact path='/help' component={Help}/>
+        <Route exact path='/adduser' component={AddUser}/>
+        <Route exact path='/manageusers' component={ManageUsers}/>
         <Route exact path='/resetpassword' component={ResetPassword}/>
     </Switch>
 
