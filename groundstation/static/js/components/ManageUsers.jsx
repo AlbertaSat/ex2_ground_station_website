@@ -1,7 +1,6 @@
 import React, { Component, useState } from 'react';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-import CommunicationsList from './CommunicationsListFull';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import AddCircleIcon from '@material-ui/icons/AddCircle';

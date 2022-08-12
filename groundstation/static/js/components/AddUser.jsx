@@ -6,6 +6,7 @@ import Button from '@material-ui/core/Button';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from "@material-ui/core/Checkbox";
 import Paper from '@material-ui/core/Paper';
+import Tooltip from '@material-ui/core/Tooltip';
 
 
 class AddUser extends Component {
@@ -182,8 +183,19 @@ class AddUser extends Component {
                         {this.handleError()}
                     </div>
                     <div style={{textAlign: "center"}}>
-                        <FormControlLabel label="Admin User"
-                            control={<Checkbox checked={this.state.newUserIsAdmin} onChange={(event) => this.handleChecked(event)} />} />
+                        <Tooltip placement="top" disableFocusListener title={
+                                <div>
+                                    <p style={{fontSize:"18px", padding:"3%"}}>Admin users:</p>
+                                    <ul style={{fontSize:"14px", padding:"1% 0% 4% 8%"}}>
+                                        <li style={{padding:"2% 0% 2% 0%"}}>cannot be deleted.</li>
+                                        <li style={{padding:"2% 0% 2% 0%"}}>can change automation of commands on passovers.</li>
+                                        <li style={{padding:"2% 0% 2% 0%"}}>can dequeue any command from being sent.</li>
+                                        <li style={{padding:"2% 0% 2% 0%"}}>can create new users.</li>
+                                    </ul>
+                                </div>}>
+                            <FormControlLabel label="Admin User"
+                                control={<Checkbox checked={this.state.newUserIsAdmin} onChange={(event) => this.handleChecked(event)} />} />
+                        </Tooltip>
                     </div>
                     
                     <div style = {{display: "flex", alignItems: "center", justifyContent: "center"}}>
