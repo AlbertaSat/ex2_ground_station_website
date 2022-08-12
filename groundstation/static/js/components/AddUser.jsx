@@ -178,7 +178,7 @@ class AddUser extends Component {
             />
           </div>
           <div>{this.handleError()}</div>
-          <div style={{ textAlign: 'center' }}>
+          <div style={{ textAlign: "center" }}>
             <Tooltip
               placement="top"
               disableFocusListener
