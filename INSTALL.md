@@ -74,7 +74,7 @@ The website's [comm.py](comm.py) script communicates with the database and with 
     ```
     Would like to communicate with the satellite simulator (if not, the program will attempt to communicate with the satellite) [Y/n]:
     ```
-    Respond with 'Y' and let the script run in the background.
+    Respond with 'n' and let the script run in the background.
 
 ---
 
