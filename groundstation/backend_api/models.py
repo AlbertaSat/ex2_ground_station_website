@@ -198,7 +198,8 @@ class Telecommands(db.Model):
             'command_id': self.id,
             'command_name': self.command_name,
             'num_arguments': self.num_arguments,
-            'is_dangerous': self.is_dangerous
+            'is_dangerous': self.is_dangerous,
+            'about_info': self.about_info
         }
 
 
