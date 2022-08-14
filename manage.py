@@ -35,7 +35,7 @@ from groundstation.backend_api.utils import add_telecommand, \
     add_arg_to_flightschedulecommand, add_message_to_communications, \
     add_passover
 
-from ex2_ground_station_software.src.system import SatelliteNodes
+from ex2_ground_station_software.src.system import SatelliteNodes, services
 
 app = create_app()
 cli = FlaskGroup(create_app=create_app)
@@ -254,39 +254,30 @@ def demo_db():
 
 @cli.command('import_commands')
 def import_commands():
-    """Imports commands from the CommandDocs.txt file in ex2_ground_station_software,
+    """Imports commands from the system.py file in ex2_ground_station_software/src,
     and adds them to the database.
     """
 
-    filepath = 'ex2_ground_station_software/CommandDocs.txt'
+    for serv in services:
+        subservice = services[serv]['subservice']
+        for subName in subservice.keys():
 
-    if not os.path.exists(filepath):
-        print(f'Couldn\'t find list of commands at {filepath}. Seeding database with no commands.')
-        return False
+            sub = subservice[subName]
+            inoutInfo = sub['inoutInfo']
+            info = None if not 'what' in sub else sub['what']
+            if inoutInfo['args'] is None:
+                num_arguments = 0
+            else:
+                num_arguments = len(inoutInfo['args'])
 
-    # first regenerate CommandDocs.txt
-    print('Regenerating commands.')
-    subprocess.run(['./regenerate_commands.sh'])
-
-    with open('./ex2_ground_station_software/CommandDocs.txt', 'r') as f:
-        text = f.read()
-
-    # regex command based on current formatting of CommandDocs.txt; might need to be changed later
-    blocks = re.findall('[\.\n]([A-Z0-9_.]*):[^\[]*\[([^\]]*)\]', text)
-
-    for (command_name, arguments) in blocks:
-        # currently false; need to figure out which commands should be considered dangerous
-        is_dangerous = False
-
-        if arguments == 'None':
-            num_arguments = 0
-        else:
-            num_arguments = len(re.findall(',', arguments)) + 1
-
-        # make a copy of each command for each server
-        for prefix in SatelliteNodes:
-            c = add_telecommand(command_name=(prefix.name + '.' + command_name).lower(), num_arguments=num_arguments,
-                                is_dangerous=is_dangerous)
+            is_dangerous = False
+            for prefix in SatelliteNodes:
+                if prefix.name == 'EX2':
+                    c = add_telecommand(command_name=(prefix.name + '.' + serv + '.' + subName).lower(), num_arguments=num_arguments,
+                                is_dangerous=is_dangerous, about_info=info)
+                else:
+                    c = add_telecommand(command_name=(prefix.name + '.' + serv + '.' + subName).lower(), num_arguments=num_arguments,
+                                    is_dangerous=is_dangerous, about_info=None)
 
     print("Added new telecommands.")
 
