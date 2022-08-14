@@ -1,3 +1,6 @@
+#!/bin/sh
+echo "Setting secrets..."
+
 # SECRET_KEY is used for JWT authentication token generation
 export SECRET_KEY="SECRET KEY HERE"
 
