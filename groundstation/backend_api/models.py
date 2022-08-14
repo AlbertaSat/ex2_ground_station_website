@@ -29,7 +29,7 @@ class User(db.Model):
     def regenerate_password_hash(self, password):
         num_rounds = current_app.config.get('BCRYPT_LOG_ROUNDS')
         self.password_hash = bcrypt.generate_password_hash(password, num_rounds).decode()
-        
+
     def verify_password(self, password):
         """Returns True if passes password is valid, else False
 
@@ -80,6 +80,7 @@ class User(db.Model):
             'is_admin': self.is_admin,
             'slack_id': self.slack_id,
             'creator_id': self.creator_id,
+            'subscribed_to_slack': self.subscribed_to_slack
         }
 
 class BlacklistedTokens(db.Model):
@@ -311,7 +312,7 @@ class AutomatedCommands(db.Model):
         """Returns a dictionary of some selected model attributes
         """
         return {
-            'automatedcommand_id': self.id, 
+            'automatedcommand_id': self.id,
             'command': self.command.to_json(),
             'priority': self.priority,
             'args': [arg.to_json() for arg in self.arguments]
@@ -332,4 +333,4 @@ class AutomatedCommandsArgs(db.Model):
             'index': self.index,
             'argument': self.argument
         }
-        
+

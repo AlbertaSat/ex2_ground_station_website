@@ -199,14 +199,18 @@ class UserList(Resource):
         :rtype: tuple (dict, int)
         """
         response_object = {}
-        # if not local_args:
-        #     query_limit = request.args.get('limit')
-        # else:
-        #     query_limit = local_args.get('limit')
+        if not local_args:
+            query_limit = request.args.get('limit')
+            no_admin = request.args.get('no_admin')
+        else:
+            query_limit = local_args.get('limit')
+            no_admin = local_args.get('no_admin')
 
-        # users = User.query.order_by(User.id).limit(query_limit).all()
+        if no_admin:  # Fetch ALL users
+            users = User.query.order_by(User.id).limit(query_limit).all()
+        else:  # Fetch ONLY users created by the user calling this endpoint
+            users = User.query.filter_by(creator_id=g.user.id).all()
 
-        users = User.query.filter_by(creator_id=g.user.id).all()
         response_object = {
             'status': 'success',
             'data': {'users': [user.to_json() for user in users]}

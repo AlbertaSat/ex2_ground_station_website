@@ -113,19 +113,21 @@ def send_slack_notifs(message):
     # api call to get all users
     user_list = UserList()
 
-    users = user_list.get(local_args={'limit': 1000})[0]['data']
+    users = user_list.get(local_args={'limit': 1000, 'no_admin': True})[
+        0]['data']['users']
 
     slack_token = os.getenv('SLACK_TOKEN')
     if slack_token is not None:
         client = slack.WebClient(token=slack_token)
         for user in users:
-            if user.subscribed_to_slack and user.slack_id is not None:
+            print(user)
+            if user['subscribed_to_slack'] and user['slack_id'] is not None:
                 try:
                     client.chat_postMessage(
-                        channel=user.slack_id, text=message)
+                        channel=user['slack_id'], text=message)
                 except:
                     print('Error: slack id "{0}" is invalid.'.format(
-                        user.slack_id))
+                        user['slack_id']))
     else:
         print('Error: SLACK_TOKEN environemnt variable not set!')
 
