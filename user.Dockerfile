@@ -16,7 +16,8 @@ RUN apt-get update && apt-get install -y \
   libsocketcan-dev \
   pkg-config \
   gcc-multilib \
-  g++-multilib
+  g++-multilib \
+  postgresql
 
 # install python
 RUN apt-get update && apt-get install -y \
@@ -30,6 +31,8 @@ RUN ln -s /usr/bin/python3 python \
 # copy our repo to the image
 WORKDIR /home/ex2_ground_station_website
 COPY . .
+
+# Install python dependencies
 RUN pip3 install -r requirements.txt
 
 # build libcsp
@@ -45,12 +48,11 @@ RUN apt-get update && apt-get install -y \
 # set up environment
 WORKDIR /home/ex2_ground_station_website
 ENV FLASK_APP=groundstation/__init__.py
-ENV FLASK_ENV=development
-ENV APP_SETTINGS=groundstation.config.DevelopmentConfig
-ENV SECRET_KEY="\xffY\x8dG\xfbu\x96S\x86\xdfu\x98\xe8S\x9f\x0e\xc6\xde\xb6$\xab:\x9d\x8b"
+ENV FLASK_ENV=production
+ENV APP_SETTINGS=groundstation.config.ProductionConfig
+ENV SECRET_KEY="overwritten-in-keys-sh"
+ENV SLACK_TOKEN="overwritten-in-keys-sh"
 ENV LD_LIBRARY_PATH=libcsp/build
-ENV PYTHONPATH=.
-SHELL ["/bin/bash", "-c"]
-RUN source ./update.sh
+ENV PYTHONPATH=libcsp/build
 
-ENTRYPOINT [ "flask", "run", "--host=0.0.0.0", "--port=8000" ]
+ENTRYPOINT [ "./entrypoint.prod.sh" ]

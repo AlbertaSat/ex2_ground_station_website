@@ -13,6 +13,7 @@ from groundstation.backend_api.utils import create_context, login_required
 user_blueprint = Blueprint('user', __name__)
 api = Api(user_blueprint)
 
+
 class UserEntity(Resource):
     def __init__(self):
         self.validator = UserPatchValidator()
@@ -28,12 +29,13 @@ class UserEntity(Resource):
         :returns: response_object, status_code
         :rtype: tuple (dict, int)
         """
-        user = User.query.filter_by(id=User.decode_auth_token(auth_token)).first()
+        user = User.query.filter_by(
+            id=User.decode_auth_token(auth_token)).first()
 
         response_object = {
-            'status':None,
-            'message':None,
-            'data':None
+            'status': None,
+            'message': None,
+            'data': None
         }
 
         if user is None:
@@ -63,10 +65,25 @@ class UserEntity(Resource):
         else:
             post_data = json.loads(local_data)
 
-        user = User.query.filter_by(id=User.decode_auth_token(auth_token)).first()
+        # has to be called id in request JSON for data to be validated
+        other_user_id = post_data.get('id')
+
+        if other_user_id:
+            if not g.user.is_admin:
+                response_object = {
+                    'status': 'fail',
+                    'message': 'You do not have permission to create users.'
+                }
+                return response_object, 403
+            else:
+                user = User.query.filter_by(id=other_user_id).first()
+        else:
+            user = User.query.filter_by(
+                id=User.decode_auth_token(auth_token)).first()
 
         if user is None:
-            response_object = {'status': 'fail', 'message': 'User does not exist'}
+            response_object = {'status': 'fail',
+                               'message': 'User does not exist'}
             return response_object, 404
 
         try:
@@ -82,13 +99,84 @@ class UserEntity(Resource):
         for attribute in validated_data:
             setattr(user, attribute, validated_data[attribute])
 
-        user.regenerate_password_hash(post_data.get('password'))
+        new_password = post_data.get('password')
+        if new_password:
+            user.regenerate_password_hash(new_password)
 
-        db.session.commit()
+        try:
+            db.session.commit()
+        except exc.IntegrityError as e:
+            db.session.rollback()
+            # TODO: Probably remove dev_message
+            response_object = {
+                'status': 'fail',
+                'message': 'Username already taken!',
+                'dev_message': str(e.orig)
+            }
+            return response_object, 400
 
         response_object = {
             'status': 'success',
             'data': user.to_json()
+        }
+        return response_object, 200
+
+    @create_context
+    @login_required
+    def delete(self, auth_token, local_data=None):
+        response_object = {
+            'status': None,
+            'message': None
+        }
+
+        if not g.user.is_admin:
+            response_object = {
+                'status': 'fail',
+                'message': 'You are not authorized to delete users.'
+            }
+            return response_object, 403
+
+        if not local_data:
+            delete_data = request.get_json()
+        else:
+            delete_data = json.loads(local_data)
+
+        id_to_delete = delete_data.get('id_to_delete')
+
+        if not id_to_delete:
+            response_object = {
+                'status': 'fail',
+                'message': 'unable to delete user without user id'
+            }
+            return response_object, 403
+
+        user = User.query.filter_by(id=id_to_delete).first()
+        if not user:
+            response_object = {
+                'status': 'fail',
+                'message': 'user not found'
+            }
+            return response_object, 404
+
+        if user.is_admin:
+            response_object = {
+                'status': 'fail',
+                'message': 'Admin users cannot be deleted.'
+            }
+            return response_object, 403
+
+        if (user.creator_id != g.user.id):
+            response_object = {
+                'status': 'fail',
+                'message': 'You are not authorized to delete this user.'
+            }
+            return response_object, 403
+
+        db.session.delete(user)
+        db.session.commit()
+        response_object = {
+            'status': 'success',
+            'message': 'user successfully deleted'
         }
         return response_object, 200
 
@@ -100,8 +188,9 @@ class UserList(Resource):
         super(UserList, self).__init__()
 
     @create_context
+    @login_required
     def get(self, local_args=None):
-        """Endpoint for getting a list of users
+        """Endpoint for getting a list of users an admin user has created.
 
         :param dict local_args: This should be used in place of the QUERY PARAMS
             that would be used through HTTP, used for local calls.
@@ -109,18 +198,23 @@ class UserList(Resource):
         :returns: response_object, status_code
         :rtype: tuple (dict, int)
         """
-        response_object = {
-            'status':'success',
-            'data':{}
-        }
+        response_object = {}
         if not local_args:
             query_limit = request.args.get('limit')
+            no_admin = request.args.get('no_admin')
         else:
             query_limit = local_args.get('limit')
+            no_admin = local_args.get('no_admin')
 
-        users = User.query.order_by(User.id).limit(query_limit).all()
+        if no_admin:  # Fetch ALL users
+            users = User.query.order_by(User.id).limit(query_limit).all()
+        else:  # Fetch ONLY users created by the user calling this endpoint
+            users = User.query.filter_by(creator_id=g.user.id).all()
 
-        response_object['data'] = users
+        response_object = {
+            'status': 'success',
+            'data': {'users': [user.to_json() for user in users]}
+        }
 
         return response_object, 200
 
@@ -140,8 +234,8 @@ class UserList(Resource):
         """
         if not g.user.is_admin:
             response_object = {
-                'status':'fail',
-                'message':'You do not have permission to create users.'
+                'status': 'fail',
+                'message': 'You do not have permission to create users.'
             }
             return response_object, 403
 
@@ -160,7 +254,7 @@ class UserList(Resource):
             }
             return response_object, 400
 
-        new_user = User(**validated_data)
+        new_user = User(**validated_data, creator_id=g.user.id)
         try:
             db.session.add(new_user)
             db.session.commit()
@@ -168,16 +262,16 @@ class UserList(Resource):
             db.session.rollback()
             # TODO: Probably remove dev_message
             response_object = {
-                'status':'fail',
-                'message':'Invalid Payload',
-                'dev_message':str(e.orig)
+                'status': 'fail',
+                'message': 'User already exists!',
+                'dev_message': str(e.orig)
             }
             return response_object, 400
 
         response_object = {
-            'status':'success',
-            'message':'User was successfully added',
-            'data':new_user.to_json()
+            'status': 'success',
+            'message': 'User was successfully added',
+            'data': new_user.to_json()
         }
         return response_object, 201
 

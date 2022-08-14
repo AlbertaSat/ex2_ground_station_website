@@ -123,6 +123,8 @@ class UserValidator(Schema):
     """
     username = fields.String(required=True)
     password = fields.String(required=True)
+    is_admin = fields.Boolean(required=False)
+    creator_id = fields.Integer(required=False)
 
 
 class UserPatchValidator(Schema):
@@ -132,6 +134,7 @@ class UserPatchValidator(Schema):
     password = fields.String(required=False)
     is_admin = fields.Boolean(required=False)
     slack_id = fields.String(required=False)
+    id = fields.Integer(required=False)
     subscribed_to_slack = fields.Boolean(required=False)
 
 
