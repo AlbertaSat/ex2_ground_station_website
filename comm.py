@@ -19,6 +19,7 @@ class Connection(Enum):
     SIMULATOR = 1
     SATELLITE = 2
 
+
 class FSStatus(Enum):
     QUEUED = 1
     DRAFT = 2
@@ -138,19 +139,19 @@ def generate_fs_file(fs):
             exec_time = format_date_time(command['timestamp'])
             time_fields = {
                 'ms': '*' if command['repeats']['repeat_ms']
-                    else int(exec_time.microsecond / 1000),
+                else int(exec_time.microsecond / 1000),
                 'second': '*' if command['repeats']['repeat_sec']
-                    else exec_time.second,
+                else exec_time.second,
                 'minute': '*' if command['repeats']['repeat_min']
-                    else exec_time.minute,
+                else exec_time.minute,
                 'hour': '*' if command['repeats']['repeat_hr']
-                    else exec_time.hour,
+                else exec_time.hour,
                 'day': '*' if command['repeats']['repeat_day']
-                    else exec_time.day,
+                else exec_time.day,
                 'month': '*' if command['repeats']['repeat_month']
-                    else exec_time.month,
+                else exec_time.month,
                 'year': '*' if command['repeats']['repeat_year']
-                    else exec_time.year - 1970  # Offset from 1970
+                else exec_time.year - 1970  # Offset from 1970
             }
             time_str = ('{ms} {second} {minute} {hour} 0 {day} {month} {year}'
                         .format(**time_fields))
@@ -169,8 +170,9 @@ def send_flightschedules(gs):
         elif mode == Connection.SATELLITE:
             file_path = generate_fs_file(queued_fs)
             resp = send_to_satellite(
-                gs, 'ex2.scheduler.set_schedule({})'.format(file_path))
-            save_response(resp)
+                gs, 'ex2.scheduler.replace_schedule({})'.format(file_path))
+            save_response('Flight Schedule Successful! (ID = {}): {}'.format(
+                queued_fs['flightschedule_id'], repr(resp)))
             if resp['err'] == 0:
                 change_fs_status(
                     queued_fs['flightschedule_id'],
@@ -193,9 +195,11 @@ def send_to_simulator(msg):
     except Exception as e:
         print('Unexpected error occured:', e)
 
+
 def send_to_satellite(gs, msg):
     try:
-        transactObj = gs.interactive.getTransactionObject(msg, gs.networkManager)
+        transactObj = gs.interactive.getTransactionObject(
+            msg, gs.networkManager)
         return transactObj.execute()
     except Exception as e:
         print('Unexpected error occured:', e)
@@ -215,7 +219,7 @@ def save_response(message):
     communication_list.post(local_data=message)
 
 
-def communication_loop(gs=None, cli_gs=None):
+def communication_loop(gs=None):
     """
     Main communication loop which polls for messages that are queued and addressed to comm
     (i.e. messages it needs to send to satellite). This should be run when a passover is
@@ -224,15 +228,16 @@ def communication_loop(gs=None, cli_gs=None):
     :param Csp csp: The Csp instance. See groundStation.py
     """
     if mode == Connection.SATELLITE and gs is None:
-        raise Exception('Ground station instance must be specified if sending to satellite')
+        raise Exception(
+            'Ground station instance must be specified if sending to satellite')
 
     request_data = {'is_queued': True,
                     'receiver': 'comm', 'newest-first': False}
 
     # Check communication table every minute
     while True:
+        # Upload any queued flight schedules
         if mode == Connection.SATELLITE:
-            # Upload any queued flight schedules
             send_flightschedules(gs)
 
         # Get queued communications
@@ -242,8 +247,6 @@ def communication_loop(gs=None, cli_gs=None):
         if len(messages['data']['messages']) > 0:
             for message in messages['data']['messages']:
                 if message['message']:
-                    # TODO may need to handle flight schedule stuff here using handle_message
-
                     # Send the message to the satellite
                     response = None
                     msg = message['message']
@@ -265,17 +268,6 @@ def communication_loop(gs=None, cli_gs=None):
                         communication_patch.patch(
                             message['message_id'],
                             local_data=json.dumps({'is_queued': False}))
-
-        # Fetch any flight schedule command responses
-        # TODO: How would fs work with gs_software/obc?
-        # TODO: Find an efficient way to continually listen for any kind of message from sat
-        #       since right now, comm.py is a client and must continuously request from sat_server
-        if mode == Connection.SIMULATOR:
-            resp = send_to_simulator('fetch-fs')
-            if resp != 'null':
-                resp = json.loads(resp)
-                for item in resp:
-                    save_response(item)
 
         time.sleep(5)
 
@@ -299,7 +291,8 @@ if __name__ == '__main__':
         print('Detected CLI arguments for Ground Station Software!')
         print('Automatically setting mode to satellite...')
         mode = Connection.SATELLITE
-        sys.path.append(os.path.join(sys.path[0], 'ex2_ground_station_software', 'src'))
+        sys.path.append(os.path.join(
+            sys.path[0], 'ex2_ground_station_software', 'src'))
         from groundStation import GroundStation
         from options import optionsFactory
     else:
@@ -309,7 +302,8 @@ if __name__ == '__main__':
             import satellite_simulator.antenna as antenna
         else:
             mode = Connection.SATELLITE
-            sys.path.append(os.path.join(sys.path[0], 'ex2_ground_station_software', 'src'))
+            sys.path.append(os.path.join(
+                sys.path[0], 'ex2_ground_station_software', 'src'))
             from groundStation import GroundStation
             from options import optionsFactory
 
