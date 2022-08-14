@@ -13,6 +13,7 @@ from groundstation.backend_api.utils import create_context, login_required
 user_blueprint = Blueprint('user', __name__)
 api = Api(user_blueprint)
 
+
 class UserEntity(Resource):
     def __init__(self):
         self.validator = UserPatchValidator()
@@ -28,12 +29,13 @@ class UserEntity(Resource):
         :returns: response_object, status_code
         :rtype: tuple (dict, int)
         """
-        user = User.query.filter_by(id=User.decode_auth_token(auth_token)).first()
+        user = User.query.filter_by(
+            id=User.decode_auth_token(auth_token)).first()
 
         response_object = {
-            'status':None,
-            'message':None,
-            'data':None
+            'status': None,
+            'message': None,
+            'data': None
         }
 
         if user is None:
@@ -63,22 +65,25 @@ class UserEntity(Resource):
         else:
             post_data = json.loads(local_data)
 
-        other_user_id = post_data.get('id') # has to be called id in request JSON for data to be validated
+        # has to be called id in request JSON for data to be validated
+        other_user_id = post_data.get('id')
 
         if other_user_id:
             if not g.user.is_admin:
                 response_object = {
-                    'status':'fail',
-                    'message':'You do not have permission to create users.'
+                    'status': 'fail',
+                    'message': 'You do not have permission to create users.'
                 }
                 return response_object, 403
             else:
                 user = User.query.filter_by(id=other_user_id).first()
         else:
-            user = User.query.filter_by(id=User.decode_auth_token(auth_token)).first()
+            user = User.query.filter_by(
+                id=User.decode_auth_token(auth_token)).first()
 
         if user is None:
-            response_object = {'status': 'fail', 'message': 'User does not exist'}
+            response_object = {'status': 'fail',
+                               'message': 'User does not exist'}
             return response_object, 404
 
         try:
@@ -94,16 +99,19 @@ class UserEntity(Resource):
         for attribute in validated_data:
             setattr(user, attribute, validated_data[attribute])
 
-        user.regenerate_password_hash(post_data.get('password'))
+        new_password = post_data.get('password')
+        if new_password:
+            user.regenerate_password_hash(new_password)
+
         try:
             db.session.commit()
         except exc.IntegrityError as e:
             db.session.rollback()
             # TODO: Probably remove dev_message
             response_object = {
-                'status':'fail',
-                'message':'Username already taken!',
-                'dev_message':str(e.orig)
+                'status': 'fail',
+                'message': 'Username already taken!',
+                'dev_message': str(e.orig)
             }
             return response_object, 400
 
@@ -132,7 +140,7 @@ class UserEntity(Resource):
             delete_data = request.get_json()
         else:
             delete_data = json.loads(local_data)
-        
+
         id_to_delete = delete_data.get('id_to_delete')
 
         if not id_to_delete:
@@ -141,7 +149,7 @@ class UserEntity(Resource):
                 'message': 'unable to delete user without user id'
             }
             return response_object, 403
-        
+
         user = User.query.filter_by(id=id_to_delete).first()
         if not user:
             response_object = {
@@ -173,7 +181,6 @@ class UserEntity(Resource):
         return response_object, 200
 
 
-
 class UserList(Resource):
 
     def __init__(self):
@@ -192,16 +199,20 @@ class UserList(Resource):
         :rtype: tuple (dict, int)
         """
         response_object = {}
-        # if not local_args:
-        #     query_limit = request.args.get('limit')
-        # else:
-        #     query_limit = local_args.get('limit')
+        if not local_args:
+            query_limit = request.args.get('limit')
+            no_admin = request.args.get('no_admin')
+        else:
+            query_limit = local_args.get('limit')
+            no_admin = local_args.get('no_admin')
 
-        # users = User.query.order_by(User.id).limit(query_limit).all()
-        
-        users = User.query.filter_by(creator_id=g.user.id).all()
+        if no_admin:  # Fetch ALL users
+            users = User.query.order_by(User.id).limit(query_limit).all()
+        else:  # Fetch ONLY users created by the user calling this endpoint
+            users = User.query.filter_by(creator_id=g.user.id).all()
+
         response_object = {
-            'status': 'success', 
+            'status': 'success',
             'data': {'users': [user.to_json() for user in users]}
         }
 
@@ -223,8 +234,8 @@ class UserList(Resource):
         """
         if not g.user.is_admin:
             response_object = {
-                'status':'fail',
-                'message':'You do not have permission to create users.'
+                'status': 'fail',
+                'message': 'You do not have permission to create users.'
             }
             return response_object, 403
 
@@ -251,16 +262,16 @@ class UserList(Resource):
             db.session.rollback()
             # TODO: Probably remove dev_message
             response_object = {
-                'status':'fail',
-                'message':'User already exists!',
-                'dev_message':str(e.orig)
+                'status': 'fail',
+                'message': 'User already exists!',
+                'dev_message': str(e.orig)
             }
             return response_object, 400
 
         response_object = {
-            'status':'success',
-            'message':'User was successfully added',
-            'data':new_user.to_json()
+            'status': 'success',
+            'message': 'User was successfully added',
+            'data': new_user.to_json()
         }
         return response_object, 201
 
