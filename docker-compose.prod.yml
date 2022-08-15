@@ -36,6 +36,9 @@ services:
   web:
     image: albertasatdocker/ground-station-website:user-latest
     restart: always
+    volumes:
+      - ./keys.sh:/home/ex2_ground_station_website/keys.sh
+      - gs_web:/home/ex2_ground_station_website
     expose:
       - 5000
     environment:
@@ -51,3 +54,6 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf
     depends_on:
       - web
+
+volumes:
+  gs_web:
