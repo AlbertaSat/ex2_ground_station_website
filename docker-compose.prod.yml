@@ -34,15 +34,12 @@ services:
       - BACKUP_KEEP_MONTHS=6
       - HEALTHCHECK_PORT=8080
   web:
-    image: albertasatdocker/ground-station-website:dev-latest
+    image: albertasatdocker/ground-station-website:user-latest
     restart: always
     expose:
       - 5000
     environment:
       - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/ex2_gs
-    volumes:
-      - ./:/home/ex2_ground_station_website
-    entrypoint: ./entrypoint.prod.sh
     depends_on:
       - db
   nginx:

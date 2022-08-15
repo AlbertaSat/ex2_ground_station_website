@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # This script is for the entrypoint when the app is deployed on a server
 
 # Update pip and install python dependencies
@@ -9,6 +9,7 @@ pip install -r requirements.txt
 export FLASK_APP=groundstation/__init__.py
 export FLASK_ENV=production
 export APP_SETTINGS=groundstation.config.ProductionConfig
+source ./keys.sh
 
 # Build frontend
 cd groundstation/static
