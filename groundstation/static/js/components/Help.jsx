@@ -229,7 +229,7 @@ class Help extends Component {
             }}
           >
             Send telecommands to the satellite via the live commands page.
-            Commands are formatted as "prefix.command_name(arg1 arg2 ...) "
+            Commands are formatted as "prefix.command_name(arg1,arg2,arg3,...) "
             where the number and content of arguments differ for each command.
             For commands with no arguments, the format is
             "prefix.command_name()". See below for a list of valid telecommands.
