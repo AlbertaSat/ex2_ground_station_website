@@ -21,6 +21,7 @@ class CommandValidator(Schema):
     num_arguments = fields.Integer(required=False)
     is_dangerous = fields.Boolean(required=False)
     command_name = fields.String(required=False)
+    about_info = fields.String(required=False, allow_none=True)
 
 
 class FlightScheduleCommandRepeatValidator(Schema):

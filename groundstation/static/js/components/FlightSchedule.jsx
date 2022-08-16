@@ -1,12 +1,12 @@
-import React, { Component } from "react";
-import FlightScheduleList from "./FlightScheduleList";
-import AddFlightschedule from "./AddFlightschedule";
-import DeleteFlightschedule from "./DeleteFlightschedule";
-import Typography from "@material-ui/core/Typography";
-import Grid from "@material-ui/core/Grid";
-import Fab from "@material-ui/core/Fab";
-import AddIcon from "@material-ui/icons/Add";
-import Paper from "@material-ui/core/Paper";
+import React, { Component } from 'react';
+import FlightScheduleList from './FlightScheduleList';
+import AddFlightschedule from './AddFlightschedule';
+import DeleteFlightschedule from './DeleteFlightschedule';
+import Typography from '@material-ui/core/Typography';
+import Grid from '@material-ui/core/Grid';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
+import Paper from '@material-ui/core/Paper';
 
 function isMinified(minify, elemt) {
   if (!minify) {
@@ -17,7 +17,7 @@ function isMinified(minify, elemt) {
 }
 
 const DEFAULT_COMMAND = {
-  command: { command_id: "" },
+  command: { command_id: '' },
   timestamp: null,
   repeats: {
     repeat_ms: false,
@@ -26,9 +26,9 @@ const DEFAULT_COMMAND = {
     repeat_hr: false,
     repeat_day: false,
     repeat_month: false,
-    repeat_year: false,
+    repeat_year: false
   },
-  args: [],
+  args: []
 };
 
 class FlightSchedule extends Component {
@@ -47,7 +47,7 @@ class FlightSchedule extends Component {
       availCommands: [],
       patchCommands: [],
       thisFlightScheduleStatus: 2,
-      thisExecutionTime: null,
+      thisExecutionTime: null
     };
     this.handleAddFlightOpenClick = this.handleAddFlightOpenClick.bind(this);
     this.fetchFlightschedules = this.fetchFlightschedules.bind(this);
@@ -68,25 +68,25 @@ class FlightSchedule extends Component {
 
   fetchFlightschedules() {
     Promise.all([
-      fetch("/api/flightschedules", {
+      fetch('/api/flightschedules', {
         headers: {
-          Authorization: "Bearer " + sessionStorage.getItem("auth_token"),
-        },
+          Authorization: 'Bearer ' + sessionStorage.getItem('auth_token')
+        }
       }),
-      fetch("/api/telecommands", {
+      fetch('/api/telecommands', {
         headers: {
-          Authorization: "Bearer " + sessionStorage.getItem("auth_token"),
-        },
-      }),
+          Authorization: 'Bearer ' + sessionStorage.getItem('auth_token')
+        }
+      })
     ])
       .then(([res1, res2]) => {
         return Promise.all([res1.json(), res2.json()]);
       })
       .then(([res1, res2]) => {
-        if (res1.status == "success") {
+        if (res1.status == 'success') {
           this.setState({
             allflightschedules: res1.data.flightschedules,
-            isLoading: false,
+            isLoading: false
           });
           if (res1.data.flightschedules.length > 0) {
             this.setState({ empty: false });
@@ -102,7 +102,7 @@ class FlightSchedule extends Component {
               setTimeout(this.fetchFlightschedules, 1000);
           }
         }
-        if (res2.status == "success") {
+        if (res2.status == 'success') {
           this.setState({
             availCommands: res2.data.telecommands.map((command) => ({
               label: command.command_name,
@@ -130,7 +130,7 @@ class FlightSchedule extends Component {
       thisIndex: null,
       thisFlightscheduleCommands: [structuredClone(DEFAULT_COMMAND)],
       thisFlightScheduleStatus: 2,
-      thisExecutionTime: null,
+      thisExecutionTime: null
     });
   }
 
@@ -141,7 +141,7 @@ class FlightSchedule extends Component {
     this.setState({
       deleteFlightOpen: !this.state.deleteFlightOpen,
       thisFlightscheduleId: id,
-      thisIndex: idx,
+      thisIndex: idx
     });
   }
 
@@ -151,31 +151,31 @@ class FlightSchedule extends Component {
     this.setState({
       deleteFlightOpen: false,
       thisFlightscheduleId: null,
-      thisIndex: null,
+      thisIndex: null
     });
   }
 
   // handle deletion of flight schedule
   deleteFlightschedule(event) {
     event.preventDefault();
-    fetch("/api/flightschedules/" + this.state.thisFlightscheduleId, {
-      method: "DELETE",
+    fetch('/api/flightschedules/' + this.state.thisFlightscheduleId, {
+      method: 'DELETE',
       headers: {
-        Authorization: "Bearer " + sessionStorage.getItem("auth_token"),
-      },
+        Authorization: 'Bearer ' + sessionStorage.getItem('auth_token')
+      }
     })
       .then((results) => {
         return results.json();
       })
       .then((data) => {
-        if (data.status == "success") {
+        if (data.status == 'success') {
           const obj = this.state.allflightschedules.slice();
           obj.splice(this.state.thisIndex, 1);
           this.setState({
             deleteFlightOpen: false,
             thisIndex: null,
             thisFlightscheduleId: null,
-            allflightschedules: obj,
+            allflightschedules: obj
           });
           if (this.state.allflightschedules.length == 0) {
             this.setState({ empty: true });
@@ -196,24 +196,24 @@ class FlightSchedule extends Component {
     };
 
     let url = this.state.editFlight
-      ? "/api/flightschedules/" + this.state.thisFlightscheduleId
-      : "/api/flightschedules";
-    let method = this.state.editFlight ? "PATCH" : "POST";
+      ? '/api/flightschedules/' + this.state.thisFlightscheduleId
+      : '/api/flightschedules';
+    let method = this.state.editFlight ? 'PATCH' : 'POST';
     this.setState({ empty: false });
     // console.log("posted data", data);
     fetch(url, {
       method: method,
       headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + sessionStorage.getItem("auth_token"),
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + sessionStorage.getItem('auth_token')
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(data)
     })
       .then((results) => {
         return results.json();
       })
       .then((data) => {
-        if (data.status == "success") {
+        if (data.status == 'success') {
           const obj = this.state.allflightschedules.slice();
           // depending on what we are doing, we handle the resulting data differently
           if (this.state.editFlight) {
@@ -229,14 +229,16 @@ class FlightSchedule extends Component {
             thisIndex: null,
             thisFlightscheduleId: null,
             thisFlightScheduleStatus: 2,
-            thisExecutionTime: null,
+            thisExecutionTime: null
           });
           setTimeout(this.fetchFlightschedules, 1000);
         } else {
-          if (data.message == "A Queued flight schedule already exists!") {
+          if (data.message == 'A Queued flight schedule already exists!') {
             alert(
-              "A flight schedule is already queued. Please dequeue it first."
+              'A flight schedule is already queued. Please dequeue it first.'
             );
+          } else if (data.message == 'The posted data is not valid!') {
+            alert('Please fill in all fields!');
           }
         }
       });
@@ -245,32 +247,31 @@ class FlightSchedule extends Component {
   // handle any changes in our form fields
   handleAddEvent(event, type, idx) {
     const obj = this.state.thisFlightscheduleCommands.slice();
-    if (type == "date") {
-      // when the time delta offset is changed, add the number of seconds
-      // to the execution time for the command timestamp
+    if (type.includes('offset')) {
+      // Add the offset (second or millisecond) to command timestamp
       let thisTimeObj = this.state.thisExecutionTime;
-      if (this.state.editFlight && !thisTimeObj.endsWith("Z")) {
-        // console.log(this.state.thisExecutionTime);
-        // console.log(typeof this.state.thisExecutionTime);
-        thisTimeObj = thisTimeObj.replace(" ", "T").concat("Z");
-      }
-      let thisTime = Date.parse(thisTimeObj);
-      let offsetSeconds = parseInt(event.target.value);
-      thisTime = new Date(thisTime + offsetSeconds);
 
+      if (this.state.editFlight && !thisTimeObj.endsWith('Z')) {
+        thisTimeObj = thisTimeObj.replace(' ', 'T').concat('Z');
+      }
+
+      let thisTime = Date.parse(thisTimeObj);
+      let offset = event.target.value; // offset is in ms
+
+      thisTime = new Date(thisTime + offset);
       obj[idx].timestamp = thisTime.toISOString();
     } else {
       obj[idx].command.command_id = event.value;
       obj[idx].command.command_name = event.label;
       obj[idx].args = [];
       for (let i = 0; i < event.args; i++) {
-        obj[idx].args.push({ index: i, argument: "" });
+        obj[idx].args.push({ index: i, argument: '' });
       }
     }
     // if a command was created and then edited, we consider it added
     // and not replaced, only existing commands can be replaced
-    if (this.state.editFlight && obj[idx].op != "add") {
-      obj[idx].op = "replace";
+    if (this.state.editFlight && obj[idx].op != 'add') {
+      obj[idx].op = 'replace';
     }
     // we have to handle the case where an object is being edited,
     // however it is newly created, so deleting it shouldnt be
@@ -292,9 +293,9 @@ class FlightSchedule extends Component {
       let adjustedCommands = obj.map((command) => {
         if (command.timestamp) {
           // handle a weird bug
-          if (command.op == "add") {
-            command.timestamp = command.timestamp.replace("Z", "");
-            command.timestamp = command.timestamp.concat("000");
+          if (command.op == 'add') {
+            command.timestamp = command.timestamp.replace('Z', '');
+            command.timestamp = command.timestamp.concat('000');
           }
           // console.log(command.timestamp, command.op);
           let oldTime = Date.parse(command.timestamp);
@@ -304,8 +305,8 @@ class FlightSchedule extends Component {
 
           command.timestamp = newTimestamp.toISOString();
           if (this.state.editFlight) {
-            if (command.op != "add" || command.op != "remove") {
-              command.op = "replace";
+            if (command.op != 'add' || command.op != 'remove') {
+              command.op = 'replace';
             }
           }
         }
@@ -313,7 +314,7 @@ class FlightSchedule extends Component {
     }
     this.setState({
       thisExecutionTime: thisExecutionTime.toISOString(),
-      thisFlightscheduleCommands: obj,
+      thisFlightscheduleCommands: obj
     });
   }
 
@@ -321,8 +322,8 @@ class FlightSchedule extends Component {
   handleChangeRepeat(event, fs_idx, repeats) {
     const obj = this.state.thisFlightscheduleCommands.slice();
     obj[fs_idx].repeats = structuredClone(repeats);
-    if (this.state.editFlight && obj[fs_idx].op != "add") {
-      obj[fs_idx].op = "replace";
+    if (this.state.editFlight && obj[fs_idx].op != 'add') {
+      obj[fs_idx].op = 'replace';
     }
 
     this.setState({ thisFlightscheduleCommands: obj });
@@ -332,8 +333,8 @@ class FlightSchedule extends Component {
   handleChangeArgument(event, fs_idx, arg_idx) {
     const obj = this.state.thisFlightscheduleCommands.slice();
     obj[fs_idx].args[arg_idx].argument = event.target.value;
-    if (this.state.editFlight && obj[fs_idx].op != "add") {
-      obj[fs_idx].op = "replace";
+    if (this.state.editFlight && obj[fs_idx].op != 'add') {
+      obj[fs_idx].op = 'replace';
     }
 
     this.setState({ thisFlightscheduleCommands: obj });
@@ -345,7 +346,7 @@ class FlightSchedule extends Component {
     let comm = structuredClone(DEFAULT_COMMAND);
     // if we are editing add a condition for adding
     if (this.state.editFlight) {
-      comm.op = "add";
+      comm.op = 'add';
     }
     obj.push(comm);
     this.setState({ thisFlightscheduleCommands: obj });
@@ -355,8 +356,8 @@ class FlightSchedule extends Component {
   handleDeleteCommandClick(event, idx) {
     const obj = this.state.thisFlightscheduleCommands.slice();
     // if a flight schedule is newly created we just want to remove it
-    if (obj[idx].op == "none" || obj[idx].op == "replace") {
-      obj[idx].op = "remove";
+    if (obj[idx].op == 'none' || obj[idx].op == 'replace') {
+      obj[idx].op = 'remove';
     } else {
       obj.splice(idx, 1);
       // console.log("obj", obj);
@@ -375,7 +376,7 @@ class FlightSchedule extends Component {
     let executionTime = this.state.allflightschedules[idx].execution_time;
     const obj = this.state.allflightschedules[idx].commands.map((command) => ({
       ...command,
-      op: "none",
+      op: 'none'
     }));
     // console.log(obj);
 
@@ -386,7 +387,7 @@ class FlightSchedule extends Component {
       thisFlightscheduleId: id,
       thisIndex: idx,
       thisFlightScheduleStatus: status,
-      thisExecutionTime: executionTime,
+      thisExecutionTime: executionTime
     });
   }
 
@@ -401,18 +402,18 @@ class FlightSchedule extends Component {
     return (
       <div>
         <Paper className="grid-containers">
-          <Grid container style={{ paddingBottom: "12px" }}>
+          <Grid container style={{ paddingBottom: '12px' }}>
             <Grid item xs={11}>
-              <Typography variant="h5" style={{ padding: "10px" }}>
+              <Typography variant="h5" style={{ padding: '10px' }}>
                 Flight Schedules
               </Typography>
             </Grid>
-            <Grid item xs={1} style={{ textAlign: "right" }}>
+            <Grid item xs={1} style={{ textAlign: 'right' }}>
               <Fab
-                style={{ position: "inherit" }}
+                style={{ position: 'inherit' }}
                 onClick={(event) => this.handleAddFlightOpenClick(event)}
               >
-                <AddIcon style={{ color: "#4bacb8", fontSize: "2rem" }} />
+                <AddIcon style={{ color: '#4bacb8', fontSize: '2rem' }} />
               </Fab>
             </Grid>
           </Grid>
