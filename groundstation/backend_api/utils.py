@@ -26,21 +26,25 @@ def create_context(function):
                 return function(*args, **kwargs)
 
         else:
-             return function(*args, **kwargs)
+            return function(*args, **kwargs)
 
     return decorate
 
-def add_telecommand(command_name, num_arguments, is_dangerous):
+
+def add_telecommand(command_name, num_arguments, is_dangerous, about_info=None):
     """Add a new telecommand to the database
     """
     # only add command if it isn't already in the database
-    command = Telecommands.query.filter(Telecommands.command_name == command_name).first()
+    command = Telecommands.query.filter(
+        Telecommands.command_name == command_name).first()
     if not command:
-        command = Telecommands(command_name=command_name, num_arguments=num_arguments, is_dangerous=is_dangerous)
+        command = Telecommands(command_name=command_name, num_arguments=num_arguments,
+                               is_dangerous=is_dangerous, about_info=about_info)
 
         db.session.add(command)
         db.session.commit()
     return command
+
 
 def add_flight_schedule(creation_date, upload_date, status, execution_time):
     """Add a new flight schedule to the database
@@ -55,17 +59,19 @@ def add_flight_schedule(creation_date, upload_date, status, execution_time):
     db.session.commit()
     return flightschedule
 
+
 def add_command_to_flightschedule(timestamp, flightschedule_id, command_id):
     """Add a new command to a pre-existing flight schedule
     """
     flightschedule_commands = FlightScheduleCommands(
-                                timestamp=timestamp,
-                                flightschedule_id=flightschedule_id,
-                                command_id=command_id,
-                            )
+        timestamp=timestamp,
+        flightschedule_id=flightschedule_id,
+        command_id=command_id
+    )
     db.session.add(flightschedule_commands)
     db.session.commit()
     return flightschedule_commands
+
 
 def add_user(username, password, is_admin=False):
     """Add a new user to the database
@@ -74,6 +80,7 @@ def add_user(username, password, is_admin=False):
     db.session.add(user)
     db.session.commit()
     return user
+
 
 def login_required(f):
     """This is a wrapper which can be used to protect endpoints behind authentication
@@ -123,7 +130,8 @@ def login_required(f):
             response_object['message'] = 'Invalid token. Please log in again.'
             response_header_object['WWW-Authenticate'] = 'Bearer'
             return response_object, 401, response_header_object
-        blacklisted_tokens = BlacklistedTokens.query.filter(BlacklistedTokens.user.has(id=user_id)).all()
+        blacklisted_tokens = BlacklistedTokens.query.filter(
+            BlacklistedTokens.user.has(id=user_id)).all()
         for tok in blacklisted_tokens:
             if auth_token == tok.token:
                 response_object['status'] = 'fail'
@@ -136,37 +144,41 @@ def login_required(f):
 
     return decorated_function
 
+
 def add_arg_to_flightschedulecommand(index, argument, flightschedule_command_id):
     """Add a new argument to a pre-existing flightschedule command
     """
     flightschedule_command_arg = FlightScheduleCommandsArgs(
-                                    index=index,
-                                    argument=argument,
-                                    flightschedulecommand_id=flightschedule_command_id
-                                )
+        index=index,
+        argument=argument,
+        flightschedulecommand_id=flightschedule_command_id
+    )
 
     db.session.add(flightschedule_command_arg)
     db.session.commit()
     return flightschedule_command_arg
 
+
 def add_message_to_communications(timestamp, message, receiver, sender, is_queued):
     """Add a new message to the communications table
     """
     message = Communications(
-                        timestamp=timestamp,
-                        message=message,
-                        receiver=receiver,
-                        sender=sender,
-                        is_queued=is_queued)
+        timestamp=timestamp,
+        message=message,
+        receiver=receiver,
+        sender=sender,
+        is_queued=is_queued)
 
     db.session.add(message)
     db.session.commit()
     return message
 
+
 def add_passover(aos_timestamp, los_timestamp):
     """Add a new passover to the database
     """
-    passover = Passover(aos_timestamp=aos_timestamp, los_timestamp=los_timestamp)
+    passover = Passover(aos_timestamp=aos_timestamp,
+                        los_timestamp=los_timestamp)
     db.session.add(passover)
     db.session.commit()
     return passover
@@ -194,7 +206,8 @@ def dynamic_filters_communications(filters):
         elif arg == 'is_queued':
             filter_ops.append(operator.eq(Communications.is_queued, value))
         elif arg == 'max':
-            max_comm = Communications.query.order_by(Communications.id.desc()).limit(1).first()
+            max_comm = Communications.query.order_by(
+                Communications.id.desc()).limit(1).first()
             max_id = -1 if max_comm is None else max_comm.id
             filter_ops.append(operator.eq(Communications.id, max_id))
         else:
@@ -236,6 +249,7 @@ def dynamic_filters_housekeeping(filters, ignore_keys=[]):
                     except ValueError as e:
                         return None
 
-                filter_ops.append(getattr(operator, operation)(getattr(Housekeeping, arg), value))
+                filter_ops.append(getattr(operator, operation)(
+                    getattr(Housekeeping, arg), value))
 
     return filter_ops
