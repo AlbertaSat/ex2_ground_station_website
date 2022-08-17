@@ -172,7 +172,7 @@ function App() {
                   Login
                 </a>
               )}
-              <Countdown />
+
               {isAuthenticated() && (
                 <div style={{ marginLeft: '3em' }}>
                   <Button
@@ -202,7 +202,7 @@ function App() {
                               : 'center bottom'
                         }}
                       >
-                        <Paper>
+                        <Paper style={{ zIndex: '2', position: 'relative' }}>
                           <ClickAwayListener onClickAway={handleClose}>
                             <MenuList
                               autoFocusItem={open}
@@ -244,6 +244,7 @@ function App() {
                   </Popper>
                 </div>
               )}
+              <Countdown />
             </Typography>
           </Toolbar>
         </AppBar>
