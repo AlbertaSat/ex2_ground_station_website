@@ -89,6 +89,11 @@ class Flightschedule(Resource):
 
         flightschedule.status = validated_data['status']
         flightschedule.execution_time = validated_data['execution_time']
+        flightschedule.error = validated_data['error']
+
+        # Automatically set failed uploads back to draft, if not done so already
+        if validated_data['error'] != 0 and validated_data['status'] != 2:
+            flightschedule.status = 2
 
         # go through the operations for this patch, inspired by the parse JSON syntax
         # we have replace, add, or remove as valid operations on the flight schedule
@@ -97,7 +102,14 @@ class Flightschedule(Resource):
             if command['op'] == 'add':
                 new_command = FlightScheduleCommands(
                         command_id=command['command']['command_id'],
-                        timestamp=command['timestamp']
+                        timestamp=command['timestamp'],
+                        repeat_ms=command['repeats']['repeat_ms'],
+                        repeat_sec=command['repeats']['repeat_sec'],
+                        repeat_min=command['repeats']['repeat_min'],
+                        repeat_hr=command['repeats']['repeat_min'] or command['repeats']['repeat_hr'],
+                        repeat_day=command['repeats']['repeat_day'],
+                        repeat_month=command['repeats']['repeat_month'],
+                        repeat_year=command['repeats']['repeat_year'],
                     )
 
                 # iterate through args and add them to our flightschedule in the db
@@ -116,6 +128,15 @@ class Flightschedule(Resource):
 
                 this_command.arguments.clear()
                 arguments = command.pop('args')
+
+                # change repeating settings
+                this_command.repeat_ms=command['repeats']['repeat_ms']
+                this_command.repeat_sec=command['repeats']['repeat_sec']
+                this_command.repeat_min=command['repeats']['repeat_min']
+                this_command.repeat_hr=command['repeats']['repeat_min'] or command['repeats']['repeat_hr']
+                this_command.repeat_day=command['repeats']['repeat_day']
+                this_command.repeat_month=command['repeats']['repeat_month']
+                this_command.repeat_year=command['repeats']['repeat_year']
 
                 # iterate through args and add them to the db
                 for arg_data in arguments:
@@ -194,7 +215,7 @@ class FlightScheduleList(Resource):
             queued = local_args.get('queued')
 
         if queued:
-            flightschedules = FlightSchedules.query.filter(FlightSchedules.status == 1).limit(query_limit).all()
+            flightschedules = FlightSchedules.query.filter(FlightSchedules.status == queued).limit(query_limit).all()
         else:
             flightschedules = FlightSchedules.query.order_by(
                             FlightSchedules.status,
@@ -252,7 +273,17 @@ class FlightScheduleList(Resource):
         for command_data in flightschedule_commands:
             command_id = command_data['command']['command_id']
             timestamp = command_data['timestamp']
-            command = FlightScheduleCommands(command_id=command_id, timestamp=timestamp)
+            command = FlightScheduleCommands(
+                command_id=command_id,
+                timestamp=timestamp,
+                repeat_ms=command_data['repeats']['repeat_ms'],
+                repeat_sec=command_data['repeats']['repeat_sec'],
+                repeat_min=command_data['repeats']['repeat_min'],
+                repeat_hr=command_data['repeats']['repeat_min'] or command_data['repeats']['repeat_hr'],
+                repeat_day=command_data['repeats']['repeat_day'],
+                repeat_month=command_data['repeats']['repeat_month'],
+                repeat_year=command_data['repeats']['repeat_year'],
+            )
             flightschedule.commands.append(command)
 
             arguments = command_data.pop('args')

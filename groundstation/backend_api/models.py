@@ -11,7 +11,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(128), unique=True)
     password_hash = db.Column(db.String(128))
-    is_admin = db.Column(db.Boolean, server_default="0", nullable=False)
+    is_admin = db.Column(db.Boolean, server_default='0', nullable=False)
     slack_id = db.Column(db.String(128), nullable=True, unique=True)
     creator_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     subscribed_to_slack = db.Column(db.Boolean, server_default="0")
@@ -217,6 +217,7 @@ class FlightSchedules(db.Model):
     execution_time = db.Column(db.DateTime)
     # status is an integer, where 1=queued, 2=draft, 3=uploaded
     status = db.Column(db.Integer)
+    error = db.Column(db.Integer, nullable=False, server_default='0')
     commands = db.relationship(
         'FlightScheduleCommands', backref='flightschedule', lazy=True, cascade='all')
 
@@ -228,6 +229,7 @@ class FlightSchedules(db.Model):
             'creation_date': str(self.creation_date),
             'upload_date': str(self.upload_date),
             'status': self.status,
+            'error': self.error,
             'execution_time': self.execution_time.isoformat(),
             'commands': [command.to_json() for command in self.commands]
         }
@@ -240,6 +242,13 @@ class FlightScheduleCommands(db.Model):
     command_id = db.Column(db.Integer, db.ForeignKey(
         'telecommands.id'), nullable=False)
     timestamp = db.Column(db.DateTime)
+    repeat_ms = db.Column(db.Boolean, default=False, nullable=False)
+    repeat_sec = db.Column(db.Boolean, default=False, nullable=False)
+    repeat_min = db.Column(db.Boolean, default=False, nullable=False)
+    repeat_hr = db.Column(db.Boolean, default=False, nullable=False)
+    repeat_day = db.Column(db.Boolean, default=False, nullable=False)
+    repeat_month = db.Column(db.Boolean, default=False, nullable=False)
+    repeat_year = db.Column(db.Boolean, default=False, nullable=False)
     flightschedule_id = db.Column(db.Integer, db.ForeignKey(
         'flightschedules.id'), nullable=False)
     arguments = db.relationship('FlightScheduleCommandsArgs',
@@ -254,8 +263,17 @@ class FlightScheduleCommands(db.Model):
         return {
             'flightschedule_command_id': self.id,
             'timestamp': str(self.timestamp),
+            'repeats': {
+                'repeat_ms': self.repeat_ms,
+                'repeat_sec': self.repeat_sec,
+                'repeat_min': self.repeat_min,
+                'repeat_hr': self.repeat_hr,
+                'repeat_day': self.repeat_day,
+                'repeat_month': self.repeat_month,
+                'repeat_year': self.repeat_year,
+            },
             'command': self.command.to_json(),
-            'args': [arg.to_json() for arg in self.arguments]
+            'args': [arg.to_json() for arg in self.arguments],
         }
 
 
