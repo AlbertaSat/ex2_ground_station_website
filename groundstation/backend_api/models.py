@@ -12,25 +12,29 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(128), unique=True)
     password_hash = db.Column(db.String(128))
-    is_admin = db.Column(db.Boolean, server_default="0", nullable=False)
+    is_admin = db.Column(db.Boolean, server_default='0', nullable=False)
     slack_id = db.Column(db.String(128), nullable=True, unique=True)
+    creator_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     subscribed_to_slack = db.Column(db.Boolean, server_default="0")
     blacklisted_tokens = db.relationship(
         'BlacklistedTokens', backref='user', lazy=True, cascade='all, delete-orphan')
+    creator = db.relationship('User', remote_side=[id], lazy=True)
 
-    def __init__(self, username, password, is_admin=False, slack_id=None, subscribed_to_slack=False):
+    def __init__(self, username, password, is_admin=False, slack_id=None, subscribed_to_slack=False, creator_id=None):
         self.username = username
         num_rounds = current_app.config.get('BCRYPT_LOG_ROUNDS')
         self.password_hash = bcrypt.generate_password_hash(
-            password, num_rounds).decode('ascii')
+            password, num_rounds).decode()
         self.is_admin = is_admin
         self.slack_id = slack_id
         self.subscribed_to_slack = subscribed_to_slack
+        self.creator_id = creator_id
 
     def regenerate_password_hash(self, password):
         num_rounds = current_app.config.get('BCRYPT_LOG_ROUNDS')
-        self.password_hash = bcrypt.generate_password_hash(password, num_rounds).decode()
-        
+        self.password_hash = bcrypt.generate_password_hash(
+            password, num_rounds).decode()
+
     def verify_password(self, password):
         """Returns True if passes password is valid, else False
 
@@ -79,7 +83,9 @@ class User(db.Model):
             'id': self.id,
             'username': self.username,
             'is_admin': self.is_admin,
-            'slack_id': self.slack_id
+            'slack_id': self.slack_id,
+            'creator_id': self.creator_id,
+            'subscribed_to_slack': self.subscribed_to_slack
         }
 
 
@@ -102,6 +108,7 @@ class Telecommands(db.Model):
     automatedcommands = db.relationship(
         'AutomatedCommands', backref='command', lazy=True)
     is_dangerous = db.Column(db.Boolean)
+    about_info = db.Column(db.String(256))
 
     def to_json(self):
         """Returns a dictionary of some selected model attributes
@@ -110,7 +117,8 @@ class Telecommands(db.Model):
             'command_id': self.id,
             'command_name': self.command_name,
             'num_arguments': self.num_arguments,
-            'is_dangerous': self.is_dangerous
+            'is_dangerous': self.is_dangerous,
+            'about_info': self.about_info
         }
 
 
@@ -123,6 +131,7 @@ class FlightSchedules(db.Model):
     execution_time = db.Column(db.DateTime)
     # status is an integer, where 1=queued, 2=draft, 3=uploaded
     status = db.Column(db.Integer)
+    error = db.Column(db.Integer, nullable=False, server_default='0')
     commands = db.relationship(
         'FlightScheduleCommands', backref='flightschedule', lazy=True, cascade='all')
 
@@ -134,6 +143,7 @@ class FlightSchedules(db.Model):
             'creation_date': str(self.creation_date),
             'upload_date': str(self.upload_date),
             'status': self.status,
+            'error': self.error,
             'execution_time': self.execution_time.isoformat(),
             'commands': [command.to_json() for command in self.commands]
         }
@@ -146,6 +156,13 @@ class FlightScheduleCommands(db.Model):
     command_id = db.Column(db.Integer, db.ForeignKey(
         'telecommands.id'), nullable=False)
     timestamp = db.Column(db.DateTime)
+    repeat_ms = db.Column(db.Boolean, default=False, nullable=False)
+    repeat_sec = db.Column(db.Boolean, default=False, nullable=False)
+    repeat_min = db.Column(db.Boolean, default=False, nullable=False)
+    repeat_hr = db.Column(db.Boolean, default=False, nullable=False)
+    repeat_day = db.Column(db.Boolean, default=False, nullable=False)
+    repeat_month = db.Column(db.Boolean, default=False, nullable=False)
+    repeat_year = db.Column(db.Boolean, default=False, nullable=False)
     flightschedule_id = db.Column(db.Integer, db.ForeignKey(
         'flightschedules.id'), nullable=False)
     arguments = db.relationship('FlightScheduleCommandsArgs',
@@ -160,8 +177,17 @@ class FlightScheduleCommands(db.Model):
         return {
             'flightschedule_command_id': self.id,
             'timestamp': str(self.timestamp),
+            'repeats': {
+                'repeat_ms': self.repeat_ms,
+                'repeat_sec': self.repeat_sec,
+                'repeat_min': self.repeat_min,
+                'repeat_hr': self.repeat_hr,
+                'repeat_day': self.repeat_day,
+                'repeat_month': self.repeat_month,
+                'repeat_year': self.repeat_year,
+            },
             'command': self.command.to_json(),
-            'args': [arg.to_json() for arg in self.arguments]
+            'args': [arg.to_json() for arg in self.arguments],
         }
 
 
@@ -202,8 +228,6 @@ class Passover(db.Model):
 # This will be the table of telecommands being sent to the satellite as well as the responses
 # the table will allow us to send and receive all commands transactionally allowing us to log
 # them as well as their responses
-
-
 class Communications(db.Model):
     __tablename__ = 'communications'
 

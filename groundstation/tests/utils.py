@@ -387,9 +387,10 @@ def fake_iris_hk_as_dict():
 
 def fake_flight_schedule_as_dict(status=2, commands=[], execution_time=None):
     flightschedule = {
-        'status': status,
-        'commands': commands,
-        'execution_time': execution_time
+        'status':status,
+        'commands':commands,
+        'execution_time': execution_time,
+        'error': 0
     }
     return flightschedule
 
@@ -418,15 +419,40 @@ def fake_message_as_dict(message='test', sender='tester', receiver='tester2'):
 
 def fake_patch_update_as_dict(timestamp):
     return {'status': 2,
+            'error': 0,
             'execution_time': str(timestamp),
             'commands': [
-                {'op': 'replace',
-                 'flightschedule_command_id': 1,
-                 'timestamp': str(timestamp),
-                 'args': [],
-                 'command': {'command_id': 2}},
-                {'op': 'add', 'timestamp': str(timestamp), 'args': [], 'command': {
-                    'command_id': 1}}
+                {
+                    'op': 'replace',
+                    'flightschedule_command_id': 1,
+                    'timestamp': str(timestamp),
+                    'args' : [],
+                    'command': {'command_id': 2},
+                    'repeats': {
+                        'repeat_ms': False,
+                        'repeat_sec': False,
+                        'repeat_min': False,
+                        'repeat_hr': False,
+                        'repeat_day': False,
+                        'repeat_month': False,
+                        'repeat_year': False
+                    }
+                },
+                {
+                    'op': 'add',
+                    'timestamp': str(timestamp),
+                    'args' : [],
+                    'command': {'command_id': 1},
+                    'repeats': {
+                        'repeat_ms': False,
+                        'repeat_sec': False,
+                        'repeat_min': False,
+                        'repeat_hr': False,
+                        'repeat_day': False,
+                        'repeat_month': False,
+                        'repeat_year': False
+                    }
+                }
             ]
             }
 

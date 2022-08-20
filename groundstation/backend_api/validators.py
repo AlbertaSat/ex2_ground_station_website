@@ -3,8 +3,8 @@ the expected format and contain the required information needed by the backend_a
 for examples, eg.) backend_api.housekeeping.HousekeepingLogList.post. Note: You can nest validators using the Nested field.
 """
 
-from ast import Bytes
-from marshmallow import Schema, fields, validate, ValidationError
+from marshmallow import Schema, fields, validate, \
+    validates_schema, ValidationError
 
 
 class ArgumentValidator(Schema):
@@ -21,6 +21,25 @@ class CommandValidator(Schema):
     num_arguments = fields.Integer(required=False)
     is_dangerous = fields.Boolean(required=False)
     command_name = fields.String(required=False)
+    about_info = fields.String(required=False, allow_none=True)
+
+
+class FlightScheduleCommandRepeatValidator(Schema):
+    """Validator for the repeat settings for a single flight schedule command
+    """
+    repeat_ms = fields.Boolean(required=True)
+    repeat_sec = fields.Boolean(required=True)
+    repeat_min = fields.Boolean(required=True)
+    repeat_hr = fields.Boolean(required=True)
+    repeat_day = fields.Boolean(required=True)
+    repeat_month = fields.Boolean(required=True)
+    repeat_year = fields.Boolean(required=True)
+
+    @validates_schema
+    def validate_min_hr_repeat(self, data, **kwargs):
+        if data['repeat_min'] and not data['repeat_hr']:
+            raise ValidationError(
+                'repeat_hr MUST be checked if repeat_min is also checked!')
 
 
 class AutomatedCommandValidator(Schema):
@@ -46,7 +65,8 @@ class FlightScheduleCommandValidator(Schema):
     timestamp = fields.DateTime(format='iso', required=True)
     command = fields.Nested(CommandValidator, required=True)
     args = fields.Nested(ArgumentValidator, required=True, many=True)
-    #flightschedule_id = fields.Integer(required=True)
+    repeats = fields.Nested(
+        FlightScheduleCommandRepeatValidator, required=True)
 
 
 class FlightScheduleValidator(Schema):
@@ -57,6 +77,8 @@ class FlightScheduleValidator(Schema):
     commands = fields.Nested(
         FlightScheduleCommandValidator, many=True, required=True)
     execution_time = fields.DateTime(format='iso', required=True)
+    # Prevents posting a flight schedule with an error
+    error = fields.Integer(required=True, validate=validate.Equal(0))
 
 
 class FlightSchedulePatchCommandValidator(Schema):
@@ -67,6 +89,8 @@ class FlightSchedulePatchCommandValidator(Schema):
     command = fields.Nested(CommandValidator, required=True)
     flightschedule_command_id = fields.Integer(required=False)
     args = fields.Nested(ArgumentValidator, required=True, many=True)
+    repeats = fields.Nested(
+        FlightScheduleCommandRepeatValidator, required=True)
 
 
 class FlightSchedulePatchValidator(Schema):
@@ -77,6 +101,7 @@ class FlightSchedulePatchValidator(Schema):
     commands = fields.Nested(
         FlightSchedulePatchCommandValidator, many=True, required=True)
     execution_time = fields.DateTime(format='iso', required=True)
+    error = fields.Integer(required=True)
 
 
 class PassoverValidator(Schema):
@@ -98,6 +123,8 @@ class UserValidator(Schema):
     """
     username = fields.String(required=True)
     password = fields.String(required=True)
+    is_admin = fields.Boolean(required=False)
+    creator_id = fields.Integer(required=False)
 
 
 class UserPatchValidator(Schema):
@@ -107,6 +134,7 @@ class UserPatchValidator(Schema):
     password = fields.String(required=False)
     is_admin = fields.Boolean(required=False)
     slack_id = fields.String(required=False)
+    id = fields.Integer(required=False)
     subscribed_to_slack = fields.Boolean(required=False)
 
 

@@ -8,6 +8,7 @@ import json
 import signal
 import sys
 import os
+import datetime
 from enum import Enum
 from datetime import datetime
 
@@ -26,6 +27,12 @@ class Connection(Enum):
     SATELLITE = 2
 
 
+class FSStatus(Enum):
+    QUEUED = 1
+    DRAFT = 2
+    UPLOADED = 3
+
+
 # Global variables
 mode = None
 communication_list = CommunicationList()
@@ -40,56 +47,154 @@ def handler(signum, frame):
     exit()
 
 
-def handle_message(message):
+def change_fs_status(fs_id, new_status, execution_time=None, error=0):
     """
-    Messages sent to comm will pass through this function, essentially acting
-    as a decorator.
+    Given a flightschedule, change its status
 
-    TODO: this needs to be implmented to support flight schedule functionality.
+    :param fs_id: The id of the flightschedule to change
+    :param new_status: The new status of the flightschedule.
+    :param execution_time: The execution time of the flightschedule.
+    :param error: The error code returned after upload (0 means success).
 
-    :param str message: The incoming message to comm
-
-    :returns: Return is dependent on the handler function triggered
-    :rtype: Optional
+    :returns: A dict representing the newly patched flightschedule
     """
-    # Groundstation functions with additional capabilities rather than just sending a string
-    gs_commands = {
-        'upload-fs': upload_fs
+    if execution_time is None:
+        fs = flightschedule_patch.get(fs_id)
+        execution_time = fs[0]['data']['execution_time']
+    patch_data = {
+        'status': new_status,
+        'execution_time': execution_time,
+        'commands': [],
+        'error': error
     }
-
-    handle = gs_commands.get(message)
-
-    if handle:
-        return handle()
-    else:
-        return message
+    return flightschedule_patch.patch(
+        fs_id, local_data=json.dumps(patch_data))[0]['data']
 
 
-def upload_fs():
+def get_queued_fs():
     """
-    If there is no queued flightschedule log it, otherwise, set its status
-    to uploaded and send something to the flight schedule (this may be handled
-    differently right now we are blindly trusting that a sent flightschedule
-    is uploaded) and no data of the flight schedule is actually sent at the
-    moment.
+    Fetches a queued flightschedule.
 
-    TODO: this needs to be implemented properly.
+    The website's API logic only allowes for one flightschedule to be queued
+    at any given time.
+
+    :returns: A dict representing the queued flightschedule object
     """
-    local_args = {'limit': 1, 'queued': True}
+    local_args = {'limit': 1, 'queued': 1}
     fs = flightschedule_list.get(local_args=local_args)
 
-    if len(fs[0]['data']['flightschedules']) < 1:
-        save_response('A queued flight schedule does not exist.')
-        return None
-    else:
-        fs_id = fs[0]['data']['flightschedules'][0]['flightschedule_id']
-        fs_ex = fs[0]['data']['flightschedules'][0]['execution_time']
-        local_data = {'status': 3, 'execution_time': fs_ex, 'commands': []}
+    if len(fs[0]['data']['flightschedules']) >= 1:
+        return fs[0]['data']['flightschedules'][0]
 
-        flightschedule_patch.patch(
-            fs_id, local_data=json.dumps(local_data))
+    return None
 
-        return 'upload-fs'
+
+def reset_fs_status_except_uploaded(uploadedID):
+    """
+    Resets all previously uploaded flightschedules to 'draft' status when
+    a new flightschedule is uploaded.
+
+    :param uploadedID: The ID of the most recently uploaded flightschedule.
+    :type uploadedID: int
+    """
+    local_args = {'limit': 5, 'queued': 3}
+    prev_uploaded = flightschedule_list.get(local_args=local_args)
+
+    for prev_fs in prev_uploaded[0]['data']['flightschedules']:
+        if prev_fs['flightschedule_id'] != uploadedID:
+            change_fs_status(
+                prev_fs['flightschedule_id'],
+                FSStatus.DRAFT.value,
+                prev_fs['execution_time']
+            )
+
+
+def format_date_time(dt_str):
+    """Generates a datetime object from a string.
+
+    :param str dt_str: A date-time string to convert
+
+    :returns: A datetime object representing the time passed in from string.
+    :rtype: datetime
+    """
+    try:
+        exec_time = (datetime.datetime
+                     .strptime(dt_str, '%Y-%m-%d %H:%M:%S.%f')
+                     .replace(tzinfo=datetime.timezone.utc))
+    except ValueError:  # Sometimes the date format is off for some reason
+        exec_time = (datetime.datetime
+                     .strptime(dt_str, '%Y-%m-%d %H:%M:%S')
+                     .replace(tzinfo=datetime.timezone.utc))
+    return exec_time
+
+
+def generate_fs_file(fs):
+    """Generates a flight schdeule file for upload.
+
+    :param dict fs: A flight schedule object fetched from db.
+    :return: Path to the flight schedule file.
+    :rtype: str
+    """
+    file_name = 'flightschedules/fs_{}.txt'.format(fs['flightschedule_id'])
+    with open(file_name, "w+") as file:
+        for command in fs['commands']:
+            # Format the command string from fs
+            command_name = command['command']['command_name']
+            args = [arg['argument'] for arg in command['args']]
+            command_string = ('{}({})'.format(command_name, ','.join(args)))
+
+            # Format the date/time from fs
+            exec_time = format_date_time(command['timestamp'])
+            time_fields = {
+                'ms': '*' if command['repeats']['repeat_ms']
+                else int(exec_time.microsecond / 1000),
+                'second': '*' if command['repeats']['repeat_sec']
+                else exec_time.second,
+                'minute': '*' if command['repeats']['repeat_min']
+                else exec_time.minute,
+                'hour': '*' if command['repeats']['repeat_hr']
+                else exec_time.hour,
+                'day': '*' if command['repeats']['repeat_day']
+                else exec_time.day,
+                'month': '*' if command['repeats']['repeat_month']
+                else exec_time.month,
+                'year': '*' if command['repeats']['repeat_year']
+                else exec_time.year - 1970  # Offset from 1970
+            }
+            time_str = ('{ms} {second} {minute} {hour} 0 {day} {month} {year}'
+                        .format(**time_fields))
+
+            # Write fs commands to file
+            print(time_str, command_string, file=file)
+
+    return file_name
+
+
+def send_flightschedules(gs):
+    queued_fs = get_queued_fs()
+    if queued_fs is not None:
+        if mode == Connection.SIMULATOR:
+            resp = send_to_simulator(queued_fs)
+        elif mode == Connection.SATELLITE:
+            file_path = generate_fs_file(queued_fs)
+            resp = send_to_satellite(
+                gs, 'ex2.scheduler.replace_schedule({})'.format(file_path))
+            save_response('Flight Schedule Successful! (ID = {}): {}'.format(
+                queued_fs['flightschedule_id'], repr(resp)))
+            if resp['err'] == 0:
+                change_fs_status(
+                    queued_fs['flightschedule_id'],
+                    FSStatus.UPLOADED.value,
+                    queued_fs['execution_time']
+                )
+                reset_fs_status_except_uploaded(queued_fs['flightschedule_id'])
+            else:
+                change_fs_status(
+                    queued_fs['flightschedule_id'],
+                    FSStatus.DRAFT.value,
+                    queued_fs['execution_time'],
+                    resp['err']
+                )
 
 
 def log_housekeeping(response):
@@ -143,14 +248,15 @@ def log_housekeeping(response):
 
 def send_to_simulator(msg):
     try:
-        return antenna.send(msg)
+        return antenna.send(json.dumps(msg))
     except Exception as e:
         print('Unexpected error occured:', e)
 
 
 def send_to_satellite(gs, msg):
     try:
-        transactObj = gs.interactive.getTransactionObject(msg, gs.networkManager)
+        transactObj = gs.interactive.getTransactionObject(
+            msg, gs.networkManager)
         return transactObj.execute()
     except Exception as e:
         print('Unexpected error occured:', e)
@@ -170,7 +276,7 @@ def save_response(message):
     communication_list.post(local_data=message)
 
 
-def communication_loop(gs=None, cli_gs=None):
+def communication_loop(gs=None):
     """
     Main communication loop which polls for messages that are queued and addressed to comm
     (i.e. messages it needs to send to satellite). This should be run when a passover is
@@ -187,6 +293,10 @@ def communication_loop(gs=None, cli_gs=None):
 
     # Check communication table every minute
     while True:
+        # Upload any queued flight schedules
+        if mode == Connection.SATELLITE:
+            send_flightschedules(gs)
+
         # Get queued communications
         messages = communication_list.get(local_data=request_data)[0]
 
@@ -194,8 +304,6 @@ def communication_loop(gs=None, cli_gs=None):
         if len(messages['data']['messages']) > 0:
             for message in messages['data']['messages']:
                 if message['message']:
-                    # TODO may need to handle flight schedule stuff here using handle_message
-
                     # Send the message to the satellite
                     response = None
                     msg = message['message']
@@ -227,7 +335,7 @@ def communication_loop(gs=None, cli_gs=None):
 def main():
     # Terminate after 10 minutes
     signal.signal(signal.SIGALRM, handler)
-    signal.alarm(10 * 60)
+    signal.alarm(60 * 60)
 
     if mode == Connection.SIMULATOR:
         communication_loop()
@@ -239,16 +347,24 @@ def main():
 
 
 if __name__ == '__main__':
-    if input('Would like to communicate with the satellite simulator (if not, the program '
-             'will attempt to communicate with the satellite) [Y/n]: ').strip() in ('Y', 'y'):
-        mode = Connection.SIMULATOR
-        import satellite_simulator.antenna as antenna
-    else:
+    if len(sys.argv) > 1:
+        print('Detected CLI arguments for Ground Station Software!')
+        print('Automatically setting mode to satellite...')
         mode = Connection.SATELLITE
-        # Really jank path workaround that prevents messing up a lot of imports
-        # in ex2_ground_station_software for non-website users
-        sys.path.append(os.path.join(sys.path[0], 'ex2_ground_station_software', 'src'))
+        sys.path.append(os.path.join(
+            sys.path[0], 'ex2_ground_station_software', 'src'))
         from groundStation import GroundStation
         from options import optionsFactory
+    else:
+        if input('Would like to communicate with the satellite simulator (if not, the program '
+                 'will attempt to communicate with the satellite) [Y/n]: ').strip() in ('Y', 'y'):
+            mode = Connection.SIMULATOR
+            import satellite_simulator.antenna as antenna
+        else:
+            mode = Connection.SATELLITE
+            sys.path.append(os.path.join(
+                sys.path[0], 'ex2_ground_station_software', 'src'))
+            from groundStation import GroundStation
+            from options import optionsFactory
 
     main()

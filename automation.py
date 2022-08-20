@@ -39,7 +39,8 @@ def automate_communication():
             message = json.dumps(message)
             sender.post(local_data=message)
 
-    automatedcommands = automatedcommand_list.get(local_args={'limit': 1000})[0]['data']['automatedcommands']
+    automatedcommands = automatedcommand_list.get(local_args={'limit': 1000})[
+        0]['data']['automatedcommands']
     for command in automatedcommands:
         args = []
         # might need to sort args by index, not sure if db keeps order from original post req
@@ -57,7 +58,8 @@ def automate_communication():
         sender.post(local_data=message)
 
     timestamp = str(datetime.utcnow())
-    message = 'An Ex-Alta 2 passover is beginning now! The timestamp for this passover is {0}'.format(timestamp)
+    message = 'An Ex-Alta 2 passover is beginning now! The timestamp for this passover is {0}'.format(
+        timestamp)
     send_slack_notifs(message)
 
 
@@ -70,12 +72,13 @@ def automate_passovers():
 
     # the automation will also handle queuing passover times
     passovers = passover.get(local_args={'limit': 1, 'next': 'true'})
+    passover_data = passovers[0]['data']['next_passovers']
 
-    if passovers[1] == 200 and len(passovers[0]['data']['next_passovers']) > 0:
+    if passovers[1] == 200 and len(passover_data) > 0:
         passover_data = passovers[0]['data']['next_passovers']
         for ps in passover_data:
             time_obj = datetime.strptime(
-                ps['timestamp'], '%Y-%m-%d %H:%M:%S.%f')
+                ps['aos_timestamp'], '%Y-%m-%d %H:%M:%S.%f')
             time_obj = time_obj.replace(
                 tzinfo=timezone.utc).astimezone(tz=None)
             f_time_min = time_obj.strftime('%H:%M')
@@ -95,8 +98,10 @@ def automate_passovers():
 
         orb = Orbital('ex-alta 2', line1=lines[0], line2=lines[1])
         dtobj = datetime.utcnow()
-        passes = orb.get_next_passes(dtobj, 24, -113.4938, 53.5461, 0.645) # edmonton coordinates and elevation
-        ps_data = {'passovers': [{'aos_timestamp': str(ps[0]), 'los_timestamp': str(ps[1])} for ps in passes]}
+        # edmonton coordinates and elevation
+        passes = orb.get_next_passes(dtobj, 24, -113.4938, 53.5461, 0.645)
+        ps_data = {'passovers': [{'aos_timestamp': str(
+            ps[0]), 'los_timestamp': str(ps[1])} for ps in passes]}
 
         passover.post(local_data=json.dumps(ps_data))
 
@@ -109,20 +114,23 @@ def send_slack_notifs(message):
     # api call to get all users
     user_list = UserList()
 
-    users = user_list.get(local_args={'limit': 1000})[0]['data']
+    users = user_list.get(local_args={'limit': 1000, 'no_admin': True})[
+        0]['data']['users']
 
     slack_token = os.getenv('SLACK_TOKEN')
     if slack_token is not None:
         client = slack.WebClient(token=slack_token)
         for user in users:
-            if user.subscribed_to_slack and user.slack_id is not None:
+            print(user)
+            if user['subscribed_to_slack'] and user['slack_id'] is not None:
                 try:
-                    client.chat_postMessage(channel=user.slack_id, text=message)
+                    client.chat_postMessage(
+                        channel=user['slack_id'], text=message)
                 except:
-                    print('Error: slack id "{0}" is invalid.'.format(user.slack_id))
+                    print('Error: slack id "{0}" is invalid.'.format(
+                        user['slack_id']))
     else:
         print('Error: SLACK_TOKEN environemnt variable not set!')
-
 
 
 def main():
