@@ -3,6 +3,7 @@ import datetime
 # Default values for each datatype in fake housekeeping data
 DEFAULT_INT = 42
 DEFAULT_FLOAT = 13.37
+DEFAULT_STR = 'Fake string!'
 
 
 def fake_housekeeping_as_dict(timestamp, data_position):
@@ -82,13 +83,16 @@ def fake_adcs_hk_as_dict():
 
 def fake_athena_hk_as_dict():
     return {
-        'temparray1': DEFAULT_INT,
-        'temparray2': DEFAULT_INT,
+        'OBC_software_ver': DEFAULT_STR,
+        'MCU_core_temp': DEFAULT_INT,
+        'converter_temp': DEFAULT_INT,
+        'OBC_uptime': DEFAULT_INT,
+        'vol0_usage_percent': DEFAULT_INT,
+        'vol1_usage_percent': DEFAULT_INT,
         'boot_cnt': DEFAULT_INT,
+        'boot_src': DEFAULT_INT,
         'last_reset_reason': DEFAULT_INT,
         'OBC_mode': DEFAULT_INT,
-        'OBC_uptime': DEFAULT_INT,
-        'OBC_software_ver': DEFAULT_INT,
         'solar_panel_supply_curr': DEFAULT_INT,
         'cmds_received': DEFAULT_INT,
         'pckts_uncovered_by_FEC': DEFAULT_INT,
@@ -97,11 +101,11 @@ def fake_athena_hk_as_dict():
 
 def fake_eps_hk_as_dict():
     return {
-        'cmd': DEFAULT_INT,
-        'status': DEFAULT_INT,
-        'timestamp': DEFAULT_FLOAT,
-        'uptimeInS': DEFAULT_INT,
-        'bootCnt': DEFAULT_INT,
+        'eps_cmd_hk': DEFAULT_INT,
+        'eps_status_hk': DEFAULT_INT,
+        'eps_timestamp_hk': DEFAULT_FLOAT,
+        'eps_uptimeInS_hk': DEFAULT_INT,
+        'eps_bootCnt_hk': DEFAULT_INT,
         'wdt_gs_time_left_s': DEFAULT_INT,
         'wdt_gs_counter': DEFAULT_INT,
         'mpptConverterVoltage1_mV': DEFAULT_INT,
@@ -226,6 +230,38 @@ def fake_eps_hk_as_dict():
         'battHeaterState': DEFAULT_INT,
         'PingWdt_toggles': DEFAULT_INT,
         'PingWdt_turnOffs': DEFAULT_INT,
+        'thermalProtTemperature_1': DEFAULT_INT,
+        'thermalProtTemperature_2': DEFAULT_INT,
+        'thermalProtTemperature_3': DEFAULT_INT,
+        'thermalProtTemperature_4': DEFAULT_INT,
+        'thermalProtTemperature_5': DEFAULT_INT,
+        'thermalProtTemperature_6': DEFAULT_INT,
+        'thermalProtTemperature_7': DEFAULT_INT,
+        'thermalProtTemperature_8': DEFAULT_INT,
+    }
+
+
+def fake_eps_startup_hk_as_dict():
+    return {
+        'eps_cmd_startup': DEFAULT_INT,
+        'eps_status_startup': DEFAULT_INT,
+        'eps_timestamp_startup': DEFAULT_FLOAT,
+        'last_reset_reason_reg': DEFAULT_INT,
+        'eps_bootCnt_startup': DEFAULT_INT,
+        'FallbackConfigUsed': DEFAULT_INT,
+        'rtcInit': DEFAULT_INT,
+        'rtcClkSourceLSE': DEFAULT_INT,
+        'flashAppInit': DEFAULT_INT,
+        'Fram4kPartitionInit': DEFAULT_INT,
+        'Fram520kPartitionInit': DEFAULT_INT,
+        'intFlashPartitionInit': DEFAULT_INT,
+        'fwUpdInit': DEFAULT_INT,
+        'FSInit': DEFAULT_INT,
+        'FTInit': DEFAULT_INT,
+        'supervisorInit': DEFAULT_INT,
+        'uart1App': DEFAULT_INT,
+        'uart2App': DEFAULT_INT,
+        'tmp107Init': DEFAULT_INT,
     }
 
 
@@ -243,7 +279,7 @@ def fake_uhf_hk_as_dict():
         'scw10': DEFAULT_INT,
         'scw11': DEFAULT_INT,
         'scw12': DEFAULT_INT,
-        'freq': DEFAULT_INT,
+        'U_frequency': DEFAULT_INT,
         'pipe_t': DEFAULT_INT,
         'beacon_t': DEFAULT_INT,
         'audio_t': DEFAULT_INT,
@@ -257,14 +293,24 @@ def fake_uhf_hk_as_dict():
 
 def fake_sband_hk_as_dict():
     return {
-        'Output_Power': DEFAULT_FLOAT,
-        'PA_Temp': DEFAULT_FLOAT,
-        'Top_Temp': DEFAULT_FLOAT,
-        'Bottom_Temp': DEFAULT_FLOAT,
-        'Bat_Current': DEFAULT_FLOAT,
-        'Bat_Voltage': DEFAULT_FLOAT,
-        'PA_Current': DEFAULT_FLOAT,
-        'PA_Voltage': DEFAULT_FLOAT
+        'S_mode': DEFAULT_INT,
+        'PA_status': DEFAULT_INT,
+        'S_frequency_Hz': DEFAULT_INT,
+        'S_scrambler': DEFAULT_INT,
+        'S_filter': DEFAULT_INT,
+        'S_modulation': DEFAULT_INT,
+        'S_data_rate': DEFAULT_INT,
+        'S_bit_order': DEFAULT_INT,
+        'S_PWRGD': DEFAULT_INT,
+        'S_TXL': DEFAULT_INT,
+        'Output_Power': DEFAULT_INT,
+        'PA_Temp': DEFAULT_INT,
+        'Top_Temp': DEFAULT_INT,
+        'Bottom_Temp': DEFAULT_INT,
+        'Bat_Current_mA': DEFAULT_INT,
+        'Bat_Voltage_mV': DEFAULT_INT,
+        'PA_Current_mA': DEFAULT_INT,
+        'PA_Voltage_mV': DEFAULT_INT,
     }
 
 

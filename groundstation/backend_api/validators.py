@@ -227,13 +227,16 @@ class AdcsHKValidator(Schema):
 class AthenaHKValidator(Schema):
     """Validator for Athena housekeeping data
     """
-    temparray1 = fields.Integer(required=False)
-    temparray2 = fields.Integer(required=False)
+    OBC_software_ver = fields.String(required=False)
+    MCU_core_temp = fields.Integer(required=False)
+    converter_temp = fields.Integer(required=False)
+    OBC_uptime = fields.Integer(required=False)
+    vol0_usage_percent = fields.Integer(required=False)
+    vol1_usage_percent = fields.Integer(required=False)
     boot_cnt = fields.Integer(required=False)
+    boot_src = fields.Integer(required=False)
     last_reset_reason = fields.Integer(required=False)
     OBC_mode = fields.Integer(required=False)
-    OBC_uptime = fields.Integer(required=False)
-    OBC_software_ver = fields.Integer(required=False)
     solar_panel_supply_curr = fields.Integer(required=False)
     cmds_received = fields.Integer(required=False)
     pckts_uncovered_by_FEC = fields.Integer(required=False)
@@ -242,11 +245,11 @@ class AthenaHKValidator(Schema):
 class EpsHKValidator(Schema):
     """Validator for EPS housekeeping data
     """
-    cmd = fields.Integer(required=False)
-    status = fields.Integer(required=False)
-    timestamp = fields.Float(required=False)
-    uptimeInS = fields.Integer(required=False)
-    bootCnt = fields.Integer(required=False)
+    eps_cmd_hk = fields.Integer(required=False)
+    eps_status_hk = fields.Integer(required=False)
+    eps_timestamp_hk = fields.Float(required=False)
+    eps_uptimeInS_hk = fields.Integer(required=False)
+    eps_bootCnt_hk = fields.Integer(required=False)
     wdt_gs_time_left_s = fields.Integer(required=False)
     wdt_gs_counter = fields.Integer(required=False)
     mpptConverterVoltage1_mV = fields.Integer(required=False)
@@ -371,6 +374,38 @@ class EpsHKValidator(Schema):
     battHeaterState = fields.Integer(required=False)
     PingWdt_toggles = fields.Integer(required=False)
     PingWdt_turnOffs = fields.Integer(required=False)
+    thermalProtTemperature_1 = fields.Integer(required=False)
+    thermalProtTemperature_2 = fields.Integer(required=False)
+    thermalProtTemperature_3 = fields.Integer(required=False)
+    thermalProtTemperature_4 = fields.Integer(required=False)
+    thermalProtTemperature_5 = fields.Integer(required=False)
+    thermalProtTemperature_6 = fields.Integer(required=False)
+    thermalProtTemperature_7 = fields.Integer(required=False)
+    thermalProtTemperature_8 = fields.Integer(required=False)
+
+
+class EpsStartupHKValidator(Schema):
+    """Validator for EPS Startup housekeeping data
+    """
+    eps_cmd_startup = fields.Integer(required=False)
+    eps_status_startup = fields.Integer(required=False)
+    eps_timestamp_startup = fields.Float(required=False)
+    last_reset_reason_reg = fields.Integer(required=False)
+    eps_bootCnt_startup = fields.Integer(required=False)
+    FallbackConfigUsed = fields.Integer(required=False)
+    rtcInit = fields.Integer(required=False)
+    rtcClkSourceLSE = fields.Integer(required=False)
+    flashAppInit = fields.Integer(required=False)
+    Fram4kPartitionInit = fields.Integer(required=False)
+    Fram520kPartitionInit = fields.Integer(required=False)
+    intFlashPartitionInit = fields.Integer(required=False)
+    fwUpdInit = fields.Integer(required=False)
+    FSInit = fields.Integer(required=False)
+    FTInit = fields.Integer(required=False)
+    supervisorInit = fields.Integer(required=False)
+    uart1App = fields.Integer(required=False)
+    uart2App = fields.Integer(required=False)
+    tmp107Init = fields.Integer(required=False)
 
 
 class UhfHKValidator(Schema):
@@ -388,7 +423,7 @@ class UhfHKValidator(Schema):
     scw10 = fields.Integer(required=False)
     scw11 = fields.Integer(required=False)
     scw12 = fields.Integer(required=False)
-    freq = fields.Integer(required=False)
+    U_frequency = fields.Integer(required=False)
     pipe_t = fields.Integer(required=False)
     beacon_t = fields.Integer(required=False)
     audio_t = fields.Integer(required=False)
@@ -402,14 +437,24 @@ class UhfHKValidator(Schema):
 class SbandHKValidator(Schema):
     """Validator for S-Band housekeeping data
     """
-    Output_Power = fields.Float(required=False)
-    PA_Temp = fields.Float(required=False)
-    Top_Temp = fields.Float(required=False)
-    Bottom_Temp = fields.Float(required=False)
-    Bat_Current = fields.Float(required=False)
-    Bat_Voltage = fields.Float(required=False)
-    PA_Current = fields.Float(required=False)
-    PA_Voltage = fields.Float(required=False)
+    S_mode = fields.Integer(required=False)
+    PA_status = fields.Integer(required=False)
+    S_frequency_Hz = fields.Integer(required=False)
+    S_scrambler = fields.Integer(required=False)
+    S_filter = fields.Integer(required=False)
+    S_modulation = fields.Integer(required=False)
+    S_data_rate = fields.Integer(required=False)
+    S_bit_order = fields.Integer(required=False)
+    S_PWRGD = fields.Integer(required=False)
+    S_TXL = fields.Integer(required=False)
+    Output_Power = fields.Integer(required=False)
+    PA_Temp = fields.Integer(required=False)
+    Top_Temp = fields.Integer(required=False)
+    Bottom_Temp = fields.Integer(required=False)
+    Bat_Current_mA = fields.Integer(required=False)
+    Bat_Voltage_mV = fields.Integer(required=False)
+    PA_Current_mA = fields.Integer(required=False)
+    PA_Voltage_mV = fields.Integer(required=False)
 
 
 class HyperionHKValidator(Schema):
@@ -540,6 +585,7 @@ class HousekeepingValidator(Schema):
     adcs = fields.Nested(AdcsHKValidator, many=False, required=True)
     athena = fields.Nested(AthenaHKValidator, many=False, required=True)
     eps = fields.Nested(EpsHKValidator, many=False, required=True)
+    eps_startup = fields.Nested(EpsStartupHKValidator, many=False, required=True)
     uhf = fields.Nested(UhfHKValidator, many=False, required=True)
     sband = fields.Nested(SbandHKValidator, many=False, required=True)
     hyperion = fields.Nested(HyperionHKValidator, many=False, required=True)

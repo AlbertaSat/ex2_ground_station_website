@@ -1,19 +1,19 @@
-import React, { Component } from "react";
-import HousekeepingList from "./HousekeepingListFull";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
-import FilterListIcon from "@material-ui/icons/FilterList";
-import Fab from "@material-ui/core/Fab";
-import Grid from "@material-ui/core/Grid";
-import moment from "moment";
-import "moment-timezone";
-import MomentUtils from "@date-io/moment";
-import { DateTimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
-import ClearIcon from "@material-ui/icons/Clear";
+import React, { Component } from 'react';
+import HousekeepingList from './HousekeepingListFull';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+import FilterListIcon from '@material-ui/icons/FilterList';
+import Fab from '@material-ui/core/Fab';
+import Grid from '@material-ui/core/Grid';
+import moment from 'moment';
+import 'moment-timezone';
+import MomentUtils from '@date-io/moment';
+import { DateTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
+import ClearIcon from '@material-ui/icons/Clear';
 
 class HouseKeeping extends Component {
   constructor() {
-    moment.tz.setDefault("UTC");
+    moment.tz.setDefault('UTC');
     super();
     this.state = {
       startDate: null,
@@ -32,26 +32,27 @@ class HouseKeeping extends Component {
           adcs: null,
           athena: null,
           eps: null,
+          eps_startup: null,
           uhf: null,
           sband: null,
           hyperion: null,
           charon: null,
           dfgm: null,
           northern_spirit: null,
-          iris: null,
-        },
+          iris: null
+        }
       ],
-      flightschedule: [],
+      flightschedule: []
     };
   }
 
   componentDidMount() {
-    fetch("/api/housekeepinglog?newest-first=true")
+    fetch('/api/housekeepinglog?newest-first=true')
       .then((results) => {
         return results.json();
       })
       .then((data) => {
-        if (data.status == "success") {
+        if (data.status == 'success') {
           this.setState({ housekeeping: data.data.logs, isLoading: false });
           if (data.data.logs.length > 0) {
             this.setState({ empty: false });
@@ -77,17 +78,17 @@ class HouseKeeping extends Component {
       this.setState({ endDateError: true });
     } else {
       let queryString =
-        "?timestamp=ge-" +
+        '?timestamp=ge-' +
         this.state.startDate +
-        "&timestamp=le-" +
+        '&timestamp=le-' +
         this.state.endDate +
-        "&newest-first=true";
-      fetch("/api/housekeepinglog" + queryString)
+        '&newest-first=true';
+      fetch('/api/housekeepinglog' + queryString)
         .then((results) => {
           return results.json();
         })
         .then((data) => {
-          if (data.status == "success") {
+          if (data.status == 'success') {
             this.setState({ housekeeping: data.data.logs, isLoading: false });
             if (data.data.logs.length > 0) {
               this.setState({ empty: false });
@@ -103,12 +104,12 @@ class HouseKeeping extends Component {
     this.setState({ startDate: null, endDate: null });
     this.setState({ startDateError: false });
     this.setState({ endDateError: false });
-    fetch("/api/housekeepinglog?newest-first=true")
+    fetch('/api/housekeepinglog?newest-first=true')
       .then((results) => {
         return results.json();
       })
       .then((data) => {
-        if (data.status == "success") {
+        if (data.status == 'success') {
           this.setState({ housekeeping: data.data.logs, isLoading: false });
           if (data.data.logs.length > 0) {
             this.setState({ empty: false });
@@ -126,7 +127,7 @@ class HouseKeeping extends Component {
           <div>
             <Grid container spacing={2} alignItems="flex-end">
               <Grid item sm={2}>
-                <Typography variant="h5" style={{ padding: "10px" }}>
+                <Typography variant="h5" style={{ padding: '10px' }}>
                   Housekeeping
                 </Typography>
               </Grid>
@@ -145,7 +146,7 @@ class HouseKeeping extends Component {
                             this.handleStartDateChange(event);
                           }}
                           value={this.state.startDate}
-                          style={{ width: "100%" }}
+                          style={{ width: '100%' }}
                           name="startdate"
                           error={this.state.startDateError}
                         />
@@ -165,7 +166,7 @@ class HouseKeeping extends Component {
                             this.handleEndDateChange(event);
                           }}
                           value={this.state.endDate}
-                          style={{ width: "100%" }}
+                          style={{ width: '100%' }}
                           name="enddate"
                           error={this.state.endDateError}
                         />
@@ -181,10 +182,10 @@ class HouseKeeping extends Component {
                       variant="extended"
                       name="filter"
                       style={{
-                        fontSize: "0.75rem",
-                        height: "40px",
-                        marginBottom: "20px",
-                        backgroundColor: "#55c4d3",
+                        fontSize: '0.75rem',
+                        height: '40px',
+                        marginBottom: '20px',
+                        backgroundColor: '#55c4d3'
                       }}
                     >
                       <FilterListIcon />
@@ -199,10 +200,10 @@ class HouseKeeping extends Component {
                       variant="extended"
                       name="clear"
                       style={{
-                        fontSize: "0.75rem",
-                        height: "40px",
-                        marginBottom: "20px",
-                        backgroundColor: "#55c4d3",
+                        fontSize: '0.75rem',
+                        height: '40px',
+                        marginBottom: '20px',
+                        backgroundColor: '#55c4d3'
                       }}
                     >
                       <ClearIcon />

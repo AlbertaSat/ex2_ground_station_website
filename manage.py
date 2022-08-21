@@ -14,27 +14,22 @@ or:
     python3 manage.py test test_api.TestHousekeepingService.test_get_housekeeping
 
 """
-from readline import set_completion_display_matches_hook
 import sys
 import unittest
 from datetime import datetime, timedelta
-import json
 import click
-import re
-import subprocess
-import os
 
 from flask.cli import FlaskGroup
 
 from groundstation import create_app, db
 from groundstation.backend_api.models import AdcsHK, AthenaHK, CharonHK, \
-    DfgmHK, EpsHK, HyperionHK, IrisHK, NorthernSpiritHK, SbandHK, UhfHK, User, \
-    Housekeeping, Telecommands
+    DfgmHK, EpsHK, EpsStartupHK,HyperionHK, IrisHK, NorthernSpiritHK, SbandHK, \
+    UhfHK, User, Housekeeping, Telecommands
 from groundstation.tests.utils import fake_adcs_hk_as_dict, \
     fake_athena_hk_as_dict, fake_charon_hk_as_dict, fake_dfgm_hk_as_dict, \
-    fake_eps_hk_as_dict, fake_housekeeping_as_dict, fake_hyperion_hk_as_dict, \
-    fake_iris_hk_as_dict, fake_northern_spirit_hk_as_dict, \
-    fake_sband_hk_as_dict, fake_uhf_hk_as_dict
+    fake_eps_hk_as_dict, fake_eps_startup_hk_as_dict, fake_housekeeping_as_dict, \
+    fake_hyperion_hk_as_dict, fake_iris_hk_as_dict, \
+    fake_northern_spirit_hk_as_dict, fake_sband_hk_as_dict, fake_uhf_hk_as_dict
 from groundstation.backend_api.housekeeping import HousekeepingLogList
 from groundstation.backend_api.utils import add_telecommand, \
     add_flight_schedule, add_command_to_flightschedule, add_user, \
@@ -111,6 +106,7 @@ def seed_db_example(ctx):
                 adcs=AdcsHK(**fake_adcs_hk_as_dict()),
                 athena=AthenaHK(**fake_athena_hk_as_dict()),
                 eps=EpsHK(**fake_eps_hk_as_dict()),
+                eps_startup=EpsStartupHK(**fake_eps_startup_hk_as_dict()),
                 uhf=UhfHK(**fake_uhf_hk_as_dict()),
                 sband=SbandHK(**fake_sband_hk_as_dict()),
                 hyperion=HyperionHK(**fake_hyperion_hk_as_dict()),

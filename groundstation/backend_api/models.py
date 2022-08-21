@@ -324,6 +324,7 @@ class Housekeeping(db.Model):
             'adcs': self.adcs.to_json(),
             'athena': self.athena.to_json(),
             'eps': self.eps.to_json(),
+            'eps_startup': self.eps_startup.to_json(),
             'uhf': self.uhf.to_json(),
             'sband': self.sband.to_json(),
             'hyperion': self.hyperion.to_json(),
@@ -480,29 +481,35 @@ class AthenaHK(db.Model):
     hk = db.relationship(
         'Housekeeping', backref=backref('athena', uselist=False))
 
-    temparray1 = db.Column(db.Integer)
-    temparray2 = db.Column(db.Integer)
+    OBC_software_ver = db.Column(db.String)
+    MCU_core_temp = db.Column(db.Integer)
+    converter_temp = db.Column(db.Integer)
+    OBC_uptime = db.Column(db.Integer)
+    vol0_usage_percent = db.Column(db.Integer)
+    vol1_usage_percent = db.Column(db.Integer)
     boot_cnt = db.Column(db.Integer)
+    boot_src = db.Column(db.Integer)
     last_reset_reason = db.Column(db.Integer)
     OBC_mode = db.Column(db.Integer)
-    OBC_uptime = db.Column(db.Integer)
-    OBC_software_ver = db.Column(db.Integer)
     solar_panel_supply_curr = db.Column(db.Integer)
     cmds_received = db.Column(db.Integer)
     pckts_uncovered_by_FEC = db.Column(db.Integer)
 
     def to_json(self):
         return {
-            'temparray1': self.temparray1,
-            'temparray2': self.temparray2,
+            'OBC_software_ver': self.OBC_software_ver,
+            'MCU_core_temp': self.MCU_core_temp,
+            'converter_temp': self.converter_temp,
+            'OBC_uptime': self.OBC_uptime,
+            'vol0_usage_percent': self.vol0_usage_percent,
+            'vol1_usage_percent': self.vol1_usage_percent,
             'boot_cnt': self.boot_cnt,
+            'boot_src': self.boot_src,
             'last_reset_reason': self.last_reset_reason,
             'OBC_mode': self.OBC_mode,
-            'OBC_uptime': self.OBC_uptime,
-            'OBC_software_ver': self.OBC_software_ver,
             'solar_panel_supply_curr': self.solar_panel_supply_curr,
             'cmds_received': self.cmds_received,
-            'pckts_uncovered_by_FEC': self.pckts_uncovered_by_FEC
+            'pckts_uncovered_by_FEC': self.pckts_uncovered_by_FEC,
         }
 
 
@@ -513,11 +520,11 @@ class EpsHK(db.Model):
     hk_id = db.Column(db.Integer, db.ForeignKey('housekeeping.id'))
     hk = db.relationship('Housekeeping', backref=backref('eps', uselist=False))
 
-    cmd = db.Column(db.Integer)
-    status = db.Column(db.Integer)
-    timestamp = db.Column(db.Float)
-    uptimeInS = db.Column(db.Integer)
-    bootCnt = db.Column(db.Integer)
+    eps_cmd_hk = db.Column(db.Integer)
+    eps_status_hk = db.Column(db.Integer)
+    eps_timestamp_hk = db.Column(db.Float)
+    eps_uptimeInS_hk = db.Column(db.Integer)
+    eps_bootCnt_hk = db.Column(db.Integer)
     wdt_gs_time_left_s = db.Column(db.Integer)
     wdt_gs_counter = db.Column(db.Integer)
     mpptConverterVoltage1_mV = db.Column(db.Integer)
@@ -642,14 +649,22 @@ class EpsHK(db.Model):
     battHeaterState = db.Column(db.Integer)
     PingWdt_toggles = db.Column(db.Integer)
     PingWdt_turnOffs = db.Column(db.Integer)
+    thermalProtTemperature_1 = db.Column(db.Integer)
+    thermalProtTemperature_2 = db.Column(db.Integer)
+    thermalProtTemperature_3 = db.Column(db.Integer)
+    thermalProtTemperature_4 = db.Column(db.Integer)
+    thermalProtTemperature_5 = db.Column(db.Integer)
+    thermalProtTemperature_6 = db.Column(db.Integer)
+    thermalProtTemperature_7 = db.Column(db.Integer)
+    thermalProtTemperature_8 = db.Column(db.Integer)
 
     def to_json(self):
         return {
-            'cmd': self.cmd,
-            'status': self.status,
-            'timestamp': self.timestamp,
-            'uptimeInS': self.uptimeInS,
-            'bootCnt': self.bootCnt,
+            'eps_cmd_hk': self.eps_cmd_hk,
+            'eps_status_hk': self.eps_status_hk,
+            'eps_timestamp_hk': self.eps_timestamp_hk,
+            'eps_uptimeInS_hk': self.eps_uptimeInS_hk,
+            'eps_bootCnt_hk': self.eps_bootCnt_hk,
             'wdt_gs_time_left_s': self.wdt_gs_time_left_s,
             'wdt_gs_counter': self.wdt_gs_counter,
             'mpptConverterVoltage1_mV': self.mpptConverterVoltage1_mV,
@@ -773,7 +788,66 @@ class EpsHK(db.Model):
             'battHeaterMode': self.battHeaterMode,
             'battHeaterState': self.battHeaterState,
             'PingWdt_toggles': self.PingWdt_toggles,
-            'PingWdt_turnOffs': self.PingWdt_turnOffs
+            'PingWdt_turnOffs': self.PingWdt_turnOffs,
+            'thermalProtTemperature_1': self.thermalProtTemperature_1,
+            'thermalProtTemperature_2': self.thermalProtTemperature_2,
+            'thermalProtTemperature_3': self.thermalProtTemperature_3,
+            'thermalProtTemperature_4': self.thermalProtTemperature_4,
+            'thermalProtTemperature_5': self.thermalProtTemperature_5,
+            'thermalProtTemperature_6': self.thermalProtTemperature_6,
+            'thermalProtTemperature_7': self.thermalProtTemperature_7,
+            'thermalProtTemperature_8': self.thermalProtTemperature_8,
+        }
+
+
+class EpsStartupHK(db.Model):
+    __tablename__ = 'eps_startup_hk'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    hk_id = db.Column(db.Integer, db.ForeignKey('housekeeping.id'))
+    hk = db.relationship('Housekeeping', backref=backref('eps_startup', uselist=False))
+
+    eps_cmd_startup = db.Column(db.Integer)
+    eps_status_startup = db.Column(db.Integer)
+    eps_timestamp_startup = db.Column(db.Float)
+    last_reset_reason_reg = db.Column(db.Integer)
+    eps_bootCnt_startup = db.Column(db.Integer)
+    FallbackConfigUsed = db.Column(db.Integer)
+    rtcInit = db.Column(db.Integer)
+    rtcClkSourceLSE = db.Column(db.Integer)
+    flashAppInit = db.Column(db.Integer)
+    Fram4kPartitionInit = db.Column(db.Integer)
+    Fram520kPartitionInit = db.Column(db.Integer)
+    intFlashPartitionInit = db.Column(db.Integer)
+    fwUpdInit = db.Column(db.Integer)
+    FSInit = db.Column(db.Integer)
+    FTInit = db.Column(db.Integer)
+    supervisorInit = db.Column(db.Integer)
+    uart1App = db.Column(db.Integer)
+    uart2App = db.Column(db.Integer)
+    tmp107Init = db.Column(db.Integer)
+
+    def to_json(self):
+        return {
+            'eps_cmd_startup': self.eps_cmd_startup,
+            'eps_status_startup': self.eps_status_startup,
+            'eps_timestamp_startup': self.eps_timestamp_startup,
+            'last_reset_reason_reg': self.last_reset_reason_reg,
+            'eps_bootCnt_startup': self.eps_bootCnt_startup,
+            'FallbackConfigUsed': self.FallbackConfigUsed,
+            'rtcInit': self.rtcInit,
+            'rtcClkSourceLSE': self.rtcClkSourceLSE,
+            'flashAppInit': self.flashAppInit,
+            'Fram4kPartitionInit': self.Fram4kPartitionInit,
+            'Fram520kPartitionInit': self.Fram520kPartitionInit,
+            'intFlashPartitionInit': self.intFlashPartitionInit,
+            'fwUpdInit': self.fwUpdInit,
+            'FSInit': self.FSInit,
+            'FTInit': self.FTInit,
+            'supervisorInit': self.supervisorInit,
+            'uart1App': self.uart1App,
+            'uart2App': self.uart2App,
+            'tmp107Init': self.tmp107Init,
         }
 
 
@@ -796,7 +870,7 @@ class UhfHK(db.Model):
     scw10 = db.Column(db.Integer)
     scw11 = db.Column(db.Integer)
     scw12 = db.Column(db.Integer)
-    freq = db.Column(db.Integer)
+    U_frequency = db.Column(db.Integer)
     pipe_t = db.Column(db.Integer)
     beacon_t = db.Column(db.Integer)
     audio_t = db.Column(db.Integer)
@@ -820,7 +894,7 @@ class UhfHK(db.Model):
             'scw10': self.scw10,
             'scw11': self.scw11,
             'scw12': self.scw12,
-            'freq': self.freq,
+            'U_frequency': self.U_frequency,
             'pipe_t': self.pipe_t,
             'beacon_t': self.beacon_t,
             'audio_t': self.audio_t,
@@ -840,25 +914,45 @@ class SbandHK(db.Model):
     hk = db.relationship(
         'Housekeeping', backref=backref('sband', uselist=False))
 
-    Output_Power = db.Column(db.Float)
-    PA_Temp = db.Column(db.Float)
-    Top_Temp = db.Column(db.Float)
-    Bottom_Temp = db.Column(db.Float)
-    Bat_Current = db.Column(db.Float)
-    Bat_Voltage = db.Column(db.Float)
-    PA_Current = db.Column(db.Float)
-    PA_Voltage = db.Column(db.Float)
+    S_mode = db.Column(db.Integer)
+    PA_status = db.Column(db.Integer)
+    S_frequency_Hz = db.Column(db.Integer)
+    S_scrambler = db.Column(db.Integer)
+    S_filter = db.Column(db.Integer)
+    S_modulation = db.Column(db.Integer)
+    S_data_rate = db.Column(db.Integer)
+    S_bit_order = db.Column(db.Integer)
+    S_PWRGD = db.Column(db.Integer)
+    S_TXL = db.Column(db.Integer)
+    Output_Power = db.Column(db.Integer)
+    PA_Temp = db.Column(db.Integer)
+    Top_Temp = db.Column(db.Integer)
+    Bottom_Temp = db.Column(db.Integer)
+    Bat_Current_mA = db.Column(db.Integer)
+    Bat_Voltage_mV = db.Column(db.Integer)
+    PA_Current_mA = db.Column(db.Integer)
+    PA_Voltage_mV = db.Column(db.Integer)
 
     def to_json(self):
         return {
+            'S_mode': self.S_mode,
+            'PA_status': self.PA_status,
+            'S_frequency_Hz': self.S_frequency_Hz,
+            'S_scrambler': self.S_scrambler,
+            'S_filter': self.S_filter,
+            'S_modulation': self.S_modulation,
+            'S_data_rate': self.S_data_rate,
+            'S_bit_order': self.S_bit_order,
+            'S_PWRGD': self.S_PWRGD,
+            'S_TXL': self.S_TXL,
             'Output_Power': self.Output_Power,
             'PA_Temp': self.PA_Temp,
             'Top_Temp': self.Top_Temp,
             'Bottom_Temp': self.Bottom_Temp,
-            'Bat_Current': self.Bat_Current,
-            'Bat_Voltage': self.Bat_Voltage,
-            'PA_Current': self.PA_Current,
-            'PA_Voltage': self.PA_Voltage
+            'Bat_Current_mA': self.Bat_Current_mA,
+            'Bat_Voltage_mV': self.Bat_Voltage_mV,
+            'PA_Current_mA': self.PA_Current_mA,
+            'PA_Voltage_mV': self.PA_Voltage_mV,
         }
 
 

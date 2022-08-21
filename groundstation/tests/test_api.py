@@ -6,12 +6,12 @@ from groundstation.tests.base import BaseTestCase
 from groundstation import db
 
 from groundstation.backend_api.models import AdcsHK, AthenaHK, CharonHK, \
-    DfgmHK, EpsHK, Housekeeping, FlightSchedules, HyperionHK, IrisHK, \
-    NorthernSpiritHK, Passover, SbandHK, Telecommands, FlightScheduleCommands, \
-    Communications, UhfHK, AutomatedCommands
+    DfgmHK, EpsHK, EpsStartupHK, Housekeeping, FlightSchedules, HyperionHK, \
+    IrisHK, NorthernSpiritHK, Passover, SbandHK, Telecommands, \
+    FlightScheduleCommands, Communications, UhfHK, AutomatedCommands
 from groundstation.tests.utils import fake_adcs_hk_as_dict, \
     fake_athena_hk_as_dict, fake_charon_hk_as_dict, fake_dfgm_hk_as_dict, \
-    fake_eps_hk_as_dict, fake_housekeeping_as_dict, \
+    fake_eps_hk_as_dict, fake_eps_startup_hk_as_dict, fake_housekeeping_as_dict, \
     fake_flight_schedule_as_dict, fake_hyperion_hk_as_dict, \
     fake_iris_hk_as_dict, fake_northern_spirit_hk_as_dict, fake_passover_as_dict, \
     fake_patch_update_as_dict, fake_sband_hk_as_dict, fake_telecommand_as_dict, \
@@ -41,6 +41,7 @@ class TestHousekeepingService(BaseTestCase):
             adcs=AdcsHK(**fake_adcs_hk_as_dict()),
             athena=AthenaHK(**fake_athena_hk_as_dict()),
             eps=EpsHK(**fake_eps_hk_as_dict()),
+            eps_startup=EpsStartupHK(**fake_eps_startup_hk_as_dict()),
             uhf=UhfHK(**fake_uhf_hk_as_dict()),
             sband=SbandHK(**fake_sband_hk_as_dict()),
             hyperion=HyperionHK(**fake_hyperion_hk_as_dict()),
@@ -63,12 +64,15 @@ class TestHousekeepingService(BaseTestCase):
             self.assertEqual(data['data']['data_position'], 1)
             self.assertEqual(data['data']['adcs']['Att_Estimate_Mode'], 42)
             self.assertEqual(data['data']['adcs']['Longitude'], 13.37)
-            self.assertEqual(data['data']['athena']['temparray1'], 42)
-            self.assertEqual(data['data']['eps']['cmd'], 42)
-            self.assertEqual(data['data']['eps']['timestamp'], 13.37)
+            self.assertEqual(data['data']['athena']['OBC_software_ver'], 'Fake string!')
+            self.assertEqual(data['data']['athena']['MCU_core_temp'], 42)
+            self.assertEqual(data['data']['eps']['eps_cmd_hk'], 42)
+            self.assertEqual(data['data']['eps']['eps_timestamp_hk'], 13.37)
+            self.assertEqual(data['data']['eps_startup']['eps_cmd_startup'], 42)
+            self.assertEqual(data['data']['eps_startup']['eps_timestamp_startup'], 13.37)
             self.assertEqual(data['data']['uhf']['scw1'], 42)
             self.assertEqual(data['data']['uhf']['temperature'], 13.37)
-            self.assertEqual(data['data']['sband']['Output_Power'], 13.37)
+            self.assertEqual(data['data']['sband']['Output_Power'], 42)
             self.assertEqual(data['data']['hyperion']['Port_Pd1'], 42)
             self.assertEqual(data['data']['charon']['charon_temp7'], 42)
             self.assertEqual(data['data']['dfgm']['Input_Current'], 42)
@@ -84,6 +88,7 @@ class TestHousekeepingService(BaseTestCase):
             adcs=AdcsHK(**fake_adcs_hk_as_dict()),
             athena=AthenaHK(**fake_athena_hk_as_dict()),
             eps=EpsHK(**fake_eps_hk_as_dict()),
+            eps_startup=EpsStartupHK(**fake_eps_startup_hk_as_dict()),
             uhf=UhfHK(**fake_uhf_hk_as_dict()),
             sband=SbandHK(**fake_sband_hk_as_dict()),
             hyperion=HyperionHK(**fake_hyperion_hk_as_dict()),
@@ -118,6 +123,7 @@ class TestHousekeepingService(BaseTestCase):
             adcs=AdcsHK(**fake_adcs_hk_as_dict()),
             athena=AthenaHK(**fake_athena_hk_as_dict()),
             eps=EpsHK(**fake_eps_hk_as_dict()),
+            eps_startup=EpsStartupHK(**fake_eps_startup_hk_as_dict()),
             uhf=UhfHK(**fake_uhf_hk_as_dict()),
             sband=SbandHK(**fake_sband_hk_as_dict()),
             hyperion=HyperionHK(**fake_hyperion_hk_as_dict()),
@@ -133,6 +139,7 @@ class TestHousekeepingService(BaseTestCase):
             adcs=AdcsHK(**fake_adcs_hk_as_dict()),
             athena=AthenaHK(**fake_athena_hk_as_dict()),
             eps=EpsHK(**fake_eps_hk_as_dict()),
+            eps_startup=EpsStartupHK(**fake_eps_startup_hk_as_dict()),
             uhf=UhfHK(**fake_uhf_hk_as_dict()),
             sband=SbandHK(**fake_sband_hk_as_dict()),
             hyperion=HyperionHK(**fake_hyperion_hk_as_dict()),
@@ -148,6 +155,7 @@ class TestHousekeepingService(BaseTestCase):
             adcs=AdcsHK(**fake_adcs_hk_as_dict()),
             athena=AthenaHK(**fake_athena_hk_as_dict()),
             eps=EpsHK(**fake_eps_hk_as_dict()),
+            eps_startup=EpsStartupHK(**fake_eps_startup_hk_as_dict()),
             uhf=UhfHK(**fake_uhf_hk_as_dict()),
             sband=SbandHK(**fake_sband_hk_as_dict()),
             hyperion=HyperionHK(**fake_hyperion_hk_as_dict()),
@@ -189,6 +197,7 @@ class TestHousekeepingService(BaseTestCase):
             adcs=AdcsHK(**fake_adcs_hk_as_dict()),
             athena=AthenaHK(**fake_athena_hk_as_dict()),
             eps=EpsHK(**fake_eps_hk_as_dict()),
+            eps_startup=EpsStartupHK(**fake_eps_startup_hk_as_dict()),
             uhf=UhfHK(**fake_uhf_hk_as_dict()),
             sband=SbandHK(**fake_sband_hk_as_dict()),
             hyperion=HyperionHK(**fake_hyperion_hk_as_dict()),
@@ -214,6 +223,7 @@ class TestHousekeepingService(BaseTestCase):
                 adcs=AdcsHK(**fake_adcs_hk_as_dict()),
                 athena=AthenaHK(**fake_athena_hk_as_dict()),
                 eps=EpsHK(**fake_eps_hk_as_dict()),
+                eps_startup=EpsStartupHK(**fake_eps_startup_hk_as_dict()),
                 uhf=UhfHK(**fake_uhf_hk_as_dict()),
                 sband=SbandHK(**fake_sband_hk_as_dict()),
                 hyperion=HyperionHK(**fake_hyperion_hk_as_dict()),
@@ -245,6 +255,7 @@ class TestHousekeepingService(BaseTestCase):
                 adcs=AdcsHK(**fake_adcs_hk_as_dict()),
                 athena=AthenaHK(**fake_athena_hk_as_dict()),
                 eps=EpsHK(**fake_eps_hk_as_dict()),
+                eps_startup=EpsStartupHK(**fake_eps_startup_hk_as_dict()),
                 uhf=UhfHK(**fake_uhf_hk_as_dict()),
                 sband=SbandHK(**fake_sband_hk_as_dict()),
                 hyperion=HyperionHK(**fake_hyperion_hk_as_dict()),
@@ -276,6 +287,7 @@ class TestHousekeepingService(BaseTestCase):
                 adcs=AdcsHK(**fake_adcs_hk_as_dict()),
                 athena=AthenaHK(**fake_athena_hk_as_dict()),
                 eps=EpsHK(**fake_eps_hk_as_dict()),
+                eps_startup=EpsStartupHK(**fake_eps_startup_hk_as_dict()),
                 uhf=UhfHK(**fake_uhf_hk_as_dict()),
                 sband=SbandHK(**fake_sband_hk_as_dict()),
                 hyperion=HyperionHK(**fake_hyperion_hk_as_dict()),
@@ -309,6 +321,7 @@ class TestHousekeepingService(BaseTestCase):
                 adcs=AdcsHK(**fake_adcs_hk_as_dict()),
                 athena=AthenaHK(**fake_athena_hk_as_dict()),
                 eps=EpsHK(**fake_eps_hk_as_dict()),
+                eps_startup=EpsStartupHK(**fake_eps_startup_hk_as_dict()),
                 uhf=UhfHK(**fake_uhf_hk_as_dict()),
                 sband=SbandHK(**fake_sband_hk_as_dict()),
                 hyperion=HyperionHK(**fake_hyperion_hk_as_dict()),
@@ -340,6 +353,7 @@ class TestHousekeepingService(BaseTestCase):
                 adcs=AdcsHK(**fake_adcs_hk_as_dict()),
                 athena=AthenaHK(**fake_athena_hk_as_dict()),
                 eps=EpsHK(**fake_eps_hk_as_dict()),
+                eps_startup=EpsStartupHK(**fake_eps_startup_hk_as_dict()),
                 uhf=UhfHK(**fake_uhf_hk_as_dict()),
                 sband=SbandHK(**fake_sband_hk_as_dict()),
                 hyperion=HyperionHK(**fake_hyperion_hk_as_dict()),
@@ -377,6 +391,7 @@ class TestHousekeepingService(BaseTestCase):
         housekeepingData['adcs'] = fake_adcs_hk_as_dict()
         housekeepingData['athena'] = fake_athena_hk_as_dict()
         housekeepingData['eps'] = fake_eps_hk_as_dict()
+        housekeepingData['eps_startup'] = fake_eps_startup_hk_as_dict()
         housekeepingData['uhf'] = fake_uhf_hk_as_dict()
         housekeepingData['sband'] = fake_sband_hk_as_dict()
         housekeepingData['hyperion'] = fake_hyperion_hk_as_dict()
@@ -409,6 +424,7 @@ class TestHousekeepingService(BaseTestCase):
         housekeepingData['adcs'] = fake_adcs_hk_as_dict()
         housekeepingData['athena'] = fake_athena_hk_as_dict()
         housekeepingData['eps'] = fake_eps_hk_as_dict()
+        housekeepingData['eps_startup'] = fake_eps_startup_hk_as_dict()
         housekeepingData['uhf'] = fake_uhf_hk_as_dict()
         housekeepingData['sband'] = fake_sband_hk_as_dict()
         housekeepingData['hyperion'] = fake_hyperion_hk_as_dict()
@@ -435,6 +451,7 @@ class TestHousekeepingService(BaseTestCase):
         housekeepingData['adcs'] = fake_adcs_hk_as_dict()
         housekeepingData['athena'] = fake_athena_hk_as_dict()
         housekeepingData['eps'] = fake_eps_hk_as_dict()
+        housekeepingData['eps_startup'] = fake_eps_startup_hk_as_dict()
         housekeepingData['uhf'] = fake_uhf_hk_as_dict()
         housekeepingData['sband'] = fake_sband_hk_as_dict()
         housekeepingData['hyperion'] = fake_hyperion_hk_as_dict()
@@ -460,6 +477,7 @@ class TestHousekeepingService(BaseTestCase):
         housekeepingData['adcs'] = fake_adcs_hk_as_dict()
         housekeepingData['athena'] = fake_athena_hk_as_dict()
         housekeepingData['eps'] = fake_eps_hk_as_dict()
+        housekeepingData['eps_startup'] = fake_eps_startup_hk_as_dict()
         housekeepingData['uhf'] = fake_uhf_hk_as_dict()
         housekeepingData['sband'] = fake_sband_hk_as_dict()
         housekeepingData['hyperion'] = fake_hyperion_hk_as_dict()
@@ -489,6 +507,7 @@ class TestHousekeepingService(BaseTestCase):
         housekeepingData['adcs'] = fake_adcs_hk_as_dict()
         housekeepingData['athena'] = fake_athena_hk_as_dict()
         housekeepingData['eps'] = fake_eps_hk_as_dict()
+        housekeepingData['eps_startup'] = fake_eps_startup_hk_as_dict()
         housekeepingData['uhf'] = fake_uhf_hk_as_dict()
         housekeepingData['sband'] = fake_sband_hk_as_dict()
         housekeepingData['hyperion'] = fake_hyperion_hk_as_dict()
@@ -534,6 +553,7 @@ class TestHousekeepingService(BaseTestCase):
         housekeepingData['adcs'] = {}
         housekeepingData['athena'] = fake_athena_hk_as_dict()
         housekeepingData['eps'] = fake_eps_hk_as_dict()
+        housekeepingData['eps_startup'] = fake_eps_startup_hk_as_dict()
         housekeepingData['uhf'] = fake_uhf_hk_as_dict()
         housekeepingData['sband'] = fake_sband_hk_as_dict()
         housekeepingData['hyperion'] = fake_hyperion_hk_as_dict()
@@ -565,6 +585,7 @@ class TestHousekeepingService(BaseTestCase):
             adcs=AdcsHK(**fake_adcs_hk_as_dict()),
             athena=AthenaHK(**fake_athena_hk_as_dict()),
             eps=EpsHK(**fake_eps_hk_as_dict()),
+            eps_startup=EpsStartupHK(**fake_eps_startup_hk_as_dict()),
             uhf=UhfHK(**fake_uhf_hk_as_dict()),
             sband=SbandHK(**fake_sband_hk_as_dict()),
             hyperion=HyperionHK(**fake_hyperion_hk_as_dict()),
@@ -580,6 +601,7 @@ class TestHousekeepingService(BaseTestCase):
             adcs=AdcsHK(**fake_adcs_hk_as_dict()),
             athena=AthenaHK(**fake_athena_hk_as_dict()),
             eps=EpsHK(**fake_eps_hk_as_dict()),
+            eps_startup=EpsStartupHK(**fake_eps_startup_hk_as_dict()),
             uhf=UhfHK(**fake_uhf_hk_as_dict()),
             sband=SbandHK(**fake_sband_hk_as_dict()),
             hyperion=HyperionHK(**fake_hyperion_hk_as_dict()),
@@ -595,6 +617,7 @@ class TestHousekeepingService(BaseTestCase):
             adcs=AdcsHK(**fake_adcs_hk_as_dict()),
             athena=AthenaHK(**fake_athena_hk_as_dict()),
             eps=EpsHK(**fake_eps_hk_as_dict()),
+            eps_startup=EpsStartupHK(**fake_eps_startup_hk_as_dict()),
             uhf=UhfHK(**fake_uhf_hk_as_dict()),
             sband=SbandHK(**fake_sband_hk_as_dict()),
             hyperion=HyperionHK(**fake_hyperion_hk_as_dict()),
@@ -632,6 +655,7 @@ class TestHousekeepingService(BaseTestCase):
             adcs=AdcsHK(**fake_adcs_hk_as_dict()),
             athena=AthenaHK(**fake_athena_hk_as_dict()),
             eps=EpsHK(**fake_eps_hk_as_dict()),
+            eps_startup=EpsStartupHK(**fake_eps_startup_hk_as_dict()),
             uhf=UhfHK(**fake_uhf_hk_as_dict()),
             sband=SbandHK(**fake_sband_hk_as_dict()),
             hyperion=HyperionHK(**fake_hyperion_hk_as_dict()),
@@ -647,6 +671,7 @@ class TestHousekeepingService(BaseTestCase):
             adcs=AdcsHK(**fake_adcs_hk_as_dict()),
             athena=AthenaHK(**fake_athena_hk_as_dict()),
             eps=EpsHK(**fake_eps_hk_as_dict()),
+            eps_startup=EpsStartupHK(**fake_eps_startup_hk_as_dict()),
             uhf=UhfHK(**fake_uhf_hk_as_dict()),
             sband=SbandHK(**fake_sband_hk_as_dict()),
             hyperion=HyperionHK(**fake_hyperion_hk_as_dict()),
@@ -680,6 +705,7 @@ class TestHousekeepingService(BaseTestCase):
             adcs=AdcsHK(**fake_adcs_hk_as_dict()),
             athena=AthenaHK(**fake_athena_hk_as_dict()),
             eps=EpsHK(**fake_eps_hk_as_dict()),
+            eps_startup=EpsStartupHK(**fake_eps_startup_hk_as_dict()),
             uhf=UhfHK(**fake_uhf_hk_as_dict()),
             sband=SbandHK(**fake_sband_hk_as_dict()),
             hyperion=HyperionHK(**fake_hyperion_hk_as_dict()),
@@ -695,6 +721,7 @@ class TestHousekeepingService(BaseTestCase):
             adcs=AdcsHK(**fake_adcs_hk_as_dict()),
             athena=AthenaHK(**fake_athena_hk_as_dict()),
             eps=EpsHK(**fake_eps_hk_as_dict()),
+            eps_startup=EpsStartupHK(**fake_eps_startup_hk_as_dict()),
             uhf=UhfHK(**fake_uhf_hk_as_dict()),
             sband=SbandHK(**fake_sband_hk_as_dict()),
             hyperion=HyperionHK(**fake_hyperion_hk_as_dict()),
@@ -728,6 +755,7 @@ class TestHousekeepingService(BaseTestCase):
             adcs=AdcsHK(**fake_adcs_hk_as_dict()),
             athena=AthenaHK(**fake_athena_hk_as_dict()),
             eps=EpsHK(**fake_eps_hk_as_dict()),
+            eps_startup=EpsStartupHK(**fake_eps_startup_hk_as_dict()),
             uhf=UhfHK(**fake_uhf_hk_as_dict()),
             sband=SbandHK(**fake_sband_hk_as_dict()),
             hyperion=HyperionHK(**fake_hyperion_hk_as_dict()),
@@ -743,6 +771,7 @@ class TestHousekeepingService(BaseTestCase):
             adcs=AdcsHK(**fake_adcs_hk_as_dict()),
             athena=AthenaHK(**fake_athena_hk_as_dict()),
             eps=EpsHK(**fake_eps_hk_as_dict()),
+            eps_startup=EpsStartupHK(**fake_eps_startup_hk_as_dict()),
             uhf=UhfHK(**fake_uhf_hk_as_dict()),
             sband=SbandHK(**fake_sband_hk_as_dict()),
             hyperion=HyperionHK(**fake_hyperion_hk_as_dict()),
@@ -758,6 +787,7 @@ class TestHousekeepingService(BaseTestCase):
             adcs=AdcsHK(**fake_adcs_hk_as_dict()),
             athena=AthenaHK(**fake_athena_hk_as_dict()),
             eps=EpsHK(**fake_eps_hk_as_dict()),
+            eps_startup=EpsStartupHK(**fake_eps_startup_hk_as_dict()),
             uhf=UhfHK(**fake_uhf_hk_as_dict()),
             sband=SbandHK(**fake_sband_hk_as_dict()),
             hyperion=HyperionHK(**fake_hyperion_hk_as_dict()),

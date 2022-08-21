@@ -4,17 +4,17 @@ from sqlalchemy import exc
 
 from groundstation.tests.base import BaseTestCase
 from groundstation.backend_api.models import AdcsHK, AthenaHK, CharonHK, \
-    DfgmHK, EpsHK, Housekeeping, HyperionHK, IrisHK, NorthernSpiritHK, \
-    SbandHK, UhfHK, User
+    DfgmHK, EpsHK, EpsStartupHK, Housekeeping, HyperionHK, IrisHK, \
+    NorthernSpiritHK, SbandHK, UhfHK, User
 from groundstation import db
 from groundstation.backend_api.utils import add_telecommand, \
     add_flight_schedule, add_command_to_flightschedule, \
     add_arg_to_flightschedulecommand, add_user
 from groundstation.tests.utils import fake_adcs_hk_as_dict, \
     fake_athena_hk_as_dict, fake_charon_hk_as_dict, fake_dfgm_hk_as_dict, \
-    fake_eps_hk_as_dict, fake_housekeeping_as_dict, fake_hyperion_hk_as_dict, \
-    fake_iris_hk_as_dict, fake_northern_spirit_hk_as_dict, \
-    fake_sband_hk_as_dict, fake_uhf_hk_as_dict
+    fake_eps_hk_as_dict, fake_eps_startup_hk_as_dict, fake_housekeeping_as_dict, \
+    fake_hyperion_hk_as_dict, fake_iris_hk_as_dict, \
+    fake_northern_spirit_hk_as_dict, fake_sband_hk_as_dict, fake_uhf_hk_as_dict
 
 class TestUserModel(BaseTestCase):
 
@@ -53,6 +53,7 @@ class TestHousekeepingModel(BaseTestCase):
             adcs=AdcsHK(**fake_adcs_hk_as_dict()),
             athena=AthenaHK(**fake_athena_hk_as_dict()),
             eps=EpsHK(**fake_eps_hk_as_dict()),
+            eps_startup=EpsStartupHK(**fake_eps_startup_hk_as_dict()),
             uhf=UhfHK(**fake_uhf_hk_as_dict()),
             sband=SbandHK(**fake_sband_hk_as_dict()),
             hyperion=HyperionHK(**fake_hyperion_hk_as_dict()),
@@ -72,6 +73,7 @@ class TestHousekeepingModel(BaseTestCase):
         self.assertIsNotNone('adcs')
         self.assertIsNotNone('athena')
         self.assertIsNotNone('eps')
+        self.assertIsNotNone('eps_startup')
         self.assertIsNotNone('uhf')
         self.assertIsNotNone('sband')
         self.assertIsNotNone('hyperion')
@@ -83,12 +85,15 @@ class TestHousekeepingModel(BaseTestCase):
         # Test values
         self.assertEqual(housekeeping.adcs.Att_Estimate_Mode, 42)
         self.assertEqual(housekeeping.adcs.Longitude, 13.37)
-        self.assertEqual(housekeeping.athena.temparray1, 42)
-        self.assertEqual(housekeeping.eps.cmd, 42)
-        self.assertEqual(housekeeping.eps.timestamp, 13.37)
+        self.assertEqual(housekeeping.athena.OBC_software_ver, 'Fake string!')
+        self.assertEqual(housekeeping.athena.MCU_core_temp, 42)
+        self.assertEqual(housekeeping.eps.eps_cmd_hk, 42)
+        self.assertEqual(housekeeping.eps.eps_timestamp_hk, 13.37)
+        self.assertEqual(housekeeping.eps_startup.eps_cmd_startup, 42)
+        self.assertEqual(housekeeping.eps_startup.eps_timestamp_startup, 13.37)
         self.assertEqual(housekeeping.uhf.scw1, 42)
         self.assertEqual(housekeeping.uhf.temperature, 13.37)
-        self.assertEqual(housekeeping.sband.Output_Power, 13.37)
+        self.assertEqual(housekeeping.sband.Output_Power, 42)
         self.assertEqual(housekeeping.hyperion.Port_Pd1, 42)
         self.assertEqual(housekeeping.charon.charon_temp7, 42)
         self.assertEqual(housekeeping.dfgm.Input_Current, 42)
@@ -106,6 +111,7 @@ class TestHousekeepingModel(BaseTestCase):
             adcs=AdcsHK(**fake_adcs_hk_as_dict()),
             athena=AthenaHK(**fake_athena_hk_as_dict()),
             eps=EpsHK(**fake_eps_hk_as_dict()),
+            eps_startup=EpsStartupHK(**fake_eps_startup_hk_as_dict()),
             uhf=UhfHK(**fake_uhf_hk_as_dict()),
             sband=SbandHK(**fake_sband_hk_as_dict()),
             hyperion=HyperionHK(**fake_hyperion_hk_as_dict()),

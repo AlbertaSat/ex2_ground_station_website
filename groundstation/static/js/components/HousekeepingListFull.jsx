@@ -1,43 +1,43 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 
-import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
-import Paper from "@material-ui/core/Paper";
-import { withStyles } from "@material-ui/core/styles";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableRow from "@material-ui/core/TableRow";
-import Slide from "@material-ui/core/Slide";
-import LinearProgress from "@material-ui/core/LinearProgress";
-import HousekeepingDialog from "./HousekeepingDialog";
-import { formatDateToUTCString } from "../helpers.js";
+import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
+import Paper from '@material-ui/core/Paper';
+import { withStyles } from '@material-ui/core/styles';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableRow from '@material-ui/core/TableRow';
+import Slide from '@material-ui/core/Slide';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import HousekeepingDialog from './HousekeepingDialog';
+import { formatDateToUTCString } from '../helpers.js';
 
 const styles = {
   root: {
-    width: "100%",
+    width: '100%'
   },
   appBar: {
-    position: "relative",
+    position: 'relative'
   },
   title: {
-    marginLeft: "10px",
-    flex: 1,
+    marginLeft: '10px',
+    flex: 1
   },
   paper: {
-    marginTop: "10px",
-    width: "100%",
-    overflowX: "auto",
-    marginBottom: "10px",
+    marginTop: '10px',
+    width: '100%',
+    overflowX: 'auto',
+    marginBottom: '10px'
   },
   table: {
-    minWidth: 650,
+    minWidth: 650
   },
   customListItemText: {
-    display: "flex",
-    alignItems: "baseline",
-    justifyContent: "space-between",
-    maxWidth: "78%",
-  },
+    display: 'flex',
+    alignItems: 'baseline',
+    justifyContent: 'space-between',
+    maxWidth: '78%'
+  }
 };
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -57,14 +57,15 @@ class HousekeepingLogListFull extends Component {
         adcs: {},
         athena: {},
         eps: {},
+        eps_startup: {},
         uhf: {},
         sband: {},
         hyperion: {},
         charon: {},
         dfgm: {},
         northern_spirit: {},
-        iris: {},
-      },
+        iris: {}
+      }
     }),
       (this.handleOpenClick = this.handleOpenClick.bind(this));
     this.handleClose = this.handleClose.bind(this);
@@ -73,13 +74,13 @@ class HousekeepingLogListFull extends Component {
   handleOpenClick(housekeeping) {
     this.setState({
       open: !this.state.open,
-      selectedHousekeeping: housekeeping,
+      selectedHousekeeping: housekeeping
     });
   }
 
   handleClose() {
     this.setState({
-      open: false,
+      open: false
     });
   }
 
@@ -112,19 +113,19 @@ class HousekeepingLogListFull extends Component {
                   <TableRow
                     button
                     key={housekeeping.name}
-                    id={"housekeeping-" + housekeeping.id}
+                    id={'housekeeping-' + housekeeping.id}
                     onClick={() => this.handleOpenClick(housekeeping)}
                   >
                     <TableCell
                       width="30%"
                       component="th"
                       scope="row"
-                      style={{ borderLeft: "solid 8px #479b4e" }}
+                      style={{ borderLeft: 'solid 8px #479b4e' }}
                     >
                       {this.props.isLoading
-                        ? ""
+                        ? ''
                         : formatDateToUTCString(
-                            new Date(housekeeping.timestamp + "Z")
+                            new Date(housekeeping.timestamp + 'Z')
                           )}
                     </TableCell>
                     <TableCell component="th" scope="row">
