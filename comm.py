@@ -204,6 +204,11 @@ def log_housekeeping(response):
     a database entry for each housekeeping entry.
     """
     for log in response:
+        if log['err'] != 0:
+            save_response(
+                'Failed to log housekeeping! (error: {})'.format(log['err']))
+            continue
+
         # Form baseline schema for the post data
         hk = fake_housekeeping_as_dict(
             timestamp=datetime.fromtimestamp(log['UNIXtimestamp']).isoformat(),
@@ -247,6 +252,10 @@ def log_housekeeping(response):
         # Post HK data
         post_data = json.dumps(hk)
         housekeeping_post.post(local_data=post_data)
+
+        # Log HK transaction
+        save_response('Logged housekeeping!\nTimestamp: {}\nData Position: {}'.format(
+            hk['timestamp'], hk['data_position']))
 
 
 def send_to_simulator(msg):
@@ -319,7 +328,6 @@ def communication_loop(gs=None):
 
                     if response:
                         if 'housekeeping.get_hk' in msg:
-                            save_response('Housekeeping logged')
                             log_housekeeping(response)
                         elif isinstance(response, list):
                             for item in response:
