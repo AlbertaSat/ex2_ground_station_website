@@ -17,9 +17,10 @@ from groundstation.backend_api.communications import CommunicationList, Communic
 
 from groundstation.backend_api.housekeeping import HousekeepingLogList
 from groundstation.tests.utils import fake_housekeeping_as_dict, fake_adcs_hk_as_dict, \
-    fake_athena_hk_as_dict, fake_eps_hk_as_dict, fake_uhf_hk_as_dict, \
-    fake_sband_hk_as_dict, fake_hyperion_hk_as_dict, fake_charon_hk_as_dict, \
-    fake_dfgm_hk_as_dict, fake_northern_spirit_hk_as_dict, fake_iris_hk_as_dict
+    fake_athena_hk_as_dict, fake_eps_hk_as_dict, fake_eps_startup_hk_as_dict, \
+    fake_uhf_hk_as_dict, fake_sband_hk_as_dict, fake_hyperion_hk_as_dict, \
+    fake_charon_hk_as_dict, fake_dfgm_hk_as_dict, \
+    fake_northern_spirit_hk_as_dict, fake_iris_hk_as_dict
 
 
 class Connection(Enum):
@@ -211,6 +212,7 @@ def log_housekeeping(response):
         hk['adcs'] = fake_adcs_hk_as_dict()
         hk['athena'] = fake_athena_hk_as_dict()
         hk['eps'] = fake_eps_hk_as_dict()
+        hk['eps_startup'] = fake_eps_startup_hk_as_dict()
         hk['uhf'] = fake_uhf_hk_as_dict()
         hk['sband'] = fake_sband_hk_as_dict()
         hk['hyperion'] = fake_hyperion_hk_as_dict()
@@ -229,6 +231,7 @@ def log_housekeeping(response):
             'adcs',
             'athena',
             'eps',
+            'eps_startup',
             'uhf',
             'sband',
             'hyperion',
