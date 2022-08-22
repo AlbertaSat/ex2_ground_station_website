@@ -18,6 +18,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Slide from '@material-ui/core/Slide';
 
+const DECIMAL_PLACES = 5; // How many decimal places to round floats to
+
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%'
@@ -39,7 +41,19 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2)
   },
   table: {
-    minWidth: 650
+    minWidth: 325,
+    maxWidth: 325
+  },
+  label: {
+    fontWeight: 600
+  },
+  hkDisplay: {
+    columnCount: 5,
+    columnWidth: 325,
+    columnSpan: 'none'
+  },
+  hkItem: {
+    breakInside: 'avoid-column'
   },
   customListItemText: {
     display: 'flex',
@@ -80,6 +94,18 @@ const HousekeepingDialog = (props) => {
    */
   const handleScrollClick = (section) => {
     section.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
+  /**
+   * Rounds housekeeeping values to 3 decimal places to keep tables thin
+   *
+   * @param value A value to potentially round
+   * @returns A value rounded to 3 decimals (if possible)
+   */
+  const roundValue = (value) => {
+    return Number(value) === value && value % 1 !== 0
+      ? value.toFixed(DECIMAL_PLACES)
+      : value;
   };
 
   return (
@@ -197,223 +223,356 @@ const HousekeepingDialog = (props) => {
 
       <br></br>
 
-      <Typography variant="h4" className={classes.subtitle} ref={adcsRef}>
-        ADCS
-      </Typography>
-      <List>
-        <Grid container spacing={2}>
-          {Object.keys(props.housekeeping.adcs).map((label) => (
-            <Grid item>
-              <ListItem>
-                <ListItemText
-                  primary={label}
-                  secondary={props.housekeeping.adcs[label]}
-                />
-              </ListItem>
-            </Grid>
-          ))}
-        </Grid>
-      </List>
+      <div className={classes.hkDisplay}>
+        <div className={classes.hkItem}>
+          <Typography variant="h4" className={classes.subtitle} ref={adcsRef}>
+            ADCS
+          </Typography>
+          <Table
+            className={classes.table}
+            size="small"
+            aria-label="dense table"
+          >
+            <TableBody>
+              {Object.keys(props.housekeeping.adcs).map((label, idx) => (
+                <TableRow key={idx}>
+                  <TableCell
+                    width="20%"
+                    component="th"
+                    scope="row"
+                    className={classes.label}
+                  >
+                    {label}
+                  </TableCell>
+                  <TableCell width="60%" align="left">
+                    {roundValue(props.housekeeping.adcs[label])}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
 
-      <br></br>
+        <br></br>
 
-      <Typography variant="h4" className={classes.subtitle} ref={athenaRef}>
-        Athena
-      </Typography>
-      <List>
-        <Grid container spacing={2}>
-          {Object.keys(props.housekeeping.athena).map((label) => (
-            <Grid item>
-              <ListItem>
-                <ListItemText
-                  primary={label}
-                  secondary={props.housekeeping.athena[label]}
-                />
-              </ListItem>
-            </Grid>
-          ))}
-        </Grid>
-      </List>
+        <div className={classes.hkItem}>
+          <Typography variant="h4" className={classes.subtitle} ref={athenaRef}>
+            Athena
+          </Typography>
+          <Table
+            className={classes.table}
+            size="small"
+            aria-label="dense table"
+          >
+            <TableBody>
+              {Object.keys(props.housekeeping.athena).map((label, idx) => (
+                <TableRow key={idx}>
+                  <TableCell
+                    width="20%"
+                    component="th"
+                    scope="row"
+                    className={classes.label}
+                  >
+                    {label}
+                  </TableCell>
+                  <TableCell width="60%" align="left">
+                    {roundValue(props.housekeeping.athena[label])}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
 
-      <br></br>
+        <br></br>
 
-      <Typography variant="h4" className={classes.subtitle} ref={epsRef}>
-        EPS
-      </Typography>
-      <List>
-        <Grid container spacing={2}>
-          {Object.keys(props.housekeeping.eps).map((label) => (
-            <Grid item>
-              <ListItem>
-                <ListItemText
-                  primary={label}
-                  secondary={props.housekeeping.eps[label]}
-                />
-              </ListItem>
-            </Grid>
-          ))}
-        </Grid>
-      </List>
+        <div className={classes.hkItem}>
+          <Typography variant="h4" className={classes.subtitle} ref={epsRef}>
+            EPS
+          </Typography>
+          <Table
+            className={classes.table}
+            size="small"
+            aria-label="dense table"
+          >
+            <TableBody>
+              {Object.keys(props.housekeeping.eps).map((label, idx) => (
+                <TableRow key={idx}>
+                  <TableCell
+                    width="20%"
+                    component="th"
+                    scope="row"
+                    className={classes.label}
+                  >
+                    {label}
+                  </TableCell>
+                  <TableCell width="60%" align="left">
+                    {roundValue(props.housekeeping.eps[label])}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
 
-      <br></br>
+        <br></br>
 
-      <Typography variant="h5" className={classes.subtitle} ref={epsStartupRef}>
-        EPS Startup
-      </Typography>
-      <List>
-        <Grid container spacing={2}>
-          {Object.keys(props.housekeeping.eps_startup).map((label) => (
-            <Grid item>
-              <ListItem>
-                <ListItemText
-                  primary={label}
-                  secondary={props.housekeeping.eps_startup[label]}
-                />
-              </ListItem>
-            </Grid>
-          ))}
-        </Grid>
-      </List>
+        <div className={classes.hkItem}>
+          <Typography
+            variant="h4"
+            className={classes.subtitle}
+            ref={epsStartupRef}
+          >
+            EPS Startup
+          </Typography>
+          <Table
+            className={classes.table}
+            size="small"
+            aria-label="dense table"
+          >
+            <TableBody>
+              {Object.keys(props.housekeeping.eps_startup).map((label, idx) => (
+                <TableRow key={idx}>
+                  <TableCell
+                    width="20%"
+                    component="th"
+                    scope="row"
+                    className={classes.label}
+                  >
+                    {label}
+                  </TableCell>
+                  <TableCell width="60%" align="left">
+                    {roundValue(props.housekeeping.eps_startup[label])}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
 
-      <br></br>
+        <br></br>
 
-      <Typography variant="h4" className={classes.subtitle} ref={uhfRef}>
-        UHF
-      </Typography>
-      <List>
-        <Grid container spacing={2}>
-          {Object.keys(props.housekeeping.uhf).map((label) => (
-            <Grid item>
-              <ListItem>
-                <ListItemText
-                  primary={label}
-                  secondary={props.housekeeping.uhf[label]}
-                />
-              </ListItem>
-            </Grid>
-          ))}
-        </Grid>
-      </List>
+        <div className={classes.hkItem}>
+          <Typography variant="h4" className={classes.subtitle} ref={uhfRef}>
+            UHF
+          </Typography>
+          <Table
+            className={classes.table}
+            size="small"
+            aria-label="dense table"
+          >
+            <TableBody>
+              {Object.keys(props.housekeeping.uhf).map((label, idx) => (
+                <TableRow key={idx}>
+                  <TableCell
+                    width="20%"
+                    component="th"
+                    scope="row"
+                    className={classes.label}
+                  >
+                    {label}
+                  </TableCell>
+                  <TableCell width="60%" align="left">
+                    {roundValue(props.housekeeping.uhf[label])}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
 
-      <br></br>
+        <br></br>
 
-      <Typography variant="h4" className={classes.subtitle} ref={sbandRef}>
-        S-Band
-      </Typography>
-      <List>
-        <Grid container spacing={2}>
-          {Object.keys(props.housekeeping.sband).map((label) => (
-            <Grid item>
-              <ListItem>
-                <ListItemText
-                  primary={label}
-                  secondary={props.housekeeping.sband[label]}
-                />
-              </ListItem>
-            </Grid>
-          ))}
-        </Grid>
-      </List>
+        <div className={classes.hkItem}>
+          <Typography variant="h4" className={classes.subtitle} ref={sbandRef}>
+            S-Band
+          </Typography>
+          <Table
+            className={classes.table}
+            size="small"
+            aria-label="dense table"
+          >
+            <TableBody>
+              {Object.keys(props.housekeeping.sband).map((label, idx) => (
+                <TableRow key={idx}>
+                  <TableCell
+                    width="20%"
+                    component="th"
+                    scope="row"
+                    className={classes.label}
+                  >
+                    {label}
+                  </TableCell>
+                  <TableCell width="60%" align="left">
+                    {roundValue(props.housekeeping.sband[label])}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
 
-      <br></br>
+        <br></br>
 
-      <Typography variant="h4" className={classes.subtitle} ref={hyperionRef}>
-        Hyperion
-      </Typography>
-      <List>
-        <Grid container spacing={2}>
-          {Object.keys(props.housekeeping.hyperion).map((label) => (
-            <Grid item>
-              <ListItem>
-                <ListItemText
-                  primary={label}
-                  secondary={props.housekeeping.hyperion[label]}
-                />
-              </ListItem>
-            </Grid>
-          ))}
-        </Grid>
-      </List>
+        <div className={classes.hkItem}>
+          <Typography
+            variant="h4"
+            className={classes.subtitle}
+            ref={hyperionRef}
+          >
+            Hyperion
+          </Typography>
+          <Table
+            className={classes.table}
+            size="small"
+            aria-label="dense table"
+          >
+            <TableBody>
+              {Object.keys(props.housekeeping.hyperion).map((label, idx) => (
+                <TableRow key={idx}>
+                  <TableCell
+                    width="20%"
+                    component="th"
+                    scope="row"
+                    className={classes.label}
+                  >
+                    {label}
+                  </TableCell>
+                  <TableCell width="60%" align="left">
+                    {roundValue(props.housekeeping.hyperion[label])}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
 
-      <br></br>
+        <br></br>
 
-      <Typography variant="h4" className={classes.subtitle} ref={charonRef}>
-        Charon
-      </Typography>
-      <List>
-        <Grid container spacing={2}>
-          {Object.keys(props.housekeeping.charon).map((label) => (
-            <Grid item>
-              <ListItem>
-                <ListItemText
-                  primary={label}
-                  secondary={props.housekeeping.charon[label]}
-                />
-              </ListItem>
-            </Grid>
-          ))}
-        </Grid>
-      </List>
+        <div className={classes.hkItem}>
+          <Typography variant="h4" className={classes.subtitle} ref={charonRef}>
+            Charon
+          </Typography>
+          <Table
+            className={classes.table}
+            size="small"
+            aria-label="dense table"
+          >
+            <TableBody>
+              {Object.keys(props.housekeeping.charon).map((label, idx) => (
+                <TableRow key={idx}>
+                  <TableCell
+                    width="20%"
+                    component="th"
+                    scope="row"
+                    className={classes.label}
+                  >
+                    {label}
+                  </TableCell>
+                  <TableCell width="60%" align="left">
+                    {roundValue(props.housekeeping.charon[label])}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
 
-      <br></br>
+        <br></br>
 
-      <Typography variant="h4" className={classes.subtitle} ref={dfgmRef}>
-        DFGM
-      </Typography>
-      <List>
-        <Grid container spacing={2}>
-          {Object.keys(props.housekeeping.dfgm).map((label) => (
-            <Grid item>
-              <ListItem>
-                <ListItemText
-                  primary={label}
-                  secondary={props.housekeeping.dfgm[label]}
-                />
-              </ListItem>
-            </Grid>
-          ))}
-        </Grid>
-      </List>
+        <div className={classes.hkItem}>
+          <Typography variant="h4" className={classes.subtitle} ref={dfgmRef}>
+            DFGM
+          </Typography>
+          <Table
+            className={classes.table}
+            size="small"
+            aria-label="dense table"
+          >
+            <TableBody>
+              {Object.keys(props.housekeeping.dfgm).map((label, idx) => (
+                <TableRow key={idx}>
+                  <TableCell
+                    width="20%"
+                    component="th"
+                    scope="row"
+                    className={classes.label}
+                  >
+                    {label}
+                  </TableCell>
+                  <TableCell width="60%" align="left">
+                    {roundValue(props.housekeeping.dfgm[label])}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
 
-      <br></br>
+        <br></br>
 
-      <Typography variant="h4" className={classes.subtitle} ref={nsRef}>
-        Northern Spirit
-      </Typography>
-      <List>
-        <Grid container spacing={2}>
-          {Object.keys(props.housekeeping.northern_spirit).map((label) => (
-            <Grid item>
-              <ListItem>
-                <ListItemText
-                  primary={label}
-                  secondary={props.housekeeping.northern_spirit[label]}
-                />
-              </ListItem>
-            </Grid>
-          ))}
-        </Grid>
-      </List>
+        <div className={classes.hkItem}>
+          <Typography variant="h4" className={classes.subtitle} ref={nsRef}>
+            Northern Spirit
+          </Typography>
+          <Table
+            className={classes.table}
+            size="small"
+            aria-label="dense table"
+          >
+            <TableBody>
+              {Object.keys(props.housekeeping.northern_spirit).map(
+                (label, idx) => (
+                  <TableRow key={idx}>
+                    <TableCell
+                      width="20%"
+                      component="th"
+                      scope="row"
+                      className={classes.label}
+                    >
+                      {label}
+                    </TableCell>
+                    <TableCell width="60%" align="left">
+                      {roundValue(props.housekeeping.northern_spirit[label])}
+                    </TableCell>
+                  </TableRow>
+                )
+              )}
+            </TableBody>
+          </Table>
+        </div>
 
-      <br></br>
+        <br></br>
 
-      <Typography variant="h4" className={classes.subtitle} ref={irisRef}>
-        IRIS
-      </Typography>
-      <List>
-        <Grid container spacing={2}>
-          {Object.keys(props.housekeeping.iris).map((label) => (
-            <Grid item>
-              <ListItem>
-                <ListItemText
-                  primary={label}
-                  secondary={props.housekeeping.iris[label]}
-                />
-              </ListItem>
-            </Grid>
-          ))}
-        </Grid>
-      </List>
+        <div className={classes.hkItem}>
+          <Typography variant="h4" className={classes.subtitle} ref={irisRef}>
+            IRIS
+          </Typography>
+          <Table
+            className={classes.table}
+            size="small"
+            aria-label="dense table"
+          >
+            <TableBody>
+              {Object.keys(props.housekeeping.iris).map((label, idx) => (
+                <TableRow key={idx}>
+                  <TableCell
+                    width="20%"
+                    component="th"
+                    scope="row"
+                    className={classes.label}
+                  >
+                    {label}
+                  </TableCell>
+                  <TableCell width="60%" align="left">
+                    {roundValue(props.housekeeping.iris[label])}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
     </Dialog>
   );
 };
