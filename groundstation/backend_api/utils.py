@@ -243,7 +243,7 @@ def dynamic_filters_housekeeping(filters, ignore_keys=[]):
                 if not hasattr(operator, operation):
                     return None
 
-                if arg == 'last_beacon_time':
+                if arg == 'timestamp':
                     try:
                         value = dateutil.parser.parse(value)
                     except ValueError as e:

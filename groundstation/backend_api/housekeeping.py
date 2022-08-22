@@ -5,15 +5,19 @@ from marshmallow import ValidationError
 from datetime import datetime
 import json
 
-from groundstation.backend_api.models import Housekeeping, PowerChannels
+from groundstation.backend_api.models import Housekeeping, AdcsHK, AthenaHK, \
+    EpsHK, EpsStartupHK, IrisHK, UhfHK, SbandHK, HyperionHK, CharonHK, DfgmHK, \
+    NorthernSpiritHK
 from groundstation import db
-from groundstation.backend_api.utils import create_context, login_required, dynamic_filters_housekeeping
+from groundstation.backend_api.utils import create_context, login_required, \
+    dynamic_filters_housekeeping
 from groundstation.backend_api.validators import HousekeepingValidator
 from werkzeug.datastructures import MultiDict
 from sqlalchemy import desc
 
 housekeeping_blueprint = Blueprint('housekeeping', __name__)
 api = Api(housekeeping_blueprint)
+
 
 class HousekeepingLog(Resource):
 
@@ -38,10 +42,11 @@ class HousekeepingLog(Resource):
         else:
             response_object = {
                 'status': 'success',
-                'data' : housekeeping.to_json()
+                'data': housekeeping.to_json()
             }
 
             return response_object, 200
+
 
 class HousekeepingLogList(Resource):
 
@@ -74,19 +79,39 @@ class HousekeepingLogList(Resource):
             }
             return response_object, 400
 
-        channels = validated_data.pop('channels')
-        housekeeping = Housekeeping(**validated_data)
+        adcs_data = validated_data.pop('adcs')
+        athena_data = validated_data.pop('athena')
+        eps_data = validated_data.pop('eps')
+        eps_startup_data = validated_data.pop('eps_startup')
+        uhf_data = validated_data.pop('uhf')
+        sband_data = validated_data.pop('sband')
+        hyperion_data = validated_data.pop('hyperion')
+        charon_data = validated_data.pop('charon')
+        dfgm_data = validated_data.pop('dfgm')
+        northern_spirit_data = validated_data.pop('northern_spirit')
+        iris_data = validated_data.pop('iris')
 
-        for channel in channels:
-            p = PowerChannels(**channel)
-            housekeeping.channels.append(p)
+        subsystems = {
+            'adcs': AdcsHK(**adcs_data),
+            'athena': AthenaHK(**athena_data),
+            'eps': EpsHK(**eps_data),
+            'eps_startup': EpsStartupHK(**eps_startup_data),
+            'uhf': UhfHK(**uhf_data),
+            'sband': SbandHK(**sband_data),
+            'hyperion': HyperionHK(**hyperion_data),
+            'charon': CharonHK(**charon_data),
+            'dfgm': DfgmHK(**dfgm_data),
+            'northern_spirit': NorthernSpiritHK(**northern_spirit_data),
+            'iris': IrisHK(**iris_data)
+        }
+        housekeeping = Housekeeping(**validated_data, **subsystems)
 
         db.session.add(housekeeping)
         db.session.commit()
 
         response_object = {
             'status': 'success',
-            'message': f'Housekeeping Log with timestamp {housekeeping.last_beacon_time} was added!'
+            'message': f'Housekeeping Log with timestamp {housekeeping.timestamp} was added!'
         }
 
         return response_object, 201
@@ -103,12 +128,14 @@ class HousekeepingLogList(Resource):
         if not local_args:
             query_limit = request.args.get('limit', None)
             newest_first = request.args.get('newest-first', None)
-            args = dynamic_filters_housekeeping(request.args, ignore_keys=['limit', 'newest-first'])
+            args = dynamic_filters_housekeeping(
+                request.args, ignore_keys=['limit', 'newest-first'])
         else:
             local_args = MultiDict(local_args)
             query_limit = local_args.get('limit', None)
             newest_first = local_args.get('newest-first', None)
-            args = dynamic_filters_housekeeping(local_args, ignore_keys=['limit', 'newest-first'])
+            args = dynamic_filters_housekeeping(
+                local_args, ignore_keys=['limit', 'newest-first'])
 
         if args is None:
             response_object = {
@@ -118,11 +145,12 @@ class HousekeepingLogList(Resource):
             return response_object, 400
 
         if newest_first in ("true", True):
-            ordering = desc(Housekeeping.last_beacon_time)
+            ordering = desc(Housekeeping.timestamp)
         else:
-            ordering = Housekeeping.last_beacon_time
+            ordering = Housekeeping.timestamp
 
-        logs = Housekeeping.query.filter(*args).order_by(ordering).limit(query_limit).all()
+        logs = Housekeeping.query.filter(
+            *args).order_by(ordering).limit(query_limit).all()
         response_object = {
             'status': 'success',
             'data': {
@@ -131,6 +159,7 @@ class HousekeepingLogList(Resource):
         }
 
         return response_object, 200
+
 
 api.add_resource(HousekeepingLog, '/api/housekeepinglog/<housekeeping_id>')
 api.add_resource(HousekeepingLogList, '/api/housekeepinglog')

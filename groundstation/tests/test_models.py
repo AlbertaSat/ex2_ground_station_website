@@ -3,12 +3,18 @@ from datetime import datetime
 from sqlalchemy import exc
 
 from groundstation.tests.base import BaseTestCase
-from groundstation.backend_api.models import Housekeeping, User, PowerChannels
+from groundstation.backend_api.models import AdcsHK, AthenaHK, CharonHK, \
+    DfgmHK, EpsHK, EpsStartupHK, Housekeeping, HyperionHK, IrisHK, \
+    NorthernSpiritHK, SbandHK, UhfHK, User
 from groundstation import db
-from groundstation.tests.utils import fakeHousekeepingAsDict, fake_power_channel_as_dict
 from groundstation.backend_api.utils import add_telecommand, \
     add_flight_schedule, add_command_to_flightschedule, \
     add_arg_to_flightschedulecommand, add_user
+from groundstation.tests.utils import fake_adcs_hk_as_dict, \
+    fake_athena_hk_as_dict, fake_charon_hk_as_dict, fake_dfgm_hk_as_dict, \
+    fake_eps_hk_as_dict, fake_eps_startup_hk_as_dict, fake_housekeeping_as_dict, \
+    fake_hyperion_hk_as_dict, fake_iris_hk_as_dict, \
+    fake_northern_spirit_hk_as_dict, fake_sband_hk_as_dict, fake_uhf_hk_as_dict
 
 class TestUserModel(BaseTestCase):
 
@@ -39,53 +45,82 @@ class TestHousekeepingModel(BaseTestCase):
 
     """Test adding a housekeeping entry"""
     def testAddHousekeepingEntry(self):
-        timestamp = datetime.fromtimestamp(1570749472)
-        housekeepingData = fakeHousekeepingAsDict(timestamp)
+        timestamp = datetime.fromtimestamp(1659816386)
+        housekeepingData = fake_housekeeping_as_dict(timestamp, 1)
 
-        housekeeping = Housekeeping(**housekeepingData)
-
-        for i in range(1, 25):
-            channel = fake_power_channel_as_dict(i)
-            p = PowerChannels(**channel)
-            housekeeping.channels.append(p)
-
+        housekeeping = Housekeeping(
+            **housekeepingData,
+            adcs=AdcsHK(**fake_adcs_hk_as_dict()),
+            athena=AthenaHK(**fake_athena_hk_as_dict()),
+            eps=EpsHK(**fake_eps_hk_as_dict()),
+            eps_startup=EpsStartupHK(**fake_eps_startup_hk_as_dict()),
+            uhf=UhfHK(**fake_uhf_hk_as_dict()),
+            sband=SbandHK(**fake_sband_hk_as_dict()),
+            hyperion=HyperionHK(**fake_hyperion_hk_as_dict()),
+            charon=CharonHK(**fake_charon_hk_as_dict()),
+            dfgm=DfgmHK(**fake_dfgm_hk_as_dict()),
+            northern_spirit=NorthernSpiritHK(
+                **fake_northern_spirit_hk_as_dict()),
+            iris=IrisHK(**fake_iris_hk_as_dict())
+        )
 
         db.session.add(housekeeping)
         db.session.commit()
         self.assertTrue(housekeeping.id)
-        self.assertEqual(housekeeping.satellite_mode, 'Passive')
-        self.assertEqual(housekeeping.battery_voltage, 1.7)
-        self.assertEqual(housekeeping.current_in, 1.2)
-        self.assertEqual(housekeeping.no_MCU_resets, 14)
-        self.assertEqual(housekeeping.last_beacon_time, timestamp)
-        self.assertEqual(housekeeping.watchdog_1, 6000)
-        self.assertEqual(housekeeping.watchdog_2, 11)
-        self.assertEqual(housekeeping.watchdog_3, 0)
-        self.assertEqual(housekeeping.panel_1_current, 1.1)
-        self.assertEqual(housekeeping.panel_2_current, 1.0)
-        self.assertEqual(housekeeping.panel_3_current, 1.2)
-        self.assertEqual(housekeeping.panel_4_current, 1.0)
-        self.assertEqual(housekeeping.panel_5_current, 1.0)
-        self.assertEqual(housekeeping.panel_6_current, 1.0)
-        self.assertEqual(housekeeping.temp_1, 11.0)
-        self.assertEqual(housekeeping.temp_2, 11.0)
-        self.assertEqual(housekeeping.temp_3, 14.0)
-        self.assertEqual(housekeeping.temp_4, 12.0)
-        self.assertEqual(housekeeping.temp_5, 11.0)
-        self.assertEqual(housekeeping.temp_6, 10.0)
-        for i in range(1, 25):
-            self.assertEqual(housekeeping.channels[i-1].id, i)
-            self.assertEqual(housekeeping.channels[i-1].hk_id, 1)
-            self.assertEqual(housekeeping.channels[i-1].channel_no, i)
-            self.assertEqual(housekeeping.channels[i-1].enabled, True)
-            self.assertEqual(housekeeping.channels[i-1].current, 0.0)
+        self.assertEqual(housekeeping.data_position, 1)
+
+        # Test if subsystem data exists
+        self.assertIsNotNone('adcs')
+        self.assertIsNotNone('athena')
+        self.assertIsNotNone('eps')
+        self.assertIsNotNone('eps_startup')
+        self.assertIsNotNone('uhf')
+        self.assertIsNotNone('sband')
+        self.assertIsNotNone('hyperion')
+        self.assertIsNotNone('charon')
+        self.assertIsNotNone('dfgm')
+        self.assertIsNotNone('northern_spirit')
+        self.assertIsNotNone('iris')
+
+        # Test values
+        self.assertEqual(housekeeping.adcs.Att_Estimate_Mode, 42)
+        self.assertEqual(housekeeping.adcs.Longitude, 13.37)
+        self.assertEqual(housekeeping.athena.OBC_software_ver, 'Fake string!')
+        self.assertEqual(housekeeping.athena.MCU_core_temp, 42)
+        self.assertEqual(housekeeping.eps.eps_cmd_hk, 42)
+        self.assertEqual(housekeeping.eps.eps_timestamp_hk, 13.37)
+        self.assertEqual(housekeeping.eps_startup.eps_cmd_startup, 42)
+        self.assertEqual(housekeeping.eps_startup.eps_timestamp_startup, 13.37)
+        self.assertEqual(housekeeping.uhf.scw1, 42)
+        self.assertEqual(housekeeping.uhf.temperature, 13.37)
+        self.assertEqual(housekeeping.sband.Output_Power, 42)
+        self.assertEqual(housekeeping.hyperion.Port_Pd1, 42)
+        self.assertEqual(housekeeping.charon.charon_temp7, 42)
+        self.assertEqual(housekeeping.dfgm.Input_Current, 42)
+        self.assertEqual(housekeeping.northern_spirit.ns_temp3, 42)
+        self.assertEqual(housekeeping.iris.Error_number, 42)
+        self.assertEqual(housekeeping.iris.NIR_Temperature, 13.37)
 
     """Test converting a housekeeping entry into json"""
     def testHousekeepingToJson(self):
-        timestamp = datetime.fromtimestamp(1570749472)
-        housekeepingData = fakeHousekeepingAsDict(timestamp)
+        timestamp = datetime.fromtimestamp(1659816386)
+        housekeepingData = fake_housekeeping_as_dict(timestamp, 1)
 
-        housekeeping = Housekeeping(**housekeepingData)
+        housekeeping = Housekeeping(
+            **housekeepingData,
+            adcs=AdcsHK(**fake_adcs_hk_as_dict()),
+            athena=AthenaHK(**fake_athena_hk_as_dict()),
+            eps=EpsHK(**fake_eps_hk_as_dict()),
+            eps_startup=EpsStartupHK(**fake_eps_startup_hk_as_dict()),
+            uhf=UhfHK(**fake_uhf_hk_as_dict()),
+            sband=SbandHK(**fake_sband_hk_as_dict()),
+            hyperion=HyperionHK(**fake_hyperion_hk_as_dict()),
+            charon=CharonHK(**fake_charon_hk_as_dict()),
+            dfgm=DfgmHK(**fake_dfgm_hk_as_dict()),
+            northern_spirit=NorthernSpiritHK(
+                **fake_northern_spirit_hk_as_dict()),
+            iris=IrisHK(**fake_iris_hk_as_dict())
+        )
         db.session.add(housekeeping)
         db.session.commit()
         self.assertTrue(isinstance(housekeeping.to_json(), dict))
@@ -106,8 +141,8 @@ class TestFlightScheduleModel(BaseTestCase):
     def test_add_flight_schedule(self):
         timestamp = datetime.fromtimestamp(1570749472)
         flightschedule = add_flight_schedule(
-            creation_date=timestamp, 
-            upload_date=timestamp, 
+            creation_date=timestamp,
+            upload_date=timestamp,
             status=2,
             execution_time=timestamp
         )
@@ -122,9 +157,9 @@ class TestFlightScheduleCommandsModel(BaseTestCase):
         timestamp = datetime.fromtimestamp(1570749472)
         command = add_telecommand(command_name='ping', num_arguments=0, is_dangerous=False)
         flightschedule = add_flight_schedule(
-            creation_date=timestamp, 
-            upload_date=timestamp, 
-            status=2, 
+            creation_date=timestamp,
+            upload_date=timestamp,
+            status=2,
             execution_time=timestamp
         )
         flightschedule_commands = add_command_to_flightschedule(
@@ -144,9 +179,9 @@ class TestFlightScheduleCommandsArgsModel(BaseTestCase):
         timestamp = datetime.fromtimestamp(1570749472)
         command = add_telecommand(command_name='turn-on', num_arguments=1, is_dangerous=False)
         flightschedule = add_flight_schedule(
-            creation_date=timestamp, 
-            upload_date=timestamp, 
-            status=2, 
+            creation_date=timestamp,
+            upload_date=timestamp,
+            status=2,
             execution_time=timestamp
         )
         flightschedule_commands = add_command_to_flightschedule(

@@ -10,9 +10,17 @@ import sys
 import os
 import datetime
 from enum import Enum
+from datetime import datetime
 
 from groundstation.backend_api.flightschedule import FlightScheduleList, Flightschedule
 from groundstation.backend_api.communications import CommunicationList, Communication
+
+from groundstation.backend_api.housekeeping import HousekeepingLogList
+from groundstation.tests.utils import fake_housekeeping_as_dict, fake_adcs_hk_as_dict, \
+    fake_athena_hk_as_dict, fake_eps_hk_as_dict, fake_eps_startup_hk_as_dict, \
+    fake_uhf_hk_as_dict, fake_sband_hk_as_dict, fake_hyperion_hk_as_dict, \
+    fake_charon_hk_as_dict, fake_dfgm_hk_as_dict, \
+    fake_northern_spirit_hk_as_dict, fake_iris_hk_as_dict
 
 
 class Connection(Enum):
@@ -32,6 +40,7 @@ communication_list = CommunicationList()
 communication_patch = Communication()
 flightschedule_list = FlightScheduleList()
 flightschedule_patch = Flightschedule()
+housekeeping_post = HousekeepingLogList()
 
 
 # Handle the sig alarm
@@ -189,6 +198,66 @@ def send_flightschedules(gs):
                 )
 
 
+def log_housekeeping(response):
+    """
+    Parses housekeeping data from the HOUSEKEEPING.GET_HK command and creates
+    a database entry for each housekeeping entry.
+    """
+    for log in response:
+        if log['err'] != 0:
+            save_response(
+                'Failed to log housekeeping! (error: {})'.format(log['err']))
+            continue
+
+        # Form baseline schema for the post data
+        hk = fake_housekeeping_as_dict(
+            timestamp=datetime.fromtimestamp(log['UNIXtimestamp']).isoformat(),
+            data_position=log['dataPosition']
+        )
+        hk['adcs'] = fake_adcs_hk_as_dict()
+        hk['athena'] = fake_athena_hk_as_dict()
+        hk['eps'] = fake_eps_hk_as_dict()
+        hk['eps_startup'] = fake_eps_startup_hk_as_dict()
+        hk['uhf'] = fake_uhf_hk_as_dict()
+        hk['sband'] = fake_sband_hk_as_dict()
+        hk['hyperion'] = fake_hyperion_hk_as_dict()
+        hk['charon'] = fake_charon_hk_as_dict()
+        hk['dfgm'] = fake_dfgm_hk_as_dict()
+        hk['northern_spirit'] = fake_northern_spirit_hk_as_dict()
+        hk['iris'] = fake_iris_hk_as_dict()
+
+        # Strip the subsystem title from response data
+        for key in list(log):
+            if '#' in key:
+                log[key.split('\r\n')[-1]] = log.pop(key)
+
+        # Copy over response data to post data
+        subsystems = [
+            'adcs',
+            'athena',
+            'eps',
+            'eps_startup',
+            'uhf',
+            'sband',
+            'hyperion',
+            'charon',
+            'dfgm',
+            'northern_spirit',
+            'iris'
+        ]
+        for subsystem in subsystems:
+            for key in hk[subsystem]:
+                hk[subsystem][key] = log[key]
+
+        # Post HK data
+        post_data = json.dumps(hk)
+        housekeeping_post.post(local_data=post_data)
+
+        # Log HK transaction
+        save_response('Logged housekeeping!\nTimestamp: {}\nData Position: {}'.format(
+            hk['timestamp'], hk['data_position']))
+
+
 def send_to_simulator(msg):
     try:
         return antenna.send(json.dumps(msg))
@@ -258,7 +327,9 @@ def communication_loop(gs=None):
                         response = send_to_satellite(gs, msg)
 
                     if response:
-                        if isinstance(response, list):
+                        if 'housekeeping.get_hk' in msg:
+                            log_housekeeping(response)
+                        elif isinstance(response, list):
                             for item in response:
                                 save_response(item)
                         else:

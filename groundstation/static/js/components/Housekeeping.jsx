@@ -5,18 +5,15 @@ import Typography from '@material-ui/core/Typography';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import Fab from '@material-ui/core/Fab';
 import Grid from '@material-ui/core/Grid';
-import moment from "moment";
+import moment from 'moment';
 import 'moment-timezone';
 import MomentUtils from '@date-io/moment';
-import {
-  DateTimePicker,
-  MuiPickersUtilsProvider
-} from "@material-ui/pickers";
+import { DateTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import ClearIcon from '@material-ui/icons/Clear';
 
 class HouseKeeping extends Component {
   constructor() {
-    moment.tz.setDefault("UTC");
+    moment.tz.setDefault('UTC');
     super();
     this.state = {
       startDate: null,
@@ -26,39 +23,49 @@ class HouseKeeping extends Component {
       open: false,
       empty: true,
       isLoading: true,
-      housekeeping: [{
-            id: null,
-            satelliteMode: null,
-            batteryVoltage: null,
-            currentIn: null,
-            currentOut: null,
-            lastBeaconTime: null,
-            noMCUResets: null,
-            channels: []
-      }],
+      housekeeping: [
+        {
+          id: null,
+          timestamp: null,
+          data_position: null,
+          tle: null,
+          adcs: null,
+          athena: null,
+          eps: null,
+          eps_startup: null,
+          uhf: null,
+          sband: null,
+          hyperion: null,
+          charon: null,
+          dfgm: null,
+          northern_spirit: null,
+          iris: null
+        }
+      ],
       flightschedule: []
     };
   }
 
   componentDidMount() {
     fetch('/api/housekeepinglog?newest-first=true')
-      .then(results => {
+      .then((results) => {
         return results.json();
-      }).then(data => {
+      })
+      .then((data) => {
         if (data.status == 'success') {
-          this.setState({ housekeeping: data.data.logs, 'isLoading': false })
+          this.setState({ housekeeping: data.data.logs, isLoading: false });
           if (data.data.logs.length > 0) {
-            this.setState({ empty: false })
+            this.setState({ empty: false });
           }
         }
       });
   }
 
   handleStartDateChange(event) {
-    this.setState({ startDate: event._d.toISOString() })
+    this.setState({ startDate: event._d.toISOString() });
   }
   handleEndDateChange(event) {
-    this.setState({ endDate: event._d.toISOString() })
+    this.setState({ endDate: event._d.toISOString() });
   }
 
   handleFilter() {
@@ -66,44 +73,51 @@ class HouseKeeping extends Component {
       this.setState({ startDateError: true });
       this.setState({ endDateError: true });
     } else if (this.state.startDate == null) {
-      this.setState({ startDateError: true })
+      this.setState({ startDateError: true });
     } else if (this.state.endDate == null) {
-      this.setState({ endDateError: true })
+      this.setState({ endDateError: true });
     } else {
-      let queryString = "?last_beacon_time=ge-" + this.state.startDate + "&last_beacon_time=le-" + this.state.endDate + "&newest-first=true"
+      let queryString =
+        '?timestamp=ge-' +
+        this.state.startDate +
+        '&timestamp=le-' +
+        this.state.endDate +
+        '&newest-first=true';
       fetch('/api/housekeepinglog' + queryString)
-        .then(results => {
+        .then((results) => {
           return results.json();
-        }).then(data => {
+        })
+        .then((data) => {
           if (data.status == 'success') {
-            this.setState({ housekeeping: data.data.logs, 'isLoading': false })
+            this.setState({ housekeeping: data.data.logs, isLoading: false });
             if (data.data.logs.length > 0) {
-              this.setState({ empty: false })
+              this.setState({ empty: false });
             } else {
-              this.setState({ empty: true })
+              this.setState({ empty: true });
             }
           }
-        })
+        });
     }
   }
 
   handleClearFilter() {
-    this.setState({ startDate: null, endDate: null })
+    this.setState({ startDate: null, endDate: null });
     this.setState({ startDateError: false });
     this.setState({ endDateError: false });
     fetch('/api/housekeepinglog?newest-first=true')
-      .then(results => {
+      .then((results) => {
         return results.json();
-      }).then(data => {
+      })
+      .then((data) => {
         if (data.status == 'success') {
-          this.setState({ housekeeping: data.data.logs, 'isLoading': false })
+          this.setState({ housekeeping: data.data.logs, isLoading: false });
           if (data.data.logs.length > 0) {
-            this.setState({ empty: false })
+            this.setState({ empty: false });
           } else {
-            this.setState({ empty: true })
+            this.setState({ empty: true });
           }
         }
-      })
+      });
   }
 
   render() {
@@ -111,19 +125,26 @@ class HouseKeeping extends Component {
       <div>
         <Paper className="grid-containers">
           <div>
-            <Grid container spacing={2} alignItems='flex-end'>
+            <Grid container spacing={2} alignItems="flex-end">
               <Grid item sm={2}>
-                <Typography variant="h5" style={{ padding: '10px' }}>Housekeeping</Typography>
+                <Typography variant="h5" style={{ padding: '10px' }}>
+                  Housekeeping
+                </Typography>
               </Grid>
               <Grid item sm={6}>
-                <Grid container spacing={1} alignItems='flex-end'>
+                <Grid container spacing={1} alignItems="flex-end">
                   <Grid item sm={3}>
                     <form>
-                      <MuiPickersUtilsProvider moment={moment} utils={MomentUtils}>
+                      <MuiPickersUtilsProvider
+                        moment={moment}
+                        utils={MomentUtils}
+                      >
                         <DateTimePicker
                           label="Start Date"
                           showTodayButton
-                          onChange={(event) => { this.handleStartDateChange(event) }}
+                          onChange={(event) => {
+                            this.handleStartDateChange(event);
+                          }}
                           value={this.state.startDate}
                           style={{ width: '100%' }}
                           name="startdate"
@@ -134,11 +155,16 @@ class HouseKeeping extends Component {
                   </Grid>
                   <Grid item sm={3}>
                     <form>
-                      <MuiPickersUtilsProvider moment={moment} utils={MomentUtils}>
+                      <MuiPickersUtilsProvider
+                        moment={moment}
+                        utils={MomentUtils}
+                      >
                         <DateTimePicker
                           label="End Date"
                           showTodayButton
-                          onChange={(event) => { this.handleEndDateChange(event) }}
+                          onChange={(event) => {
+                            this.handleEndDateChange(event);
+                          }}
                           value={this.state.endDate}
                           style={{ width: '100%' }}
                           name="enddate"
@@ -148,15 +174,38 @@ class HouseKeeping extends Component {
                     </form>
                   </Grid>
                   <Grid item sm={2}>
-                    <Fab ref="filter-button" onClick={() => { this.handleFilter() }} variant="extended" name="filter"
-                      style={{ fontSize: '0.75rem', height: '40px', marginBottom: '20px', backgroundColor: '#55c4d3' }}>
+                    <Fab
+                      ref="filter-button"
+                      onClick={() => {
+                        this.handleFilter();
+                      }}
+                      variant="extended"
+                      name="filter"
+                      style={{
+                        fontSize: '0.75rem',
+                        height: '40px',
+                        marginBottom: '20px',
+                        backgroundColor: '#55c4d3'
+                      }}
+                    >
                       <FilterListIcon />
                       Filter
                     </Fab>
                   </Grid>
                   <Grid item xs={2}>
-                    <Fab onClick={() => { this.handleClearFilter() }} variant="extended" name="clear"
-                      style={{ fontSize: '0.75rem', height: '40px', marginBottom: '20px', backgroundColor: '#55c4d3' }}>
+                    <Fab
+                      onClick={() => {
+                        this.handleClearFilter();
+                      }}
+                      variant="extended"
+                      name="clear"
+                      style={{
+                        fontSize: '0.75rem',
+                        height: '40px',
+                        marginBottom: '20px',
+                        backgroundColor: '#55c4d3'
+                      }}
+                    >
                       <ClearIcon />
                       Clear
                     </Fab>
@@ -165,10 +214,14 @@ class HouseKeeping extends Component {
               </Grid>
             </Grid>
           </div>
-          <HousekeepingList isLoading={this.state.isLoading} housekeeping={this.state.housekeeping} empty={this.state.empty} />
+          <HousekeepingList
+            isLoading={this.state.isLoading}
+            housekeeping={this.state.housekeeping}
+            empty={this.state.empty}
+          />
         </Paper>
       </div>
-    )
+    );
   }
 }
 export default HouseKeeping;
