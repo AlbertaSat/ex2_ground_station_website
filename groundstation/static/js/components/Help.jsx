@@ -357,7 +357,7 @@ const Help = () => {
             }}
           >
             {commands.map((command) =>
-              command.command_id % 4 == 1 ? (
+              !!command.about_info ? (
                 <Typography variant="body1" style={{ paddingLeft: '10px' }}>
                   <strong>{command.command_name.slice(4)}</strong>
                   <span style={{ fontStyle: 'italic' }}>
