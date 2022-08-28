@@ -23,7 +23,7 @@ from flask.cli import FlaskGroup
 
 from groundstation import create_app, db
 from groundstation.backend_api.models import AdcsHK, AthenaHK, CharonHK, \
-    DfgmHK, EpsHK, EpsStartupHK,HyperionHK, IrisHK, NorthernSpiritHK, SbandHK, \
+    DfgmHK, EpsHK, EpsStartupHK, HyperionHK, IrisHK, NorthernSpiritHK, SbandHK, \
     UhfHK, User, Housekeeping, Telecommands
 from groundstation.tests.utils import fake_adcs_hk_as_dict, \
     fake_athena_hk_as_dict, fake_charon_hk_as_dict, fake_dfgm_hk_as_dict, \
@@ -37,6 +37,9 @@ from groundstation.backend_api.utils import add_telecommand, \
     add_passover
 
 from ex2_ground_station_software.src.system import SatelliteNodes, services
+AVAILABLE_OBCS = tuple(node[1] for node in SatelliteNodes if node[0] == 'OBC')
+AVAILABLE_EPS = tuple(node[1] for node in SatelliteNodes if node[0] == 'EPS')
+
 
 app = create_app()
 cli = FlaskGroup(create_app=create_app)
@@ -150,7 +153,8 @@ def seed_db_example(ctx):
     now = datetime.utcnow()
     add_passover(aos_timestamp=now - timedelta(seconds=20), los_timestamp=now)
     for i in range(1, 20):
-        p = add_passover(aos_timestamp=now + timedelta(minutes=i*5), los_timestamp=now + timedelta(minutes=i*5 + 1))
+        p = add_passover(aos_timestamp=now + timedelta(minutes=i*5),
+                         los_timestamp=now + timedelta(minutes=i*5 + 1))
     print("Database has been seeded.")
 
 
@@ -258,7 +262,8 @@ def demo_db():
     now = datetime.utcnow()
     add_passover(aos_timestamp=now - timedelta(seconds=20), los_timestamp=now)
     for i in range(5):
-        p = add_passover(aos_timestamp=now + timedelta(minutes=i*5), los_timestamp=now + timedelta(minutes=i*5 + 1))
+        p = add_passover(aos_timestamp=now + timedelta(minutes=i*5),
+                         los_timestamp=now + timedelta(minutes=i*5 + 1))
 
     print("Database has been seeded with demo data.")
 
@@ -268,26 +273,34 @@ def import_commands():
     """Imports commands from the system.py file in ex2_ground_station_software/src,
     and adds them to the database.
     """
-
     for serv in services:
         subservice = services[serv]['subservice']
-        for subName in subservice.keys():
 
+        supported_prefixes = list(services[serv]['supports'])
+        if 'OBC' in supported_prefixes:
+            supported_prefixes.remove('OBC')
+            supported_prefixes.extend(AVAILABLE_OBCS)
+        if 'EPS' in supported_prefixes:
+            supported_prefixes.remove('EPS')
+            supported_prefixes.extend(AVAILABLE_EPS)
+
+        for subName in subservice.keys():
             sub = subservice[subName]
             inoutInfo = sub['inoutInfo']
-            info = None if not 'what' in sub else sub['what']
+            info = 'Not yet available' if not 'what' in sub else sub['what']
             if inoutInfo['args'] is None:
                 num_arguments = 0
             else:
                 num_arguments = len(inoutInfo['args'])
 
             is_dangerous = False
-            for prefix in SatelliteNodes:
-                if prefix.name == 'EX2':
-                    c = add_telecommand(command_name=(prefix.name + '.' + serv + '.' + subName).lower(), num_arguments=num_arguments,
-                                is_dangerous=is_dangerous, about_info=info)
+            for i, prefix in enumerate(supported_prefixes):
+                if i == 0:
+                    # Only one 'copy' of a command needs the about_info
+                    add_telecommand(command_name=(prefix + '.' + serv + '.' + subName).lower(), num_arguments=num_arguments,
+                                    is_dangerous=is_dangerous, about_info=info)
                 else:
-                    c = add_telecommand(command_name=(prefix.name + '.' + serv + '.' + subName).lower(), num_arguments=num_arguments,
+                    add_telecommand(command_name=(prefix + '.' + serv + '.' + subName).lower(), num_arguments=num_arguments,
                                     is_dangerous=is_dangerous, about_info=None)
 
     print("Added new telecommands.")
