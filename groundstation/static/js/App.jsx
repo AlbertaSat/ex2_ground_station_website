@@ -202,12 +202,13 @@ function App() {
                               : 'center bottom'
                         }}
                       >
-                        <Paper style={{ zIndex: '2', position: 'relative' }}>
+                        <Paper>
                           <ClickAwayListener onClickAway={handleClose}>
                             <MenuList
                               autoFocusItem={open}
                               id="menu-list-grow"
                               onKeyDown={handleListKeyDown}
+                              style={{ zIndex: '2', position: 'relative' }}
                             >
                               <MenuItem disabled>{username}</MenuItem>
                               {isAdmin && (
