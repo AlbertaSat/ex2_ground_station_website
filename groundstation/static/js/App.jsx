@@ -172,7 +172,7 @@ function App() {
                   Login
                 </a>
               )}
-              <Countdown />
+
               {isAuthenticated() && (
                 <div style={{ marginLeft: '3em' }}>
                   <Button
@@ -244,6 +244,7 @@ function App() {
                   </Popper>
                 </div>
               )}
+              <Countdown />
             </Typography>
           </Toolbar>
         </AppBar>
