@@ -208,7 +208,6 @@ function App() {
                               autoFocusItem={open}
                               id="menu-list-grow"
                               onKeyDown={handleListKeyDown}
-                              style={{ zIndex: '2', position: 'relative' }}
                             >
                               <MenuItem disabled>{username}</MenuItem>
                               {isAdmin && (

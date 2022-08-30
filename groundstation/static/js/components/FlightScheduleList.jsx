@@ -33,21 +33,15 @@ const FlightScheduleList = (props) => {
   function tableColour(status) {
     if (status == 3) {
       return {
-        borderLeft: 'solid 8px #479b4e',
-        zIndex: '0',
-        position: 'relative'
+        borderLeft: 'solid 8px #479b4e'
       };
     } else if (status == 1) {
       return {
-        borderLeft: 'solid 8px #4bacb8',
-        zIndex: '0',
-        position: 'relative'
+        borderLeft: 'solid 8px #4bacb8'
       };
     } else if (status == 2) {
       return {
-        borderLeft: 'solid 8px #A9A9A9',
-        zIndex: '0',
-        position: 'relative'
+        borderLeft: 'solid 8px #A9A9A9'
       };
     }
   }
