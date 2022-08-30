@@ -13,6 +13,13 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Button from '@material-ui/core/Button';
+import { REPEAT_LABELS } from './FlightscheduleCommand';
+
+const FS_STATUS = {
+  DRAFT: 2,
+  QUEUED: 1,
+  UPLOADED: 3
+};
 
 const FlightScheduleList = (props) => {
   if (props.isLoading) {
@@ -30,31 +37,42 @@ const FlightScheduleList = (props) => {
     );
   }
 
-  function tableColour(status) {
-    if (status == 3) {
-      return {
-        borderLeft: 'solid 8px #479b4e'
-      };
-    } else if (status == 1) {
-      return {
-        borderLeft: 'solid 8px #4bacb8'
-      };
-    } else if (status == 2) {
-      return {
-        borderLeft: 'solid 8px #A9A9A9'
-      };
+  function tableColour(status, error = 0) {
+    if (status == FS_STATUS.UPLOADED)
+      return { borderLeft: 'solid 8px #479b4e' };
+    else if (status == FS_STATUS.QUEUED)
+      return { borderLeft: 'solid 8px #4bacb8' };
+    else if (status == FS_STATUS.DRAFT) {
+      if (error != 0) return { borderLeft: 'solid 8px #fc3c35' };
+      return { borderLeft: 'solid 8px #a9a9a9' };
     }
   }
 
   // format what our status div will look like
-  function statusDiv(status) {
-    if (status == 3) {
+  function statusDiv(status, error = 0) {
+    if (status == FS_STATUS.UPLOADED)
       return <div style={{ fontSize: '14px', color: '#479b4e' }}>Uploaded</div>;
-    } else if (status == 1) {
+    else if (status == FS_STATUS.QUEUED)
       return <div style={{ fontSize: '14px', color: '#4bacb8' }}>Queued</div>;
-    } else if (status == 2) {
-      return <div style={{ fontSize: '14px', color: '#A9A9A9' }}>Draft</div>;
+    else if (status == FS_STATUS.DRAFT) {
+      if (error != 0)
+        return (
+          <div style={{ fontSize: '14px', color: '#fc3c35' }}>
+            UPLOAD FAILED | Error Code: {error}
+          </div>
+        );
+      return <div style={{ fontSize: '14px', color: '#a9a9a9' }}>Draft</div>;
     }
+  }
+
+  function getRepeatString(repeats) {
+    let repeatString = '';
+    for (let [field, value] of Object.entries(repeats)) {
+      if (value) repeatString += REPEAT_LABELS[field] + ', ';
+    }
+    // Remove the last ', '
+    if (repeatString !== '') repeatString = repeatString.slice(0, -2);
+    return repeatString;
   }
 
   return (
@@ -62,7 +80,7 @@ const FlightScheduleList = (props) => {
       {props.flightschedule.map((flightschedule, idx) => (
         <ExpansionPanel
           key={flightschedule.flightschedule_id}
-          style={tableColour(flightschedule.status)}
+          style={tableColour(flightschedule.status, flightschedule.error)}
         >
           <ExpansionPanelSummary
             expandIcon={<ExpandMoreIcon style={{ color: '#4bacb8' }} />}
@@ -76,7 +94,7 @@ const FlightScheduleList = (props) => {
                     <div style={{ fontWeight: 'bold' }}>
                       {'Flight Schedule #' + flightschedule.flightschedule_id}
                     </div>
-                    {statusDiv(flightschedule.status)}
+                    {statusDiv(flightschedule.status, flightschedule.error)}
                   </TableCell>
                   <TableCell align="right">
                     {'Created at ' + flightschedule.creation_date.split('.')[0]}
@@ -154,6 +172,17 @@ const FlightScheduleList = (props) => {
                   >
                     Timestamp
                   </TableCell>
+                  <TableCell
+                    align="right"
+                    style={{
+                      backgroundColor: '#212529',
+                      color: '#fff',
+                      paddingTop: '8px',
+                      paddingBottom: '8px'
+                    }}
+                  >
+                    Repeats Every...
+                  </TableCell>
                 </TableRow>
               </TableHead>
               {flightschedule.commands.map((commands) => (
@@ -166,6 +195,9 @@ const FlightScheduleList = (props) => {
                       {commands.args.map((arg) => arg.argument).join(', ')}
                     </TableCell>
                     <TableCell align="right">{commands.timestamp}</TableCell>
+                    <TableCell align="right">
+                      {getRepeatString(commands.repeats)}
+                    </TableCell>
                   </TableRow>
                 </TableBody>
               ))}

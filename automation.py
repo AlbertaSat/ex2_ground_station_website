@@ -72,8 +72,9 @@ def automate_passovers():
 
     # the automation will also handle queuing passover times
     passovers = passover.get(local_args={'limit': 1, 'next': 'true'})
+    passover_data = passovers[0]['data']['next_passovers']
 
-    if passovers[1] == 200 and len(passovers[0]['data']['next_passovers']) > 0:
+    if passovers[1] == 200 and len(passover_data) > 0:
         passover_data = passovers[0]['data']['next_passovers']
         for ps in passover_data:
             time_obj = datetime.strptime(

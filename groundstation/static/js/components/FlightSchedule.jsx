@@ -10,11 +10,26 @@ import Paper from '@material-ui/core/Paper';
 
 function isMinified(minify, elemt) {
   if (!minify) {
-    return elmt;
+    return elemt;
   } else {
     return;
   }
 }
+
+const DEFAULT_COMMAND = {
+  command: { command_id: '' },
+  timestamp: null,
+  repeats: {
+    repeat_ms: false,
+    repeat_sec: false,
+    repeat_min: false,
+    repeat_hr: false,
+    repeat_day: false,
+    repeat_month: false,
+    repeat_year: false
+  },
+  args: []
+};
 
 class FlightSchedule extends Component {
   constructor() {
@@ -26,9 +41,7 @@ class FlightSchedule extends Component {
       deleteFlightOpen: false,
       editFlight: false,
       allflightschedules: [],
-      thisFlightscheduleCommands: [
-        { command: { command_id: '' }, timestamp: null, args: [] }
-      ],
+      thisFlightscheduleCommands: [structuredClone(DEFAULT_COMMAND)],
       thisFlightscheduleId: null,
       thisIndex: null,
       availCommands: [],
@@ -37,6 +50,7 @@ class FlightSchedule extends Component {
       thisExecutionTime: null
     };
     this.handleAddFlightOpenClick = this.handleAddFlightOpenClick.bind(this);
+    this.fetchFlightschedules = this.fetchFlightschedules.bind(this);
     this.handleDeleteFlightOpenClick =
       this.handleDeleteFlightOpenClick.bind(this);
     this.handleAddEvent = this.handleAddEvent.bind(this);
@@ -46,14 +60,15 @@ class FlightSchedule extends Component {
     this.deleteFlightschedule = this.deleteFlightschedule.bind(this);
     this.handleDeleteFlightClose = this.handleDeleteFlightClose.bind(this);
     this.handleDeleteCommandClick = this.handleDeleteCommandClick.bind(this);
+    this.handleChangeRepeat = this.handleChangeRepeat.bind(this);
     this.handleChangeArgument = this.handleChangeArgument.bind(this);
     this.handleQueueClick = this.handleQueueClick.bind(this);
     this.handleExecutionTimeChange = this.handleExecutionTimeChange.bind(this);
   }
 
-  componentDidMount() {
+  fetchFlightschedules() {
     Promise.all([
-      fetch('/api/flightschedules?limit=5', {
+      fetch('/api/flightschedules', {
         headers: {
           Authorization: 'Bearer ' + sessionStorage.getItem('auth_token')
         }
@@ -75,12 +90,32 @@ class FlightSchedule extends Component {
           });
           if (res1.data.flightschedules.length > 0) {
             this.setState({ empty: false });
+            // If a fs is queued, continually refresh so that its status
+            // can be updated
+            let existsQueued = false;
+            let numUploaded = 0;
+            res1.data.flightschedules.forEach((fs) => {
+              if (fs.status === 1) existsQueued = true;
+              else if (fs.status === 3) numUploaded++;
+            });
+            if (existsQueued || numUploaded >= 2)
+              setTimeout(this.fetchFlightschedules, 1000);
           }
         }
         if (res2.status == 'success') {
-          this.setState({ availCommands: res2.data.telecommands });
+          this.setState({
+            availCommands: res2.data.telecommands.map((command) => ({
+              label: command.command_name,
+              value: command.command_id,
+              args: command.num_arguments
+            }))
+          });
         }
       });
+  }
+
+  componentDidMount() {
+    this.fetchFlightschedules();
   }
 
   // handle add flight screen open
@@ -93,9 +128,7 @@ class FlightSchedule extends Component {
       editFlight: false,
       thisFlightscheduleId: null,
       thisIndex: null,
-      thisFlightscheduleCommands: [
-        { command: { command_id: '' }, timestamp: null, args: [] }
-      ],
+      thisFlightscheduleCommands: [structuredClone(DEFAULT_COMMAND)],
       thisFlightScheduleStatus: 2,
       thisExecutionTime: null
     });
@@ -158,7 +191,8 @@ class FlightSchedule extends Component {
     let data = {
       status: this.state.thisFlightScheduleStatus,
       execution_time: this.state.thisExecutionTime,
-      commands: this.state.thisFlightscheduleCommands
+      commands: this.state.thisFlightscheduleCommands,
+      error: 0
     };
 
     let url = this.state.editFlight
@@ -166,7 +200,7 @@ class FlightSchedule extends Component {
       : '/api/flightschedules';
     let method = this.state.editFlight ? 'PATCH' : 'POST';
     this.setState({ empty: false });
-    console.log('posted data', data);
+    // console.log("posted data", data);
     fetch(url, {
       method: method,
       headers: {
@@ -189,9 +223,7 @@ class FlightSchedule extends Component {
           }
           this.setState({
             addFlightOpen: !this.state.addFlightOpen,
-            thisFlightscheduleCommands: [
-              { command: { command_id: '' }, timestamp: '', args: [] }
-            ],
+            thisFlightscheduleCommands: [structuredClone(DEFAULT_COMMAND)],
             allflightschedules: obj,
             editFlight: false,
             thisIndex: null,
@@ -199,11 +231,14 @@ class FlightSchedule extends Component {
             thisFlightScheduleStatus: 2,
             thisExecutionTime: null
           });
+          setTimeout(this.fetchFlightschedules, 1000);
         } else {
           if (data.message == 'A Queued flight schedule already exists!') {
             alert(
               'A flight schedule is already queued. Please dequeue it first.'
             );
+          } else if (data.message == 'The posted data is not valid!') {
+            alert('Please fill in all fields!');
           }
         }
       });
@@ -212,19 +247,18 @@ class FlightSchedule extends Component {
   // handle any changes in our form fields
   handleAddEvent(event, type, idx) {
     const obj = this.state.thisFlightscheduleCommands.slice();
-    if (type == 'date') {
-      // when the time delta offset is changed, add the number of seconds
-      // to the execution time for the command timestamp
+    if (type.includes('offset')) {
+      // Add the offset (second or millisecond) to command timestamp
       let thisTimeObj = this.state.thisExecutionTime;
+
       if (this.state.editFlight && !thisTimeObj.endsWith('Z')) {
-        console.log(this.state.thisExecutionTime);
-        thisTimeObj.slice(-3);
         thisTimeObj = thisTimeObj.replace(' ', 'T').concat('Z');
       }
-      let thisTime = Date.parse(thisTimeObj);
-      let offsetSeconds = parseInt(event.target.value) * 1000;
-      thisTime = new Date(thisTime + offsetSeconds);
 
+      let thisTime = Date.parse(thisTimeObj);
+      let offset = event.target.value; // offset is in ms
+
+      thisTime = new Date(thisTime + offset);
       obj[idx].timestamp = thisTime.toISOString();
     } else {
       obj[idx].command.command_id = event.value;
@@ -247,6 +281,8 @@ class FlightSchedule extends Component {
 
   handleExecutionTimeChange(event) {
     let thisExecutionTime = event._d;
+    thisExecutionTime.setMilliseconds(0);
+    thisExecutionTime.setSeconds(0);
     const obj = this.state.thisFlightscheduleCommands.slice();
     // handle changing all flight schedule command timestamps if the execution
     // time is changed, that is all flightschedule timestamps should reflect
@@ -261,7 +297,7 @@ class FlightSchedule extends Component {
             command.timestamp = command.timestamp.replace('Z', '');
             command.timestamp = command.timestamp.concat('000');
           }
-          console.log(command.timestamp, command.op);
+          // console.log(command.timestamp, command.op);
           let oldTime = Date.parse(command.timestamp);
           let oldExecTime = Date.parse(this.state.thisExecutionTime);
           let origOffset = oldTime - oldExecTime;
@@ -282,6 +318,17 @@ class FlightSchedule extends Component {
     });
   }
 
+  // handle changing repeating settings
+  handleChangeRepeat(event, fs_idx, repeats) {
+    const obj = this.state.thisFlightscheduleCommands.slice();
+    obj[fs_idx].repeats = structuredClone(repeats);
+    if (this.state.editFlight && obj[fs_idx].op != 'add') {
+      obj[fs_idx].op = 'replace';
+    }
+
+    this.setState({ thisFlightscheduleCommands: obj });
+  }
+
   // handle changing/adding arguments
   handleChangeArgument(event, fs_idx, arg_idx) {
     const obj = this.state.thisFlightscheduleCommands.slice();
@@ -296,7 +343,7 @@ class FlightSchedule extends Component {
   // handle when the add command button is clicked
   handleAddCommandClick(event) {
     const obj = this.state.thisFlightscheduleCommands.slice();
-    let comm = { command: { command_id: '' }, timestamp: null, args: [] };
+    let comm = structuredClone(DEFAULT_COMMAND);
     // if we are editing add a condition for adding
     if (this.state.editFlight) {
       comm.op = 'add';
@@ -313,10 +360,10 @@ class FlightSchedule extends Component {
       obj[idx].op = 'remove';
     } else {
       obj.splice(idx, 1);
-      console.log('obj', obj);
+      // console.log("obj", obj);
     }
     this.setState({ thisFlightscheduleCommands: obj });
-    console.log(this.state.thisFlightscheduleCommands);
+    // console.log(this.state.thisFlightscheduleCommands);
   }
 
   // handle opening the editing dialog
@@ -331,7 +378,7 @@ class FlightSchedule extends Component {
       ...command,
       op: 'none'
     }));
-    console.log(obj);
+    // console.log(obj);
 
     this.setState({
       addFlightOpen: !this.state.addFlightOpen,
@@ -391,6 +438,7 @@ class FlightSchedule extends Component {
             addFlightschedule={this.addFlightschedule}
             handleAddCommandClick={this.handleAddCommandClick}
             handleDeleteCommandClick={this.handleDeleteCommandClick}
+            handleChangeRepeat={this.handleChangeRepeat}
             handleChangeArgument={this.handleChangeArgument}
             status={this.state.thisFlightScheduleStatus}
             executionTime={this.state.thisExecutionTime}

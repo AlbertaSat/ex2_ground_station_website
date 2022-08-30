@@ -14,21 +14,22 @@ or:
     python3 manage.py test test_api.TestHousekeepingService.test_get_housekeeping
 
 """
-from readline import set_completion_display_matches_hook
 import sys
 import unittest
 from datetime import datetime, timedelta
-import json
 import click
-import re
-import subprocess
-import os
 
 from flask.cli import FlaskGroup
 
 from groundstation import create_app, db
-from groundstation.backend_api.models import User, Housekeeping, Telecommands, PowerChannels
-from groundstation.tests.utils import fakeHousekeepingAsDict, fake_power_channel_as_dict
+from groundstation.backend_api.models import AdcsHK, AthenaHK, CharonHK, \
+    DfgmHK, EpsHK, EpsStartupHK, HyperionHK, IrisHK, NorthernSpiritHK, SbandHK, \
+    UhfHK, User, Housekeeping, Telecommands
+from groundstation.tests.utils import fake_adcs_hk_as_dict, \
+    fake_athena_hk_as_dict, fake_charon_hk_as_dict, fake_dfgm_hk_as_dict, \
+    fake_eps_hk_as_dict, fake_eps_startup_hk_as_dict, fake_housekeeping_as_dict, \
+    fake_hyperion_hk_as_dict, fake_iris_hk_as_dict, \
+    fake_northern_spirit_hk_as_dict, fake_sband_hk_as_dict, fake_uhf_hk_as_dict
 from groundstation.backend_api.housekeeping import HousekeepingLogList
 from groundstation.backend_api.utils import add_telecommand, \
     add_flight_schedule, add_command_to_flightschedule, add_user, \
@@ -36,6 +37,9 @@ from groundstation.backend_api.utils import add_telecommand, \
     add_passover
 
 from ex2_ground_station_software.src.system import SatelliteNodes, services
+AVAILABLE_OBCS = tuple(node[1] for node in SatelliteNodes if node[0] == 'OBC')
+AVAILABLE_EPS = tuple(node[1] for node in SatelliteNodes if node[0] == 'EPS')
+
 
 app = create_app()
 cli = FlaskGroup(create_app=create_app)
@@ -74,7 +78,7 @@ def test(path=None):
 def seed_db(ctx):
     """Imports commands and adds admin and non-admin user as well as a base passover.
     """
-    ctx.invoke(import_commands) # no telecommands added if import fails
+    ctx.invoke(import_commands)  # no telecommands added if import fails
 
     add_user(username='Admin_user', password='Admin_user', is_admin=True)
     add_user(username='albert', password='albert', is_admin=False)
@@ -89,27 +93,37 @@ def seed_db_example(ctx):
     """Imports commands, adds users and example data.
     """
     # generate timestamps for flightschedule commands
-    timestamp = datetime.fromtimestamp(1570749472)
+    timestamp = datetime.utcnow()
+    data_position = 1
     for x in range(20):
         # 20 days
         for y in range(3):
             # 3 entries per day
-            housekeepingData = fakeHousekeepingAsDict(
-                timestamp + timedelta(days=x, minutes=y*15))
-            if (x+y) % 10 == 0:
-                housekeepingData['satellite_mode'] = 'Danger'
+            housekeepingData = fake_housekeeping_as_dict(
+                timestamp + timedelta(days=x, minutes=y*15), data_position)
 
-            housekeeping = Housekeeping(**housekeepingData)
+            data_position += 1
 
-            for i in range(1, 25):
-                channel = fake_power_channel_as_dict(i)
-                p = PowerChannels(**channel)
-                housekeeping.channels.append(p)
+            housekeeping = Housekeeping(
+                **housekeepingData,
+                adcs=AdcsHK(**fake_adcs_hk_as_dict()),
+                athena=AthenaHK(**fake_athena_hk_as_dict()),
+                eps=EpsHK(**fake_eps_hk_as_dict()),
+                eps_startup=EpsStartupHK(**fake_eps_startup_hk_as_dict()),
+                uhf=UhfHK(**fake_uhf_hk_as_dict()),
+                sband=SbandHK(**fake_sband_hk_as_dict()),
+                hyperion=HyperionHK(**fake_hyperion_hk_as_dict()),
+                charon=CharonHK(**fake_charon_hk_as_dict()),
+                dfgm=DfgmHK(**fake_dfgm_hk_as_dict()),
+                northern_spirit=NorthernSpiritHK(
+                    **fake_northern_spirit_hk_as_dict()),
+                iris=IrisHK(**fake_iris_hk_as_dict())
+            )
 
             db.session.add(housekeeping)
     db.session.commit()
 
-    ctx.invoke(import_commands) # no telecommands added if import fails
+    ctx.invoke(import_commands)  # no telecommands added if import fails
 
     flightschedule = add_flight_schedule(
         creation_date=timestamp, upload_date=timestamp, status=2, execution_time=timestamp)
@@ -139,7 +153,8 @@ def seed_db_example(ctx):
     now = datetime.utcnow()
     add_passover(aos_timestamp=now - timedelta(seconds=20), los_timestamp=now)
     for i in range(1, 20):
-        p = add_passover(aos_timestamp=now + timedelta(minutes=i*5), los_timestamp=now + timedelta(minutes=i*5 + 1))
+        p = add_passover(aos_timestamp=now + timedelta(minutes=i*5),
+                         los_timestamp=now + timedelta(minutes=i*5 + 1))
     print("Database has been seeded.")
 
 
@@ -153,10 +168,10 @@ def demo_db():
     #time3 = datetime.fromisoformat('2019-11-05 00:08:43.203+00:00')
     #time4 = datetime.fromisoformat('2019-11-05 00:15:20.118+00:00')
 
-    housekeepingData = fakeHousekeepingAsDict(timestamp)
-    hkd2 = fakeHousekeepingAsDict(time2)
-    #hkd3 = fakeHousekeepingAsDict(time3)
-    #hkd4 = fakeHousekeepingAsDict(time4)
+    housekeepingData = fake_housekeeping_as_dict(timestamp)
+    hkd2 = fake_housekeeping_as_dict(time2)
+    #hkd3 = fake_housekeeping_as_dict(time3)
+    #hkd4 = fake_housekeeping_as_dict(time4)
 
     housekeeping = Housekeeping(**housekeepingData)
     hk2 = Housekeeping(**hkd2)
@@ -247,7 +262,8 @@ def demo_db():
     now = datetime.utcnow()
     add_passover(aos_timestamp=now - timedelta(seconds=20), los_timestamp=now)
     for i in range(5):
-        p = add_passover(aos_timestamp=now + timedelta(minutes=i*5), los_timestamp=now + timedelta(minutes=i*5 + 1))
+        p = add_passover(aos_timestamp=now + timedelta(minutes=i*5),
+                         los_timestamp=now + timedelta(minutes=i*5 + 1))
 
     print("Database has been seeded with demo data.")
 
@@ -257,26 +273,34 @@ def import_commands():
     """Imports commands from the system.py file in ex2_ground_station_software/src,
     and adds them to the database.
     """
-
     for serv in services:
         subservice = services[serv]['subservice']
-        for subName in subservice.keys():
 
+        supported_prefixes = list(services[serv]['supports'])
+        if 'OBC' in supported_prefixes:
+            supported_prefixes.remove('OBC')
+            supported_prefixes.extend(AVAILABLE_OBCS)
+        if 'EPS' in supported_prefixes:
+            supported_prefixes.remove('EPS')
+            supported_prefixes.extend(AVAILABLE_EPS)
+
+        for subName in subservice.keys():
             sub = subservice[subName]
             inoutInfo = sub['inoutInfo']
-            info = None if not 'what' in sub else sub['what']
+            info = 'Not yet available' if not 'what' in sub else sub['what']
             if inoutInfo['args'] is None:
                 num_arguments = 0
             else:
                 num_arguments = len(inoutInfo['args'])
 
             is_dangerous = False
-            for prefix in SatelliteNodes:
-                if prefix.name == 'EX2':
-                    c = add_telecommand(command_name=(prefix.name + '.' + serv + '.' + subName).lower(), num_arguments=num_arguments,
-                                is_dangerous=is_dangerous, about_info=info)
+            for i, prefix in enumerate(supported_prefixes):
+                if i == 0:
+                    # Only one 'copy' of a command needs the about_info
+                    add_telecommand(command_name=(prefix + '.' + serv + '.' + subName).lower(), num_arguments=num_arguments,
+                                    is_dangerous=is_dangerous, about_info=info)
                 else:
-                    c = add_telecommand(command_name=(prefix.name + '.' + serv + '.' + subName).lower(), num_arguments=num_arguments,
+                    add_telecommand(command_name=(prefix + '.' + serv + '.' + subName).lower(), num_arguments=num_arguments,
                                     is_dangerous=is_dangerous, about_info=None)
 
     print("Added new telecommands.")

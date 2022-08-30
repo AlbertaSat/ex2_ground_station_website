@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
+import { Grid } from '@material-ui/core';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItem from '@material-ui/core/ListItem';
 import List from '@material-ui/core/List';
@@ -17,187 +18,563 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Slide from '@material-ui/core/Slide';
 
-const useStyles = makeStyles(theme => ({
-    root: {
-      width: '100%',
-    },
-    appBar: {
-      position: 'relative',
-    },
-    title: {
-      marginLeft: theme.spacing(2),
-      flex: 1,
-    },
-    paper: {
-      marginTop: theme.spacing(3),
-      width: '100%',
-      overflowX: 'auto',
-      marginBottom: theme.spacing(2),
-    },
-    table: {
-      minWidth: 650,
-    },
-    customListItemText: {
-      display: 'flex',
-      alignItems: 'baseline',
-      justifyContent: 'space-between',
-      maxWidth: '78%',
-    },
-  }));
+const DECIMAL_PLACES = 5; // How many decimal places to round floats to
 
-  const Transition = React.forwardRef(function Transition(props, ref) {
-    return <Slide direction="up" ref={ref} {...props} />;
-  });
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: '100%'
+  },
+  appBar: {
+    position: 'sticky'
+  },
+  title: {
+    marginLeft: theme.spacing(2),
+    flex: 1
+  },
+  subtitle: {
+    marginLeft: theme.spacing(2)
+  },
+  paper: {
+    marginTop: theme.spacing(3),
+    width: '100%',
+    overflowX: 'auto',
+    marginBottom: theme.spacing(2)
+  },
+  table: {
+    minWidth: 325,
+    maxWidth: 325
+  },
+  label: {
+    fontWeight: 600
+  },
+  hkDisplay: {
+    columnCount: 5,
+    columnWidth: 325,
+    columnSpan: 'none'
+  },
+  hkItem: {
+    breakInside: 'avoid-column'
+  },
+  customListItemText: {
+    display: 'flex',
+    alignItems: 'baseline',
+    justifyContent: 'space-between',
+    maxWidth: '78%'
+  },
+  navbarLinks: {
+    color: '#fff',
+    '&:hover': {
+      color: '#55c4d3'
+    }
+  }
+}));
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
 const HousekeepingDialog = (props) => {
-    const classes = useStyles();
-    return (
-          /* Display a HK log in a full screen dialog */
-            <Dialog fullScreen open={props.open} onClose={() => props.handleClose()} TransitionComponent={Transition}>
-            <AppBar>
-            <Toolbar>
-                <IconButton edge="start" color="inherit" onClick={() => props.handleClose()} aria-label="close">
-                <CloseIcon />
-                </IconButton>
-                <Typography variant="h6" className={classes.title}>
-                {props.housekeeping.last_beacon_time}
-                </Typography>
-            </Toolbar>
-            </AppBar>
+  const classes = useStyles();
 
-            {/* HK log data being displayed */}
-            <List>
-            <ListItem >
-                <ListItemText classes={{root: classes.customListItemText}} primary="ID" secondary={props.housekeeping.id} />
-            </ListItem>
-            <ListItem >
-                <ListItemText classes={{root: classes.customListItemText}} primary="Satellite Mode" secondary={props.housekeeping.satellite_mode} />
-            </ListItem>
-            <ListItem >
-                <ListItemText classes={{root: classes.customListItemText}} primary="Watchdog 1" secondary={props.housekeeping.watchdog_1} />
-            </ListItem>
-            <ListItem >
-                <ListItemText classes={{root: classes.customListItemText}} primary="Watchdog 2" secondary={props.housekeeping.watchdog_2} />
-            </ListItem>
-            <ListItem >
-                <ListItemText classes={{root: classes.customListItemText}} primary="Watchdog 3" secondary={props.housekeeping.watchdog_3} />
-            </ListItem>
-            <ListItem >
-                <ListItemText classes={{root: classes.customListItemText}} primary="MCU Resets" secondary={props.housekeeping.no_MCU_resets} />
-            </ListItem>
-            <ListItem >
-                <ListItemText classes={{root: classes.customListItemText}} primary="Battery Voltage" secondary={props.housekeeping.battery_voltage} />
-            </ListItem>
-            <ListItem >
-                <ListItemText classes={{root: classes.customListItemText}} primary="Current In" secondary={props.housekeeping.current_in} />
-            </ListItem>
-            <ListItem >
-                <ListItemText classes={{root: classes.customListItemText}} primary="Current Out" secondary={props.housekeeping.current_out} />
-            </ListItem>
-            <br></br>
+  const adcsRef = useRef();
+  const athenaRef = useRef();
+  const epsRef = useRef();
+  const epsStartupRef = useRef();
+  const uhfRef = useRef();
+  const sbandRef = useRef();
+  const hyperionRef = useRef();
+  const charonRef = useRef();
+  const dfgmRef = useRef();
+  const nsRef = useRef();
+  const irisRef = useRef();
 
-            {/* Power Channels table */}
-            <ListItem>
-                <Table className={classes.table} size="small" aria-label="dense table">
-                <TableHead>
-                    <TableRow>
-                    <TableCell width="40%">Power Channel</TableCell>
-                    <TableCell width="30%" align="left">Enabled</TableCell>
-                    <TableCell width="30%" align="left">Current (mA)</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {props.housekeeping.channels.map(channel => (
-                    <TableRow key={channel.channel_no}>
-                        <TableCell component="th" scope="row">
-                        {channel.channel_no}
-                        </TableCell>
-                        <TableCell align="left">{channel.enabled.toString()}</TableCell>
-                        <TableCell align="left">{channel.current}</TableCell>
-                    </TableRow>
-                    ))}
-                </TableBody>
-                </Table>
-            </ListItem><br></br>
+  /**
+   * Scrolls the page to a given section
+   * @param {React.MutableRefObject} section The section to scroll to
+   */
+  const handleScrollClick = (section) => {
+    section.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
 
-            {/* Solar Panels table */}
-            <ListItem>
-                <Table className={classes.table} size="small" aria-label="dense table">
-                <TableHead>
-                    <TableRow>
-                    <TableCell width="70%">Solar Panel</TableCell>
-                    <TableCell width="30%" align="left">Current (mA)</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    <TableRow key={1}>
-                    <TableCell component="th" scope="row" >{1}</TableCell>
-                    <TableCell align="left">{props.housekeeping.panel_1_current}</TableCell>
-                    </TableRow>
-                    <TableRow key={2}>
-                    <TableCell component="th" scope="row">{2}</TableCell>
-                    <TableCell align="left">{props.housekeeping.panel_2_current}</TableCell>
-                    </TableRow>
-                    <TableRow key={3}>
-                    <TableCell component="th" scope="row">{3}</TableCell>
-                    <TableCell align="left">{props.housekeeping.panel_3_current}</TableCell>
-                    </TableRow>
-                    <TableRow key={4}>
-                    <TableCell component="th" scope="row">{4}</TableCell>
-                    <TableCell align="left">{props.housekeeping.panel_4_current}</TableCell>
-                    </TableRow>
-                    <TableRow key={5}>
-                    <TableCell component="th" scope="row">{5}</TableCell>
-                    <TableCell align="left">{props.housekeeping.panel_5_current}</TableCell>
-                    </TableRow>
-                    <TableRow key={6}>
-                    <TableCell component="th" scope="row">{6}</TableCell>
-                    <TableCell align="left">{props.housekeeping.panel_6_current}</TableCell>
-                    </TableRow>
-                </TableBody>
-                </Table>
-            </ListItem><br></br>
+  /**
+   * Rounds housekeeeping values to 3 decimal places to keep tables thin
+   *
+   * @param value A value to potentially round
+   * @returns A value rounded to 3 decimals (if possible)
+   */
+  const roundValue = (value) => {
+    return Number(value) === value && value % 1 !== 0
+      ? value.toFixed(DECIMAL_PLACES)
+      : value;
+  };
 
-            {/* Temperatures table */}
-            <ListItem>
-                <Table className={classes.table} size="small" aria-label="dense table">
-                <TableHead>
-                    <TableRow>
-                    <TableCell width="70%">Temperature Location</TableCell>
-                    <TableCell width="30%" align="left">Temperature (°C)</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    <TableRow key={1}>
-                    <TableCell component="th" scope="row">{1}</TableCell>
-                    <TableCell align="left">{props.housekeeping.temp_1}</TableCell>
-                    </TableRow>
-                    <TableRow key={2}>
-                    <TableCell component="th" scope="row">{2}</TableCell>
-                    <TableCell align="left">{props.housekeeping.temp_2}</TableCell>
-                    </TableRow>
-                    <TableRow key={3}>
-                    <TableCell component="th" scope="row">{3}</TableCell>
-                    <TableCell align="left">{props.housekeeping.temp_3}</TableCell>
-                    </TableRow>
-                    <TableRow key={4}>
-                    <TableCell component="th" scope="row">{4}</TableCell>
-                    <TableCell align="left">{props.housekeeping.temp_4}</TableCell>
-                    </TableRow>
-                    <TableRow key={5}>
-                    <TableCell component="th" scope="row">{5}</TableCell>
-                    <TableCell align="left">{props.housekeeping.temp_5}</TableCell>
-                    </TableRow>
-                    <TableRow key={6}>
-                    <TableCell component="th" scope="row">{6}</TableCell>
-                    <TableCell align="left">{props.housekeeping.temp_6}</TableCell>
-                    </TableRow>
-                </TableBody>
-                </Table>
-            </ListItem><br></br>
+  return (
+    /* Display a HK log in a full screen dialog */
+    <Dialog
+      fullScreen
+      open={props.open}
+      onClose={() => props.handleClose()}
+      TransitionComponent={Transition}
+    >
+      <AppBar className={classes.appBar}>
+        <Toolbar>
+          <IconButton
+            edge="start"
+            color="inherit"
+            onClick={() => props.handleClose()}
+            aria-label="close"
+          >
+            <CloseIcon />
+          </IconButton>
+          <Typography variant="h6" className={classes.title}>
+            {props.housekeeping.timestamp}
+          </Typography>
+          <Typography
+            className="menu-links"
+            style={{ display: 'inline-flex', alignItems: 'center' }}
+          >
+            <a
+              className={`link-items hvr-underline-from-center ${classes.navbarLinks}`}
+              onClick={() => handleScrollClick(adcsRef)}
+            >
+              ADCS
+            </a>
+            <a
+              className={`link-items hvr-underline-from-center ${classes.navbarLinks}`}
+              onClick={() => handleScrollClick(athenaRef)}
+            >
+              Athena
+            </a>
+            <a
+              className={`link-items hvr-underline-from-center ${classes.navbarLinks}`}
+              onClick={() => handleScrollClick(epsRef)}
+            >
+              EPS
+            </a>
+            <a
+              className={`link-items hvr-underline-from-center ${classes.navbarLinks}`}
+              onClick={() => handleScrollClick(epsStartupRef)}
+            >
+              EPS Startup
+            </a>
+            <a
+              className={`link-items hvr-underline-from-center ${classes.navbarLinks}`}
+              onClick={() => handleScrollClick(uhfRef)}
+            >
+              UHF
+            </a>
+            <a
+              className={`link-items hvr-underline-from-center ${classes.navbarLinks}`}
+              onClick={() => handleScrollClick(sbandRef)}
+            >
+              S-Band
+            </a>
+            <a
+              className={`link-items hvr-underline-from-center ${classes.navbarLinks}`}
+              onClick={() => handleScrollClick(hyperionRef)}
+            >
+              Hyperion
+            </a>
+            <a
+              className={`link-items hvr-underline-from-center ${classes.navbarLinks}`}
+              onClick={() => handleScrollClick(charonRef)}
+            >
+              Charon
+            </a>
+            <a
+              className={`link-items hvr-underline-from-center ${classes.navbarLinks}`}
+              onClick={() => handleScrollClick(dfgmRef)}
+            >
+              DFGM
+            </a>
+            <a
+              className={`link-items hvr-underline-from-center ${classes.navbarLinks}`}
+              onClick={() => handleScrollClick(nsRef)}
+            >
+              Northern Spirit
+            </a>
+            <a
+              className={`link-items hvr-underline-from-center ${classes.navbarLinks}`}
+              onClick={() => handleScrollClick(irisRef)}
+            >
+              IRIS
+            </a>
+          </Typography>
+        </Toolbar>
+      </AppBar>
 
-            </List>
-        </Dialog>
-    )
-}
+      {/* General info about HK data */}
+      <List>
+        <ListItem>
+          <ListItemText
+            classes={{ root: classes.customListItemText }}
+            primary="Data Position"
+            secondary={props.housekeeping.data_position}
+          />
+        </ListItem>
+        <ListItem>
+          <ListItemText
+            classes={{ root: classes.customListItemText }}
+            primary="TLE"
+            secondary={props.housekeeping.tle}
+          />
+        </ListItem>
+      </List>
+
+      <br></br>
+
+      <div className={classes.hkDisplay}>
+        <div className={classes.hkItem}>
+          <Typography variant="h4" className={classes.subtitle} ref={adcsRef}>
+            ADCS
+          </Typography>
+          <Table
+            className={classes.table}
+            size="small"
+            aria-label="dense table"
+          >
+            <TableBody>
+              {Object.keys(props.housekeeping.adcs).map((label, idx) => (
+                <TableRow key={idx}>
+                  <TableCell
+                    width="20%"
+                    component="th"
+                    scope="row"
+                    className={classes.label}
+                  >
+                    {label}
+                  </TableCell>
+                  <TableCell width="60%" align="left">
+                    {roundValue(props.housekeeping.adcs[label])}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+
+        <br></br>
+
+        <div className={classes.hkItem}>
+          <Typography variant="h4" className={classes.subtitle} ref={athenaRef}>
+            Athena
+          </Typography>
+          <Table
+            className={classes.table}
+            size="small"
+            aria-label="dense table"
+          >
+            <TableBody>
+              {Object.keys(props.housekeeping.athena).map((label, idx) => (
+                <TableRow key={idx}>
+                  <TableCell
+                    width="20%"
+                    component="th"
+                    scope="row"
+                    className={classes.label}
+                  >
+                    {label}
+                  </TableCell>
+                  <TableCell width="60%" align="left">
+                    {roundValue(props.housekeeping.athena[label])}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+
+        <br></br>
+
+        <div className={classes.hkItem}>
+          <Typography variant="h4" className={classes.subtitle} ref={epsRef}>
+            EPS
+          </Typography>
+          <Table
+            className={classes.table}
+            size="small"
+            aria-label="dense table"
+          >
+            <TableBody>
+              {Object.keys(props.housekeeping.eps).map((label, idx) => (
+                <TableRow key={idx}>
+                  <TableCell
+                    width="20%"
+                    component="th"
+                    scope="row"
+                    className={classes.label}
+                  >
+                    {label}
+                  </TableCell>
+                  <TableCell width="60%" align="left">
+                    {roundValue(props.housekeeping.eps[label])}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+
+        <br></br>
+
+        <div className={classes.hkItem}>
+          <Typography
+            variant="h4"
+            className={classes.subtitle}
+            ref={epsStartupRef}
+          >
+            EPS Startup
+          </Typography>
+          <Table
+            className={classes.table}
+            size="small"
+            aria-label="dense table"
+          >
+            <TableBody>
+              {Object.keys(props.housekeeping.eps_startup).map((label, idx) => (
+                <TableRow key={idx}>
+                  <TableCell
+                    width="20%"
+                    component="th"
+                    scope="row"
+                    className={classes.label}
+                  >
+                    {label}
+                  </TableCell>
+                  <TableCell width="60%" align="left">
+                    {roundValue(props.housekeeping.eps_startup[label])}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+
+        <br></br>
+
+        <div className={classes.hkItem}>
+          <Typography variant="h4" className={classes.subtitle} ref={uhfRef}>
+            UHF
+          </Typography>
+          <Table
+            className={classes.table}
+            size="small"
+            aria-label="dense table"
+          >
+            <TableBody>
+              {Object.keys(props.housekeeping.uhf).map((label, idx) => (
+                <TableRow key={idx}>
+                  <TableCell
+                    width="20%"
+                    component="th"
+                    scope="row"
+                    className={classes.label}
+                  >
+                    {label}
+                  </TableCell>
+                  <TableCell width="60%" align="left">
+                    {roundValue(props.housekeeping.uhf[label])}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+
+        <br></br>
+
+        <div className={classes.hkItem}>
+          <Typography variant="h4" className={classes.subtitle} ref={sbandRef}>
+            S-Band
+          </Typography>
+          <Table
+            className={classes.table}
+            size="small"
+            aria-label="dense table"
+          >
+            <TableBody>
+              {Object.keys(props.housekeeping.sband).map((label, idx) => (
+                <TableRow key={idx}>
+                  <TableCell
+                    width="20%"
+                    component="th"
+                    scope="row"
+                    className={classes.label}
+                  >
+                    {label}
+                  </TableCell>
+                  <TableCell width="60%" align="left">
+                    {roundValue(props.housekeeping.sband[label])}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+
+        <br></br>
+
+        <div className={classes.hkItem}>
+          <Typography
+            variant="h4"
+            className={classes.subtitle}
+            ref={hyperionRef}
+          >
+            Hyperion
+          </Typography>
+          <Table
+            className={classes.table}
+            size="small"
+            aria-label="dense table"
+          >
+            <TableBody>
+              {Object.keys(props.housekeeping.hyperion).map((label, idx) => (
+                <TableRow key={idx}>
+                  <TableCell
+                    width="20%"
+                    component="th"
+                    scope="row"
+                    className={classes.label}
+                  >
+                    {label}
+                  </TableCell>
+                  <TableCell width="60%" align="left">
+                    {roundValue(props.housekeeping.hyperion[label])}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+
+        <br></br>
+
+        <div className={classes.hkItem}>
+          <Typography variant="h4" className={classes.subtitle} ref={charonRef}>
+            Charon
+          </Typography>
+          <Table
+            className={classes.table}
+            size="small"
+            aria-label="dense table"
+          >
+            <TableBody>
+              {Object.keys(props.housekeeping.charon).map((label, idx) => (
+                <TableRow key={idx}>
+                  <TableCell
+                    width="20%"
+                    component="th"
+                    scope="row"
+                    className={classes.label}
+                  >
+                    {label}
+                  </TableCell>
+                  <TableCell width="60%" align="left">
+                    {roundValue(props.housekeeping.charon[label])}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+
+        <br></br>
+
+        <div className={classes.hkItem}>
+          <Typography variant="h4" className={classes.subtitle} ref={dfgmRef}>
+            DFGM
+          </Typography>
+          <Table
+            className={classes.table}
+            size="small"
+            aria-label="dense table"
+          >
+            <TableBody>
+              {Object.keys(props.housekeeping.dfgm).map((label, idx) => (
+                <TableRow key={idx}>
+                  <TableCell
+                    width="20%"
+                    component="th"
+                    scope="row"
+                    className={classes.label}
+                  >
+                    {label}
+                  </TableCell>
+                  <TableCell width="60%" align="left">
+                    {roundValue(props.housekeeping.dfgm[label])}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+
+        <br></br>
+
+        <div className={classes.hkItem}>
+          <Typography variant="h4" className={classes.subtitle} ref={nsRef}>
+            Northern Spirit
+          </Typography>
+          <Table
+            className={classes.table}
+            size="small"
+            aria-label="dense table"
+          >
+            <TableBody>
+              {Object.keys(props.housekeeping.northern_spirit).map(
+                (label, idx) => (
+                  <TableRow key={idx}>
+                    <TableCell
+                      width="20%"
+                      component="th"
+                      scope="row"
+                      className={classes.label}
+                    >
+                      {label}
+                    </TableCell>
+                    <TableCell width="60%" align="left">
+                      {roundValue(props.housekeeping.northern_spirit[label])}
+                    </TableCell>
+                  </TableRow>
+                )
+              )}
+            </TableBody>
+          </Table>
+        </div>
+
+        <br></br>
+
+        <div className={classes.hkItem}>
+          <Typography variant="h4" className={classes.subtitle} ref={irisRef}>
+            IRIS
+          </Typography>
+          <Table
+            className={classes.table}
+            size="small"
+            aria-label="dense table"
+          >
+            <TableBody>
+              {Object.keys(props.housekeeping.iris).map((label, idx) => (
+                <TableRow key={idx}>
+                  <TableCell
+                    width="20%"
+                    component="th"
+                    scope="row"
+                    className={classes.label}
+                  >
+                    {label}
+                  </TableCell>
+                  <TableCell width="60%" align="left">
+                    {roundValue(props.housekeeping.iris[label])}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+    </Dialog>
+  );
+};
 
 export default HousekeepingDialog;
