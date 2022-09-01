@@ -288,20 +288,26 @@ def import_commands():
             sub = subservice[subName]
             inoutInfo = sub['inoutInfo']
             info = 'Not yet available' if not 'what' in sub else sub['what']
+            
             if inoutInfo['args'] is None:
                 num_arguments = 0
+                arg_list=None
             else:
                 num_arguments = len(inoutInfo['args'])
-
+                arg_list=''
+                for arg in inoutInfo['args'].keys():
+                    arg_list = arg_list + str(arg) + ', '
+                arg_list = arg_list[:-2]
+                
             is_dangerous = False
             for i, prefix in enumerate(supported_prefixes):
                 if i == 0:
                     # Only one 'copy' of a command needs the about_info
                     add_telecommand(command_name=(prefix + '.' + serv + '.' + subName).lower(), num_arguments=num_arguments,
-                                    is_dangerous=is_dangerous, about_info=info)
+                                    is_dangerous=is_dangerous, about_info=info, arg_labels=arg_list)
                 else:
                     add_telecommand(command_name=(prefix + '.' + serv + '.' + subName).lower(), num_arguments=num_arguments,
-                                    is_dangerous=is_dangerous, about_info=None)
+                                    is_dangerous=is_dangerous, about_info=None, arg_labels=None)
 
     print("Added new telecommands.")
 

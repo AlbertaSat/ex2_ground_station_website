@@ -366,6 +366,11 @@ const Help = () => {
                   {command.about_info != null ? (
                     <p style={{ paddingLeft: '5%' }}>{command.about_info}</p>
                   ) : null}
+                  {command.arg_labels != null ? (
+                    <p style={{ paddingLeft: '5%' }}>
+                      {'Arguments: ' + command.arg_labels}
+                    </p>
+                  ) : null}
                   <hr></hr>
                 </Typography>
               ) : null

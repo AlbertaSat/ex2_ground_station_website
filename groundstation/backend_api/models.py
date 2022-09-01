@@ -109,6 +109,7 @@ class Telecommands(db.Model):
         'AutomatedCommands', backref='command', lazy=True)
     is_dangerous = db.Column(db.Boolean)
     about_info = db.Column(db.String(256))
+    arg_labels = db.Column(db.String(400))
 
     def to_json(self):
         """Returns a dictionary of some selected model attributes
@@ -118,7 +119,8 @@ class Telecommands(db.Model):
             'command_name': self.command_name,
             'num_arguments': self.num_arguments,
             'is_dangerous': self.is_dangerous,
-            'about_info': self.about_info
+            'about_info': self.about_info,
+            'arg_labels': self.arg_labels
         }
 
 
@@ -228,6 +230,8 @@ class Passover(db.Model):
 # This will be the table of telecommands being sent to the satellite as well as the responses
 # the table will allow us to send and receive all commands transactionally allowing us to log
 # them as well as their responses
+
+
 class Communications(db.Model):
     __tablename__ = 'communications'
 
@@ -805,7 +809,8 @@ class EpsStartupHK(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     hk_id = db.Column(db.Integer, db.ForeignKey('housekeeping.id'))
-    hk = db.relationship('Housekeeping', backref=backref('eps_startup', uselist=False))
+    hk = db.relationship('Housekeeping', backref=backref(
+        'eps_startup', uselist=False))
 
     eps_cmd_startup = db.Column(db.Integer)
     eps_status_startup = db.Column(db.Integer)

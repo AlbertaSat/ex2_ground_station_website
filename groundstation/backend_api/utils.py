@@ -31,7 +31,7 @@ def create_context(function):
     return decorate
 
 
-def add_telecommand(command_name, num_arguments, is_dangerous, about_info=None):
+def add_telecommand(command_name, num_arguments, is_dangerous, about_info=None, arg_labels=None):
     """Add a new telecommand to the database
     """
     # only add command if it isn't already in the database
@@ -39,7 +39,7 @@ def add_telecommand(command_name, num_arguments, is_dangerous, about_info=None):
         Telecommands.command_name == command_name).first()
     if not command:
         command = Telecommands(command_name=command_name, num_arguments=num_arguments,
-                               is_dangerous=is_dangerous, about_info=about_info)
+                               is_dangerous=is_dangerous, about_info=about_info, arg_labels=arg_labels)
 
         db.session.add(command)
         db.session.commit()
