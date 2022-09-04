@@ -110,6 +110,7 @@ class Telecommands(db.Model):
     is_dangerous = db.Column(db.Boolean)
     about_info = db.Column(db.String(256))
     arg_labels = db.Column(db.String(400))
+    return_labels = db.Column(db.String(7000))
 
     def to_json(self):
         """Returns a dictionary of some selected model attributes
@@ -120,7 +121,8 @@ class Telecommands(db.Model):
             'num_arguments': self.num_arguments,
             'is_dangerous': self.is_dangerous,
             'about_info': self.about_info,
-            'arg_labels': self.arg_labels
+            'arg_labels': self.arg_labels,
+            'return_labels': self.return_labels
         }
 
 
