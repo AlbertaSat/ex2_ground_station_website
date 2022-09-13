@@ -227,7 +227,9 @@ class AdcsHKValidator(Schema):
 class AthenaHKValidator(Schema):
     """Validator for Athena housekeeping data
     """
-    OBC_software_ver = fields.String(required=False)
+    software_ver_major = fields.Integer(required=False)
+    software_ver_minor = fields.Integer(required=False)
+    software_ver_patch = fields.Integer(required=False)
     MCU_core_temp = fields.Integer(required=False)
     converter_temp = fields.Integer(required=False)
     OBC_uptime = fields.Integer(required=False)
@@ -240,6 +242,8 @@ class AthenaHKValidator(Schema):
     solar_panel_supply_curr = fields.Integer(required=False)
     cmds_received = fields.Integer(required=False)
     pckts_uncovered_by_FEC = fields.Integer(required=False)
+    heap_free = fields.Integer(required=False)
+    lowest_heap_free = fields.Integer(required=False)
 
 
 class EpsHKValidator(Schema):
