@@ -56,7 +56,8 @@ class TestHousekeepingService(BaseTestCase):
         db.session.commit()
 
         with self.client:
-            response = self.client.get(f'/api/housekeepinglog/{housekeeping.id}')
+            response = self.client.get(
+                f'/api/housekeepinglog/{housekeeping.id}')
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertIn(data['status'], 'success')
@@ -64,12 +65,13 @@ class TestHousekeepingService(BaseTestCase):
             self.assertEqual(data['data']['data_position'], 1)
             self.assertEqual(data['data']['adcs']['Att_Estimate_Mode'], 42)
             self.assertEqual(data['data']['adcs']['Longitude'], 13.37)
-            self.assertEqual(data['data']['athena']['OBC_software_ver'], 'Fake string!')
             self.assertEqual(data['data']['athena']['MCU_core_temp'], 42)
             self.assertEqual(data['data']['eps']['eps_cmd_hk'], 42)
             self.assertEqual(data['data']['eps']['eps_timestamp_hk'], 13.37)
-            self.assertEqual(data['data']['eps_startup']['eps_cmd_startup'], 42)
-            self.assertEqual(data['data']['eps_startup']['eps_timestamp_startup'], 13.37)
+            self.assertEqual(data['data']['eps_startup']
+                             ['eps_cmd_startup'], 42)
+            self.assertEqual(data['data']['eps_startup']
+                             ['eps_timestamp_startup'], 13.37)
             self.assertEqual(data['data']['uhf']['scw1'], 42)
             self.assertEqual(data['data']['uhf']['temperature'], 13.37)
             self.assertEqual(data['data']['sband']['Output_Power'], 42)
@@ -103,11 +105,13 @@ class TestHousekeepingService(BaseTestCase):
         db.session.commit()
 
         with self.client:
-            response = self.client.get('/api/housekeepinglog?data_position=gt-12')
+            response = self.client.get(
+                '/api/housekeepinglog?data_position=gt-12')
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertEqual(len(data['data']['logs']), 0)
-            response = self.client.get('/api/housekeepinglog?data_position=gt-10')
+            response = self.client.get(
+                '/api/housekeepinglog?data_position=gt-10')
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertEqual(len(data['data']['logs']), 1)
@@ -172,19 +176,23 @@ class TestHousekeepingService(BaseTestCase):
         db.session.commit()
 
         with self.client:
-            response = self.client.get('/api/housekeepinglog?data_position=gt-9')
+            response = self.client.get(
+                '/api/housekeepinglog?data_position=gt-9')
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertEqual(len(data['data']['logs']), 3)
-            response = self.client.get('/api/housekeepinglog?data_position=gt-15')
+            response = self.client.get(
+                '/api/housekeepinglog?data_position=gt-15')
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertEqual(len(data['data']['logs']), 2)
-            response = self.client.get('/api/housekeepinglog?data_position=gt-25')
+            response = self.client.get(
+                '/api/housekeepinglog?data_position=gt-25')
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertEqual(len(data['data']['logs']), 1)
-            response = self.client.get('/api/housekeepinglog?data_position=gt-30')
+            response = self.client.get(
+                '/api/housekeepinglog?data_position=gt-30')
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertEqual(len(data['data']['logs']), 0)
@@ -237,7 +245,8 @@ class TestHousekeepingService(BaseTestCase):
         db.session.commit()
 
         with self.client:
-            start_ts = datetime.datetime.fromtimestamp(1659816386 + 5 + 700).isoformat()
+            start_ts = datetime.datetime.fromtimestamp(
+                1659816386 + 5 + 700).isoformat()
             url = '/api/housekeepinglog'
             query_string = MultiDict([
                 ('timestamp', f'ge-{start_ts}')
@@ -269,7 +278,8 @@ class TestHousekeepingService(BaseTestCase):
         db.session.commit()
 
         with self.client:
-            end_ts = datetime.datetime.fromtimestamp(1659816386 + 5 + 700).isoformat()
+            end_ts = datetime.datetime.fromtimestamp(
+                1659816386 + 5 + 700).isoformat()
             url = '/api/housekeepinglog'
             query_string = MultiDict([
                 ('timestamp', f'le-{end_ts}')
@@ -301,8 +311,10 @@ class TestHousekeepingService(BaseTestCase):
         db.session.commit()
 
         with self.client:
-            start_ts = datetime.datetime.fromtimestamp(1659816386 + 5 + 200).isoformat()
-            end_ts = datetime.datetime.fromtimestamp(1659816386 + 5 + 600).isoformat()
+            start_ts = datetime.datetime.fromtimestamp(
+                1659816386 + 5 + 200).isoformat()
+            end_ts = datetime.datetime.fromtimestamp(
+                1659816386 + 5 + 600).isoformat()
             url = '/api/housekeepinglog'
             query_string = MultiDict([
                 ('timestamp', f'ge-{start_ts}'),
@@ -334,8 +346,10 @@ class TestHousekeepingService(BaseTestCase):
 
         db.session.commit()
 
-        start_ts = datetime.datetime.fromtimestamp(1659816386 + 5 + 200).isoformat()
-        end_ts = datetime.datetime.fromtimestamp(1659816386 + 5 + 600).isoformat()
+        start_ts = datetime.datetime.fromtimestamp(
+            1659816386 + 5 + 200).isoformat()
+        end_ts = datetime.datetime.fromtimestamp(
+            1659816386 + 5 + 600).isoformat()
         local_args = MultiDict([
             ('timestamp', f'ge-{start_ts}'),
             ('timestamp', f'le-{end_ts}')
@@ -368,7 +382,8 @@ class TestHousekeepingService(BaseTestCase):
 
         with self.client:
             start_ts = "invalid_date!"
-            end_ts = datetime.datetime.fromtimestamp(1659816386 + 5 + 600).isoformat()
+            end_ts = datetime.datetime.fromtimestamp(
+                1659816386 + 5 + 600).isoformat()
             url = '/api/housekeepinglog'
             query_string = MultiDict([
                 ('timestamp', f'ge-{start_ts}'),
@@ -434,7 +449,8 @@ class TestHousekeepingService(BaseTestCase):
         housekeepingData['iris'] = fake_iris_hk_as_dict()
 
         housekeepingLogList = HousekeepingLogList()
-        response = housekeepingLogList.post(local_data=json.dumps(housekeepingData))
+        response = housekeepingLogList.post(
+            local_data=json.dumps(housekeepingData))
         self.assertEqual(response[1], 201)
         self.assertEqual(
             f'Housekeeping Log with timestamp {timestamp} was added!',
@@ -804,7 +820,8 @@ class TestHousekeepingService(BaseTestCase):
         db.session.commit()
 
         with self.client:
-            response = self.client.get('/api/housekeepinglog?data_position=eq-10')
+            response = self.client.get(
+                '/api/housekeepinglog?data_position=eq-10')
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertEqual(len(data['data']['logs']), 1)
@@ -833,13 +850,16 @@ class TestHousekeepingService(BaseTestCase):
         db.session.commit()
 
         with self.client:
-            response = self.client.get('/api/housekeepinglog?data_position=eq-2')
+            response = self.client.get(
+                '/api/housekeepinglog?data_position=eq-2')
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertEqual(len(data['data']['logs']), 0)
 
 #########################################################################
-#Test telecommand model/get and post
+# Test telecommand model/get and post
+
+
 class TestTelecommandService(BaseTestCase):
 
     def test_get_telecommand_by_name(self):
@@ -857,6 +877,7 @@ class TestTelecommandService(BaseTestCase):
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 404)
             self.assertEqual(data['message'], 'telecommand does not exist')
+
 
 class TestTelecommandList(BaseTestCase):
 
@@ -880,7 +901,7 @@ class TestTelecommandList(BaseTestCase):
         command = fake_telecommand_as_dict('ping', 0)
         with self.client:
             post_data = json.dumps(command)
-            kw_args = {'data':post_data, 'content_type':'application/json'}
+            kw_args = {'data': post_data, 'content_type': 'application/json'}
 
             response = self.client.post('/api/telecommands', **kw_args)
             response_data = json.loads(response.data.decode())
@@ -891,19 +912,22 @@ class TestTelecommandList(BaseTestCase):
         command.pop('command_name')
         with self.client:
             post_data = json.dumps(command)
-            kw_args = {'data':post_data, 'content_type':'application/json'}
+            kw_args = {'data': post_data, 'content_type': 'application/json'}
 
             response = self.client.post('/api/telecommands', **kw_args)
             response_data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 400)
 
 #########################################################################
-#Test flight schedule functions
+# Test flight schedule functions
+
+
 class TestFlightScheduleService(BaseTestCase):
 
     def test_post_with_no_commands(self):
         timestamp = datetime.datetime.fromtimestamp(1659816386)
-        flightschedule = fake_flight_schedule_as_dict(execution_time=str(timestamp))
+        flightschedule = fake_flight_schedule_as_dict(
+            execution_time=str(timestamp))
         self.assertEqual(len(FlightSchedules.query.all()), 0)
 
         with self.client:
@@ -921,7 +945,8 @@ class TestFlightScheduleService(BaseTestCase):
 
     def test_local_post_no_commands(self):
         timestamp = datetime.datetime.fromtimestamp(1659816386)
-        flightschedule = fake_flight_schedule_as_dict(execution_time=str(timestamp))
+        flightschedule = fake_flight_schedule_as_dict(
+            execution_time=str(timestamp))
         self.assertEqual(len(FlightSchedules.query.all()), 0)
 
         post_data = json.dumps(flightschedule)
@@ -933,7 +958,8 @@ class TestFlightScheduleService(BaseTestCase):
 
     def test_with_missing_commands(self):
         timestamp = datetime.datetime.fromtimestamp(1659816386)
-        flightschedule = fake_flight_schedule_as_dict(execution_time=str(timestamp))
+        flightschedule = fake_flight_schedule_as_dict(
+            execution_time=str(timestamp))
         flightschedule.pop('commands')
 
         with self.client:
@@ -949,11 +975,12 @@ class TestFlightScheduleService(BaseTestCase):
 
     def test_multiple_queued_posts(self):
         timestamp = datetime.datetime.fromtimestamp(1659816386)
-        flightschedule = fake_flight_schedule_as_dict(status=1, commands=[], execution_time=str(timestamp))
+        flightschedule = fake_flight_schedule_as_dict(
+            status=1, commands=[], execution_time=str(timestamp))
 
         with self.client:
             post_data = json.dumps(flightschedule)
-            kw_args = {'data':post_data, 'content_type':'application/json'}
+            kw_args = {'data': post_data, 'content_type': 'application/json'}
 
             response_1 = self.client.post('api/flightschedules', **kw_args)
             response_data = json.loads(response_1.data.decode())
@@ -962,12 +989,14 @@ class TestFlightScheduleService(BaseTestCase):
             response_2 = self.client.post('api/flightschedules', **kw_args)
             response_data = json.loads(response_2.data.decode())
             self.assertEqual(response_2.status_code, 400)
-            self.assertIn('A Queued flight schedule already exists!', response_data['message'])
+            self.assertIn('A Queued flight schedule already exists!',
+                          response_data['message'])
 
     def test_get_all_flightschedules(self):
         timestamp = datetime.datetime.fromtimestamp(1659816386)
         for i in range(10):
-            flightschedule = FlightSchedules(**fake_flight_schedule_as_dict(execution_time=timestamp))
+            flightschedule = FlightSchedules(
+                **fake_flight_schedule_as_dict(execution_time=timestamp))
             db.session.add(flightschedule)
         db.session.commit()
 
@@ -980,7 +1009,8 @@ class TestFlightScheduleService(BaseTestCase):
     def test_get_all_flightschedules_limit_by(self):
         timestamp = datetime.datetime.fromtimestamp(1659816386)
         for i in range(10):
-            flightschedule = FlightSchedules(**fake_flight_schedule_as_dict(execution_time=timestamp))
+            flightschedule = FlightSchedules(
+                **fake_flight_schedule_as_dict(execution_time=timestamp))
             db.session.add(flightschedule)
         db.session.commit()
         with self.client:
@@ -992,17 +1022,19 @@ class TestFlightScheduleService(BaseTestCase):
     def test_get_all_flightschedules_locally_limit_by(self):
         timestamp = datetime.datetime.fromtimestamp(1659816386)
         for i in range(10):
-            flightschedule = FlightSchedules(**fake_flight_schedule_as_dict(execution_time=timestamp))
+            flightschedule = FlightSchedules(
+                **fake_flight_schedule_as_dict(execution_time=timestamp))
             db.session.add(flightschedule)
         db.session.commit()
 
-        response = FlightScheduleList().get(local_args={'limit':3})
+        response = FlightScheduleList().get(local_args={'limit': 3})
         self.assertEqual(response[1], 200)
         self.assertEqual(len(response[0]['data']['flightschedules']), 3)
 
     def test_get_flight_schedule_by_id(self):
         timestamp = datetime.datetime.fromtimestamp(1659816386)
-        flightschedule = FlightSchedules(**fake_flight_schedule_as_dict(execution_time=timestamp))
+        flightschedule = FlightSchedules(
+            **fake_flight_schedule_as_dict(execution_time=timestamp))
         db.session.add(flightschedule)
         db.session.commit()
         id = flightschedule.id
@@ -1015,12 +1047,13 @@ class TestFlightScheduleService(BaseTestCase):
     def test_patch_flight_schedule(self):
         timestamp = datetime.datetime.fromtimestamp(1659816386)
         commands = {
-            'ping': (0,False),
-            'get-hk':(0,False),
+            'ping': (0, False),
+            'get-hk': (0, False),
         }
 
         for name, (num_args, is_danger) in commands.items():
-            c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
+            c = add_telecommand(command_name=name,
+                                num_arguments=num_args, is_dangerous=is_danger)
 
         command1 = Telecommands.query.filter_by(command_name='ping').first()
         command2 = Telecommands.query.filter_by(command_name='get-hk').first()
@@ -1030,15 +1063,15 @@ class TestFlightScheduleService(BaseTestCase):
             status=2,
             execution_time=timestamp)
         flightschedule_commands1 = add_command_to_flightschedule(
-                                timestamp=timestamp,
-                                flightschedule_id=flightschedule.id,
-                                command_id=command1.id
-                            )
+            timestamp=timestamp,
+            flightschedule_id=flightschedule.id,
+            command_id=command1.id
+        )
         flightschedule_commands2 = add_command_to_flightschedule(
-                                timestamp=timestamp,
-                                flightschedule_id=flightschedule.id,
-                                command_id=command2.id
-                            )
+            timestamp=timestamp,
+            flightschedule_id=flightschedule.id,
+            command_id=command2.id
+        )
         post_data = json.dumps(fake_patch_update_as_dict(timestamp))
         with self.client:
             response = self.client.patch(
@@ -1049,17 +1082,20 @@ class TestFlightScheduleService(BaseTestCase):
             response_data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertEqual(len(response_data['data']['commands']), 3)
-            self.assertEqual(response_data['data']['commands'][0]['command']['command_id'], 2)
-            self.assertEqual(response_data['data']['commands'][2]['command']['command_id'], 1)
+            self.assertEqual(
+                response_data['data']['commands'][0]['command']['command_id'], 2)
+            self.assertEqual(
+                response_data['data']['commands'][2]['command']['command_id'], 1)
 
     def test_delete_flightschedule(self):
         timestamp = datetime.datetime.fromtimestamp(1659816386)
         commands = {
-            'ping': (0,False),
-            'get-hk':(0,False),
+            'ping': (0, False),
+            'get-hk': (0, False),
         }
         for name, (num_args, is_danger) in commands.items():
-            c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
+            c = add_telecommand(command_name=name,
+                                num_arguments=num_args, is_dangerous=is_danger)
 
         command1 = Telecommands.query.filter_by(command_name='ping').first()
         flightschedule = add_flight_schedule(
@@ -1069,16 +1105,19 @@ class TestFlightScheduleService(BaseTestCase):
             execution_time=timestamp)
 
         flightschedule_commands = add_command_to_flightschedule(
-                                timestamp=timestamp,
-                                flightschedule_id=flightschedule.id,
-                                command_id=command1.id
-                            )
+            timestamp=timestamp,
+            flightschedule_id=flightschedule.id,
+            command_id=command1.id
+        )
         with self.client:
-            response = self.client.delete(f'api/flightschedules/{flightschedule.id}')
+            response = self.client.delete(
+                f'api/flightschedules/{flightschedule.id}')
             self.assertEqual(response.status_code, 200)
-            self.assertEqual(FlightSchedules.query.filter_by(id=flightschedule.id).first(), None)
+            self.assertEqual(FlightSchedules.query.filter_by(
+                id=flightschedule.id).first(), None)
             self.assertEqual(
-                FlightScheduleCommands.query.filter_by(id=flightschedule_commands.id).first(),
+                FlightScheduleCommands.query.filter_by(
+                    id=flightschedule_commands.id).first(),
                 None
             )
 
@@ -1096,29 +1135,34 @@ class TestFlightScheduleService(BaseTestCase):
         user = add_user('Alice', 'password', is_admin=False)
         auth_token = user.encode_auth_token_by_id().decode()
         with self.client:
-            response = self.client.get('/api/flightschedules', headers={'Authorization': f'Bearer {auth_token}'})
+            response = self.client.get(
+                '/api/flightschedules', headers={'Authorization': f'Bearer {auth_token}'})
             response_data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
 
 #########################################################################
-#Test automated command sequence model
+# Test automated command sequence model
+
+
 class TestAutomatedCommandService(BaseTestCase):
 
     def test_post_without_admin_priviliges(self):
         current_app.config.update(BYPASS_AUTH=False)
 
         commands = {
-            'ping': (0,False),
-            'get-hk':(0,False),
+            'ping': (0, False),
+            'get-hk': (0, False),
         }
         for name, (num_args, is_danger) in commands.items():
-            c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
+            c = add_telecommand(command_name=name,
+                                num_arguments=num_args, is_dangerous=is_danger)
         command1 = Telecommands.query.filter_by(command_name='ping').first()
 
         user = add_user('user', 'user', is_admin=False)
         auth_token = user.encode_auth_token_by_id().decode()
 
-        automatedcommand = fake_automatedcommand_as_dict(command_id=command1.id)
+        automatedcommand = fake_automatedcommand_as_dict(
+            command_id=command1.id)
         self.assertEqual(len(AutomatedCommands.query.all()), 0)
 
         with self.client:
@@ -1132,23 +1176,26 @@ class TestAutomatedCommandService(BaseTestCase):
             response_data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 403)
             self.assertIn('fail', response_data['status'])
-            self.assertIn('You do not have permission to create automated commands.', response_data['message'])
+            self.assertIn(
+                'You do not have permission to create automated commands.', response_data['message'])
 
     def test_post_with_admin_priviliges(self):
         current_app.config.update(BYPASS_AUTH=False)
 
         commands = {
-            'ping': (0,False),
-            'get-hk':(0,False),
+            'ping': (0, False),
+            'get-hk': (0, False),
         }
         for name, (num_args, is_danger) in commands.items():
-            c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
+            c = add_telecommand(command_name=name,
+                                num_arguments=num_args, is_dangerous=is_danger)
         command1 = Telecommands.query.filter_by(command_name='ping').first()
 
         admin = add_user('admin', 'admin', is_admin=True)
         auth_token = admin.encode_auth_token_by_id().decode()
 
-        automatedcommand = fake_automatedcommand_as_dict(command_id=command1.id)
+        automatedcommand = fake_automatedcommand_as_dict(
+            command_id=command1.id)
         self.assertEqual(len(AutomatedCommands.query.all()), 0)
 
         with self.client:
@@ -1170,22 +1217,25 @@ class TestAutomatedCommandService(BaseTestCase):
         current_app.config.update(BYPASS_AUTH=False)
 
         commands = {
-            'ping': (0,False),
-            'get-hk':(0,False),
+            'ping': (0, False),
+            'get-hk': (0, False),
         }
         for name, (num_args, is_danger) in commands.items():
-            c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
+            c = add_telecommand(command_name=name,
+                                num_arguments=num_args, is_dangerous=is_danger)
         command1 = Telecommands.query.filter_by(command_name='ping').first()
         command2 = Telecommands.query.filter_by(command_name='get-hk').first()
 
         user = add_user('user', 'user', is_admin=False)
         auth_token = user.encode_auth_token_by_id().decode()
 
-        automatedcommand = AutomatedCommands(command_id=command1.id, priority=1)
+        automatedcommand = AutomatedCommands(
+            command_id=command1.id, priority=1)
         db.session.add(automatedcommand)
         db.session.commit()
 
-        patch_update = {'command': {'command_id': command2.id}, 'priority': 2, 'args': []}
+        patch_update = {'command': {'command_id': command2.id},
+                        'priority': 2, 'args': []}
         post_data = json.dumps(patch_update)
 
         with self.client:
@@ -1198,28 +1248,32 @@ class TestAutomatedCommandService(BaseTestCase):
             response_data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 403)
             self.assertIn('fail', response_data['status'])
-            self.assertIn('You do not have permission to patch automated commands.', response_data['message'])
+            self.assertIn(
+                'You do not have permission to patch automated commands.', response_data['message'])
 
     def test_patch_with_admin_priviliges(self):
         current_app.config.update(BYPASS_AUTH=False)
 
         commands = {
-            'ping': (0,False),
-            'get-hk':(0,False),
+            'ping': (0, False),
+            'get-hk': (0, False),
         }
         for name, (num_args, is_danger) in commands.items():
-            c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
+            c = add_telecommand(command_name=name,
+                                num_arguments=num_args, is_dangerous=is_danger)
         command1 = Telecommands.query.filter_by(command_name='ping').first()
         command2 = Telecommands.query.filter_by(command_name='get-hk').first()
 
         admin = add_user('admin', 'admin', is_admin=True)
         auth_token = admin.encode_auth_token_by_id().decode()
 
-        automatedcommand = AutomatedCommands(command_id=command1.id, priority=1)
+        automatedcommand = AutomatedCommands(
+            command_id=command1.id, priority=1)
         db.session.add(automatedcommand)
         db.session.commit()
 
-        patch_update = {'command': {'command_id': command2.id}, 'priority': 2, 'args': []}
+        patch_update = {'command': {'command_id': command2.id},
+                        'priority': 2, 'args': []}
         post_data = json.dumps(patch_update)
 
         with self.client:
@@ -1231,7 +1285,8 @@ class TestAutomatedCommandService(BaseTestCase):
             )
             response_data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
-            self.assertEqual(response_data['data']['command']['command_id'], command2.id)
+            self.assertEqual(
+                response_data['data']['command']['command_id'], command2.id)
             self.assertEqual(response_data['data']['priority'], 2)
             self.assertIn('success', response_data['status'])
 
@@ -1239,17 +1294,19 @@ class TestAutomatedCommandService(BaseTestCase):
         current_app.config.update(BYPASS_AUTH=False)
 
         commands = {
-            'ping': (0,False),
-            'get-hk':(0,False),
+            'ping': (0, False),
+            'get-hk': (0, False),
         }
         for name, (num_args, is_danger) in commands.items():
-            c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
+            c = add_telecommand(command_name=name,
+                                num_arguments=num_args, is_dangerous=is_danger)
         command1 = Telecommands.query.filter_by(command_name='ping').first()
 
         user = add_user('user', 'user', is_admin=False)
         auth_token = user.encode_auth_token_by_id().decode()
 
-        automatedcommand = AutomatedCommands(command_id=command1.id, priority=1)
+        automatedcommand = AutomatedCommands(
+            command_id=command1.id, priority=1)
         db.session.add(automatedcommand)
         db.session.commit()
 
@@ -1261,23 +1318,26 @@ class TestAutomatedCommandService(BaseTestCase):
             response_data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 403)
             self.assertIn('fail', response_data['status'])
-            self.assertIn('You do not have permission to delete automated commands.', response_data['message'])
+            self.assertIn(
+                'You do not have permission to delete automated commands.', response_data['message'])
 
     def test_delete_with_admin_priviliges(self):
         current_app.config.update(BYPASS_AUTH=False)
 
         commands = {
-            'ping': (0,False),
-            'get-hk':(0,False),
+            'ping': (0, False),
+            'get-hk': (0, False),
         }
         for name, (num_args, is_danger) in commands.items():
-            c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
+            c = add_telecommand(command_name=name,
+                                num_arguments=num_args, is_dangerous=is_danger)
         command1 = Telecommands.query.filter_by(command_name='ping').first()
 
         admin = add_user('admin', 'admin', is_admin=True)
         auth_token = admin.encode_auth_token_by_id().decode()
 
-        automatedcommand = AutomatedCommands(command_id=command1.id, priority=1)
+        automatedcommand = AutomatedCommands(
+            command_id=command1.id, priority=1)
         db.session.add(automatedcommand)
         db.session.commit()
 
@@ -1288,20 +1348,23 @@ class TestAutomatedCommandService(BaseTestCase):
             )
             response_data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
-            self.assertEqual(AutomatedCommands.query.filter_by(id=automatedcommand.id).first(), None)
+            self.assertEqual(AutomatedCommands.query.filter_by(
+                id=automatedcommand.id).first(), None)
             self.assertIn('success', response_data['status'])
 
     def test_get_all_automatedcommands(self):
         commands = {
-            'ping': (0,False),
-            'get-hk':(0,False),
+            'ping': (0, False),
+            'get-hk': (0, False),
         }
         for name, (num_args, is_danger) in commands.items():
-            c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
+            c = add_telecommand(command_name=name,
+                                num_arguments=num_args, is_dangerous=is_danger)
         command1 = Telecommands.query.filter_by(command_name='ping').first()
 
         for i in range(10):
-            automatedcommand = AutomatedCommands(command_id=command1.id, priority=i)
+            automatedcommand = AutomatedCommands(
+                command_id=command1.id, priority=i)
             db.session.add(automatedcommand)
         db.session.commit()
 
@@ -1313,15 +1376,17 @@ class TestAutomatedCommandService(BaseTestCase):
 
     def test_get_all_automatedcommands_limit_by(self):
         commands = {
-            'ping': (0,False),
-            'get-hk':(0,False),
+            'ping': (0, False),
+            'get-hk': (0, False),
         }
         for name, (num_args, is_danger) in commands.items():
-            c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
+            c = add_telecommand(command_name=name,
+                                num_arguments=num_args, is_dangerous=is_danger)
         command1 = Telecommands.query.filter_by(command_name='ping').first()
 
         for i in range(10):
-            automatedcommand = AutomatedCommands(command_id=command1.id, priority=i)
+            automatedcommand = AutomatedCommands(
+                command_id=command1.id, priority=i)
             db.session.add(automatedcommand)
         db.session.commit()
 
@@ -1333,22 +1398,23 @@ class TestAutomatedCommandService(BaseTestCase):
 
     def test_get_all_automatedcommands_locally_limit_by(self):
         commands = {
-            'ping': (0,False),
-            'get-hk':(0,False),
+            'ping': (0, False),
+            'get-hk': (0, False),
         }
         for name, (num_args, is_danger) in commands.items():
-            c = add_telecommand(command_name=name, num_arguments=num_args, is_dangerous=is_danger)
+            c = add_telecommand(command_name=name,
+                                num_arguments=num_args, is_dangerous=is_danger)
         command1 = Telecommands.query.filter_by(command_name='ping').first()
 
         for i in range(10):
-            automatedcommand = AutomatedCommands(command_id=command1.id, priority=i)
+            automatedcommand = AutomatedCommands(
+                command_id=command1.id, priority=i)
             db.session.add(automatedcommand)
         db.session.commit()
 
-        response = AutomatedCommandList().get(local_args={'limit':3})
+        response = AutomatedCommandList().get(local_args={'limit': 3})
         self.assertEqual(response[1], 200)
         self.assertEqual(len(response[0]['data']['automatedcommands']), 3)
-
 
 
 class TestPassoverService(BaseTestCase):
@@ -1358,7 +1424,7 @@ class TestPassoverService(BaseTestCase):
 
         with self.client:
             post_data = json.dumps(fake_passover_as_dict(datetimes))
-            kw_args = {'data':post_data, 'content_type':'application/json'}
+            kw_args = {'data': post_data, 'content_type': 'application/json'}
 
             response = self.client.post('/api/passovers', **kw_args)
             response_data = json.loads(response.data.decode())
@@ -1375,7 +1441,7 @@ class TestPassoverService(BaseTestCase):
     def test_invalid_post_with_no_passover_objects(self):
         with self.client:
             post_data = json.dumps(fake_passover_as_dict([]))
-            kw_args = {'data':post_data, 'content_type':'application/json'}
+            kw_args = {'data': post_data, 'content_type': 'application/json'}
 
             response = self.client.post('/api/passovers', **kw_args)
             response_data = json.loads(response.data.decode())
@@ -1406,7 +1472,8 @@ class TestPassoverService(BaseTestCase):
             self.assertEqual(response.status_code, 200)
             self.assertTrue('next_passovers' in response_data['data'].keys())
             self.assertEqual(len(response_data['data']['next_passovers']), 1)
-            self.assertEqual(str(correct_next_passover).split('+')[0], response_data['data']['next_passovers'][0]['aos_timestamp'])
+            self.assertEqual(str(correct_next_passover).split(
+                '+')[0], response_data['data']['next_passovers'][0]['aos_timestamp'])
 
     def test_get_next_5_passovers(self):
 
@@ -1431,7 +1498,8 @@ class TestPassoverService(BaseTestCase):
             self.assertEqual(response.status_code, 200)
             self.assertTrue('next_passovers' in response_data['data'].keys())
             self.assertEqual(len(response_data['data']['next_passovers']), 5)
-            self.assertEqual(str(correct_next_passover).split('+')[0], response_data['data']['next_passovers'][0]['aos_timestamp'])
+            self.assertEqual(str(correct_next_passover).split(
+                '+')[0], response_data['data']['next_passovers'][0]['aos_timestamp'])
 
     def test_get_most_recent_passover(self):
 
@@ -1455,8 +1523,10 @@ class TestPassoverService(BaseTestCase):
             response = self.client.get('/api/passovers?most-recent=true')
             response_data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
-            self.assertTrue('most_recent_passover' in response_data['data'].keys())
-            self.assertEqual(str(correct_most_recent_passover).split('+')[0], response_data['data']['most_recent_passover']['aos_timestamp'])
+            self.assertTrue(
+                'most_recent_passover' in response_data['data'].keys())
+            self.assertEqual(str(correct_most_recent_passover).split(
+                '+')[0], response_data['data']['most_recent_passover']['aos_timestamp'])
 
     def test_get_next_passover_when_none_exist(self):
 
@@ -1476,6 +1546,7 @@ class TestPassoverService(BaseTestCase):
             self.assertTrue('next_passovers' in response_data['data'].keys())
             self.assertEqual(len(response_data['data']['next_passovers']), 0)
 
+
 class TestUserService(BaseTestCase):
 
     def test_post_new_user_without_admin_priviliges(self):
@@ -1487,12 +1558,14 @@ class TestUserService(BaseTestCase):
         with self.client:
             user_dict = fake_user_as_dict('new_user', 'new_user')
             post_data = json.dumps(user_dict)
-            kw_args = {'data':post_data, 'content_type':'application/json'}
-            response = self.client.post('/api/users', headers={'Authorization': f'Bearer {auth_token}'}, **kw_args)
+            kw_args = {'data': post_data, 'content_type': 'application/json'}
+            response = self.client.post(
+                '/api/users', headers={'Authorization': f'Bearer {auth_token}'}, **kw_args)
             response_data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 403)
             self.assertIn('fail', response_data['status'])
-            self.assertIn('You do not have permission to create users.', response_data['message'])
+            self.assertIn(
+                'You do not have permission to create users.', response_data['message'])
 
     def test_post_new_user_with_admin_priviliges(self):
         current_app.config.update(BYPASS_AUTH=False)
@@ -1503,8 +1576,9 @@ class TestUserService(BaseTestCase):
         with self.client:
             user_dict = fake_user_as_dict('new_user', 'new_user')
             post_data = json.dumps(user_dict)
-            kw_args = {'data':post_data, 'content_type':'application/json'}
-            response = self.client.post('/api/users', headers={'Authorization': f'Bearer {auth_token}'}, **kw_args)
+            kw_args = {'data': post_data, 'content_type': 'application/json'}
+            response = self.client.post(
+                '/api/users', headers={'Authorization': f'Bearer {auth_token}'}, **kw_args)
             response_data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 201)
             self.assertIn('success', response_data['status'])
@@ -1518,8 +1592,9 @@ class TestUserService(BaseTestCase):
         with self.client:
             user_dict = fake_user_as_dict('Bob', 'secret-password')
             post_data = json.dumps(user_dict)
-            kw_args = {'data':post_data, 'content_type':'application/json'}
-            response = self.client.post('/api/users', headers={'Authorization': f'Bearer {auth_token}'}, **kw_args)
+            kw_args = {'data': post_data, 'content_type': 'application/json'}
+            response = self.client.post(
+                '/api/users', headers={'Authorization': f'Bearer {auth_token}'}, **kw_args)
             response_data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 400)
             self.assertIn('dev_message', response_data.keys())
@@ -1533,13 +1608,17 @@ class TestUserService(BaseTestCase):
             user_dict = fake_user_as_dict('Bob', 'secret-password')
             user_dict.pop('password')
             post_data = json.dumps(user_dict)
-            kw_args = {'data':post_data, 'content_type':'application/json'}
-            response = self.client.post('/api/users', headers={'Authorization': f'Bearer {auth_token}'}, **kw_args)
+            kw_args = {'data': post_data, 'content_type': 'application/json'}
+            response = self.client.post(
+                '/api/users', headers={'Authorization': f'Bearer {auth_token}'}, **kw_args)
             response_data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 400)
-            self.assertIn('The posted data is not valid!', response_data['message'])
+            self.assertIn('The posted data is not valid!',
+                          response_data['message'])
 ####################################################################
-#Test Communications functions
+# Test Communications functions
+
+
 class TestCommunicationsService(BaseTestCase):
 
     def test_post_as_authenticated_user(self):
@@ -1555,7 +1634,7 @@ class TestCommunicationsService(BaseTestCase):
                 data=json.dumps(test_message),
                 content_type='application/json'
             )
-            data=json.loads(response.data.decode())
+            data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 201)
 
     def test_post_as_unauthenticated_user(self):
@@ -1570,7 +1649,7 @@ class TestCommunicationsService(BaseTestCase):
                 data=json.dumps(test_message),
                 content_type='application/json'
             )
-            data=json.loads(response.data.decode())
+            data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 401)
 
     def test_post_with_invalid_token(self):
@@ -1586,7 +1665,7 @@ class TestCommunicationsService(BaseTestCase):
                 data=json.dumps(test_message),
                 content_type='application/json'
             )
-            data=json.loads(response.data.decode())
+            data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 401)
 
     def test_local_post_with_auth(self):
@@ -1610,7 +1689,7 @@ class TestCommunicationsService(BaseTestCase):
                 data=json.dumps(test_message),
                 content_type='application/json'
             )
-            data=json.loads(response.data.decode())
+            data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 201)
             # print(test_message)
             msg = test_message['message']
@@ -1632,8 +1711,8 @@ class TestCommunicationsService(BaseTestCase):
         db.session.commit()
 
         with self.client:
-            response=self.client.get('/api/communications')
-            data=json.loads(response.data.decode())
+            response = self.client.get('/api/communications')
+            data = json.loads(response.data.decode())
             # print(data)
 
             self.assertEqual(response.status_code, 200)
@@ -1645,22 +1724,22 @@ class TestCommunicationsService(BaseTestCase):
     def test_get_all_communications_newest_first(self):
         messages = []
         for i in range(10):
-            test_message = Communications(**fake_message_as_dict(message=f'test message {i}'))
+            test_message = Communications(
+                **fake_message_as_dict(message=f'test message {i}'))
             messages.append(test_message)
             db.session.add(test_message)
 
         db.session.commit()
 
-        messages.sort(key=lambda obj : -1 * obj.id)
+        messages.sort(key=lambda obj: -1 * obj.id)
 
         with self.client:
-            response=self.client.get('/api/communications?newest-first=true')
-            data=json.loads(response.data.decode())
+            response = self.client.get('/api/communications?newest-first=true')
+            data = json.loads(response.data.decode())
             # print(data)
             for resp_message_idx in range(len(data['data']['messages'])):
-                self.assertEqual(messages[resp_message_idx].id, data['data']['messages'][resp_message_idx]['message_id'])
-
-
+                self.assertEqual(
+                    messages[resp_message_idx].id, data['data']['messages'][resp_message_idx]['message_id'])
 
     def test_get_communications_with_query_params(self):
         test_message_1 = fake_message_as_dict()
@@ -1674,7 +1753,8 @@ class TestCommunicationsService(BaseTestCase):
         db.session.commit()
 
         with self.client:
-            response = self.client.get('/api/communications?last_id=1&receiver=tester2')
+            response = self.client.get(
+                '/api/communications?last_id=1&receiver=tester2')
             data = json.loads(response.data.decode())
 
             self.assertEqual(response.status_code, 200)
@@ -1713,4 +1793,5 @@ class TestCommunicationsService(BaseTestCase):
             self.assertEqual(response.status_code, 200)
             self.assertEqual(data['status'], 'success')
             self.assertEqual(len(data['data']['messages']), 1)
-            self.assertEqual(correct_max_id, data['data']['messages'][0]['message_id'])
+            self.assertEqual(
+                correct_max_id, data['data']['messages'][0]['message_id'])
