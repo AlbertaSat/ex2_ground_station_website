@@ -1,6 +1,7 @@
 from flask import render_template, Blueprint
 
-home_blueprint = Blueprint('home',__name__)
+home_blueprint = Blueprint('home', __name__)
+
 
 @home_blueprint.route('/')
 @home_blueprint.route('/home')
@@ -15,6 +16,6 @@ home_blueprint = Blueprint('home',__name__)
 @home_blueprint.route('/adduser')
 @home_blueprint.route('/manageusers')
 @home_blueprint.route('/resetpassword')
+@home_blueprint.route('/ftp')
 def index():
-	return render_template("index.html")
-
+    return render_template("index.html")

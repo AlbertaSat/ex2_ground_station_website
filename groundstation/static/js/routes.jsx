@@ -12,6 +12,7 @@ import AddUser from './components/AddUser';
 import ManageUsers from './components/ManageUsers';
 import AutomatedCommandSequence from './components/AutomatedCommandSequence';
 import ResetPassword from './components/ResetPassword';
+import FTP from './components/FTP';
 
 const Routes = () => (
   <Switch>
@@ -23,6 +24,7 @@ const Routes = () => (
       path="/automatedcommandsequence"
       component={AutomatedCommandSequence}
     />
+    <Route exact path="/ftp" component={FTP} />
     <Route exact path="/housekeeping" component={HouseKeeping} />
     <Route exact path="/login" component={Login} />
     <Route exact path="/logout" component={Logout} />

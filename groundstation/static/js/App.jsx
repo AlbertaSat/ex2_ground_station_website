@@ -151,6 +151,14 @@ function App() {
               {isAuthenticated() && (
                 <a
                   className={`link-items hvr-underline-from-center ${classes.navbarLinks}`}
+                  href="/ftp"
+                >
+                  FTP
+                </a>
+              )}
+              {isAuthenticated() && (
+                <a
+                  className={`link-items hvr-underline-from-center ${classes.navbarLinks}`}
                   href="/logs"
                 >
                   Logs
