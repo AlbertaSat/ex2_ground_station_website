@@ -83,7 +83,9 @@ def fake_adcs_hk_as_dict():
 
 def fake_athena_hk_as_dict():
     return {
-        'OBC_software_ver': DEFAULT_STR,
+        'software_ver_major': DEFAULT_INT,
+        'software_ver_minor': DEFAULT_INT,
+        'software_ver_patch': DEFAULT_INT,
         'MCU_core_temp': DEFAULT_INT,
         'converter_temp': DEFAULT_INT,
         'OBC_uptime': DEFAULT_INT,
@@ -96,6 +98,8 @@ def fake_athena_hk_as_dict():
         'solar_panel_supply_curr': DEFAULT_INT,
         'cmds_received': DEFAULT_INT,
         'pckts_uncovered_by_FEC': DEFAULT_INT,
+        'heap_free': DEFAULT_INT,
+        'lowest_heap_free': DEFAULT_INT,
     }
 
 

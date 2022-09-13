@@ -10,7 +10,7 @@ import Paper from '@material-ui/core/Paper';
 
 function isMinified(minify, elemt) {
   if (!minify) {
-    return elmt;
+    return elemt;
   } else {
     return;
   }
@@ -404,7 +404,10 @@ class FlightSchedule extends Component {
         <Paper className="grid-containers">
           <Grid container style={{ paddingBottom: '12px' }}>
             <Grid item xs={11}>
-              <Typography variant="h5" style={{ padding: '10px' }}>
+              <Typography
+                variant="h4"
+                style={{ padding: '10px', paddingBottom: '50px' }}
+              >
                 Flight Schedules
               </Typography>
             </Grid>
