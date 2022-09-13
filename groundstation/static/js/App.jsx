@@ -48,7 +48,15 @@ function isAuthenticated() {
 var username = null;
 
 function App() {
+  const classes = useStyles();
+
   const [isAdmin, setIsAdmin] = React.useState(false);
+  const [openUserMenu, setOpenUserMenu] = React.useState(false);
+  const [openUtilMenu, setOpenUtilMenu] = React.useState(false);
+
+  const userMenuAnchor = React.useRef(null);
+  const utilMenuAnchor = React.useRef(null);
+
   if (isAuthenticated()) {
     username = sessionStorage.getItem('username');
 
@@ -65,39 +73,60 @@ function App() {
         }
       });
   }
-  const classes = useStyles();
-  const [open, setOpen] = React.useState(false);
 
-  const anchorRef = React.useRef(null);
-
-  const handleToggle = () => {
-    setOpen((prevOpen) => !prevOpen);
+  const handleToggleUserMenu = () => {
+    setOpenUserMenu((prevOpen) => !prevOpen);
   };
 
-  const handleClose = (event) => {
-    if (anchorRef.current && anchorRef.current.contains(event.target)) {
+  const handleToggleUtilMenu = () => {
+    setOpenUtilMenu((prevOpen) => !prevOpen);
+  };
+
+  const handleCloseUserMenu = (event) => {
+    if (
+      userMenuAnchor.current &&
+      userMenuAnchor.current.contains(event.target)
+    ) {
       return;
     }
 
-    setOpen(false);
+    setOpenUserMenu(false);
+  };
+
+  const handleCloseUtilMenu = (event) => {
+    if (
+      utilMenuAnchor.current &&
+      utilMenuAnchor.current.contains(event.target)
+    ) {
+      return;
+    }
+
+    setOpenUtilMenu(false);
   };
 
   function handleListKeyDown(event) {
     if (event.key === 'Tab') {
       event.preventDefault();
-      setOpen(false);
+      setOpenUserMenu(false);
+      setOpenUtilMenu(false);
     }
   }
 
   // return focus to the button when we transitioned from !open -> open
-  const prevOpen = React.useRef(open);
-  React.useEffect(() => {
-    if (prevOpen.current === true && open === false) {
-      anchorRef.current.focus();
-    }
+  const prevOpenUser = React.useRef(openUserMenu);
+  const prevOpenUtil = React.useRef(openUtilMenu);
 
-    prevOpen.current = open;
-  }, [open]);
+  React.useEffect(() => {
+    if (prevOpenUser.current === true && openUserMenu === false) {
+      userMenuAnchor.current.focus();
+    }
+    if (prevOpenUtil.current === true && openUtilMenu === false) {
+      utilMenuAnchor.current.focus();
+    }
+    prevOpenUser.current = openUserMenu;
+    prevOpenUtil.current = openUtilMenu;
+  }, [openUserMenu, openUtilMenu]);
+
   return (
     <div>
       <div className="menu-bar">
@@ -121,14 +150,6 @@ function App() {
               {isAuthenticated() && (
                 <a
                   className={`link-items hvr-underline-from-center ${classes.navbarLinks}`}
-                  href="/automatedcommandsequence"
-                >
-                  Automated Command Sequence
-                </a>
-              )}
-              {isAuthenticated() && (
-                <a
-                  className={`link-items hvr-underline-from-center ${classes.navbarLinks}`}
                   href="/livecommands"
                 >
                   Live Commands
@@ -141,20 +162,77 @@ function App() {
                 Housekeeping
               </a>
               {isAuthenticated() && (
-                <a
-                  className={`link-items hvr-underline-from-center ${classes.navbarLinks}`}
-                  href="/flightschedule"
-                >
-                  Flight Schedule
-                </a>
-              )}
-              {isAuthenticated() && (
-                <a
-                  className={`link-items hvr-underline-from-center ${classes.navbarLinks}`}
-                  href="/ftp"
-                >
-                  FTP
-                </a>
+                <div>
+                  <a
+                    className={`link-items hvr-underline-from-center ${classes.navbarLinks}`}
+                    ref={utilMenuAnchor}
+                    aria-controls={openUtilMenu ? 'menu-list-grow' : undefined}
+                    aria-haspopup="true"
+                    onClick={handleToggleUtilMenu}
+                  >
+                    Utilities
+                  </a>
+                  <Popper
+                    open={openUtilMenu}
+                    anchorEl={utilMenuAnchor.current}
+                    role={undefined}
+                    placement="bottom-end"
+                    transition
+                    disablePortal
+                  >
+                    {({ TransitionProps, placement }) => (
+                      <Grow
+                        {...TransitionProps}
+                        style={{
+                          transformOrigin:
+                            placement === 'bottom'
+                              ? 'right bottom'
+                              : 'right top'
+                        }}
+                      >
+                        <Paper>
+                          <ClickAwayListener onClickAway={handleCloseUtilMenu}>
+                            <MenuList>
+                              <MenuItem onClick={handleCloseUtilMenu}>
+                                <a
+                                  style={{
+                                    color: 'rgb(40, 50, 76)',
+                                    width: '100%'
+                                  }}
+                                  href="/automatedcommandsequence"
+                                >
+                                  Automated Command Sequence
+                                </a>
+                              </MenuItem>
+                              <MenuItem onClick={handleCloseUtilMenu}>
+                                <a
+                                  style={{
+                                    color: 'rgb(40, 50, 76)',
+                                    width: '100%'
+                                  }}
+                                  href="/flightschedule"
+                                >
+                                  Flightschedules
+                                </a>
+                              </MenuItem>
+                              <MenuItem onClick={handleCloseUtilMenu}>
+                                <a
+                                  style={{
+                                    color: 'rgb(40, 50, 76)',
+                                    width: '100%'
+                                  }}
+                                  href="/ftp"
+                                >
+                                  FTP
+                                </a>
+                              </MenuItem>
+                            </MenuList>
+                          </ClickAwayListener>
+                        </Paper>
+                      </Grow>
+                    )}
+                  </Popper>
+                </div>
               )}
               {isAuthenticated() && (
                 <a
@@ -180,22 +258,21 @@ function App() {
                   Login
                 </a>
               )}
-
               {isAuthenticated() && (
                 <div style={{ marginLeft: '3em' }}>
                   <Button
-                    ref={anchorRef}
-                    aria-controls={open ? 'menu-list-grow' : undefined}
+                    ref={userMenuAnchor}
+                    aria-controls={openUserMenu ? 'menu-list-grow' : undefined}
                     aria-haspopup="true"
-                    onClick={handleToggle}
+                    onClick={handleToggleUserMenu}
                   >
                     <Avatar style={{ backgroundColor: '#55c4d3' }}>
                       {username.charAt(0).toUpperCase()}
                     </Avatar>
                   </Button>
                   <Popper
-                    open={open}
-                    anchorEl={anchorRef.current}
+                    open={openUserMenu}
+                    anchorEl={userMenuAnchor.current}
                     role={undefined}
                     transition
                     disablePortal
@@ -211,15 +288,15 @@ function App() {
                         }}
                       >
                         <Paper>
-                          <ClickAwayListener onClickAway={handleClose}>
+                          <ClickAwayListener onClickAway={handleCloseUserMenu}>
                             <MenuList
-                              autoFocusItem={open}
+                              autoFocusItem={openUserMenu}
                               id="menu-list-grow"
                               onKeyDown={handleListKeyDown}
                             >
                               <MenuItem disabled>{username}</MenuItem>
                               {isAdmin && (
-                                <MenuItem onClick={handleClose}>
+                                <MenuItem onClick={handleCloseUserMenu}>
                                   <a
                                     style={{ color: 'rgb(40, 50, 76)' }}
                                     href="/manageusers"
@@ -228,7 +305,7 @@ function App() {
                                   </a>
                                 </MenuItem>
                               )}
-                              <MenuItem onClick={handleClose}>
+                              <MenuItem onClick={handleCloseUserMenu}>
                                 <a
                                   style={{ color: 'rgb(40, 50, 76)' }}
                                   href="/resetpassword"
@@ -236,7 +313,7 @@ function App() {
                                   Reset Password
                                 </a>
                               </MenuItem>
-                              <MenuItem onClick={handleClose}>
+                              <MenuItem onClick={handleCloseUserMenu}>
                                 <a
                                   style={{ color: 'rgb(40, 50, 76)' }}
                                   href="/logout"
