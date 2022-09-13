@@ -350,7 +350,7 @@ const Help = () => {
             style={{
               marginTop: '10px',
               marginBottom: '15px',
-              maxHeight: '60%',
+              maxHeight: '60vh',
               overflow: 'auto',
               borderStyle: 'solid',
               borderColor: 'black'
