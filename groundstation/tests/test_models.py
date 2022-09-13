@@ -85,7 +85,6 @@ class TestHousekeepingModel(BaseTestCase):
         # Test values
         self.assertEqual(housekeeping.adcs.Att_Estimate_Mode, 42)
         self.assertEqual(housekeeping.adcs.Longitude, 13.37)
-        self.assertEqual(housekeeping.athena.OBC_software_ver, 'Fake string!')
         self.assertEqual(housekeeping.athena.MCU_core_temp, 42)
         self.assertEqual(housekeeping.eps.eps_cmd_hk, 42)
         self.assertEqual(housekeeping.eps.eps_timestamp_hk, 13.37)

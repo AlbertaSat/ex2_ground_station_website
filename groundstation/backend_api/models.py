@@ -228,6 +228,8 @@ class Passover(db.Model):
 # This will be the table of telecommands being sent to the satellite as well as the responses
 # the table will allow us to send and receive all commands transactionally allowing us to log
 # them as well as their responses
+
+
 class Communications(db.Model):
     __tablename__ = 'communications'
 
@@ -481,7 +483,9 @@ class AthenaHK(db.Model):
     hk = db.relationship(
         'Housekeeping', backref=backref('athena', uselist=False))
 
-    OBC_software_ver = db.Column(db.String)
+    software_ver_major = db.Column(db.Integer)
+    software_ver_minor = db.Column(db.Integer)
+    software_ver_patch = db.Column(db.Integer)
     MCU_core_temp = db.Column(db.Integer)
     converter_temp = db.Column(db.Integer)
     OBC_uptime = db.Column(db.Integer)
@@ -494,10 +498,14 @@ class AthenaHK(db.Model):
     solar_panel_supply_curr = db.Column(db.Integer)
     cmds_received = db.Column(db.Integer)
     pckts_uncovered_by_FEC = db.Column(db.Integer)
+    heap_free = db.Column(db.Integer)
+    lowest_heap_free = db.Column(db.Integer)
 
     def to_json(self):
         return {
-            'OBC_software_ver': self.OBC_software_ver,
+            'software_ver_major': self.software_ver_major,
+            'software_ver_minor': self.software_ver_minor,
+            'software_ver_patch': self.software_ver_patch,
             'MCU_core_temp': self.MCU_core_temp,
             'converter_temp': self.converter_temp,
             'OBC_uptime': self.OBC_uptime,
@@ -510,6 +518,8 @@ class AthenaHK(db.Model):
             'solar_panel_supply_curr': self.solar_panel_supply_curr,
             'cmds_received': self.cmds_received,
             'pckts_uncovered_by_FEC': self.pckts_uncovered_by_FEC,
+            'heap_free': self.heap_free,
+            'lowest_heap_free': self.lowest_heap_free
         }
 
 
@@ -805,7 +815,8 @@ class EpsStartupHK(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     hk_id = db.Column(db.Integer, db.ForeignKey('housekeeping.id'))
-    hk = db.relationship('Housekeeping', backref=backref('eps_startup', uselist=False))
+    hk = db.relationship('Housekeeping', backref=backref(
+        'eps_startup', uselist=False))
 
     eps_cmd_startup = db.Column(db.Integer)
     eps_status_startup = db.Column(db.Integer)

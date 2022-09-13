@@ -48,9 +48,9 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 600
   },
   hkDisplay: {
-    columnCount: 5,
-    columnWidth: 325,
-    columnSpan: 'none'
+    columnSpan: 'none',
+    columnCount: 4,
+    columnWidth: 300
   },
   hkItem: {
     breakInside: 'avoid-column'

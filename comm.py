@@ -327,7 +327,7 @@ def communication_loop(gs=None):
                         response = send_to_satellite(gs, msg)
 
                     if response:
-                        if 'housekeeping.get_hk' in msg:
+                        if 'housekeeping.get_hk' or 'housekeeping.get_instant_hk' in msg:
                             log_housekeeping(response)
                         elif isinstance(response, list):
                             for item in response:
