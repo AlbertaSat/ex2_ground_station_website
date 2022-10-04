@@ -72,11 +72,17 @@ The website's [comm.py](comm.py) script communicates with the database and with 
    python3 comm.py -I dummy
    ```
 
-   If you have GNURadio open, run:
+   If you want to use GNURadio with the satellite, first clone ex2_uhf_software and built it:
+   ```bash
+   # NOTE: This is a PRIVATE repository accesible only to AlbertaSAT members
+   git clone git@github.com:AlbertaSat/ex2_uhf_software.git
+   cd ex2_uhf_software
+   ./build.sh
+   ```
+   then run comm.py **OUTSIDE** the Docker container and on the **host PC** that is running GNURadio by running the following:
    ```bash
    python3 comm.py -I sdr -u
    ```
-   the command **outside** of the Docker container, and on the host PC that is running GNURadio.
 
 4. You will then be prompted with:
     ```
