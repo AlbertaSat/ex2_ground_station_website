@@ -25,6 +25,6 @@ pip3 install numpy zmq pyserial
 # (Configuration flags taken from ex2_ground_station_software)
 cd libcsp
 git clone --branch master https://github.com/AlbertaSat/ex2_sdr.git
-python3 waf configure --with-os=posix --enable-SDR --SDR-use-uart --enable-rdp --enable-crc32 --enable-hmac --enable-xtea --with-loglevel=debug --enable-debug-timestamp --enable-python3-bindings --with-driver-usart=linux --enable-examples --enable-can-socketcan --enable-if-zmqhub
+python3 waf configure --with-os=posix --enable-SDR --SDR-use-gnuradio --enable-rdp --enable-crc32 --enable-hmac --enable-xtea --with-loglevel=debug --enable-debug-timestamp --enable-python3-bindings --with-driver-usart=linux --enable-examples --enable-can-socketcan --enable-if-zmqhub
 python3 waf build
 cd ..

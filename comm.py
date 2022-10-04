@@ -8,9 +8,8 @@ import json
 import signal
 import sys
 import os
-import datetime
 from enum import Enum
-from datetime import datetime
+from datetime import datetime, timezone
 
 from groundstation.backend_api.flightschedule import FlightScheduleList, Flightschedule
 from groundstation.backend_api.communications import CommunicationList, Communication
@@ -119,13 +118,13 @@ def format_date_time(dt_str):
     :rtype: datetime
     """
     try:
-        exec_time = (datetime.datetime
+        exec_time = (datetime
                      .strptime(dt_str, '%Y-%m-%d %H:%M:%S.%f')
-                     .replace(tzinfo=datetime.timezone.utc))
+                     .replace(tzinfo=timezone.utc))
     except ValueError:  # Sometimes the date format is off for some reason
-        exec_time = (datetime.datetime
+        exec_time = (datetime
                      .strptime(dt_str, '%Y-%m-%d %H:%M:%S')
-                     .replace(tzinfo=datetime.timezone.utc))
+                     .replace(tzinfo=timezone.utc))
     return exec_time
 
 
