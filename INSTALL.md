@@ -72,6 +72,12 @@ The website's [comm.py](comm.py) script communicates with the database and with 
    python3 comm.py -I dummy
    ```
 
+   If you have GNURadio open, run:
+   ```bash
+   python3 comm.py -I sdr -u
+   ```
+   the command **outside** of the Docker container, and on the host PC that is running GNURadio.
+
 4. You will then be prompted with:
     ```
     Would like to communicate with the satellite simulator (if not, the program will attempt to communicate with the satellite) [Y/n]:
