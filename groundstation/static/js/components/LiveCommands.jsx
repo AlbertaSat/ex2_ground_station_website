@@ -1,41 +1,36 @@
-import React, { Component } from "react";
-import CommunicationsList from "./CommunicationsListFull";
-import Paper from "@material-ui/core/Paper";
-import { makeStyles } from "@material-ui/core/styles";
-import TextField from "@material-ui/core/TextField";
-import LinearProgress from "@material-ui/core/LinearProgress";
-import Typography from "@material-ui/core/Typography";
-import { Checkbox, FormControlLabel, FormGroup } from "@material-ui/core";
-import Select from "react-select";
+import React, { Component } from 'react';
+import CommunicationsList from './CommunicationsListFull';
+import Paper from '@material-ui/core/Paper';
+import { makeStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import Typography from '@material-ui/core/Typography';
+import { Checkbox, FormControlLabel, FormGroup } from '@material-ui/core';
+import Select from 'react-select';
 
 // Taken from ex2_ground_station_software/src/groundStation/system.py
 const SAT_PREFIX = [
-  { value: "ex2", label: "EX2" },
-  { value: "yuk", label: "YUK" },
-  { value: "ari", label: "ARI" },
-  { value: "eps", label: "EPS" },
+  { value: 'ex2', label: 'EX2' },
+  { value: 'yuk', label: 'YUK' },
+  { value: 'ari', label: 'ARI' },
+  { value: 'eps', label: 'EPS' }
 ];
 
-const useStyles = makeStyles((theme) => ({
-  container: {
-    display: "flex",
-    flexWrap: "wrap",
-  },
-  textField: {
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
-    width: 200,
-  },
-}));
+const satCliStyles = {
+  control: (provided, state) => ({
+    ...provided,
+    width: '128px'
+  })
+};
 
 function getNewMessages(last_id, ignore) {
   var new_messages = new Promise((resolve, reject) => {
-    fetch("/api/communications?last_id=" + last_id + "&ignore_sender=" + ignore)
+    fetch('/api/communications?last_id=' + last_id + '&ignore_sender=' + ignore)
       .then((results) => {
         return results.json();
       })
       .then((data) => {
-        if (data.status == "success") {
+        if (data.status == 'success') {
           resolve(data.data.messages);
         } else {
           resolve([]);
@@ -53,14 +48,14 @@ class LiveCommands extends Component {
       isEmpty: false,
       validTelecommands: [],
       last_id: undefined,
-      errorMessage: "",
-      textBoxValue: "",
+      errorMessage: '',
+      textBoxValue: '',
       displayLog: [],
       isSatCli: false,
       currentSatCli: {
-        value: "ex2",
-        label: "EX2",
-      },
+        value: 'ex2',
+        label: 'EX2'
+      }
     };
     this.handleChangeCommand = this.handleChangeCommand.bind(this);
     this.handleToggleSatCli = this.handleToggleSatCli.bind(this);
@@ -72,36 +67,36 @@ class LiveCommands extends Component {
   }
 
   componentDidMount() {
-    fetch("/api/telecommands", {
+    fetch('/api/telecommands', {
       headers: {
-        Authorization: "Bearer " + sessionStorage.getItem("auth_token"),
-      },
+        Authorization: 'Bearer ' + sessionStorage.getItem('auth_token')
+      }
     })
       .then((results) => {
         return results.json();
       })
       .then((data) => {
-        if (data.status == "success") {
+        if (data.status == 'success') {
           this.setState((prevState) => ({
             validTelecommands: data.data.telecommands,
             isEmpty: false,
-            splashJobsLeft: prevState.splashJobsLeft - 1,
+            splashJobsLeft: prevState.splashJobsLeft - 1
           }));
         } else {
-          console.error("Error loading telecommands!");
+          console.error('Error loading telecommands!');
           console.error(data);
         }
       });
-    fetch("/api/communications?max=true", {
+    fetch('/api/communications?max=true', {
       headers: {
-        Authorization: "Bearer " + sessionStorage.getItem("auth_token"),
-      },
+        Authorization: 'Bearer ' + sessionStorage.getItem('auth_token')
+      }
     })
       .then((results) => {
         return results.json();
       })
       .then((data) => {
-        if (data.status == "success") {
+        if (data.status == 'success') {
           const max_message = data.data.messages[0];
           let max_message_id;
           if (max_message !== undefined) {
@@ -111,10 +106,10 @@ class LiveCommands extends Component {
           }
           this.setState((prevState) => ({
             last_id: max_message_id,
-            splashJobsLeft: prevState.splashJobsLeft - 1,
+            splashJobsLeft: prevState.splashJobsLeft - 1
           }));
         } else {
-          console.error("Unexpected error occured:");
+          console.error('Unexpected error occured:');
           console.error(data);
         }
       });
@@ -127,17 +122,17 @@ class LiveCommands extends Component {
 
   updateMessages() {
     if (this.state.splashJobsLeft > 0) {
-      console.log("splash jobs left!");
+      console.log('splash jobs left!');
       return;
     }
-    getNewMessages(this.state.last_id, sessionStorage.getItem("username")).then(
+    getNewMessages(this.state.last_id, sessionStorage.getItem('username')).then(
       (new_messages) => {
         let last_message = new_messages[new_messages.length - 1];
         if (last_message !== undefined) {
           // let displayable_messages = new_messages.map(message => ({type:'server-message', data:message}))
           this.setState((prevState) => ({
             displayLog: [...prevState.displayLog, ...new_messages],
-            last_id: last_message.message_id,
+            last_id: last_message.message_id
           }));
         }
       }
@@ -151,11 +146,11 @@ class LiveCommands extends Component {
     const str = telecommand_string.trim();
 
     // Check for matching closing ')'
-    const openIndex = str.indexOf("(");
+    const openIndex = str.indexOf('(');
     if (openIndex === -1) {
       return false;
     }
-    const closeIndex = str.indexOf(")");
+    const closeIndex = str.indexOf(')');
     if (closeIndex === -1 || closeIndex !== str.length - 1) {
       return false;
     }
@@ -175,7 +170,7 @@ class LiveCommands extends Component {
     const args =
       openIndex + 1 === closeIndex
         ? [] // Prevents [""] which has length 1
-        : str.substring(openIndex + 1, closeIndex).split(",");
+        : str.substring(openIndex + 1, closeIndex).split(',');
     if (matching_command.num_arguments !== args.length) {
       return false;
     }
@@ -195,8 +190,8 @@ class LiveCommands extends Component {
     this.setState({
       currentSatCli: {
         value: event.value,
-        label: event.label,
-      },
+        label: event.label
+      }
     });
   }
 
@@ -205,7 +200,7 @@ class LiveCommands extends Component {
   }
 
   handleKeyPress(event) {
-    if (event.key === "Enter") {
+    if (event.key === 'Enter') {
       const text = event.target.value;
       if (this.telecommandIsValid(text)) {
         const post_data = {
@@ -213,41 +208,41 @@ class LiveCommands extends Component {
           message: this.state.isSatCli
             ? this.formatToSatCliCommand(text)
             : text,
-          sender: sessionStorage.getItem("username"),
-          receiver: "comm",
-          is_queued: true,
+          sender: sessionStorage.getItem('username'),
+          receiver: 'comm',
+          is_queued: true
         };
 
-        fetch("/api/communications", {
-          method: "POST",
+        fetch('/api/communications', {
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + sessionStorage.getItem("auth_token"),
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + sessionStorage.getItem('auth_token')
           },
-          body: JSON.stringify(post_data),
+          body: JSON.stringify(post_data)
         })
           .then((results) => {
             return results.json();
           })
           .then((data) => {
-            if (data.status === "success") {
+            if (data.status === 'success') {
               this.setState((prevState) => ({
                 displayLog: [...prevState.displayLog, data.data],
-                errorMessage: "",
-                textBoxValue: "",
+                errorMessage: '',
+                textBoxValue: ''
               }));
             } else {
-              console.error("Unexpected error occured:");
+              console.error('Unexpected error occured:');
               console.error(data);
             }
           });
       } else {
-        this.setState({ errorMessage: "Invalid Telecommand" });
+        this.setState({ errorMessage: 'Invalid Telecommand' });
       }
-    } else if (event.key === "ArrowUp") {
+    } else if (event.key === 'ArrowUp') {
       // TODO (nice to have): Next level: store input history for easy re-send
       console.log(event.key);
-    } else if (event.key === "ArrowDown") {
+    } else if (event.key === 'ArrowDown') {
       console.log(event.key);
     }
   }
@@ -263,11 +258,11 @@ class LiveCommands extends Component {
     return (
       <div>
         <div>
-          <Paper style={{ height: "70%", overflow: "auto" }}>
+          <Paper style={{ height: '70%', overflow: 'auto' }}>
             <Typography
               className="header-title"
               variant="h5"
-              style={{ padding: "10px", margin: "20px" }}
+              style={{ padding: '10px', margin: '20px' }}
             >
               Live Commands
             </Typography>
@@ -285,33 +280,33 @@ class LiveCommands extends Component {
             label="Enter Telecommand"
             margin="normal"
             variant="outlined"
-            style={{ width: "100%", backgroundColor: "white" }}
+            style={{ width: '100%', backgroundColor: 'white' }}
             value={this.state.textBoxValue}
             onChange={(event) => this.handleChangeCommand(event)}
             onKeyDown={(event) => this.handleKeyPress(event)}
-            error={!(this.state.errorMessage === "")}
+            error={!(this.state.errorMessage === '')}
           />
         </div>
-        <div style={{ display: "flex" }}>
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={this.state.isSatCli}
-                  onChange={this.handleToggleSatCli}
-                />
-              }
-              label="Send as CLI command to:"
-            />
-            <Select
-              className="basic-single"
-              classNamePrefix="select"
-              options={SAT_PREFIX}
-              value={this.state.currentSatCli}
-              onChange={this.handleChangeSatCli}
-            />
-          </FormGroup>
-        </div>
+        <FormGroup row>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={this.state.isSatCli}
+                onChange={this.handleToggleSatCli}
+              />
+            }
+            label="Send as CLI command to:"
+          />
+          <Select
+            className="basic-single"
+            classNamePrefix="select"
+            menuPlacement="top"
+            options={SAT_PREFIX}
+            value={this.state.currentSatCli}
+            onChange={this.handleChangeSatCli}
+            styles={satCliStyles}
+          />
+        </FormGroup>
       </div>
     );
   }
