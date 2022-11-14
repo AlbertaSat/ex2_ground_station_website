@@ -1,5 +1,5 @@
 import { makeStyles, TextField } from '@material-ui/core';
-import React from 'react';
+import React, { useState } from 'react';
 import Typography from '@material-ui/core/Typography';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -32,7 +32,9 @@ const useStyles = makeStyles((theme) => ({
   },
   table: {
     minWidth: 325,
-    maxWidth: 325
+    maxWidth: 325,
+    maxHeight: '100px',
+    overflow: 'scroll'
   },
   file: {
     textDecoration: 'underline'
@@ -43,6 +45,28 @@ const useStyles = makeStyles((theme) => ({
 const FTP = () => {
   const classes = useStyles();
 
+  const [uploadFile, setUploadFile] = useState(null);
+
+  const handleChangeUploadFile = (e) => {
+    setUploadFile(e.target.files[0]);
+  };
+
+  const handleUpload = (e) => {
+    e.preventDefault();
+    const data = new FormData();
+    data.append('file', uploadFile);
+    data.append('fileName', uploadFile.name);
+    fetch('/api/ftpupload', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + sessionStorage.getItem('auth_token')
+      },
+      body: data
+    }).then((results) => {
+      return results.json();
+    });
+  };
+
   return (
     <div className={classes.ftpContainer}>
       <div className={classes.section}>
@@ -51,14 +75,17 @@ const FTP = () => {
             <Typography variant="h4" style={{ color: '#283246' }}>
               Upload File
             </Typography>
-            <input type="file" />
-            <Button
-              style={{ color: '#118851', marginTop: '10px' }}
-              variant="contained"
-              name="req-file"
-            >
-              Upload
-            </Button>
+            <form onSubmit={handleUpload}>
+              <input type="file" onChange={handleChangeUploadFile} />
+              <Button
+                style={{ color: '#118851', marginTop: '10px' }}
+                variant="contained"
+                name="req-file"
+                type="submit"
+              >
+                Upload
+              </Button>
+            </form>
           </div>
         </Paper>
       </div>

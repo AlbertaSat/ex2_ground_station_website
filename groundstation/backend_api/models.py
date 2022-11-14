@@ -299,6 +299,14 @@ class AutomatedCommandsArgs(db.Model):
             'argument': self.argument
         }
 
+
+class FTPUpload(db.Model):
+    __tablename__ = 'ftp_upload'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    filepath = db.Column(db.String, nullable=False)
+    uploaded = db.Column(db.Boolean, nullable=False, server_default='0')
+
 ############################################################
 # Housekeeping Models
 # ----------------------------------------------------------
