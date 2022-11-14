@@ -14,6 +14,7 @@ or:
     python3 manage.py test test_api.TestHousekeepingService.test_get_housekeeping
 
 """
+import os
 import sys
 import unittest
 from datetime import datetime, timedelta
@@ -48,10 +49,14 @@ cli = FlaskGroup(create_app=create_app)
 @cli.command('recreate_db')
 def recreate_db():
     """Drops and recreates the database (with no initial data)
+
+    Also generates the `.ftpTransactions/Uploads` folder if it does not exist
     """
     db.drop_all()
     db.create_all()
     db.session.commit()
+
+    os.makedirs('.ftpTransactions/Uploads', exist_ok=True)
 
     print("Database has been dropped and recreated.")
 

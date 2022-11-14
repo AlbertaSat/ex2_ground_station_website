@@ -171,3 +171,6 @@ flightschedules/fs_*
 
 # Secret Keys
 /keys.sh
+
+# FTP Transactions
+.ftpTransactions
