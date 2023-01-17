@@ -316,10 +316,10 @@ class LiveCommands extends Component {
           </Grid>
           <Grid item xs={4}>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <img src="http://anon:anon@129.128.208.184/cgi-bin/video.cgi" 
-          alt="http://anon:anon@129.128.208.184/cgi-bin/video.cgi" class="shrinkToFit" style={{ marginBottom: '30px' , marginRight: '10px'}}/>
           <img src="http://anon:anon@129.128.208.190/cgi-bin/video.cgi" 
-          alt="http://anon:anon@129.128.208.190/cgi-bin/video.cgi" class="shrinkToFit" style={{ marginRight: '10px'}}/>
+          alt="Antenna1" class="shrinkToFit" style={{ marginBottom: '30px' , marginRight: '10px'}}/>
+          <img src="http://anon:anon@129.128.208.184/cgi-bin/video.cgi" 
+          alt="Antenna2" class="shrinkToFit" style={{ marginRight: '10px'}}/>
           </div>
           </Grid>
         </Grid>
