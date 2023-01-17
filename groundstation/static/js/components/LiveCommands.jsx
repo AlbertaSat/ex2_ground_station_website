@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Typography from '@material-ui/core/Typography';
-import { Checkbox, FormControlLabel, FormGroup } from '@material-ui/core';
+import { Checkbox, FormControlLabel, FormGroup, Grid } from '@material-ui/core';
 import Select from 'react-select';
 
 // Taken from ex2_ground_station_software/src/groundStation/system.py
@@ -256,58 +256,73 @@ class LiveCommands extends Component {
       );
     }
     return (
-      <div>
-        <div>
-          <Paper style={{ height: '70%', overflow: 'auto' }}>
-            <Typography
-              className="header-title"
-              variant="h5"
-              style={{ padding: '10px', margin: '20px' }}
-            >
-              Live Commands
-            </Typography>
-            <CommunicationsList
-              autoScroll={true}
-              displayLog={this.state.displayLog}
-              isEmpty={this.state.isEmpty}
-              showQueueButton={false}
-            />
-          </Paper>
-        </div>
-        <div>
-          <TextField
-            id="user-input-textbox"
-            label="Enter Telecommand"
-            margin="normal"
-            variant="outlined"
-            style={{ width: '100%', backgroundColor: 'white' }}
-            value={this.state.textBoxValue}
-            onChange={(event) => this.handleChangeCommand(event)}
-            onKeyDown={(event) => this.handleKeyPress(event)}
-            error={!(this.state.errorMessage === '')}
-          />
-        </div>
-        <FormGroup row>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={this.state.isSatCli}
-                onChange={this.handleToggleSatCli}
+      <Grid
+      container
+      direction="row"
+      justifyContent="flex-start"
+      alignItems="stretch"
+      spacing={2}
+      style={{ height: 'calc(100vh - 120px)' }}
+    >
+          <Grid item xs={8}>
+            <div>
+              <Paper style={{ height: '90%', overflow: 'auto' }}>
+                <Typography
+                  className="header-title"
+                  variant="h5"
+                  style={{ padding: '10px', margin: '20px' }}
+                >
+                  Live Commands
+                </Typography>
+                <CommunicationsList
+                  autoScroll={true}
+                  displayLog={this.state.displayLog}
+                  isEmpty={this.state.isEmpty}
+                  showQueueButton={false}
+                />
+              </Paper>
+              <TextField
+                id="user-input-textbox"
+                label="Enter Telecommand"
+                margin="normal"
+                variant="outlined"
+                style={{ width: '100%', backgroundColor: 'white' }}
+                value={this.state.textBoxValue}
+                onChange={(event) => this.handleChangeCommand(event)}
+                onKeyDown={(event) => this.handleKeyPress(event)}
+                error={!(this.state.errorMessage === '')}
               />
-            }
-            label="Send as CLI command to:"
-          />
-          <Select
-            className="basic-single"
-            classNamePrefix="select"
-            menuPlacement="top"
-            options={SAT_PREFIX}
-            value={this.state.currentSatCli}
-            onChange={this.handleChangeSatCli}
-            styles={satCliStyles}
-          />
-        </FormGroup>
-      </div>
+            <FormGroup row>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={this.state.isSatCli}
+                    onChange={this.handleToggleSatCli}
+                  />
+                }
+                label="Send as CLI command to:"
+              />
+              <Select
+                className="basic-single"
+                classNamePrefix="select"
+                menuPlacement="top"
+                options={SAT_PREFIX}
+                value={this.state.currentSatCli}
+                onChange={this.handleChangeSatCli}
+                styles={satCliStyles}
+              />
+            </FormGroup>
+            </div>
+          </Grid>
+          <Grid item xs={4}>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <img src="http://anon:anon@129.128.208.190/cgi-bin/video.cgi" 
+          alt="Antenna1" class="shrinkToFit" style={{ marginBottom: '30px' , marginRight: '10px'}}/>
+          <img src="http://anon:anon@129.128.208.184/cgi-bin/video.cgi" 
+          alt="Antenna2" class="shrinkToFit" style={{ marginRight: '10px'}}/>
+          </div>
+          </Grid>
+        </Grid>
     );
   }
 }
