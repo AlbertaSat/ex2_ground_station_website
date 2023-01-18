@@ -15,9 +15,9 @@ jobs:
         with:
           submodules: recursive
 
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v4
         with:
-          python-version: '3.8.10'
+          python-version: '3.9'
           architecture: 'x64'
 
       - name: Install pip dependencies
