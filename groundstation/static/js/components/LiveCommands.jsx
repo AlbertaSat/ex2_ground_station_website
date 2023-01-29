@@ -3,6 +3,7 @@ import CommunicationsList from './CommunicationsListFull';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Typography from '@material-ui/core/Typography';
 import { Checkbox, FormControlLabel, FormGroup, Grid } from '@material-ui/core';
@@ -47,6 +48,7 @@ class LiveCommands extends Component {
       splashJobsLeft: 2,
       isEmpty: false,
       validTelecommands: [],
+      options: [],
       last_id: undefined,
       errorMessage: '',
       textBoxValue: '',
@@ -82,11 +84,21 @@ class LiveCommands extends Component {
             isEmpty: false,
             splashJobsLeft: prevState.splashJobsLeft - 1
           }));
+          console.log(this.state.validTelecommands)
+          const options = this.state.validTelecommands.map((option) => {
+            const firstLetter = option.command_name[0].toUpperCase();
+            return {
+              firstLetter: /[0-9]/.test(firstLetter) ? '0-9' : firstLetter,
+              ...option,
+            }
+          })
+          console.log(options)
+          this.setState({options:options})
         } else {
           console.error('Error loading telecommands!');
           console.error(data);
         }
-      });
+  });
     fetch('/api/communications?max=true', {
       headers: {
         Authorization: 'Bearer ' + sessionStorage.getItem('auth_token')
@@ -245,8 +257,10 @@ class LiveCommands extends Component {
     } else if (event.key === 'ArrowDown') {
       console.log(event.key);
     }
+    console.log(this.state.errorMessage)
   }
 
+ 
   render() {
     if (this.state.splashJobsLeft > 0) {
       return (
@@ -281,17 +295,28 @@ class LiveCommands extends Component {
                   showQueueButton={false}
                 />
               </Paper>
-              <TextField
-                id="user-input-textbox"
-                label="Enter Telecommand"
-                margin="normal"
-                variant="outlined"
-                style={{ width: '100%', backgroundColor: 'white' }}
-                value={this.state.textBoxValue}
-                onChange={(event) => this.handleChangeCommand(event)}
-                onKeyDown={(event) => this.handleKeyPress(event)}
-                error={!(this.state.errorMessage === '')}
+
+              <Autocomplete
+                id="grouped-demo"
+                options={this.state.options.sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
+                groupBy={(option) => option.firstLetter}
+                getOptionLabel={(option) => option.command_name}
+                sx={{ width: '100%'}}
+                renderInput={(params) => 
+                <TextField 
+                {...params} 
+                  InputLabelProps={{ shrink: true }}
+                  id="user-input-textbox"
+                  label="Enter Telecommand"
+                  margin="normal"
+                  variant="outlined"
+                  style={{ width: '100%', backgroundColor: 'white' }}
+                  value={this.state.textBoxValue}
+                  onChange={(event) => this.handleChangeCommand(event)}
+                  onKeyDown={(event) => this.handleKeyPress(event)}
+                  error={!(this.state.errorMessage === '')}/>}
               />
+              
             <FormGroup row>
               <FormControlLabel
                 control={
@@ -316,10 +341,10 @@ class LiveCommands extends Component {
           </Grid>
           <Grid item xs={4}>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <img src="http://anon:anon@129.128.208.190/cgi-bin/video.cgi" 
-          alt="Antenna1" class="shrinkToFit" style={{ marginBottom: '30px' , marginRight: '10px'}}/>
           <img src="http://anon:anon@129.128.208.184/cgi-bin/video.cgi" 
-          alt="Antenna2" class="shrinkToFit" style={{ marginRight: '10px'}}/>
+          alt="http://anon:anon@129.128.208.184/cgi-bin/video.cgi" class="shrinkToFit" style={{ marginBottom: '30px' , marginRight: '10px'}}/>
+          <img src="http://anon:anon@129.128.208.190/cgi-bin/video.cgi" 
+          alt="http://anon:anon@129.128.208.190/cgi-bin/video.cgi" class="shrinkToFit" style={{ marginRight: '10px'}}/>
           </div>
           </Grid>
         </Grid>
