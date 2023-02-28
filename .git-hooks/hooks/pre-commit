@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Run formatting on javascript files
 echo "Formatting JS & JSX files..."
@@ -34,10 +34,10 @@ function python_checks {
 }
 
 # Look for python files that are about to be committed.
-# staged_py_files=$(git diff --name-only --cached | grep "\.py$")
-# if [[ ! -z "$staged_py_files" ]]; then
-#     echo "Formatting Python Files..."
-#     python_checks ${staged_py_files}
-# fi
+staged_py_files=$(git diff --name-only --cached | grep "\.py$")
+if [[ ! -z "$staged_py_files" ]]; then
+    echo "Formatting Python Files..."
+    python_checks ${staged_py_files}
+fi
 
 exit 0
