@@ -4,7 +4,8 @@ import jwt
 import datetime
 from groundstation import create_app
 from groundstation.backend_api.models import Telecommands, FlightSchedules, \
-    FlightScheduleCommands, FlightScheduleCommandsArgs, User, BlacklistedTokens, Passover
+    FlightScheduleCommands, FlightScheduleCommandsArgs, User, BlacklistedTokens, Passover, \
+    FTPUpload
 from groundstation import db
 import operator
 from groundstation.backend_api.models import Communications, Housekeeping
@@ -210,6 +211,29 @@ def dynamic_filters_communications(filters):
                 Communications.id.desc()).limit(1).first()
             max_id = -1 if max_comm is None else max_comm.id
             filter_ops.append(operator.eq(Communications.id, max_id))
+        else:
+            pass
+
+    return filter_ops
+
+
+def dynamic_filters_ftpuploads(filters):
+    """Build a filter dynamically for the FTPUploads table from query parameters
+
+    :param dict filters: Dictionary of arg-value pairs
+
+    :returns: a list of filters which can be passed ino SQL alchemy filter queries
+    :rtype: list
+    """
+    filter_ops = []
+
+    for arg, value in filters.items():
+        if arg == 'last_id':
+            filter_ops.append(operator.gt(FTPUpload.id, value))
+        elif arg == 'filename':
+            filter_ops.append(operator.eq(FTPUpload.filename, value))
+        elif arg == 'uploaded':
+            filter_ops.append(operator.eq(FTPUpload.uploaded, value))
         else:
             pass
 

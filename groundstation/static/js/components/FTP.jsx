@@ -1,5 +1,5 @@
 import { makeStyles, TextField } from '@material-ui/core';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Typography from '@material-ui/core/Typography';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -31,8 +31,7 @@ const useStyles = makeStyles((theme) => ({
     width: '45%'
   },
   table: {
-    minWidth: 325,
-    maxWidth: 325,
+    maxWidth: '75%',
     maxHeight: '100px',
     overflow: 'scroll'
   },
@@ -46,6 +45,11 @@ const FTP = () => {
   const classes = useStyles();
 
   const [uploadFile, setUploadFile] = useState(null);
+  const [uploadList, setUploadList] = useState([]);
+
+  useEffect(() => {
+    fetchUploads();
+  }, []);
 
   const handleChangeUploadFile = (e) => {
     setUploadFile(e.target.files[0]);
@@ -63,8 +67,19 @@ const FTP = () => {
       },
       body: data
     }).then((results) => {
+      fetchUploads(); // Update upload list
       return results.json();
     });
+  };
+
+  const fetchUploads = () => {
+    fetch('/api/ftpupload', { method: 'GET' })
+      .then((results) => {
+        return results.json();
+      })
+      .then((data) => {
+        setUploadList(data.data.uploads);
+      });
   };
 
   return (
@@ -75,6 +90,44 @@ const FTP = () => {
             <Typography variant="h4" style={{ color: '#283246' }}>
               Upload File
             </Typography>
+            <Table
+              size="small"
+              aria-label="dense table"
+              className={classes.table}
+            >
+              <TableHead>
+                <TableRow>
+                  <TableCell style={{ fontWeight: 'bold' }}>
+                    {' '}
+                    File Name{' '}
+                  </TableCell>
+                  <TableCell style={{ fontWeight: 'bold' }}>Size</TableCell>
+                  <TableCell style={{ fontWeight: 'bold' }}>
+                    Upload Date
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {uploadList.map((file, idx) => (
+                  <TableRow key={idx}>
+                    <TableCell
+                      width="30%"
+                      component="th"
+                      scope="row"
+                      className={classes.file}
+                    >
+                      {file.filename}
+                    </TableCell>
+                    <TableCell width="20%" component="th" scope="row">
+                      {file.filesize} KB
+                    </TableCell>
+                    <TableCell width="50%" component="th" scope="row">
+                      {file.upload_date || 'Not yet uploaded'}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
             <form onSubmit={handleUpload}>
               <input type="file" onChange={handleChangeUploadFile} />
               <Button

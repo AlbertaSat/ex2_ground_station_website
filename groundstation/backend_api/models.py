@@ -246,7 +246,7 @@ class Communications(db.Model):
     is_queued = db.Column(db.Boolean, server_default="0", nullable=False)
 
     # TODO: connecting satellite responses to sent telecommands
-    #response = db.Column(db.Integer, db.ForeignKey('communications.id'))
+    # response = db.Column(db.Integer, db.ForeignKey('communications.id'))
 
     def to_json(self):
         """Returns a dictionary of some selected model attributes
@@ -305,7 +305,20 @@ class FTPUpload(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     filepath = db.Column(db.String, nullable=False)
+    filename = db.Column(db.String, nullable=False)
+    filesize = db.Column(db.Integer, nullable=False)  # In KB
     uploaded = db.Column(db.Boolean, nullable=False, server_default='0')
+    upload_date = db.Column(db.DateTime, nullable=True)
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'filepath': self.filepath,
+            'filename': self.filename,
+            'filesize': self.filesize,
+            'uploaded': self.uploaded,
+            'upload_date': str(self.upload_date)
+        }
 
 ############################################################
 # Housekeeping Models

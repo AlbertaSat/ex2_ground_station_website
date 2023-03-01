@@ -8,11 +8,13 @@ import json
 import signal
 import sys
 import os
+import subprocess
 from enum import Enum
 from datetime import datetime, timezone
 
 from groundstation.backend_api.flightschedule import FlightScheduleList, Flightschedule
 from groundstation.backend_api.communications import CommunicationList, Communication
+from groundstation.backend_api.ftp import FTPUploadAPI
 
 from groundstation.backend_api.housekeeping import HousekeepingLogList
 from groundstation.tests.utils import fake_housekeeping_as_dict, fake_adcs_hk_as_dict, \
@@ -40,6 +42,7 @@ communication_patch = Communication()
 flightschedule_list = FlightScheduleList()
 flightschedule_patch = Flightschedule()
 housekeeping_post = HousekeepingLogList()
+ftp_uploads = FTPUploadAPI()
 
 
 # Handle the sig alarm
@@ -257,6 +260,23 @@ def log_housekeeping(response):
             hk['timestamp'], hk['data_position']))
 
 
+def upload_ftp():
+    request_data = {'uploaded': False}
+    files = ftp_uploads.get(local_data=request_data)[0]
+    if (len(files['data']['uploads']) > 0):
+        for f in files['data']['uploads']:
+            subprocess.Popen([
+                'python3',
+                'comm_ftp.py',
+                '-I',
+                'dummy',  # TODO: make this flexible later
+                '-p',
+                str(f['filepath']),
+                '--file-id',
+                str(f['id'])
+            ])
+
+
 def send_to_simulator(msg):
     try:
         return antenna.send(json.dumps(msg))
@@ -307,6 +327,7 @@ def communication_loop(gs=None):
         # Upload any queued flight schedules
         if mode == Connection.SATELLITE:
             send_flightschedules(gs)
+            upload_ftp()
 
         # Get queued communications
         messages = communication_list.get(local_data=request_data)[0]
