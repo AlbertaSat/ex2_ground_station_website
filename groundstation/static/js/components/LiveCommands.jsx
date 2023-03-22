@@ -52,6 +52,11 @@ class LiveCommands extends Component {
       last_id: undefined,
       errorMessage: '',
       textBoxValue: '',
+      execCommand: {
+        command_name: '',
+        num_arguments: '',
+        about_info: ''
+      },
       displayLog: [],
       isSatCli: false,
       currentSatCli: {
@@ -60,6 +65,7 @@ class LiveCommands extends Component {
       }
     };
     this.handleChangeCommand = this.handleChangeCommand.bind(this);
+    this.handleChangeText = this.handleChangeText.bind(this);
     this.handleToggleSatCli = this.handleToggleSatCli.bind(this);
     this.handleChangeSatCli = this.handleChangeSatCli.bind(this);
     this.formatToSatCliCommand = this.formatToSatCliCommand.bind(this);
@@ -92,7 +98,6 @@ class LiveCommands extends Component {
               ...option,
             }
           })
-          console.log(options)
           this.setState({options:options})
         } else {
           console.error('Error loading telecommands!');
@@ -190,8 +195,17 @@ class LiveCommands extends Component {
     return true;
   }
 
-  handleChangeCommand(event) {
-    this.setState({ textBoxValue: event.target.value });
+  handleChangeCommand(event, value) {
+    const command = this.state.options.find(
+      (option) => option.command_name === value.command_name
+    );
+    if (command) {
+      this.setState({execCommand: command})
+    } 
+  }
+
+  handleChangeText(event){
+    this.setState({textBoxValue: event.target.value})
   }
 
   handleToggleSatCli(event) {
@@ -301,6 +315,7 @@ class LiveCommands extends Component {
                 options={this.state.options.sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
                 groupBy={(option) => option.firstLetter}
                 getOptionLabel={(option) => option.command_name}
+                onChange={(event, value) => this.handleChangeCommand(event, value)}
                 sx={{ width: '100%'}}
                 renderInput={(params) => 
                 <TextField 
@@ -312,7 +327,7 @@ class LiveCommands extends Component {
                   variant="outlined"
                   style={{ width: '100%', backgroundColor: 'white' }}
                   value={this.state.textBoxValue}
-                  onChange={(event) => this.handleChangeCommand(event)}
+                  onChange={(event) => this.handleChangeText(event)}
                   onKeyDown={(event) => this.handleKeyPress(event)}
                   error={!(this.state.errorMessage === '')}/>}
               />
@@ -342,9 +357,36 @@ class LiveCommands extends Component {
           <Grid item xs={4}>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
           <img src="http://anon:anon@129.128.208.184/cgi-bin/video.cgi" 
-          alt="http://anon:anon@129.128.208.184/cgi-bin/video.cgi" class="shrinkToFit" style={{ marginBottom: '30px' , marginRight: '10px'}}/>
+          alt="http://anon:anon@129.128.208.184/cgi-bin/video.cgi" classNmae="shrinkToFit" style={{ marginBottom: '30px' , marginRight: '10px'}}/>
           <img src="http://anon:anon@129.128.208.190/cgi-bin/video.cgi" 
-          alt="http://anon:anon@129.128.208.190/cgi-bin/video.cgi" class="shrinkToFit" style={{ marginRight: '10px'}}/>
+          alt="http://anon:anon@129.128.208.190/cgi-bin/video.cgi" className="shrinkToFit" style={{ marginBottom: '30px' , marginRight: '10px'}}/>
+          <Paper
+            style={{
+              marginTop: '10px',
+              marginBottom: '15px',
+              maxHeight: '60vh',
+              overflow: 'auto',
+              borderStyle: 'solid',
+              borderColor: 'black'
+            }}
+          >
+            {
+              this.state.execCommand.command_name!=''
+              ? (
+                  <Typography variant="body1" style={{ paddingLeft: "10px" }}>
+                    <strong>{this.state.execCommand.command_name.slice(4)}</strong>
+                    <span style={{ fontStyle: "italic" }}>
+                      {" (" + this.state.execCommand.num_arguments + ")"}
+                    </span>
+                    {this.state.execCommand.about_info != null ? (
+                      <p style={{ paddingLeft: "5%" }}>{this.state.execCommand.about_info}</p>
+                    ) : null}
+                    <hr></hr>
+                  </Typography>
+                )
+              : null
+              }
+          </Paper>
           </div>
           </Grid>
         </Grid>
