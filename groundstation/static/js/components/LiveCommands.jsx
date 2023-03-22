@@ -357,9 +357,9 @@ class LiveCommands extends Component {
           <Grid item xs={4}>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
           <img src="http://anon:anon@129.128.208.184/cgi-bin/video.cgi" 
-          alt="http://anon:anon@129.128.208.184/cgi-bin/video.cgi" classNmae="shrinkToFit" style={{ marginBottom: '30px' , marginRight: '10px'}}/>
+          alt="http://anon:anon@129.128.208.184/cgi-bin/video.cgi" class="shrinkToFit" style={{ marginBottom: '30px' , marginRight: '10px'}}/>
           <img src="http://anon:anon@129.128.208.190/cgi-bin/video.cgi" 
-          alt="http://anon:anon@129.128.208.190/cgi-bin/video.cgi" className="shrinkToFit" style={{ marginBottom: '30px' , marginRight: '10px'}}/>
+          alt="http://anon:anon@129.128.208.190/cgi-bin/video.cgi" class="shrinkToFit" style={{ marginBottom: '30px' , marginRight: '10px'}}/>
           <Paper
             style={{
               marginTop: '10px',
