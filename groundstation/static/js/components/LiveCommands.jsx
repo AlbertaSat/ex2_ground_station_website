@@ -195,6 +195,7 @@ class LiveCommands extends Component {
     return true;
   }
 
+  // Check value updated by auto complete
   handleChangeCommand(event, value) {
     const command = this.state.options.find(
       (option) => option.command_name === value.command_name
@@ -204,6 +205,7 @@ class LiveCommands extends Component {
     } 
   }
 
+  // Update value in text field
   handleChangeText(event){
     this.setState({textBoxValue: event.target.value})
   }
