@@ -342,9 +342,7 @@ const Help = () => {
           </Typography>
           <Typography variant="h7" style={{ marginTop: '5px' }}>
             <strong>command_name</strong>
-            <span style={{ fontStyle: 'italic' }}>
-              {' (number of arguments)'}
-            </span>
+            <span style={{ fontStyle: 'italic' }}>{' (arguments)'}</span>
           </Typography>
           <Paper
             style={{
@@ -360,11 +358,18 @@ const Help = () => {
               !!command.about_info ? (
                 <Typography variant="body1" style={{ paddingLeft: '10px' }}>
                   <strong>{command.command_name.slice(4)}</strong>
-                  <span style={{ fontStyle: 'italic' }}>
-                    {' (' + command.num_arguments + ')'}
-                  </span>
+                  {command.arg_labels != null ? (
+                    <span style={{ fontStyle: 'italic' }}>
+                      {' (' + command.arg_labels + ')'}
+                    </span>
+                  ) : null}
                   {command.about_info != null ? (
                     <p style={{ paddingLeft: '5%' }}>{command.about_info}</p>
+                  ) : null}
+                  {command.return_labels != null ? (
+                    <p style={{ paddingLeft: '5%' }}>
+                      {'Returns: ' + command.return_labels}
+                    </p>
                   ) : null}
                   <hr></hr>
                 </Typography>
